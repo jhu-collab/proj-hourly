@@ -36,16 +36,16 @@ cd ../frontend && npm i
 ## Developing
 First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
-~**TODO**~
+**TODO**
 
 ### Running the application locally
-~**TODO**~
+**TODO**
 
 ### Deployment
-~**TODO**~
+**TODO**
 
 ### Code Style
-~**TODO**~
+**TODO**
 
 ### Dependencies
 Joy UI - main UI component library
