@@ -1,0 +1,8 @@
+.DS_Store
+*.env
+.vscode/*
+.idea/*
+.gradle/*
+node_modules/*
+node_modules
+pgdata
