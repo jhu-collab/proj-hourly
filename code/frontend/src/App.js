@@ -1,8 +1,11 @@
-
+import { CssVarsProvider } from "@mui/joy/styles";
+import Button from "@mui/joy/Button";
 
 function App() {
   return (
-    <p>Hello</p>
+    <CssVarsProvider>
+      <Button>Joy UI</Button>
+    </CssVarsProvider>
   );
 }
 
