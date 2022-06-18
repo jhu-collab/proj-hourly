@@ -1,0 +1,40 @@
+name: Lint
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches: [main, iter-01, iter-02, iter-03, iter-04, iter-05, iter-06]
+  pull_request:
+    branches: [main, iter-01, iter-02, iter-03, iter-04, iter-05, iter-06]
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          cache: "npm"
+          cache-dependency-path: |
+            code/package-lock.json
+            code/backend/package-lock.json
+            code/frontend/package-lock.json
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: npm ci && cd backend && npm ci && cd ../frontend && npm ci
+        working-directory: code
+
+      - name: Run Prettier
+        run: npx prettier "**/*.{js,jsx,ts,tsx,html,css,less,ejs}" --check
+        working-directory: code
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0
+        working-directory: code
