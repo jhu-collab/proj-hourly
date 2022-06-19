@@ -10,9 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model account {
-  id            Int      @id @default(autoincrement())
-  userName      String
-  email         String   @unique
-  phoneNumber   String?  @unique
+model Account {
+  id                Int      @id @default(autoincrement())
+  userName          String
+  email             String   @unique
+  phoneNumber       String?  @unique
+  studentCourses    Course[] @relation("isStudent")
+  staffCourses      Course[] @relation("isStaff")
+  instructorCourses Course[] @relation("isInstructor")
+}
+
+model Course {
+  id           Int       @id @default(autoincrement())
+  title        String
+  courseNumber String
+  semester     String
+  calenderYear Int
+  code         String    @unique @db.Char(6)
+  students     Account[] @relation("isStudent")
+  courseStaff  Account[] @relation("isStaff")
+  instructors  Account[] @relation("isInstructor")
 }
