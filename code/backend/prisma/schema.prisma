@@ -11,23 +11,71 @@ datasource db {
 }
 
 model Account {
-  id                Int      @id @default(autoincrement())
+  id                Int            @id @default(autoincrement())
   userName          String
-  email             String   @unique
-  phoneNumber       String?  @unique
-  studentCourses    Course[] @relation("isStudent")
-  staffCourses      Course[] @relation("isStaff")
-  instructorCourses Course[] @relation("isInstructor")
+  email             String         @unique
+  phoneNumber       String?        @unique
+  studentCourses    Course[]       @relation("isStudent")
+  staffCourses      Course[]       @relation("isStaff")
+  instructorCourses Course[]       @relation("isInstructor")
+  isHosting         OfficeHour[]   @relation("isHost")
+  isRegistered      Registration[]
 }
 
 model Course {
-  id           Int       @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   title        String
   courseNumber String
   semester     String
   calenderYear Int
-  code         String    @unique @db.Char(6)
-  students     Account[] @relation("isStudent")
-  courseStaff  Account[] @relation("isStaff")
-  instructors  Account[] @relation("isInstructor")
+  code         String       @unique @db.Char(6)
+  students     Account[]    @relation("isStudent")
+  courseStaff  Account[]    @relation("isStaff")
+  instructors  Account[]    @relation("isInstructor")
+  officeHours  OfficeHour[]
+  topics       Topic[]
+}
+
+model OfficeHour {
+  id             Int                 @id @default(autoincrement())
+  startTime      DateTime            @db.Timetz()
+  endTime        DateTime            @db.Timetz()
+  startDate      DateTime            @db.Date
+  endDate        DateTime            @db.Date
+  timePerStudent Int
+  course         Course              @relation(fields: [courseId], references: [id])
+  courseId       Int
+  location       String
+  isRecurring    Boolean
+  hosts          Account[]           @relation("isHost")
+  isCancelledOn  DateTime            @db.Date
+  isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
+}
+
+model numberToDayOfWeek {
+  dayNumber        Int          @id @unique
+  dayOfWeek        String       @unique
+  officeHoursOnDay OfficeHour[] @relation("isOnDayOfWeek")
+}
+
+model Registration {
+  id          Int      @id @default(autoincrement())
+  startTime   DateTime @db.Timetz()
+  endTime     DateTime @db.Timetz()
+  date        DateTime @db.Date
+  isCancelled Boolean
+  account     Account  @relation(fields: [accountId], references: [id])
+  accountId   Int
+  question    String?
+  feedback    String?
+  rating      Int?
+  topics      Topic[]  @relation("withTopics")
+}
+
+model Topic {
+  id            Int            @id @default(autoincrement())
+  value         String
+  course        Course         @relation(fields: [courseId], references: [id])
+  courseId      Int
+  registrations Registration[] @relation("withTopics")
 }
