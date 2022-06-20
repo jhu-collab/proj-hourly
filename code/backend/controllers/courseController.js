@@ -15,7 +15,21 @@ function makeCourseCode() {
 }
 
 exports.create = async (req, res) => {
-  const code = makeCourseCode();
+  let code = '';
+  let codeIsUnique = false;
+  while (!codeIsUnique) {
+    code = makeCourseCode();
+    // eslint-disable-next-line no-await-in-loop
+    const matchingCourse = await prisma.Course.findFirst({
+      where: {
+        code,
+      },
+    });
+    if (matchingCourse === null) {
+      codeIsUnique = true;
+    }
+  }
+
   const { title, number, semester, year } = req.body;
   //   const { id } = req.user;
   await prisma.Course.create({
