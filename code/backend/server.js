@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 // routes
-
+app.use('/api/course', require('./routes/api/courses'));
 // serve React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 app.get('/*', (req, res) => {

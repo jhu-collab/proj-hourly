@@ -27,7 +27,7 @@ model Course {
   title        String
   courseNumber String
   semester     String
-  calenderYear Int
+  calendarYear Int
   code         String       @unique @db.Char(6)
   students     Account[]    @relation("isStudent")
   courseStaff  Account[]    @relation("isStaff")

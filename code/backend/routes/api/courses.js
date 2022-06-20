@@ -21,3 +21,5 @@ router.post(
   validator.isUniqueCourse,
   controller.create,
 );
+
+module.exports = router;

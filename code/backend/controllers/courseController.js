@@ -17,6 +17,7 @@ function makeCourseCode() {
 exports.create = async (req, res) => {
   const code = makeCourseCode();
   const { title, number, semester, year } = req.body;
+  //   const { id } = req.user;
   await prisma.Course.create({
     data: {
       title,
@@ -24,6 +25,7 @@ exports.create = async (req, res) => {
       semester,
       calendarYear: year,
       code,
+      //   instructors: [id],
     },
   });
   const course = await prisma.Course.findUnique({
