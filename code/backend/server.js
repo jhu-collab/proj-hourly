@@ -8,6 +8,7 @@ app.use(express.json());
 
 // routes
 app.use('/api/course', require('./routes/api/courses'));
+app.use('/api/account', require('./routes/api/accounts'));
 // serve React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 app.get('/*', (req, res) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const validator = require('../../middleware/courseValidator');
 const controller = require('../../controllers/courseController');
+const accountValidator = require('../../middleware/accountValidator');
 
 const router = express.Router();
 
@@ -20,6 +21,15 @@ router.post(
   }),
   validator.isUniqueCourse,
   controller.create,
+);
+
+router.post(
+  '/signup',
+  body('code', 'Course code is required').isAlphanumeric(),
+  body('id', 'Account id is required').isInt(),
+  accountValidator.isAccountIdValid,
+  validator.isCourseCode,
+  controller.register,
 );
 
 module.exports = router;
