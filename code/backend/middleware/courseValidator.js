@@ -14,9 +14,10 @@ module.exports.isUniqueCourse = async (req, res, next) => {
       semester,
     },
   });
-  console.log(query);
   if (query !== null) {
-    return res.status(StatusCodes.CONFLICT);
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'course already exists' });
   }
   next();
 };
