@@ -42,21 +42,35 @@ exports.create = async (req, res) => {
       },
       location,
       isRecurring: recurringEvent,
-      hosts: {
-        connect: {
-          id: {
-            all: {
-              hosts,
-            },
+    },
+  });
+  hosts.forEach(async (id) => {
+    await prisma.officeHour.update({
+      where: {
+        id: officeHour.id,
+      },
+      data: {
+        hosts: {
+          connect: {
+            id,
           },
         },
       },
-      isOnDayOfWeek: {
-        connect: {
-          daysOfWeek,
+    });
+  });
+  daysOfWeek.forEach(async (dayOfWeek) => {
+    await prisma.officeHour.update({
+      where: {
+        id: officeHour.id,
+      },
+      data: {
+        isOnDayOfWeek: {
+          connect: {
+            dayOfWeek,
+          },
         },
       },
-    },
+    });
   });
   return res.status(StatusCodes.CREATED).json({ officeHour });
 };

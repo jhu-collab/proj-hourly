@@ -58,8 +58,10 @@ module.exports.areCourseStaffOrInstructor = async (req, res, next) => {
     const instructorQuery = await prisma.course.findFirst({
       where: {
         id: courseId,
+      },
+      include: {
         instructors: {
-          some: {
+          where: {
             id: element,
           },
         },
@@ -68,8 +70,10 @@ module.exports.areCourseStaffOrInstructor = async (req, res, next) => {
     const staffQuery = await prisma.course.findUnique({
       where: {
         id: courseId,
+      },
+      include: {
         courseStaff: {
-          some: {
+          where: {
             id: element,
           },
         },
