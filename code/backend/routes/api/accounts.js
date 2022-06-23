@@ -15,4 +15,11 @@ router.post(
   controller.create,
 );
 
+router.post(
+  '/login',
+  body('email', 'Email is required').isEmail(),
+  validator.emailExists,
+  controller.login,
+);
+
 module.exports = router;
