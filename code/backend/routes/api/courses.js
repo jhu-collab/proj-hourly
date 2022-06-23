@@ -25,7 +25,7 @@ router.post(
 
 router.post(
   '/signup',
-  body('code', 'Course code is required').isAlphanumeric(),
+  body('code', 'Course code is required').notEmpty(),
   body('id', 'Account id is required').isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,

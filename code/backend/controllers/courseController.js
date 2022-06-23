@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { StatusCodes } = require('http-status-codes');
+const validate = require('../utils/checkValidation');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const prisma = new PrismaClient();
@@ -15,6 +16,7 @@ function makeCourseCode() {
 }
 
 exports.create = async (req, res) => {
+  validate(req);
   let code = '';
   let codeIsUnique = false;
   while (!codeIsUnique) {
@@ -48,4 +50,27 @@ exports.create = async (req, res) => {
     },
   });
   return res.status(StatusCodes.CREATED).json({ course });
+};
+
+exports.register = async (req, res) => {
+  validate(req);
+  const { code, id } = req.body;
+  const course = await prisma.Course.findUnique({
+    where: {
+      code,
+    },
+  });
+  const updateAccount = await prisma.account.update({
+    where: {
+      id,
+    },
+    data: {
+      studentCourses: {
+        connect: {
+          id: course.id,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ updateAccount });
 };

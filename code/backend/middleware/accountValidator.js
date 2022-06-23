@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { STATUS_CODES } = require('http');
 const { StatusCodes } = require('http-status-codes');
 
 const prisma = new PrismaClient();
@@ -48,4 +49,19 @@ module.exports.isUniquePhone = async (req, res, next) => {
     }
     next();
   }
+};
+
+module.exports.isAccountIdValid = async (req, res, next) => {
+  const { id } = req.body;
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(STATUS_CODES.FORBIDDEN)
+      .json({ msg: 'Account does not exists' });
+  }
+  next();
 };
