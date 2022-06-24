@@ -3,7 +3,6 @@ import { Grid, } from '@mui/material';
 
 // project imports
 import CourseCard from './CourseCard';
-import courseData from './course-data/course-data';
 import ExpandFab from './ExpandFab';
 import { useStore } from '../../store/appStore';
 import CreateCourse from 'views/create-course/CreateCourse';
@@ -12,18 +11,20 @@ import CreateCourse from 'views/create-course/CreateCourse';
 
 const Home = () => {
   const createPopup = useStore((state) => state.createPopup);
+  const courses = useStore((state) => state.courses);
+  console.log(courses);
 
   return (
     <>
       <Grid container rowSpacing={1}>
-        {courseData.map((course, index) => {
+        {courses.map((course, index) => {
           return (
             <Grid item xs={12}>
               <CourseCard
                 title={course.title}
-                number={course.courseNumber}
+                number={course.number}
                 semester={course.semester}
-                year={course.calendarYear}
+                year={course.year}
               />
             </Grid>
           );

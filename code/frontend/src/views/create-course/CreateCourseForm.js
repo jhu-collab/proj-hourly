@@ -1,24 +1,12 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
     Box,
     Button,
-    Checkbox,
-    Divider,
     FormControl,
-    FormControlLabel,
     FormHelperText,
-    Grid,
-    IconButton,
-    InputAdornment,
     InputLabel,
     OutlinedInput,
-    Stack,
-    Typography,
-    useMediaQuery
 } from '@mui/material';
 
 // third party
@@ -28,35 +16,17 @@ import { Formik } from 'formik';
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import { useStore } from 'store/appStore';
 
-// assets
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import Google from 'assets/images/icons/social-google.svg';
-
-// ============================|| FIREBASE - LOGIN ||============================ //
+// ============================|| CREATE COURSE FORM ||============================ //
 
 const CreateCourseForm = ({ ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
-    const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const customization = useSelector((state) => state.customization);
-    const [checked, setChecked] = useState(true);
-
-    const googleHandler = async () => {
-        console.error('Login');
-    };
-
-    const [showPassword, setShowPassword] = useState(false);
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
-
+    const createCourse = useStore((state) => state.createCourse);
+    const createPopupClose = useStore((state) => state.createPopupClose);
+  
     return (
         <>
             <Formik
@@ -78,6 +48,10 @@ const CreateCourseForm = ({ ...others }) => {
                         if (scriptedRef.current) {
                             setStatus({ success: true });
                             setSubmitting(false);
+                            const course = {title: values.title, number: values.number, semester: values.semester, year: values.year};
+                            console.log(course);
+                            createCourse(course);
+                            createPopupClose();
                         }
                     } catch (err) {
                         console.error(err);
@@ -193,7 +167,7 @@ const CreateCourseForm = ({ ...others }) => {
                                     variant="contained"
                                     color="secondary"
                                 >
-                                    Sign in
+                                    Create
                                 </Button>
                             </AnimateButton>
                         </Box>

@@ -15,7 +15,7 @@ import CreateCourseForm from './CreateCourseForm';
 
 // assets
 
-// ================================|| AUTH3 - LOGIN ||================================ //
+// ================================|| CREATE COURSE ||================================ //
 
 const CreateCourse = () => {
   const theme = useTheme();
@@ -25,7 +25,7 @@ const CreateCourse = () => {
   const onClose = useStore((state) => state.createPopupClose);
 
   return (
-    <Dialog onclose={onClose} open={open}>
+    <Dialog onClose={onClose} open={open}>
         <DialogContent>
         <Grid
           container
