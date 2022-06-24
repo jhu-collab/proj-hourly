@@ -4,10 +4,12 @@ import { Grid } from '@mui/material';
 // project imports
 import CourseCard from './CourseCard';
 import courseData from './course-data/course-data';
+import ExpandFab from './ExpandFab';
 
 // ==============================|| HOME ||============================== //
 
 const Home = () => (
+    <>
   <Grid container rowSpacing={1}>
     {courseData.map((course, index) => {
       return (
@@ -22,6 +24,8 @@ const Home = () => (
       );
     })}
   </Grid>
+  <ExpandFab />
+  </>
 );
 
 export default Home;
