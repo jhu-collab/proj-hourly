@@ -17,6 +17,10 @@ import CreateCourseForm from './CreateCourseForm';
 
 // ================================|| CREATE COURSE ||================================ //
 
+/**
+ * A MUI Dialog that allows the user to a create a course.
+ * @returns The Create Course Popup.
+ */
 const CreateCourse = () => {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));

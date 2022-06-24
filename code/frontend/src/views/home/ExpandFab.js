@@ -6,21 +6,24 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 
 // assets
 import { IconArrowBarToRight, IconPlus } from '@tabler/icons';
-import { useTheme } from '@emotion/react'
+import { useTheme } from '@emotion/react';
 
 // project imports
 import { useStore } from 'store/appStore';
 
+// ==============================|| HOME - EXPANDFAB ||============================== //
 
-// ==============================|| HOME ||============================== //
-
-
+/**
+ * A component that expandable floating action button that is used to create or join
+ * a course.
+ * @returns A MUI SpeedDial component.
+ */
 const ExpandFab = () => {
-const createPopupOpen = useStore((state) => state.createPopupOpen);
+  const createPopupOpen = useStore((state) => state.createPopupOpen);
   const theme = useTheme();
 
   const actions = [
-    { icon: <IconPlus />, name: 'Create',  onClick: createPopupOpen},
+    { icon: <IconPlus />, name: 'Create', onClick: createPopupOpen },
     //TODO: May need to change the icon for the Join Button
     { icon: <IconArrowBarToRight />, name: 'Join' },
   ];

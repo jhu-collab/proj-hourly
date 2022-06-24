@@ -9,7 +9,6 @@ import {
   CardActionArea,
   Grid,
   Menu,
-  MenuItem,
   Typography,
 } from '@mui/material';
 
@@ -19,10 +18,6 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
-import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
-import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -60,8 +55,19 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   },
 }));
 
-// ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
+// ===========================|| HOME - COURSE CARD ||=========================== //
 
+/**
+ * A component that represents a card to display basic details about a course. If the
+ * user clicks on a course card, they will be redirected to the course's page to have
+ * access to calendar, registrations, analytics (instructor only), etc.
+ * @param {boolean} isLoading - whether the data has finished loading
+ * @param {string} title - the course title
+ * @param {string} number - the course number
+ * @param {string} semester - the course semester
+ * @param {string} year - the course calendar year
+ * @returns A course card component.
+ */
 const CourseCard = ({ isLoading, title, number, semester, year }) => {
   const theme = useTheme();
 
@@ -93,58 +99,45 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
             <Box sx={{ p: 2.25 }}>
               <Grid container direction="column">
                 <Grid item>
-    
                   <Grid container justifyContent="flex-end">
-            
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            backgroundColor: theme.palette.secondary.dark,
-                            color: theme.palette.secondary[200],
-                            zIndex: 1,
-                          }}
-                          aria-controls="menu-earning-card"
-                          aria-haspopup="true"
-                          onMouseDown={(event) => event.stopPropagation()}
-                          onClick={handleClick}>
-                          <MoreHorizIcon fontSize="inherit" />
-                        </Avatar>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                          }}>
-                          <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
+                    <Grid item>
+                      <Avatar
+                        variant="rounded"
+                        sx={{
+                          ...theme.typography.commonAvatar,
+                          ...theme.typography.mediumAvatar,
+                          backgroundColor: theme.palette.secondary.dark,
+                          color: theme.palette.secondary[200],
+                          zIndex: 1,
+                        }}
+                        aria-controls="menu-earning-card"
+                        aria-haspopup="true"
+                        onMouseDown={(event) => event.stopPropagation()}
+                        onClick={handleClick}>
+                        <MoreHorizIcon fontSize="inherit" />
+                      </Avatar>
+                      <Menu
+                        id="menu-earning-card"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        variant="selectedMenu"
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right',
+                        }}>
+                        {/* Add menu items later! */}
+                        {/* <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
                             <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
-                          </MenuItem>
-                          <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
-                            <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
-                          </MenuItem>
-                          <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
-                            <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
-                          </MenuItem>
-                          <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
-                            <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive
-                            File
-                          </MenuItem>
-                        </Menu>
-                      </Grid>
-                
+                          </MenuItem> */}
+                      </Menu>
+                    </Grid>
                   </Grid>
-           
                 </Grid>
                 <Grid item>
                   <Grid container alignItems="center">

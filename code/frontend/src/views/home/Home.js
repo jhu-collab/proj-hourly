@@ -1,5 +1,5 @@
 // material-ui
-import { Grid, } from '@mui/material';
+import { Grid } from '@mui/material';
 
 // project imports
 import CourseCard from './CourseCard';
@@ -9,6 +9,10 @@ import CreateCourse from 'views/create-course/CreateCourse';
 
 // ==============================|| HOME ||============================== //
 
+/**
+ * A component that represents the landing page that the user visits after logging in.
+ * @returns The Home component.
+ */
 const Home = () => {
   const createPopup = useStore((state) => state.createPopup);
   const courses = useStore((state) => state.courses);
@@ -31,7 +35,7 @@ const Home = () => {
         })}
       </Grid>
       <ExpandFab />
-      {createPopup && (<CreateCourse />)}
+      {createPopup && <CreateCourse />}
     </>
   );
 };
