@@ -37,9 +37,18 @@ cd ../frontend && npm i
 ## Developing
 First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
+You will need to create a `.env` file and move it to the `code/frontend` directory. Do not push this file to GitHub. The `.env` file should include 
+
+```
+SKIP_PREFLIGHT_CHECK=true
+```
+
+As of right now, the dependency tree is experiencing issues, so this is necessary in order to run the frontend.
+
 **TODO**
 
 ### Running the application locally
+
 **TODO**
 
 ### Deployment
