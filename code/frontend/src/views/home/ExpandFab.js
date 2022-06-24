@@ -4,21 +4,26 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 
-// project imports
-
 // assets
 import { IconArrowBarToRight, IconPlus } from '@tabler/icons';
-import { useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react'
+
+// project imports
+import { useStore } from 'store/appStore';
+
 
 // ==============================|| HOME ||============================== //
-const actions = [
-  { icon: <IconPlus />, name: 'Create' },
-  //TODO: May need to change the icon for the Join Button
-  { icon: <IconArrowBarToRight />, name: 'Join' },
-];
 
-export default function ExpandFab() {
+
+const ExpandFab = () => {
+const createPopupOpen = useStore((state) => state.createPopupOpen);
   const theme = useTheme();
+
+  const actions = [
+    { icon: <IconPlus />, name: 'Create',  onClick: createPopupOpen},
+    //TODO: May need to change the icon for the Join Button
+    { icon: <IconArrowBarToRight />, name: 'Join' },
+  ];
 
   return (
     <Box
@@ -42,9 +47,12 @@ export default function ExpandFab() {
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
+            onClick={action.onClick}
           />
         ))}
       </SpeedDial>
     </Box>
   );
-}
+};
+
+export default ExpandFab;
