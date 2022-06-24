@@ -42,3 +42,41 @@ exports.login = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ id: account.id });
 };
+
+exports.getCourses = async (req, res) => {
+  validate(req);
+  const id = parseInt(req.get('id'), 10);
+  console.log(id);
+  const studentCourses = await prisma.course.findMany({
+    where: {
+      students: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  const staffCourses = await prisma.course.findMany({
+    where: {
+      courseStaff: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  const instructorCourses = await prisma.course.findMany({
+    where: {
+      instructors: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({
+    student: studentCourses,
+    staff: staffCourses,
+    instructor: instructorCourses,
+  });
+};

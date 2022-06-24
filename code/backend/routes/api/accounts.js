@@ -22,4 +22,7 @@ router.post(
   controller.login,
 );
 
+// requires the id in the header for now, will be replaced with token later
+router.get('/me/courses', controller.getCourses);
+
 module.exports = router;
