@@ -5,7 +5,7 @@ import { IconHome } from '@tabler/icons';
 // constant
 const icons = { IconHome };
 
-// ==============================|| DASHBOARD MENU ITEMS ||============================== //
+// ==============================|| HOME MENU ITEM ||============================== //
 
 const home = {
     id: 'home',
