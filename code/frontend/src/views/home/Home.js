@@ -11,7 +11,7 @@ const Home = () => (
   <Grid container rowSpacing={1}>
     {courseData.map((course, index) => {
       return (
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <CourseCard
             title={course.title}
             number={course.courseNumber}
