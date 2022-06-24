@@ -8,6 +8,7 @@ An app to help schedule, book, and manage office hours. It allows students and t
 | ------------------- | ---------------------| ----------------- | --------------- |
 | Ali Madooei         | contributer          | madooei@jhu.edu   | madooei         |
 | Sofia Xu            | team lead            | fxu13@jhu.edu     | sofiaxuuu       |
+| Tarik Yildirim      | full-stack developer | tyildir1@jhu.edu  | Sapienti01      |
 | Xinan Rahman        | full-stack developer | srahma24@jhu.edu  | xinanrahman     |
 | Varun Harish        | front-end developer  | vharish1@jhu.edu  | varun-harish    |
 | Samuel Atefah       | front-end developer  | satefah1@jhu.edu  | samuelatefah    |
