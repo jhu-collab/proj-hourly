@@ -14,9 +14,25 @@ module.exports.isUniqueCourse = async (req, res, next) => {
       semester,
     },
   });
-  console.log(query);
   if (query !== null) {
-    res.status(StatusCodes.CONFLICT);
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'course already exists' });
+  }
+  next();
+};
+
+module.exports.isCourseCode = async (req, res, next) => {
+  const { code } = req.body;
+  const query = await prisma.course.findUnique({
+    where: {
+      code,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Course with this code does not exists' });
   }
   next();
 };
