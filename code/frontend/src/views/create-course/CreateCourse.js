@@ -1,24 +1,17 @@
-import { Link } from 'react-router-dom';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
   Dialog,
   DialogContent,
-  Divider,
   Grid,
   Stack,
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import AuthWrapper1 from 'views/pages/authentication/AuthWrapper1';
-import AuthCardWrapper from 'views/pages/authentication/AuthCardWrapper';
-import AuthLogin from 'views/pages/authentication/auth-forms/AuthLogin';
-import Logo from 'ui-component/Logo';
-import AuthFooter from 'ui-component/cards/AuthFooter';
-import { useStore } from 'store/appStore';
 
 // project imports
+import { useStore } from 'store/appStore';
+import CreateCourseForm from './CreateCourseForm';
 
 // assets
 
@@ -73,7 +66,7 @@ const CreateCourse = () => {
                       </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                      <AuthLogin />
+                      <CreateCourseForm />
                     </Grid>
                   </Grid>
               </Grid>

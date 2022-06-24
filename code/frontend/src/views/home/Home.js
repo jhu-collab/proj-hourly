@@ -1,5 +1,5 @@
 // material-ui
-import { Grid, Typography } from '@mui/material';
+import { Grid, } from '@mui/material';
 
 // project imports
 import CourseCard from './CourseCard';
