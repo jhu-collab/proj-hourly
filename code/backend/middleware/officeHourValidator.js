@@ -22,25 +22,53 @@ module.exports = async (req, res, next) => {
     daysOfWeek.forEach(async (dow) => {
       const officeHour = await prisma.officeHour.findFirst({
         where: {
-          OR: [
+          AND: [
             {
-              // existing office hour begins within request OH and ends after
-              startTime: {
-                gte: startTimeObj,
-                lte: endTimeObj,
-              },
-              startDate: {
-                gte: startDateObj,
-                lte: endDateObj,
-              },
+              OR: [
+                {
+                  // existing office hour begins within request OH and ends after
+                  startTime: {
+                    gte: startTimeObj,
+                    lte: endTimeObj,
+                  },
+                },
+                {
+                  // existing office hour begins before request and ends after
+                  startTime: {
+                    lte: startTimeObj,
+                    lt: endTimeObj,
+                  },
+                },
+                {
+                  // exiting office hour begins before request and ends during
+                  endTime: {
+                    gt: startTimeObj,
+                    lte: endTimeObj,
+                  },
+                },
+              ],
             },
             {
-              // existing office hour begins before request and ends after
-              startTime: {},
-              startDate: {},
-            },
-            {
-              // exiting office hour begins before request and ends during
+              OR: [
+                {
+                  startDate: {
+                    gte: startDateObj,
+                    lte: endDateObj,
+                  },
+                },
+                {
+                  startDate: {
+                    lte: startDateObj,
+                    lt: endDateObj,
+                  },
+                },
+                {
+                  endDate: {
+                    gt: startDateObj,
+                    lte: endDateObj,
+                  },
+                },
+              ],
             },
           ],
         },
