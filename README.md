@@ -49,11 +49,14 @@ First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 **TODO**
 
 ### Dependencies
-Joy UI - main UI component library
 
-Material UI - alternative UI component library 
+Berry Free - React Material Admin Dashboard Template
+
+Material UI - primary UI component library 
 
 React Router - client-side routing
+
+Zustand - state management service
 
 React Query - to fetch, cache, and update data from the backend
 
