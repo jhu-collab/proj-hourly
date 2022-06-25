@@ -83,3 +83,18 @@ exports.create = async (req, res) => {
   });
   return res.status(StatusCodes.CREATED).json({ officeHourWithData });
 };
+
+exports.getForCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      courseId,
+    },
+    include: {
+      hosts: {},
+      isOnDayOfWeek: {},
+    },
+  });
+  res.status(StatusCodes.ACCEPTED).json({ officeHours });
+};
