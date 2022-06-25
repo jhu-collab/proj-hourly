@@ -8,6 +8,7 @@ An app to help schedule, book, and manage office hours. It allows students and t
 | ------------------- | ---------------------| ----------------- | --------------- |
 | Ali Madooei         | contributer          | madooei@jhu.edu   | madooei         |
 | Sofia Xu            | team lead            | fxu13@jhu.edu     | sofiaxuuu       |
+| Tarik Yildirim      | full-stack developer | tyildir1@jhu.edu  | Sapienti01      |
 | Xinan Rahman        | full-stack developer | srahma24@jhu.edu  | xinanrahman     |
 | Varun Harish        | front-end developer  | vharish1@jhu.edu  | varun-harish    |
 | Samuel Atefah       | front-end developer  | satefah1@jhu.edu  | samuelatefah    |
@@ -36,9 +37,18 @@ cd ../frontend && npm i
 ## Developing
 First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 
+You will need to create a `.env` file and move it to the `code/frontend` directory. Do not push this file to GitHub. The `.env` file should include 
+
+```
+SKIP_PREFLIGHT_CHECK=true
+```
+
+As of right now, the dependency tree is experiencing issues, so this is necessary in order to run the frontend.
+
 **TODO**
 
 ### Running the application locally
+
 **TODO**
 
 ### Deployment
@@ -48,11 +58,14 @@ First, read [CONTRIBUTING.md](CONTRIBUTING.md).
 **TODO**
 
 ### Dependencies
-Joy UI - main UI component library
 
-Material UI - alternative UI component library 
+Berry Free - React Material Admin Dashboard Template
+
+Material UI - primary UI component library 
 
 React Router - client-side routing
+
+Zustand - state management service
 
 React Query - to fetch, cache, and update data from the backend
 
