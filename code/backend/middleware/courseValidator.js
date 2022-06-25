@@ -52,6 +52,21 @@ module.exports.isCourseId = async (req, res, next) => {
   next();
 };
 
+module.exports.isCourseIdParams = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Course with this id does not exists' });
+  }
+  next();
+};
+
 module.exports.areCourseStaffOrInstructor = async (req, res, next) => {
   const { courseId, hosts } = req.body;
   hosts.forEach(async (element) => {
@@ -85,5 +100,56 @@ module.exports.areCourseStaffOrInstructor = async (req, res, next) => {
         .json({ msg: 'User is not a member of course staff' });
     }
   });
+  next();
+};
+
+module.exports.isInCourseFromHeader = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get('id'), 10);
+  const studentQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const staffQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const instructorQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (
+    studentQuery === null &&
+    staffQuery === null &&
+    instructorQuery === null
+  ) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'User is not in course' });
+  }
   next();
 };
