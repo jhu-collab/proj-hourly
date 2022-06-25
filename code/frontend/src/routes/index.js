@@ -8,5 +8,5 @@ import config from 'config';
 // ==============================|| ROUTING RENDER ||============================== //
 
 export default function ThemeRoutes() {
-    return useRoutes([MainRoutes, AuthenticationRoutes], config.basename);
+  return useRoutes([MainRoutes, AuthenticationRoutes], config.basename);
 }
