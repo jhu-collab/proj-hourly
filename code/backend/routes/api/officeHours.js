@@ -2,7 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const accountValidator = require('../../middleware/accountValidator');
 const courseValidator = require('../../middleware/courseValidator');
-const validator = require('../../middleware/officeHourValidator');
+// const validator = require('../../middleware/officeHourValidator');
 const timeValidator = require('../../middleware/timeValidator');
 const controller = require('../../controllers/officeHourController');
 
@@ -40,7 +40,7 @@ router.post(
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
   timeValidator.isTime,
-  validator.noConflictsWithHosts,
+  // validator.noConflictsWithHosts,
   controller.create,
 );
 

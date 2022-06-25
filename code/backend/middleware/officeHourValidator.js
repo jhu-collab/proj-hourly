@@ -3,7 +3,7 @@ const { StatusCodes } = require('http-status-codes');
 
 const prisma = new PrismaClient();
 
-module.exports = async (req, res, next) => {
+module.exports.noConflictsWithHosts = async (req, res, next) => {
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
     req.body;
   const startDateObj = new Date(startDate);

@@ -72,5 +72,14 @@ exports.create = async (req, res) => {
       },
     });
   });
-  return res.status(StatusCodes.CREATED).json({ officeHour });
+  const officeHourWithData = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHour.id,
+    },
+    include: {
+      hosts: {},
+      isOnDayOfWeek: {},
+    },
+  });
+  return res.status(StatusCodes.CREATED).json({ officeHourWithData });
 };
