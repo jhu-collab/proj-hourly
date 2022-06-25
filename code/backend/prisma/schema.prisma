@@ -48,7 +48,7 @@ model OfficeHour {
   location       String
   isRecurring    Boolean
   hosts          Account[]           @relation("isHost")
-  isCancelledOn  DateTime            @db.Date
+  isCancelledOn  DateTime[]          @db.Date
   isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
 }
 

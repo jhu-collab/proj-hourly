@@ -65,3 +65,20 @@ module.exports.isAccountIdValid = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.areAccountsIdsValid = async (req, res, next) => {
+  const { hosts } = req.body;
+  hosts.forEach(async (element) => {
+    const query = await prisma.Account.findUnique({
+      where: {
+        id: element,
+      },
+    });
+    if (query === null) {
+      return res
+        .status(STATUS_CODES.FORBIDDEN)
+        .json({ msg: 'Account does not exists' });
+    }
+  });
+  next();
+};
