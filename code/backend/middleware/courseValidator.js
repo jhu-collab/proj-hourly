@@ -36,3 +36,18 @@ module.exports.isCourseCode = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.isCourseIdUrlValid = async (req, res, next) => {
+  const id = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Course does not exist' });
+  }
+  next();
+};

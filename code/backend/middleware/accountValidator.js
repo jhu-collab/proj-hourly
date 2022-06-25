@@ -1,5 +1,4 @@
 const { PrismaClient } = require('@prisma/client');
-const { STATUS_CODES } = require('http');
 const { StatusCodes } = require('http-status-codes');
 
 const prisma = new PrismaClient();
@@ -60,8 +59,31 @@ module.exports.isAccountIdValid = async (req, res, next) => {
   });
   if (query === null) {
     return res
-      .status(STATUS_CODES.FORBIDDEN)
+      .status(StatusCodes.FORBIDDEN)
       .json({ msg: 'Account does not exists' });
+  }
+  next();
+};
+
+module.exports.isAccountStudent = async (req, res, next) => {
+  const id = parseInt(req.get('id'), 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'Account is not a student in the course' });
   }
   next();
 };
