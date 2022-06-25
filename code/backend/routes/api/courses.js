@@ -40,4 +40,12 @@ router.delete(
   controller.leaveCourse,
 );
 
+router.delete(
+  '/:courseId/removeStaff/:staffId',
+  validator.isCourseIdUrlValid,
+  accountValidator.isAccountInstructor,
+  accountValidator.isUrlStaff,
+  controller.removeStaff,
+);
+
 module.exports = router;

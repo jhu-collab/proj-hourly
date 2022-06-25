@@ -96,3 +96,42 @@ exports.leaveCourse = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+exports.removeStaff = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.params.staffId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      courseStaff: {
+        disconnect: {
+          id,
+        },
+      },
+    },
+  });
+  await prisma.officeHour.update({
+    where: {
+      courseId,
+    },
+    data: {
+      hosts: {
+        disconnect: {
+          id,
+        },
+      },
+    },
+  });
+  await prisma.officeHour.delete({
+    where: {
+      courseId,
+      hosts: {
+        none: {},
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
