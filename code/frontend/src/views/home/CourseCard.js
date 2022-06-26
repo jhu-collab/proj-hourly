@@ -18,7 +18,8 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useStore } from 'store/appStore';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -71,8 +72,11 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
  */
 const CourseCard = ({ isLoading, title, number, semester, year }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const setCurrentCourse = useStore((state) => state.setCurrentCourse);
 
   const handleClick = (event) => {
     event.stopPropagation();
@@ -86,13 +90,18 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
     setAnchorEl(null);
   };
 
+  const goToCourse = () => {
+    setCurrentCourse(title, number, semester, year);
+    navigate("/calendar");
+  }
+
   return (
     <>
       {isLoading ? (
         <SkeletonEarningCard />
       ) : (
         <CardWrapper border={false} content={false}>
-          <CardActionArea component={Link} to="/calendar">
+          <CardActionArea component="a" onClick={goToCourse}>
             <Box sx={{ p: 2.25 }}>
               <Grid container direction="column">
                 <Grid item>

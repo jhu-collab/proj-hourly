@@ -1,6 +1,11 @@
 import create from 'zustand';
 
 export const useStore = create((set) => ({
+
+  isHomepage: false,
+  setHomepageTrue: () => set({ isHomepage: true }),
+  setHomepageFalse: () => set({ isHomepage: false }),
+
   createCoursePopup: false,
   createCoursePopupOpen: () => set({ createCoursePopup: true }),
   createCoursePopupClose: () => set({ createCoursePopup: false }),
@@ -8,6 +13,18 @@ export const useStore = create((set) => ({
   createEventPopup: false,
   createEventPopupOpen: () => set({ createEventPopup: true }),
   createEventPopupClose: () => set({ createEventPopup: false }),
+
+  currentCourse: null,
+  setCurrentCourse: (courseTitle, courseNumber, courseSemester, courseYear) =>
+    set({
+      currentCourse: {
+        title: courseTitle,
+        number: courseNumber,
+        semester: courseSemester,
+        year: courseYear,
+      },
+    }),
+  removeCurrentCourse: () => set({ currentCourse: null }),
 
   courses: [
     {

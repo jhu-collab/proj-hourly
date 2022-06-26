@@ -3,9 +3,9 @@ import { Grid } from '@mui/material';
 
 // project imports
 import CourseCard from './CourseCard';
-import ExpandFab from './ExpandFab';
 import { useStore } from '../../store/appStore';
 import CreateCourse from 'views/create-course/CreateCourse';
+import { useEffect } from 'react';
 
 // ==============================|| HOME ||============================== //
 
@@ -16,7 +16,20 @@ import CreateCourse from 'views/create-course/CreateCourse';
 const Home = () => {
   const createCoursePopup = useStore((state) => state.createCoursePopup);
   const courses = useStore((state) => state.courses);
+  const removeCurrentCourse = useStore((state) => state.removeCurrentCourse);
+  const setHomepageTrue = useStore((state) => state.setHomepageTrue);
+  const setHomepageFalse = useStore((state) => state.setHomepageFalse);
   console.log(courses);
+
+  useEffect(() => {
+    removeCurrentCourse()
+    setHomepageTrue()
+  
+    return () => {
+      setHomepageFalse()
+    }
+  })
+  
 
   return (
     <>
@@ -34,7 +47,6 @@ const Home = () => {
           );
         })}
       </Grid>
-      <ExpandFab />
       {createCoursePopup && <CreateCourse />}
     </>
   );

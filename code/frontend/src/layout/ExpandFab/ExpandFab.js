@@ -22,13 +22,28 @@ const ExpandFab = () => {
   const createCoursePopupOpen = useStore(
     (state) => state.createCoursePopupOpen,
   );
+  const createEventPopupOpen = useStore(
+    (state) => state.createEventPopupOpen,
+  );
+
+  const currentCourse = useStore((state) => state.currentCourse);
+  const isHomepage = useStore((state) => state.isHomepage);
+
+
+
   const theme = useTheme();
 
-  const actions = [
-    { icon: <IconPlus />, name: 'Create', onClick: createCoursePopupOpen },
+  const actions = [];
+
+  if (isHomepage) {
+    actions.push({ icon: <IconPlus />, name: 'Create', onClick: createCoursePopupOpen });
     //TODO: May need to change the icon for the Join Button
-    { icon: <IconArrowBarToRight />, name: 'Join' },
-  ];
+    actions.push({ icon: <IconArrowBarToRight />, name: 'Join' });
+  } else if (currentCourse) {
+    actions.push({ icon: <IconPlus />, name: 'Create', onClick: createEventPopupOpen });
+  }
+
+  
 
   return (
     <Box
@@ -39,6 +54,7 @@ const ExpandFab = () => {
         transform: 'translateZ(0px)',
         zIndex: useTheme().zIndex.speedDial,
         flexGrow: 1,
+        display: isHomepage || currentCourse ? 'block' : 'none' 
       }}
     >
       <SpeedDial

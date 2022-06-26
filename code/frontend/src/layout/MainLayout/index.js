@@ -23,6 +23,7 @@ import { SET_MENU } from 'store/actions';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
+import ExpandFab from 'layout/ExpandFab/ExpandFab';
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -128,6 +129,7 @@ const MainLayout = () => {
         <Outlet />
       </Main>
       <Customization />
+      <ExpandFab />
     </Box>
   );
 };
