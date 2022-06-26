@@ -11,7 +11,7 @@ import {
 
 // project imports
 import { useStore } from 'store/appStore';
-import CreateCourseForm from './CreateCourseForm';
+import CreateCourseForm from 'views/create-course/CreateCourseForm';
 
 // assets
 
@@ -21,12 +21,12 @@ import CreateCourseForm from './CreateCourseForm';
  * A MUI Dialog that allows the user to a create a course.
  * @returns The Create Course Popup.
  */
-const CreateCourse = () => {
+const CreateEvent = () => {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
-  const open = useStore((state) => state.createCoursePopup);
-  const onClose = useStore((state) => state.createCoursePopupClose);
+  const open = useStore((state) => state.createEventPopup);
+  const onClose = useStore((state) => state.createEventPopupClose);
 
   return (
     <Dialog onClose={onClose} open={open}>
@@ -59,7 +59,7 @@ const CreateCourse = () => {
                             gutterBottom
                             variant={matchDownSM ? 'h2' : 'h1'}
                           >
-                            Create Course
+                            Create Event
                           </Typography>
                         </Stack>
                       </Grid>
@@ -78,4 +78,4 @@ const CreateCourse = () => {
   );
 };
 
-export default CreateCourse;
+export default CreateEvent;

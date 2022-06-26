@@ -14,7 +14,7 @@ import CreateCourse from 'views/create-course/CreateCourse';
  * @returns The Home component.
  */
 const Home = () => {
-  const createPopup = useStore((state) => state.createPopup);
+  const createCoursePopup = useStore((state) => state.createCoursePopup);
   const courses = useStore((state) => state.courses);
   console.log(courses);
 
@@ -35,7 +35,7 @@ const Home = () => {
         })}
       </Grid>
       <ExpandFab />
-      {createPopup && <CreateCourse />}
+      {createCoursePopup && <CreateCourse />}
     </>
   );
 };

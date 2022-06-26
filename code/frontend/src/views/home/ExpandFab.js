@@ -19,11 +19,13 @@ import { useStore } from 'store/appStore';
  * @returns A MUI SpeedDial component.
  */
 const ExpandFab = () => {
-  const createPopupOpen = useStore((state) => state.createPopupOpen);
+  const createCoursePopupOpen = useStore(
+    (state) => state.createCoursePopupOpen,
+  );
   const theme = useTheme();
 
   const actions = [
-    { icon: <IconPlus />, name: 'Create', onClick: createPopupOpen },
+    { icon: <IconPlus />, name: 'Create', onClick: createCoursePopupOpen },
     //TODO: May need to change the icon for the Join Button
     { icon: <IconArrowBarToRight />, name: 'Join' },
   ];
@@ -37,14 +39,16 @@ const ExpandFab = () => {
         transform: 'translateZ(0px)',
         zIndex: useTheme().zIndex.speedDial,
         flexGrow: 1,
-      }}>
+      }}
+    >
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
         icon={<SpeedDialIcon />}
         FabProps={{
           style: { backgroundColor: '#ff0000' },
-        }}>
+        }}
+      >
         {actions.map((action) => (
           <SpeedDialAction
             key={action.name}
