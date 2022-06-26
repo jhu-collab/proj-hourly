@@ -30,6 +30,9 @@ const CreateEventForm = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const createEvent = useStore((state) => state.createEvent);
+  const createEventDate = useStore((state) => state.createEventDate);
+  const createEventStartTime = useStore((state) => state.createEventStartTime);
+  const createEventEndTime = useStore((state) => state.createEventEndTime);
   const createEventPopupClose = useStore(
     (state) => state.createEventPopupClose,
   );
@@ -41,9 +44,9 @@ const CreateEventForm = ({ ...others }) => {
       <Formik
         initialValues={{
           eventName: '', // Once backend is set up, this will be removed
-          date: '',
-          startTime: '',
-          endTime: '',
+          date: createEventDate,
+          startTime: createEventStartTime,
+          endTime: createEventEndTime,
           location: '',
         }}
         validationSchema={Yup.object().shape({
@@ -68,6 +71,8 @@ const CreateEventForm = ({ ...others }) => {
                 location: values.location,
               };
               createEvent(event);
+              console.log(values.date);
+              console.log(values.startTime);
               createEventPopupClose();
             }
           } catch (err) {

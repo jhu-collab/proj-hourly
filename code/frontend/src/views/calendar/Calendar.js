@@ -27,6 +27,13 @@ const Calendar = () => {
 
   const createEventPopup = useStore((state) => state.createEventPopup);
   const createEventPopupOpen = useStore((state) => state.createEventPopupOpen);
+  const setCreateEventDate = useStore((state) => state.setCreateEventDate);
+  const setCreateEventStartTime = useStore(
+    (state) => state.setCreateEventStartTime,
+  );
+  const setCreateEventEndTime = useStore(
+    (state) => state.setCreateEventEndTime,
+  );
   const events = useStore((state) => state.events);
 
   const handleEventClick = (info) => {
@@ -34,6 +41,11 @@ const Calendar = () => {
   };
 
   const handleDateClick = (info) => {
+    const start = new Date(info.start);
+    const end = new Date(info.end);
+    setCreateEventDate(start.toISOString().split('T')[0]);
+    setCreateEventStartTime(start.toLocaleTimeString('it-IT').substring(0, 5));
+    setCreateEventEndTime(end.toLocaleTimeString('it-IT').substring(0, 5));
     createEventPopupOpen();
   };
 
@@ -52,7 +64,6 @@ const Calendar = () => {
           }
           initialView="timeGridWeek"
           events={events}
-          dateClick={handleDateClick}
           eventClick={handleEventClick}
           height="100%"
           editable
