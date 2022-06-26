@@ -30,54 +30,50 @@ const CreateCourse = () => {
 
   return (
     <Dialog onClose={onClose} open={open}>
-        <DialogContent>
-        <Grid
-          container
-          direction="column"
-          justifyContent="flex-end"
-          >
+      <DialogContent>
+        <Grid container direction="column" justifyContent="flex-end">
           <Grid item xs={12}>
-            <Grid
-              container
-              justifyContent="center"
-              alignItems="center"
-              >
+            <Grid container justifyContent="center" alignItems="center">
               <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
-                  <Grid
-                    container
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent="center">
-                    <Grid item xs={12}>
-                      <Grid
-                        container
-                        direction={matchDownSM ? 'column-reverse' : 'row'}
-                        alignItems="center"
-                        justifyContent="center">
-                        <Grid item>
-                          <Stack
-                            alignItems="center"
-                            justifyContent="center"
-                            spacing={1}>
-                            <Typography
-                              color={theme.palette.secondary.main}
-                              gutterBottom
-                              variant={matchDownSM ? 'h2' : 'h1'}>
-                              Create Course
-                            </Typography>
-                          </Stack>
-                        </Grid>
+                <Grid
+                  container
+                  spacing={2}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Grid item xs={12}>
+                    <Grid
+                      container
+                      direction={matchDownSM ? 'column-reverse' : 'row'}
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Grid item>
+                        <Stack
+                          alignItems="center"
+                          justifyContent="center"
+                          spacing={1}
+                        >
+                          <Typography
+                            color={theme.palette.secondary.main}
+                            gutterBottom
+                            variant={matchDownSM ? 'h2' : 'h1'}
+                          >
+                            Create Course
+                          </Typography>
+                        </Stack>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                      <CreateCourseForm />
-                    </Grid>
                   </Grid>
+                  <Grid item xs={12}>
+                    <CreateCourseForm />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        </DialogContent>
+      </DialogContent>
     </Dialog>
   );
 };

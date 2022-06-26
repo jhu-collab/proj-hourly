@@ -37,14 +37,16 @@ const ExpandFab = () => {
         transform: 'translateZ(0px)',
         zIndex: useTheme().zIndex.speedDial,
         flexGrow: 1,
-      }}>
+      }}
+    >
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
         icon={<SpeedDialIcon />}
         FabProps={{
           style: { backgroundColor: '#ff0000' },
-        }}>
+        }}
+      >
         {actions.map((action) => (
           <SpeedDialAction
             key={action.name}

@@ -95,7 +95,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
             component="a"
             onClick={(event) => {
               window.alert('Navigating to...');
-            }}>
+            }}
+          >
             <Box sx={{ p: 2.25 }}>
               <Grid container direction="column">
                 <Grid item>
@@ -113,7 +114,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                         aria-controls="menu-earning-card"
                         aria-haspopup="true"
                         onMouseDown={(event) => event.stopPropagation()}
-                        onClick={handleClick}>
+                        onClick={handleClick}
+                      >
                         <MoreHorizIcon fontSize="inherit" />
                       </Avatar>
                       <Menu
@@ -130,7 +132,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                         transformOrigin={{
                           vertical: 'top',
                           horizontal: 'right',
-                        }}>
+                        }}
+                      >
                         {/* Add menu items later! */}
                         {/* <MenuItem onClick={handleClose} onMouseDown={(event) => event.stopPropagation()}>
                             <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
@@ -149,7 +152,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                           mr: 1,
                           mt: 1.75,
                           mb: 0.75,
-                        }}>
+                        }}
+                      >
                         {title}
                       </Typography>
                     </Grid>
@@ -160,7 +164,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                     sx={{
                       fontSize: '1rem',
                       fontWeight: 500,
-                    }}>
+                    }}
+                  >
                     {number}
                   </Typography>
                 </Grid>
@@ -169,7 +174,8 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                     sx={{
                       fontSize: '1rem',
                       fontWeight: 500,
-                    }}>
+                    }}
+                  >
                     {semester} {year}
                   </Typography>
                 </Grid>

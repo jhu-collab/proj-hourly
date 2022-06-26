@@ -81,7 +81,8 @@ const CreateCourseForm = ({ ...others }) => {
               setSubmitting(false);
             }
           }
-        }}>
+        }}
+      >
         {({
           errors,
           handleBlur,
@@ -95,7 +96,8 @@ const CreateCourseForm = ({ ...others }) => {
             <FormControl
               fullWidth
               error={Boolean(touched.title && errors.title)}
-              sx={{ ...theme.typography.customInput }}>
+              sx={{ ...theme.typography.customInput }}
+            >
               <InputLabel htmlFor="outlined-adornment-email-login">
                 Course Title
               </InputLabel>
@@ -112,7 +114,8 @@ const CreateCourseForm = ({ ...others }) => {
               {touched.title && errors.title && (
                 <FormHelperText
                   error
-                  id="standard-weight-helper-text-email-login">
+                  id="standard-weight-helper-text-email-login"
+                >
                   {errors.title}
                 </FormHelperText>
               )}
@@ -121,7 +124,8 @@ const CreateCourseForm = ({ ...others }) => {
             <FormControl
               fullWidth
               error={Boolean(touched.number && errors.number)}
-              sx={{ ...theme.typography.customInput }}>
+              sx={{ ...theme.typography.customInput }}
+            >
               <InputLabel htmlFor="outlined-adornment-course-number">
                 Course Number
               </InputLabel>
@@ -138,7 +142,8 @@ const CreateCourseForm = ({ ...others }) => {
               {touched.number && errors.number && (
                 <FormHelperText
                   error
-                  id="standard-weight-helper-text-course-number">
+                  id="standard-weight-helper-text-course-number"
+                >
                   {errors.number}
                 </FormHelperText>
               )}
@@ -146,7 +151,8 @@ const CreateCourseForm = ({ ...others }) => {
             <FormControl
               fullWidth
               error={Boolean(touched.semester && errors.semester)}
-              sx={{ ...theme.typography.customInput }}>
+              sx={{ ...theme.typography.customInput }}
+            >
               <InputLabel htmlFor="outlined-adornment-semester">
                 Semester
               </InputLabel>
@@ -169,7 +175,8 @@ const CreateCourseForm = ({ ...others }) => {
             <FormControl
               fullWidth
               error={Boolean(touched.year && errors.year)}
-              sx={{ ...theme.typography.customInput }}>
+              sx={{ ...theme.typography.customInput }}
+            >
               <InputLabel htmlFor="outlined-adornment-year">Year</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-year"
@@ -202,7 +209,8 @@ const CreateCourseForm = ({ ...others }) => {
                   size="large"
                   type="submit"
                   variant="contained"
-                  color="secondary">
+                  color="secondary"
+                >
                   Create
                 </Button>
               </AnimateButton>
