@@ -11,7 +11,7 @@ import {
 
 // project imports
 import { useStore } from 'store/appStore';
-import CreateCourseForm from 'views/create-course/CreateCourseForm';
+import CreateEventForm from './CreateEventForm';
 
 // assets
 
@@ -66,7 +66,7 @@ const CreateEvent = () => {
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
-                    <CreateCourseForm />
+                    <CreateEventForm />
                   </Grid>
                 </Grid>
               </Grid>

@@ -9,7 +9,6 @@ import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import timeGridPlugin from '@fullcalendar/timegrid';
-import eventData from './calendar-data/event-data';
 import { useStore } from 'store/appStore';
 import CreateEvent from './create-event/CreateEvent';
 
@@ -28,6 +27,7 @@ const Calendar = () => {
 
   const createEventPopup = useStore((state) => state.createEventPopup);
   const createEventPopupOpen = useStore((state) => state.createEventPopupOpen);
+  const events = useStore((state) => state.events);
 
   const handleEventClick = (info) => {
     alert('Event: ' + info.event.title);
@@ -51,7 +51,7 @@ const Calendar = () => {
               : { start: 'title', end: 'prev,next' }
           }
           initialView="timeGridWeek"
-          events={eventData}
+          events={events}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
           height="100%"
