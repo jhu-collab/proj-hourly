@@ -20,11 +20,11 @@ import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { useStore } from 'store/appStore';
 
-// ============================|| CREATE COURSE FORM ||============================ //
+// ============================|| CREATE EVENT FORM ||============================ //
 
 /**
- * The form that is utilized to create a course.
- * @returns A create course form.
+ * The form that is utilized to create an event.
+ * @returns A create event form.
  */
 const CreateEventForm = ({ ...others }) => {
   const theme = useTheme();

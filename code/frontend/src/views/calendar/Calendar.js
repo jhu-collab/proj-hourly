@@ -9,17 +9,16 @@ import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import timeGridPlugin from '@fullcalendar/timegrid';
+
+// project imports
 import { useStore } from 'store/appStore';
 import CreateEvent from './create-event/CreateEvent';
 
-// project imports
-//import { useStore } from '../../store/appStore';
-
-// ==============================|| HOME ||============================== //
+// ==============================|| CALENDAR ||============================== //
 
 /**
- * A component that represents the landing page that the user visits after logging in.
- * @returns The Home component.
+ * A component that represents the Calendar page for a course.
+ * @returns The Calendar component.
  */
 const Calendar = () => {
   const theme = useTheme();

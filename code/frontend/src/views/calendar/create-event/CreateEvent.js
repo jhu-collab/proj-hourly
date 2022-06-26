@@ -15,11 +15,11 @@ import CreateEventForm from './CreateEventForm';
 
 // assets
 
-// ================================|| CREATE COURSE ||================================ //
+// ================================|| CREATE EVENT ||================================ //
 
 /**
- * A MUI Dialog that allows the user to a create a course.
- * @returns The Create Course Popup.
+ * A MUI Dialog that allows the user to a create an event.
+ * @returns The Create Event Popup.
  */
 const CreateEvent = () => {
   const theme = useTheme();
