@@ -7,10 +7,12 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
-    "prettier": "prettier --write '{src,tests}/**/*.js' --config '.prettierrc.json'",
+    "prettier": "prettier --write '{prisma,src,tests}/**/*.js' --config '.prettierrc.json'",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "seed": "yarn prisma db seed",
+    "studio": "yarn prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",
@@ -20,10 +22,14 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.3.0",
     "jest": "^28.1.1",
     "nodemon": "^2.0.18",
     "prettier": "^2.7.1",
     "prisma": "^4.0.0",
     "supertest": "^6.2.3"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
