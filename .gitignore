@@ -1,7 +1,7 @@
 .DS_Store
 __MACOSX/*
-**/.vscode/*
-**/.idea/*
+.vscode/*
+.idea/*
 **/node_modules/*
 **/dist
 **/*.local
@@ -10,3 +10,4 @@ __MACOSX/*
 **/yarn-debug.log*
 **/yarn-error.log*
 .env*
+**/coverage/*
