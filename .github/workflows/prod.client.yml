@@ -1,0 +1,16 @@
+name: Deploy the client (frontend) app
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "client/**"
+      - ".github/workflows/prod.client.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add steps to build and deploy the frontend

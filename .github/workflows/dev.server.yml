@@ -1,0 +1,16 @@
+name: Deploy the server (backend) app
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "server/**"
+      - ".github/workflows/dev.server.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add steps to build and deploy the backend
