@@ -108,6 +108,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
+    test("Return 400 for bad request for invalid email attribute", async () => {
+      const token = ""; // some auth token if needed!
+      const attributes = {
+        email: "test-user-email",
+        name: "test user",
+      }; // includes an invalid attribute!
+      const response = await request
+        .post(`${endpoint}`)
+        .send(attributes)
+        .set("Authorization", `bearer ${token}`);
+      expect(response.status).toBe(400);
+    });
+
     test("Return 400 for bad request for missing a required attribute", async () => {
       const token = ""; // some auth token if needed!
       const attributes = {

@@ -1,6 +1,7 @@
 import express from "express";
 import { checkToken } from "../util/middleware.js";
 import prisma from "../../prisma/client.js";
+import { emailSchema, requestIdSchema } from "../util/validators.js";
 
 const router = express.Router();
 const endpoint = "/users";
@@ -39,6 +40,7 @@ router.get(`${endpoint}`, checkToken, async (req, res, next) => {
 router.get(`${endpoint}/:id`, checkToken, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    requestIdSchema.parse(id);
     const data = await prisma.user.findUnique({
       where: { id },
       rejectOnNotFound: true,
@@ -54,9 +56,10 @@ router.get(`${endpoint}/:id`, checkToken, async (req, res, next) => {
 
 router.post(`${endpoint}`, checkToken, async (req, res, next) => {
   try {
-    const attributes = req.body;
+    const { email, ...rest } = req.body;
+    emailSchema.parse(email);
     const data = await prisma.user.create({
-      data: attributes,
+      data: { email, ...rest },
     });
     res.status(201).json({
       message: `Successfully created the following user!`,
@@ -70,10 +73,12 @@ router.post(`${endpoint}`, checkToken, async (req, res, next) => {
 router.put(`${endpoint}/:id`, checkToken, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const attributes = req.body;
+    requestIdSchema.parse(id);
+    const { email, ...rest } = req.body;
+    email && emailSchema.parse(email);
     const data = await prisma.user.update({
       where: { id },
-      data: attributes,
+      data: { email, ...rest },
     });
     res.json({
       message: `Successfully updated the following user!`,
@@ -87,6 +92,7 @@ router.put(`${endpoint}/:id`, checkToken, async (req, res, next) => {
 router.delete(`${endpoint}/:id`, checkToken, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
+    requestIdSchema.parse(id);
     const data = await prisma.user.delete({
       where: { id },
     });

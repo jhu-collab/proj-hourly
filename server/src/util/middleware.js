@@ -1,4 +1,5 @@
 import { isPrismaError, prismaErrorToHttpError } from "./helpers.js";
+import { ZodError } from "zod";
 
 export const checkToken = (req, res, next) => {
   const bearerHeader = req.headers["authorization"];
@@ -14,7 +15,11 @@ export const checkToken = (req, res, next) => {
 export const globalErrorHandler = (err, req, res, next) => {
   if (err) {
     // console.log(err);
-    if (
+    if (err instanceof ZodError) {
+      return res
+        .status(400)
+        .json({ message: err.issues[0].message || "Bad request!" });
+    } else if (
       (err.name && err.name === "NotFoundError") ||
       (err.name && err.name === "RecordNotFound")
     ) {
