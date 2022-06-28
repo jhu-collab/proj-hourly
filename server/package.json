@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
-    "prettier": "prettier --write 'src/**/*.js' --config '.prettierrc.json'"
+    "prettier": "prettier --write '{src,tests}/**/*.js' --config '.prettierrc.json'",
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -16,7 +17,9 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "jest": "^28.1.1",
     "nodemon": "^2.0.18",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.3"
   }
 }
