@@ -1,13 +1,33 @@
 import { isPrismaError, prismaErrorToHttpError } from "./helpers.js";
 import { ZodError } from "zod";
+import jsonWebToken from "jsonwebtoken";
+import ApiError from "../model/ApiError.js";
 
 export const checkToken = (req, res, next) => {
   const bearerHeader = req.headers["authorization"];
-  if (bearerHeader) {
-    const bearer = bearerHeader.split(" ");
-    const token = bearer[1];
-    // check the token or attach it to the request object!
-    req.token = token;
+  if (!bearerHeader) {
+    throw new ApiError(401, "No authorization token was provided!");
+  }
+  const bearer = bearerHeader.split(" ");
+  const token = bearer[1];
+  // decode the token and attach the user object to the request object!
+  try {
+    const { iat, exp, ...rest } = jsonWebToken.verify(
+      token,
+      process.env.JWT_SECRET,
+      {
+        algorithm: "HS256",
+        ignoreNotBefore: true,
+      }
+    );
+    req.user = { ...rest };
+  } catch (err) {
+    if (err && err.name === "TokenExpiredError") {
+      throw new ApiError(401, "Authorization token expired!");
+    } else if (err && err.name === "JsonWebTokenError") {
+      throw new ApiError(401, `Authorization error ${err.message}`);
+    } else {
+    }
   }
   next();
 };

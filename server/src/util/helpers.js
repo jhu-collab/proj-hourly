@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import jsonWebToken from "jsonwebtoken";
 
 export const isPrismaError = (e) => {
   return (
@@ -34,4 +35,11 @@ export const prismaErrorToHttpError = (e, res) => {
   } else {
     return res.status(500).json({ message: "Internal server error!" });
   }
+};
+
+export const createToken = ({ user, expiresIn }) => {
+  return jsonWebToken.sign(user, process.env.JWT_SECRET, {
+    algorithm: "HS256",
+    expiresIn: expiresIn || "2d",
+  });
 };

@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import prisma from "./client.js";
 
-const generateFakeUsers = async (numFakeUsers) => {
+const generateFakeUsers = async (numFakeUsers, role) => {
   for (let index = 0; index < numFakeUsers; index++) {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
@@ -10,6 +10,7 @@ const generateFakeUsers = async (numFakeUsers) => {
       data: {
         email: email.toLowerCase(),
         name: `${firstName} ${lastName}`,
+        role: role,
       },
     });
   }
@@ -18,6 +19,7 @@ const generateFakeUsers = async (numFakeUsers) => {
 const generateFakeData = async () => {
   await prisma.user.deleteMany();
   await generateFakeUsers(3);
+  await generateFakeUsers(1, "ADMIN");
 };
 
 try {
