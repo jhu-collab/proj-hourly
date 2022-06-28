@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon .",
+    "dev": "yarn docker:up && yarn prisma migrate dev && nodemon .",
     "prettier": "prettier --write '{prisma,src,tests}/**/*.js' --config '.prettierrc.json'",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "docker:up": "docker-compose up -d",
