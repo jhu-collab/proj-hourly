@@ -1,7 +1,5 @@
 function App() {
-  return (
-    <>Hello React!</>
-  )
+  return <>Hello React!</>;
 }
 
-export default App
+export default App;
