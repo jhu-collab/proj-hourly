@@ -8,7 +8,9 @@
     "start": "node .",
     "dev": "nodemon .",
     "prettier": "prettier --write '{src,tests}/**/*.js' --config '.prettierrc.json'",
-    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "cors": "^2.8.5",
