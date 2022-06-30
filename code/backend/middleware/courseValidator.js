@@ -153,3 +153,31 @@ module.exports.isInCourseFromHeader = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.isInCourseForOfficeHour = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const id = parseInt(req.get('id'), 10);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const studentQuery = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (studentQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'ERROR: student is not enrolled in course' });
+  }
+  next();
+};
