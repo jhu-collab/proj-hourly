@@ -21,7 +21,10 @@ import { useStore } from 'store/appStore';
  * A MUI Dialog that allows the user to a create a course.
  * @returns The Create Course Popup.
  */
-const Register = () => {
+const Register = (props) => {
+
+  const { title } = props;
+
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -59,8 +62,9 @@ const Register = () => {
                           <Typography
                             color={theme.palette.secondary.main}
                             gutterBottom
-                            variant={matchDownSM ? 'h2' : 'h1'}>
-                            Register
+                            align="center"
+                            variant={matchDownSM ? 'h3' : 'h2'}>
+                            Do you want to register for {title}?
                           </Typography>
                         </Stack>
                       </Grid>
