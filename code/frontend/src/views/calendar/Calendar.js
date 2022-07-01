@@ -39,7 +39,6 @@ const Calendar = () => {
   const setRegisterPopupOpen = useStore((state) => state.setRegisterPopupOpen);
 
   const handleEventClick = (info) => {
-    alert('Event: ' + info.event.title);
     setRegisterPopupOpen();
   };
 

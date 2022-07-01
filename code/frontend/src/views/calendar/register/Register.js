@@ -1,6 +1,7 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
+  Button,
   Dialog,
   DialogContent,
   Grid,
@@ -25,7 +26,7 @@ const Register = () => {
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
   const open = useStore((state) => state.registerPopup);
-  const onClose = useStore((state) => state.registerPopupClose);
+  const onClose = useStore((state) => state.setRegisterPopupClose);
 
   return (
     <Dialog onClose={onClose} open={open}>
@@ -38,34 +39,30 @@ const Register = () => {
                   container
                   spacing={2}
                   alignItems="center"
-                  justifyContent="center"
-                >
+                  justifyContent="center">
                   <Grid item xs={12}>
                     <Grid
                       container
                       direction={matchDownSM ? 'column-reverse' : 'row'}
                       alignItems="center"
-                      justifyContent="center"
-                    >
+                      justifyContent="center">
                       <Grid item>
                         <Stack
                           alignItems="center"
                           justifyContent="center"
-                          spacing={1}
-                        >
+                          spacing={1}>
                           <Typography
                             color={theme.palette.secondary.main}
                             gutterBottom
-                            variant={matchDownSM ? 'h2' : 'h1'}
-                          >
+                            variant={matchDownSM ? 'h2' : 'h1'}>
                             Register
                           </Typography>
                         </Stack>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-             
+                  <Grid item container justifyContent="center" xs={12}>
+                    <Button variant="contained" color="secondary">Sign Up!</Button>
                   </Grid>
                 </Grid>
               </Grid>
