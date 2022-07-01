@@ -114,15 +114,12 @@ module.exports.noConflictsWithHosts = async (req, res, next) => {
 module.exports.isOfficeHourOnDay = async (req, res, next) => {
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
-  const dow = weekday[dateObj.getDay()];
+  dateObj.setUTCHours(0);
+  const dow = weekday[dateObj.getUTCDay()];
+  console.log(dow);
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
-      // NOT: {
-      //   isCancelledOn: {
-      //     has: dateObj,
-      //   },
-      // },
       isOnDayOfWeek: {
         some: {
           dayOfWeek: dow,
@@ -130,7 +127,13 @@ module.exports.isOfficeHourOnDay = async (req, res, next) => {
       },
     },
   });
-  if (officeHour === null) {
+  let isCancelled = false;
+  officeHour.isCancelledOn.forEach((cancelledDate) => {
+    if (cancelledDate.toDateString() === dateObj.toDateString()) {
+      isCancelled = true;
+    }
+  });
+  if (officeHour === null || isCancelled) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: 'ERROR: office hours is not available on day' });
