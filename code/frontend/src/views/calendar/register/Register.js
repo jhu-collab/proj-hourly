@@ -28,6 +28,11 @@ const Register = () => {
   const open = useStore((state) => state.registerPopup);
   const onClose = useStore((state) => state.setRegisterPopupClose);
 
+  const onClick = () => {
+    onClose();
+    alert("Successfully registered!");
+  }
+
   return (
     <Dialog onClose={onClose} open={open}>
       <DialogContent>
@@ -62,7 +67,7 @@ const Register = () => {
                     </Grid>
                   </Grid>
                   <Grid item container justifyContent="center" xs={12}>
-                    <Button variant="contained" color="secondary">Sign Up!</Button>
+                    <Button variant="contained" color="secondary" onClick={onClick}>Sign Up!</Button>
                   </Grid>
                 </Grid>
               </Grid>
