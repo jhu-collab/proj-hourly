@@ -15,11 +15,17 @@ const prisma = new PrismaClient();
 function stringToTimeObj(timeStr) {
   const timeArray = timeStr.split(':');
   const time = new Date();
-  time.setHours(timeArray[0]);
-  time.setMinutes(timeArray[1]);
-  time.setSeconds(timeArray[2]);
+  time.setUTCHours(timeArray[0]);
+  time.setUTCMinutes(timeArray[1]);
+  time.setUTCSeconds(timeArray[2]);
+  time.setUTCMilliseconds(0);
+  time.setUTCDate(1);
+  time.setUTCMonth(0);
+  time.setUTCFullYear(1970);
   return time;
 }
+
+module.exports.stringToTimeObj = stringToTimeObj;
 
 module.exports.noConflictsWithHosts = async (req, res, next) => {
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
@@ -112,17 +118,16 @@ module.exports.isOfficeHourOnDay = async (req, res, next) => {
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
-      NOT: {
-        isCancelledOn: {
-          dateObj,
+      // NOT: {
+      //   isCancelledOn: {
+      //     has: dateObj,
+      //   },
+      // },
+      isOnDayOfWeek: {
+        some: {
+          dayOfWeek: dow,
         },
       },
-    },
-    include: {
-      isOnDayOfWeek: {
-        dow,
-      },
-      isCancelledOn: {},
     },
   });
   if (officeHour === null) {
@@ -137,7 +142,7 @@ module.exports.isWithinTimeOffering = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
-  const officeHour = prisma.findFirst({
+  const officeHour = await prisma.officeHour.findFirst({
     where: {
       AND: {
         id: officeHourId,
@@ -162,19 +167,42 @@ module.exports.isTimeCorrectInterval = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
-  const officeHour = prisma.findFirst({
+  const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  const timeInterval = officeHour.timeInterval * 1000 * 60;
+  const timeInterval = officeHour.timePerStudent * 1000 * 60;
   const diff = endTimeObj - startTimeObj;
   if (diff !== timeInterval) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: 'ERROR: time interval is not the correct length' });
   }
+  const diffFromStart = startTimeObj - officeHour.startTime;
+  if (diffFromStart % timeInterval !== 0) {
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: 'ERROR: time interval is not at one of the specified start times',
+    });
+  }
   next();
 };
 
-// module.exports.isTimeAvailable = async (req, res, next) => {};
+module.exports.isTimeAvailable = async (req, res, next) => {
+  const { startTime, officeHourId, date } = req.body;
+  const registrationDate = new Date(date);
+  const startTimeObj = stringToTimeObj(startTime);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      officeHourId,
+      startTime: startTimeObj,
+      date: registrationDate,
+    },
+  });
+  if (registration !== null) {
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: 'ERROR: time interval is already taken',
+    });
+  }
+  next();
+};

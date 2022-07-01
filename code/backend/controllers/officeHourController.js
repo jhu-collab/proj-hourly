@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { StatusCodes } = require('http-status-codes');
+const { stringToTimeObj } = require('../middleware/officeHourValidator');
 const validate = require('../utils/checkValidation');
 
 const prisma = new PrismaClient();
@@ -18,16 +19,8 @@ exports.create = async (req, res) => {
     hosts,
     daysOfWeek,
   } = req.body;
-  const startTimes = startTime.split(':');
-  const endTimes = endTime.split(':');
-  const startTimeObject = new Date();
-  startTimeObject.setHours(startTimes[0]);
-  startTimeObject.setMinutes(startTimes[1]);
-  startTimeObject.setSeconds(startTimes[2]);
-  const endTimeObject = new Date();
-  endTimeObject.setHours(endTimes[0]);
-  endTimeObject.setMinutes(endTimes[1]);
-  endTimeObject.setSeconds(endTimes[2]);
+  const startTimeObject = stringToTimeObj(startTime);
+  const endTimeObject = stringToTimeObj(endTime);
   const officeHour = await prisma.officeHour.create({
     data: {
       startTime: startTimeObject,
@@ -97,4 +90,40 @@ exports.getForCourse = async (req, res) => {
     },
   });
   res.status(StatusCodes.ACCEPTED).json({ officeHours });
+};
+
+exports.register = async (req, res) => {
+  validate(req);
+  const { officeHourId, startTime, endTime, date, question, TopicIds } =
+    req.body;
+  const id = parseInt(req.get('id'), 10);
+  const dateObj = new Date(date);
+  const registration = await prisma.registration.create({
+    data: {
+      startTime: stringToTimeObj(startTime),
+      endTime: stringToTimeObj(endTime),
+      date: dateObj,
+      isCancelled: false,
+      officeHourId,
+      accountId: id,
+      question,
+    },
+  });
+  if (TopicIds !== null && TopicIds !== undefined) {
+    TopicIds.forEach(async (topicId) => {
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          topics: {
+            connect: {
+              id: topicId,
+            },
+          },
+        },
+      });
+    });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
