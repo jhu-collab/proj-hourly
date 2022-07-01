@@ -93,4 +93,8 @@ export const useStore = create((set) => ({
   createEventEndTime: '',
   setCreateEventEndTime: (newEventEndTime) =>
     set({ createEventEndTime: newEventEndTime }),
+
+  registerPopup: false,
+  setRegisterPopupOpen: () => set({ registerPopup: true }),
+  setRegisterPopupClose: () => set({ registerPopup: false }),
 }));

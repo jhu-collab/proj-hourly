@@ -13,6 +13,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 // project imports
 import { useStore } from 'store/appStore';
 import CreateEvent from './create-event/CreateEvent';
+import Register from './register/Register';
 
 // ==============================|| CALENDAR ||============================== //
 
@@ -34,9 +35,12 @@ const Calendar = () => {
     (state) => state.setCreateEventEndTime,
   );
   const events = useStore((state) => state.events);
+  const registerPopup = useStore((state) => state.registerPopup);
+  const setRegisterPopupOpen = useStore((state) => state.setRegisterPopupOpen);
 
   const handleEventClick = (info) => {
     alert('Event: ' + info.event.title);
+    setRegisterPopupOpen();
   };
 
   const handleDateClick = (info) => {
@@ -72,6 +76,7 @@ const Calendar = () => {
         />
       </Paper>
       {createEventPopup && <CreateEvent />}
+      {registerPopup && <Register />}
     </>
   );
 };
