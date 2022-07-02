@@ -1,10 +1,13 @@
 import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import ThemeCustomization from "./themes";
 import ScrollTop from "./components/ScrollTop";
 import Loadable from "./components/Loadable";
 import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
+import ReactToastifyDemo from "./pages/demos/ReactToastifyDemo";
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const DashboardDefault = Loadable(lazy(() => import("./pages/dashboard")));
 const SamplePage = Loadable(lazy(() => import("./pages/demos/SamplePage")));
@@ -30,6 +33,7 @@ function App() {
             <Route path="sample-page" element={<SamplePage />} />
             <Route path="react-query" element={<ReactQueryDemo />} />
             <Route path="full-cal" element={<FullCalendarDemo />} />
+            <Route path="toastify" element={<ReactToastifyDemo />} />
           </Route>
           <Route path="/" element={<MinimalLayout />}>
             <Route path="login" element={<AuthLogin />} />
@@ -37,6 +41,7 @@ function App() {
           </Route>
         </Routes>
       </ScrollTop>
+      <ToastContainer/>
     </ThemeCustomization>
   );
 }

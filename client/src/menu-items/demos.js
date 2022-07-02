@@ -31,5 +31,12 @@ export const demos = {
       url: "/full-cal",
       icon: icons.ChromeOutlined,
     },
+    {
+      id: "toastify",
+      title: "React Toastify",
+      type: "item",
+      url: "/toastify",
+      icon: icons.ChromeOutlined,
+    },
   ],
 };
