@@ -11,6 +11,9 @@ const SamplePage = Loadable(lazy(() => import("./pages/demos/SamplePage")));
 const ReactQueryDemo = Loadable(
   lazy(() => import("./pages/demos/ReactQueryDemo"))
 );
+const FullCalendarDemo = Loadable(
+  lazy(() => import("./pages/demos/FullCalendarDemo"))
+);
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
@@ -26,6 +29,7 @@ function App() {
             <Route path="/" element={<DashboardDefault />} />
             <Route path="sample-page" element={<SamplePage />} />
             <Route path="react-query" element={<ReactQueryDemo />} />
+            <Route path="full-cal" element={<FullCalendarDemo />} />
           </Route>
           <Route path="/" element={<MinimalLayout />}>
             <Route path="login" element={<AuthLogin />} />

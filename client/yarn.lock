@@ -387,6 +387,29 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@fullcalendar/common@~5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.11.0.tgz#d7e47b4272ba6824f95581fb7fb630c5880f4212"
+  integrity sha512-gWjbMAnN1u73Oqlgjbyky7i+3bY0hvFSnGT0YBPx44n874AkQa9e9OU12PMLTMOPy0tXPb8DEwRelFQ7CJNbcw==
+  dependencies:
+    tslib "^2.1.0"
+
+"@fullcalendar/daygrid@^5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-5.11.0.tgz#fd10391dfc2b6caa3538e0826f8d8f3e83e0e22a"
+  integrity sha512-Ybh/dfHn/VL0qOVIRVyJc9I8oYiqqHl6xQONk8xXCe456QbPzAQLsAxpLLJLH+3smWNCfoQgvDKzR9e9XTzLMQ==
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/react@^5.11.1":
+  version "5.11.1"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/react/-/react-5.11.1.tgz#25f673bd952335792d3ced0c2a2c3f373109eac7"
+  integrity sha512-Mjuz90gzX6MLU0rdr5CVoqQA5vFM9JpHDIFmvlLaY8SvdK0R5BwNhquRJP7D2L2q0XKGyzo+/FBOZ+PFXe7jGA==
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    tslib "^2.1.0"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"

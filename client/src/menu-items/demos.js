@@ -24,5 +24,12 @@ export const demos = {
       url: "/react-query",
       icon: icons.ChromeOutlined,
     },
+    {
+      id: "full-cal",
+      title: "Full Calendar",
+      type: "item",
+      url: "/full-cal",
+      icon: icons.ChromeOutlined,
+    },
   ],
 };
