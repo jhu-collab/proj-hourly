@@ -8,6 +8,7 @@ import DrawerHeader from "./DrawerHeader";
 import DrawerContent from "./DrawerContent";
 import { MiniDrawerStyled } from "./MiniDrawerStyled";
 import { drawerWidth } from "../../config";
+import DrawerFooter from "./DrawerFooter";
 
 function MainDrawer({ open, handleDrawerToggle, window }) {
   const theme = useTheme();
@@ -18,6 +19,7 @@ function MainDrawer({ open, handleDrawerToggle, window }) {
 
   const drawerContent = useMemo(() => <DrawerContent />, []);
   const drawerHeader = useMemo(() => <DrawerHeader open={open} />, [open]);
+  const drawerFooter = useMemo(() => <DrawerFooter />, []);
 
   return (
     <Box
@@ -29,6 +31,7 @@ function MainDrawer({ open, handleDrawerToggle, window }) {
         <MiniDrawerStyled variant="permanent" open={open}>
           {drawerHeader}
           {drawerContent}
+          {drawerFooter}
         </MiniDrawerStyled>
       ) : (
         <Drawer
@@ -50,6 +53,7 @@ function MainDrawer({ open, handleDrawerToggle, window }) {
         >
           {open && drawerHeader}
           {open && drawerContent}
+          {open && drawerFooter}
         </Drawer>
       )}
     </Box>
