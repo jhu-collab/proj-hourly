@@ -27,6 +27,7 @@
         "formik": "^2.2.6",
         "framer-motion": "^4.1.13",
         "history": "^5.0.0",
+        "ical-generator": "^3.4.3",
         "material-ui-popup-state": "^1.8.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",
