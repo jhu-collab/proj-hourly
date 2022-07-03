@@ -33,6 +33,14 @@ router.post(
   controller.register,
 );
 
+// account id will be stored in header until we get a token
+router.delete(
+  '/leave/:courseId',
+  validator.isCourseIdUrlValid,
+  accountValidator.isAccountStudent,
+  controller.leaveCourse,
+);
+
 router.get(
   '/:courseId/officeHours',
   accountValidator.isAccountValidHeader,

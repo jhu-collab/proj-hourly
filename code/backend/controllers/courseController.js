@@ -135,8 +135,6 @@ exports.getRegistrationStudentCounts = async (req, res) => {
       id: 'desc',
     },
   });
-  console.log(registrationsList);
-  console.log(accounts);
   let count = 0;
   const countsAndAccount = accounts.map((account, index) => {
     if (
@@ -155,4 +153,23 @@ exports.getRegistrationStudentCounts = async (req, res) => {
     };
   });
   return res.status(StatusCodes.ACCEPTED).json({ countsAndAccount });
+};
+
+exports.leaveCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get('id'), 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      students: {
+        disconnect: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };

@@ -65,6 +65,29 @@ module.exports.isAccountIdValid = async (req, res, next) => {
   next();
 };
 
+module.exports.isAccountStudent = async (req, res, next) => {
+  const id = parseInt(req.get('id'), 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'Account is not a student in the course' });
+  }
+  next();
+};
+
 module.exports.areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;
   hosts.forEach(async (element) => {
