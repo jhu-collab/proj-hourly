@@ -70,13 +70,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
  * @param {string} year - the course calendar year
  * @returns A course card component.
  */
-const CourseCard = ({ isLoading, title, number, semester, year }) => {
+const CourseCard = ({ isLoading, title, number, semester, year, role }) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const setCurrentCourse = useStore((state) => state.setCurrentCourse);
+  const {setCurrentCourse, setIsStaffTrue} = useStore();
 
   const handleClick = (event) => {
     event.stopPropagation();
@@ -91,6 +91,7 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
   };
 
   const goToCourse = () => {
+    role === "Staff" && setIsStaffTrue();
     setCurrentCourse(title, number, semester, year);
     navigate("/calendar");
   }
@@ -163,6 +164,17 @@ const CourseCard = ({ isLoading, title, number, semester, year }) => {
                       </Typography>
                     </Grid>
                   </Grid>
+                </Grid>
+                <Grid item sx={{ mb: 1.25 }}>
+                  <Typography
+                    color="yellow"
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {role}
+                  </Typography>
                 </Grid>
                 <Grid item sx={{ mb: 1.25 }}>
                   <Typography

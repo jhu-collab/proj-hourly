@@ -19,7 +19,6 @@ const Home = () => {
   const removeCurrentCourse = useStore((state) => state.removeCurrentCourse);
   const setHomepageTrue = useStore((state) => state.setHomepageTrue);
   const setHomepageFalse = useStore((state) => state.setHomepageFalse);
-  console.log(courses);
 
   useEffect(() => {
     removeCurrentCourse()
@@ -42,6 +41,7 @@ const Home = () => {
                 number={course.number}
                 semester={course.semester}
                 year={course.year}
+                role={course.role}
               />
             </Grid>
           );

@@ -5,6 +5,14 @@ export const useStore = create((set) => ({
   setHomepageTrue: () => set({ isHomepage: true }),
   setHomepageFalse: () => set({ isHomepage: false }),
 
+  isCalendar: false,
+  setCalendarTrue: () => set({ isCalendar: true }),
+  setCalendarFalse: () => set({ isCalendar: false }),
+
+  isStaff: false,
+  setIsStaffTrue: () => set({ isStaff: true }),
+  setIsStaffFalse: () => set({ isStaff: false }),
+
   createCoursePopup: false,
   createCoursePopupOpen: () => set({ createCoursePopup: true }),
   createCoursePopupClose: () => set({ createCoursePopup: false }),
@@ -33,6 +41,16 @@ export const useStore = create((set) => ({
       semester: 'Fall',
       year: 2022,
       code: '111111',
+      role: 'Student'
+    },
+    {
+      id: 2,
+      title: 'Object Oriented Software Engineering',
+      number: '600.421',
+      semester: 'Spring',
+      year: 2023,
+      code: '222222',
+      role: 'Staff'
     },
   ],
   createCourse: (newCourse) =>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // material-ui
 import { Paper, useMediaQuery } from '@mui/material';
@@ -24,16 +24,17 @@ const Calendar = () => {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const createEventPopup = useStore((state) => state.createEventPopup);
-  const createEventPopupOpen = useStore((state) => state.createEventPopupOpen);
-  const setCreateEventDate = useStore((state) => state.setCreateEventDate);
-  const setCreateEventStartTime = useStore(
-    (state) => state.setCreateEventStartTime,
-  );
-  const setCreateEventEndTime = useStore(
-    (state) => state.setCreateEventEndTime,
-  );
-  const events = useStore((state) => state.events);
+  const { createEventPopup, createEventPopupOpen, setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime, events, setCalendarTrue, setCalendarFalse, setIsStaffFalse} = useStore();
+
+  useEffect(() => {
+    setCalendarTrue();
+  
+    return () => {
+      setCalendarFalse();
+      setIsStaffFalse();
+    }
+  }, [setCalendarFalse, setCalendarTrue, setIsStaffFalse])
+  
 
   const handleEventClick = (info) => {
     alert('Event: ' + info.event.title);
