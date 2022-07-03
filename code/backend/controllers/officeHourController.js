@@ -127,3 +127,23 @@ exports.register = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
+
+exports.cancelOnDate = async (req, res) => {
+  const { officeHourId, date } = req.body;
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(0);
+  const officehour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const officeHourUpdate = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isCancelledOn: [...officehour.isCancelledOn, dateObj],
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(officeHourUpdate);
+};
