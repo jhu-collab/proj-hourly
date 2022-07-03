@@ -106,3 +106,53 @@ exports.createTopic = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ topic });
 };
+
+exports.getRegistrationStudentCounts = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  const registrationsList = await prisma.registration.groupBy({
+    by: ['accountId'],
+    where: {
+      officeHour: {
+        courseId: id,
+      },
+    },
+    _count: {
+      id: true,
+    },
+    orderBy: {
+      accountId: 'desc',
+    },
+  });
+  const accounts = await prisma.account.findMany({
+    where: {
+      studentCourses: {
+        some: {
+          id,
+        },
+      },
+    },
+    orderBy: {
+      id: 'desc',
+    },
+  });
+  console.log(registrationsList);
+  console.log(accounts);
+  let count = 0;
+  const countsAndAccount = accounts.map((account, index) => {
+    if (
+      registrationsList[index - count] !== undefined &&
+      registrationsList[index - count].accountId === account.id
+    ) {
+      return {
+        ...account,
+        numRegistrations: registrationsList[index - count]._count.id,
+      };
+    }
+    count += 1;
+    return {
+      ...account,
+      numRegistrations: 0,
+    };
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ countsAndAccount });
+};

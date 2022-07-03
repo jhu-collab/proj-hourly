@@ -60,4 +60,12 @@ router.post(
   controller.createTopic,
 );
 
+router.get(
+  '/:courseId/studentRegistrationCounts',
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.getRegistrationStudentCounts,
+);
+
 module.exports = router;

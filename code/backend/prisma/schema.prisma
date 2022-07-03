@@ -50,6 +50,7 @@ model OfficeHour {
   hosts          Account[]           @relation("isHost")
   isCancelledOn  DateTime[]          @db.Date
   isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
+  registrations  Registration[]
 }
 
 model numberToDayOfWeek {
@@ -59,18 +60,19 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id           Int      @id @default(autoincrement())
-  startTime    DateTime @db.Timetz()
-  endTime      DateTime @db.Timetz()
-  date         DateTime @db.Date
+  id           Int        @id @default(autoincrement())
+  startTime    DateTime   @db.Timetz()
+  endTime      DateTime   @db.Timetz()
+  date         DateTime   @db.Date
   isCancelled  Boolean
+  officeHour   OfficeHour @relation(fields: [officeHourId], references: [id])
   officeHourId Int
-  account      Account  @relation(fields: [accountId], references: [id])
+  account      Account    @relation(fields: [accountId], references: [id])
   accountId    Int
   question     String?
   feedback     String?
   rating       Int?
-  topics       Topic[]  @relation("withTopics")
+  topics       Topic[]    @relation("withTopics")
 }
 
 model Topic {
