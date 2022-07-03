@@ -127,3 +127,60 @@ exports.register = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
+
+exports.cancelOnDate = async (req, res) => {
+  const { officeHourId, date } = req.body;
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(0);
+  const officehour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const officeHourUpdate = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isCancelledOn: [...officehour.isCancelledOn, dateObj],
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(officeHourUpdate);
+};
+
+exports.cancelAll = async (req, res) => {
+  const { officeHourId } = req.body;
+  const date = new Date();
+  const dateObj = new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+  );
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  let officeHourUpdate;
+  if (new Date(officeHour.startDate) >= date) {
+    officeHourUpdate = await prisma.officeHour.delete({
+      where: {
+        id: officeHourId,
+      },
+    });
+  } else if (new Date(officeHour.endDate) > date) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        endDate: dateObj,
+      },
+    });
+  } else {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'ERROR: office hours already over' });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
+};

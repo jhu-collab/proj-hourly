@@ -64,4 +64,24 @@ router.post(
   controller.register,
 );
 
+router.post(
+  '/cancelOnDate',
+  body('officeHourId', 'Office Hour is required').isInt(),
+  body('date', 'Date is required').notEmpty(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHour,
+  validator.isOfficeHourHost,
+  validator.isOfficeHourOnDay,
+  controller.cancelOnDate,
+);
+
+router.post(
+  '/cancelAll',
+  body('officeHourId', 'Office Hour is required').isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHour,
+  validator.isOfficeHourHost,
+  controller.cancelAll,
+);
+
 module.exports = router;

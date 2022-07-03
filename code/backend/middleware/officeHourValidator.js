@@ -116,7 +116,6 @@ module.exports.isOfficeHourOnDay = async (req, res, next) => {
   const dateObj = new Date(date);
   dateObj.setUTCHours(0);
   const dow = weekday[dateObj.getUTCDay()];
-  console.log(dow);
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -206,6 +205,29 @@ module.exports.isTimeAvailable = async (req, res, next) => {
     return res.status(StatusCodes.CONFLICT).json({
       msg: 'ERROR: time interval is already taken',
     });
+  }
+  next();
+};
+
+module.exports.isOfficeHourHost = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const id = parseInt(req.get('id'), 10);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      hosts: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (officeHour === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'ERROR: must be host to cancel office hours' });
   }
   next();
 };

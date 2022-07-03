@@ -211,3 +211,22 @@ exports.removeStaff = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+exports.leaveCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get('id'), 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      students: {
+        disconnect: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
