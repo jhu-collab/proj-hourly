@@ -59,17 +59,18 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id          Int      @id @default(autoincrement())
-  startTime   DateTime @db.Timetz()
-  endTime     DateTime @db.Timetz()
-  date        DateTime @db.Date
-  isCancelled Boolean
-  account     Account  @relation(fields: [accountId], references: [id])
-  accountId   Int
-  question    String?
-  feedback    String?
-  rating      Int?
-  topics      Topic[]  @relation("withTopics")
+  id           Int      @id @default(autoincrement())
+  startTime    DateTime @db.Timetz()
+  endTime      DateTime @db.Timetz()
+  date         DateTime @db.Date
+  isCancelled  Boolean
+  officeHourId Int
+  account      Account  @relation(fields: [accountId], references: [id])
+  accountId    Int
+  question     String?
+  feedback     String?
+  rating       Int?
+  topics       Topic[]  @relation("withTopics")
 }
 
 model Topic {

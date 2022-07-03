@@ -46,7 +46,6 @@ exports.login = async (req, res) => {
 exports.getCourses = async (req, res) => {
   validate(req);
   const id = parseInt(req.get('id'), 10);
-  console.log(id);
   const studentCourses = await prisma.course.findMany({
     where: {
       students: {

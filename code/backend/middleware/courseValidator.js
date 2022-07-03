@@ -1,4 +1,3 @@
-// const { StatusCodes } = require('http-status-codes');
 const { PrismaClient } = require('@prisma/client');
 const { StatusCodes } = require('http-status-codes');
 
@@ -165,6 +164,61 @@ module.exports.isInCourseFromHeader = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: 'User is not in course' });
+  }
+  next();
+};
+
+module.exports.isInCourseForOfficeHour = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const id = parseInt(req.get('id'), 10);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const studentQuery = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (studentQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: 'ERROR: student is not enrolled in course' });
+  }
+  next();
+};
+
+module.exports.areTopicsForCourse = async (req, res, next) => {
+  const { officeHourId, TopicIds } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  if (TopicIds !== null && TopicIds !== undefined) {
+    TopicIds.forEach(async (topicId) => {
+      const topic = await prisma.topic({
+        where: {
+          id: topicId,
+        },
+        include: {
+          courseId: officeHour.courseId,
+        },
+      });
+      if (topic === null) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ msg: 'ERROR: topic is not for course' });
+      }
+    });
   }
   next();
 };

@@ -6,3 +6,5 @@
 node_modules/*
 node_modules
 pgdata
+*.env.test
+client/dist

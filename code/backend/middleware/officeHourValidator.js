@@ -1,23 +1,39 @@
 const { PrismaClient } = require('@prisma/client');
 const { StatusCodes } = require('http-status-codes');
 
+const weekday = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
 const prisma = new PrismaClient();
+
+function stringToTimeObj(timeStr) {
+  const timeArray = timeStr.split(':');
+  const time = new Date();
+  time.setUTCHours(timeArray[0]);
+  time.setUTCMinutes(timeArray[1]);
+  time.setUTCSeconds(timeArray[2]);
+  time.setUTCMilliseconds(0);
+  time.setUTCDate(1);
+  time.setUTCMonth(0);
+  time.setUTCFullYear(1970);
+  return time;
+}
+
+module.exports.stringToTimeObj = stringToTimeObj;
 
 module.exports.noConflictsWithHosts = async (req, res, next) => {
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
     req.body;
   const startDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
-  const startTimeObj = new Date();
-  const starts = startTime.split(':');
-  startTimeObj.setHours(starts[0]);
-  startTimeObj.setMinutes(starts[1]);
-  startTimeObj.setSeconds(starts[2]);
-  const ends = endTime.split(':');
-  const endTimeObj = new Date();
-  endTimeObj.setHours(ends[0]);
-  endTimeObj.setMinutes(ends[1]);
-  endTimeObj.setSeconds(ends[2]);
+  const startTimeObj = stringToTimeObj(startTime);
+  const endTimeObj = stringToTimeObj(endTime);
   hosts.forEach(async (id) => {
     daysOfWeek.forEach(async (dow) => {
       const officeHour = await prisma.officeHour.findFirst({
@@ -92,5 +108,104 @@ module.exports.noConflictsWithHosts = async (req, res, next) => {
       }
     });
   });
+  next();
+};
+
+module.exports.isOfficeHourOnDay = async (req, res, next) => {
+  const { officeHourId, date } = req.body;
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(0);
+  const dow = weekday[dateObj.getUTCDay()];
+  console.log(dow);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+      isOnDayOfWeek: {
+        some: {
+          dayOfWeek: dow,
+        },
+      },
+    },
+  });
+  let isCancelled = false;
+  officeHour.isCancelledOn.forEach((cancelledDate) => {
+    if (cancelledDate.toDateString() === dateObj.toDateString()) {
+      isCancelled = true;
+    }
+  });
+  if (officeHour === null || isCancelled) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'ERROR: office hours is not available on day' });
+  }
+  next();
+};
+
+module.exports.isWithinTimeOffering = async (req, res, next) => {
+  const { startTime, endTime, officeHourId } = req.body;
+  const startTimeObj = stringToTimeObj(startTime);
+  const endTimeObj = stringToTimeObj(endTime);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      AND: {
+        id: officeHourId,
+        startTime: {
+          lte: startTimeObj,
+        },
+        endTime: {
+          gte: endTimeObj,
+        },
+      },
+    },
+  });
+  if (officeHour === null) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'ERROR: time is not within range of office hour' });
+  }
+  next();
+};
+
+module.exports.isTimeCorrectInterval = async (req, res, next) => {
+  const { startTime, endTime, officeHourId } = req.body;
+  const startTimeObj = stringToTimeObj(startTime);
+  const endTimeObj = stringToTimeObj(endTime);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const timeInterval = officeHour.timePerStudent * 1000 * 60;
+  const diff = endTimeObj - startTimeObj;
+  if (diff !== timeInterval) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'ERROR: time interval is not the correct length' });
+  }
+  const diffFromStart = startTimeObj - officeHour.startTime;
+  if (diffFromStart % timeInterval !== 0) {
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: 'ERROR: time interval is not at one of the specified start times',
+    });
+  }
+  next();
+};
+
+module.exports.isTimeAvailable = async (req, res, next) => {
+  const { startTime, officeHourId, date } = req.body;
+  const registrationDate = new Date(date);
+  const startTimeObj = stringToTimeObj(startTime);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      officeHourId,
+      startTime: startTimeObj,
+      date: registrationDate,
+    },
+  });
+  if (registration !== null) {
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: 'ERROR: time interval is already taken',
+    });
+  }
   next();
 };

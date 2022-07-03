@@ -2,7 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const accountValidator = require('../../middleware/accountValidator');
 const courseValidator = require('../../middleware/courseValidator');
-// const validator = require('../../middleware/officeHourValidator');
+const validator = require('../../middleware/officeHourValidator');
 const timeValidator = require('../../middleware/timeValidator');
 const controller = require('../../controllers/officeHourController');
 
@@ -42,6 +42,26 @@ router.post(
   timeValidator.isTime,
   // validator.noConflictsWithHosts,
   controller.create,
+);
+
+router.post(
+  '/register',
+  body('officeHourId', 'Office Hour is required').isInt(),
+  body('startTime', 'Please include a startTime').notEmpty(),
+  body('endTime', 'Please include an endtime').notEmpty(),
+  body('date', 'Please include a date').notEmpty(),
+  body('question', 'Please include questions as a string')
+    .optional()
+    .isString(),
+  body('TopicIds', 'Please include topics as an array').optional().isArray(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHour,
+  validator.isOfficeHourOnDay,
+  validator.isWithinTimeOffering,
+  validator.isTimeCorrectInterval,
+  validator.isTimeAvailable,
+  courseValidator.areTopicsForCourse,
+  controller.register,
 );
 
 module.exports = router;
