@@ -92,8 +92,26 @@ exports.getTopicCounts = async (req, res) => {
       },
     },
   });
-
   return res.status(StatusCodes.ACCEPTED).json({ counts });
+};
+
+exports.leaveCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get('id'), 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      students: {
+        disconnect: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
 exports.createTopic = async (req, res) => {
@@ -135,8 +153,6 @@ exports.getRegistrationStudentCounts = async (req, res) => {
       id: 'desc',
     },
   });
-  console.log(registrationsList);
-  console.log(accounts);
   let count = 0;
   const countsAndAccount = accounts.map((account, index) => {
     if (
@@ -155,4 +171,43 @@ exports.getRegistrationStudentCounts = async (req, res) => {
     };
   });
   return res.status(StatusCodes.ACCEPTED).json({ countsAndAccount });
+};
+
+exports.removeStaff = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.params.staffId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      courseStaff: {
+        disconnect: {
+          id,
+        },
+      },
+    },
+  });
+  await prisma.officeHour.update({
+    where: {
+      courseId,
+    },
+    data: {
+      hosts: {
+        disconnect: {
+          id,
+        },
+      },
+    },
+  });
+  await prisma.officeHour.delete({
+    where: {
+      courseId,
+      hosts: {
+        none: {},
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };
