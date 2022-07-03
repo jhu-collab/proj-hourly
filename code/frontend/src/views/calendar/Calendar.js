@@ -24,17 +24,27 @@ const Calendar = () => {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const { createEventPopup, createEventPopupOpen, setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime, events, setCalendarTrue, setCalendarFalse, setIsStaffFalse} = useStore();
+  const {
+    createEventPopup,
+    createEventPopupOpen,
+    setCreateEventDate,
+    setCreateEventStartTime,
+    setCreateEventEndTime,
+    events,
+    setCalendarTrue,
+    setCalendarFalse,
+    setIsStaffFalse,
+    isStaff,
+  } = useStore();
 
   useEffect(() => {
     setCalendarTrue();
-  
+
     return () => {
       setCalendarFalse();
       setIsStaffFalse();
-    }
-  }, [setCalendarFalse, setCalendarTrue, setIsStaffFalse])
-  
+    };
+  }, [setCalendarFalse, setCalendarTrue, setIsStaffFalse]);
 
   const handleEventClick = (info) => {
     alert('Event: ' + info.event.title);
@@ -66,10 +76,10 @@ const Calendar = () => {
           events={events}
           eventClick={handleEventClick}
           height="100%"
-          editable
+          editable={isStaff && true}
           select={handleDateClick}
-          selectMirror
-          selectable
+          selectMirror={isStaff && true}
+          selectable={isStaff && true}
         />
       </Paper>
       {createEventPopup && <CreateEvent />}
