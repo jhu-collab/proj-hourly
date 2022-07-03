@@ -77,3 +77,32 @@ exports.register = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ updateAccount });
 };
+
+exports.getTopicCounts = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  const counts = await prisma.topic.findMany({
+    where: {
+      courseId: id,
+    },
+    include: {
+      _count: {
+        select: {
+          registrations: true,
+        },
+      },
+    },
+  });
+
+  return res.status(StatusCodes.ACCEPTED).json({ counts });
+};
+
+exports.createTopic = async (req, res) => {
+  const { value, courseId } = req.body;
+  const topic = await prisma.topic.create({
+    data: {
+      courseId,
+      value,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ topic });
+};

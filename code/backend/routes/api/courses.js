@@ -41,4 +41,23 @@ router.get(
   officeHourController.getForCourse,
 );
 
+router.get(
+  '/:courseId/topicCounts',
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.getTopicCounts,
+);
+
+router.post(
+  '/createTopic',
+  body('courseId', 'must include courseid for a topic').notEmpty(),
+  body('value', 'must include a value for the topic').notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseId,
+  accountValidator.isAccountInstructorBody,
+  validator.isNotDuplicateTopic,
+  controller.createTopic,
+);
+
 module.exports = router;

@@ -207,3 +207,19 @@ module.exports.areTopicsForCourse = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.isNotDuplicateTopic = async (req, res, next) => {
+  const { courseId, value } = req.body;
+  const topic = await prisma.topic.findFirst({
+    where: {
+      courseId,
+      value,
+    },
+  });
+  if (topic !== null) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: 'ERROR: topic already exists' });
+  }
+  next();
+};
