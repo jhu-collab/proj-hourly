@@ -27,8 +27,7 @@ import { useStore } from 'store/appStore';
 const CreateCourseForm = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const createCourse = useStore((state) => state.createCourse);
-  const createPopupClose = useStore((state) => state.createPopupClose);
+  const { createCourse, createCoursePopupClose } = useStore();
 
   return (
     <>
@@ -67,11 +66,12 @@ const CreateCourseForm = ({ ...others }) => {
                 title: values.title,
                 number: values.number,
                 semester: values.semester,
+                role: 'Staff',
                 year: values.year,
               };
               console.log(course);
               createCourse(course);
-              createPopupClose();
+              createCoursePopupClose();
             }
           } catch (err) {
             console.error(err);
