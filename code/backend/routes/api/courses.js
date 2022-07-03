@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const validator = require('../../middleware/courseValidator');
 const controller = require('../../controllers/courseController');
 const accountValidator = require('../../middleware/accountValidator');
+const officeHourController = require('../../controllers/officeHourController');
 
 const router = express.Router();
 
@@ -46,6 +47,14 @@ router.delete(
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
   controller.removeStaff,
+);
+
+router.get(
+  '/:courseId/officeHours',
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  officeHourController.getForCourse,
 );
 
 module.exports = router;

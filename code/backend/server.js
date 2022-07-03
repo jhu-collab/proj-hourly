@@ -13,6 +13,7 @@ app.use(express.json());
 // routes
 app.use('/api/course', require('./routes/api/courses'));
 app.use('/api/account', require('./routes/api/accounts'));
+app.use('/api/officeHour', require('./routes/api/officeHours'));
 
 app.all('/api/*', (req, res, next) => {
   next(

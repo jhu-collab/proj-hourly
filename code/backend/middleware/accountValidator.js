@@ -133,3 +133,34 @@ module.exports.isUrlStaff = async (req, res, next) => {
   }
   next();
 };
+module.exports.areAccountsIdsValid = async (req, res, next) => {
+  const { hosts } = req.body;
+  hosts.forEach(async (element) => {
+    const query = await prisma.Account.findUnique({
+      where: {
+        id: element,
+      },
+    });
+    if (query === null) {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ msg: 'Account does not exists' });
+    }
+  });
+  next();
+};
+
+module.exports.isAccountValidHeader = async (req, res, next) => {
+  const id = parseInt(req.get('id'), 10);
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'ERROR: is not a valid account' });
+  }
+  next();
+};
