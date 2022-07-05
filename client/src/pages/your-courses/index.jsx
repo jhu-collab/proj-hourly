@@ -8,6 +8,10 @@ import React from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 
+/**
+ * Component that represents the "Your Courses" page.
+ * @returns A component representing the "Your Courses" page.
+ */
 function YourCourses() {
   const theme = useTheme();
 

@@ -4,6 +4,10 @@ import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
 import { staffCourses, studentCourses } from "./courses-data";
 
+/**
+ * Represents a list of courses that a user is associated with.
+ * @returns A component in which a user can see their courses.
+ */
 function CourseList() {
   const { courseType } = useStore();
 
