@@ -9,6 +9,7 @@ import {
 import React from "react";
 import MainCard from "../../components/MainCard";
 import CourseCard from "./CourseCard";
+import { studentCourses } from "./courses-data";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 
 function YourCourses() {
@@ -23,7 +24,7 @@ function YourCourses() {
         </Stack>
       </Grid>
       <Grid item xs={12} >
-        <CourseCard />
+        <CourseCard course={studentCourses[0]} />
       </Grid>
     </Grid>
   );

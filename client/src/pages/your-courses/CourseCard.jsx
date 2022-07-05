@@ -16,9 +16,9 @@ function CourseCard({ course }) {
       <CardActionArea component="a" to="/calendar">
         <Box sx={{ p: theme.spacing(3) }}>
           <Stack direction="column">
-            <Typography variant="h5">Gateway Computing: Java</Typography>
-            <Typography variant="h6">500.112</Typography>
-            <Typography variant="h6">Fall 2022</Typography>
+            <Typography variant="h5">{course.title}</Typography>
+            <Typography variant="h6">{course.courseNumber}</Typography>
+            <Typography variant="h6">{course.semester} {course.calendarYear}</Typography>
           </Stack>
         </Box>
       </CardActionArea>
