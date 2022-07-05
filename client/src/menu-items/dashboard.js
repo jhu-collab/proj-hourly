@@ -1,6 +1,7 @@
-import { DashboardOutlined } from "@ant-design/icons";
+import { DashboardOutlined, BookOutlined } from "@ant-design/icons";
 const icons = {
   DashboardOutlined,
+  BookOutlined,
 };
 
 export const dashboard = {
@@ -9,10 +10,18 @@ export const dashboard = {
   type: "group",
   children: [
     {
+      id: "your-courses",
+      title: "Your Courses",
+      type: "item",
+      url: "/",
+      icon: icons.BookOutlined,
+      breadcrumbs: false,
+    },
+    {
       id: "dashboard",
       title: "Dashboard",
       type: "item",
-      url: "/",
+      url: "/dashboard",
       icon: icons.DashboardOutlined,
       breadcrumbs: false,
     },
