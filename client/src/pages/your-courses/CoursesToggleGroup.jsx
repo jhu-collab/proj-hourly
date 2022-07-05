@@ -1,15 +1,16 @@
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import React, { useState } from "react";
+import useStore from "../../services/store";
 
 function CoursesToggleGroup() {
-  const [alignment, setAlignment] = useState('student');
+  const { courseType, toggleCourseType } = useStore();
 
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
+  const handleChange = (event, newValue) => {
+    toggleCourseType(newValue);
   };
 
   return (
-    <ToggleButtonGroup value={alignment} exclusive onChange={handleAlignment}>
+    <ToggleButtonGroup value={courseType} exclusive onChange={handleChange}>
       <ToggleButton value="student">Student</ToggleButton>
       <ToggleButton value="staff">Staff</ToggleButton>
     </ToggleButtonGroup>
