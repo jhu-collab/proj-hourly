@@ -1,5 +1,11 @@
 import { CloseOutlined } from "@ant-design/icons";
-import { Dialog, DialogContent, Grid, IconButton } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  Grid,
+  IconButton,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 
 /**
@@ -13,15 +19,12 @@ import React from "react";
  * @returns Reusable popup component.
  */
 function Popup({ open, onClose, children }) {
+  const theme = useTheme();
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogContent>
-        <Grid container direction="column">
-          <Grid item container xs={12} justifyContent="flex-end" sx={{ ml: 2 }}>
-            <IconButton onClick={onClose} sx={{ fontSize: "25px" }}>
-              <CloseOutlined />
-            </IconButton>
-          </Grid>
+        <Grid container direction="column" sx={{ p: theme.spacing(3) }}>
+          {/* TODO Add an "X" button to close the popup */}
           <Grid item>{children}</Grid>
         </Grid>
       </DialogContent>
