@@ -1,9 +1,12 @@
 import { CloseOutlined } from "@ant-design/icons";
 import {
+  Box,
   Dialog,
   DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
+  Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
@@ -13,21 +16,24 @@ import React from "react";
  * attached by default.
  * @param {boolean} open (required) state variable that determines whether the popup
  *                  is opened
- *  @param {*} onClose: (required) function that handles what happens when popup
+ * @param {*} onClose: (required) function that handles what happens when popup
  *             is closed
+ * @param {string} title: (required) the title of the popup
  * @param {*} children: (optional) children to fill up the component
  * @returns Reusable popup component.
  */
-function Popup({ open, onClose, children }) {
-  const theme = useTheme();
+function Popup({ open, onClose, title, children }) {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogContent>
-        <Grid container direction="column" sx={{ p: theme.spacing(3) }}>
-          {/* TODO Add an "X" button to close the popup */}
-          <Grid item>{children}</Grid>
-        </Grid>
-      </DialogContent>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle sx={{mb: -2, mt: 2}}>
+        <Typography variant="h2" align="center">{title}</Typography>
+      </DialogTitle>
+      <Box position="absolute" top={2} right={2}>
+        <IconButton sx={{fontSize: "25px"}} onClick={onClose}>
+          <CloseOutlined />
+        </IconButton>
+      </Box>
+      <DialogContent>{children}</DialogContent>
     </Dialog>
   );
 }
