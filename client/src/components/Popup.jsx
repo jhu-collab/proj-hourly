@@ -29,7 +29,7 @@ function Popup({ open, onClose, title, children }) {
         <Typography variant="h2" align="center">{title}</Typography>
       </DialogTitle>
       <Box position="absolute" top={2} right={2}>
-        <IconButton sx={{fontSize: "25px"}} onClick={onClose}>
+        <IconButton sx={{fontSize: "22px"}} onClick={onClose}>
           <CloseOutlined />
         </IconButton>
       </Box>
