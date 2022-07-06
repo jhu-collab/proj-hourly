@@ -17,11 +17,12 @@ function CoursesSpeedDial() {
 
   const { createCoursePopup, toggleCreateCoursePopup } = useStore();
 
+  // speed dial toggler
   const [open, setOpen] = React.useState(false);
 
-const handleOpen = (event) => {
-  setOpen(!open);
-};
+  const handleOpen = (event) => {
+    setOpen(!open);
+  };
 
   // popup toggler
   const [openPopup, setOpenPopup] = useState(createCoursePopup);
@@ -29,7 +30,6 @@ const handleOpen = (event) => {
     setOpenPopup(!openPopup);
     toggleCreateCoursePopup(!openPopup);
   };
-
 
   const actions = [
     { icon: <PlusOutlined />, name: "Create", onClick: handlePopupToggle },
