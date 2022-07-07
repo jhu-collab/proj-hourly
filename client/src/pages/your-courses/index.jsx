@@ -1,8 +1,5 @@
 import {
   Grid,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
   Stack,
   Typography,
   useTheme,
@@ -10,15 +7,7 @@ import {
 import React from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
-import { DashboardFilled } from "@ant-design/icons";
 import CoursesSpeedDial from "./CoursesSpeedDial";
-
-const actions = [
-  { icon: <DashboardFilled />, name: "Copy" },
-  { icon: <DashboardFilled />, name: "Save" },
-  { icon: <DashboardFilled />, name: "Print" },
-  { icon: <DashboardFilled />, name: "Share" },
-];
 
 /**
  * Component that represents the "Your Courses" page.

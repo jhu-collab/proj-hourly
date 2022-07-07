@@ -4,11 +4,9 @@ import {
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
-  Typography,
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import Popup from "../../components/Popup";
 import useStore from "../../services/store";
 import CreateCourse from "./create-course/CreateCourse";
 
