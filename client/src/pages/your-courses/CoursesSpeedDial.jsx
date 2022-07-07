@@ -10,6 +10,11 @@ import React, { useState } from "react";
 import useStore from "../../services/store";
 import CreateCourse from "./create-course/CreateCourse";
 
+/**
+ * Component that represents the MUI SpeedDial component for the 
+ * "Your Courses" page.
+ * @returns A component representing the "Your Courses" expandable FAB.
+ */
 function CoursesSpeedDial() {
   const theme = useTheme();
 

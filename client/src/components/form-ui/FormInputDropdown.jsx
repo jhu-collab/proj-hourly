@@ -8,6 +8,15 @@ import {
 import React from "react";
 import { Controller } from "react-hook-form";
 
+/**
+ * Modeled after the MUI Select component. Utilizes the react-hook-form 
+ * to ease the use of this component in a form.
+ * @param {string} name: the name of the field
+ * @param {*} control: control object from the react-hook-form useForm function
+ * @param {string} label: the label of the field
+ * @param {*} options: an array of menu item options
+ * @returns A reusuable dropdown component.
+ */
 function FormInputDropdown({ name, control, label, options, ...other }) {
   const generateSingleOptions = () => {
     return options.map((option) => {

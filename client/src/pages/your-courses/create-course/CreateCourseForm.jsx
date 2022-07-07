@@ -31,6 +31,11 @@ const options = [
   },
 ];
 
+/**
+ * Component that represents the form that is used to create a course.
+ * @param {*} handlePopupToggle: function that toggles whether the popup is open
+ * @returns A component representing the Create Course form.
+ */
 function CreateCourseForm({ handlePopupToggle }) {
   const theme = useTheme();
 
