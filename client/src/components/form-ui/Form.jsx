@@ -5,10 +5,12 @@ import React from 'react';
  * @param {*} children: the children
  * @returns A reusuable form component.
  */
-export function Form({children, ...other}) {
+function Form({children, ...other}) {
   return (
     <form autoComplete="off" {...other}>
       {children}
     </form>
   );
 }
+
+export default Form;
