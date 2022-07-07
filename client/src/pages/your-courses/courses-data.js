@@ -23,7 +23,7 @@ export const staffCourses = [
     title: "Object Oriented Software Engineering",
     courseNumber: "600.421",
     semester: "Fall",
-    calendarYear: 2022,
+    calendarYear: "2022",
     code: "333333",
   },
   {
@@ -31,7 +31,7 @@ export const staffCourses = [
     title: "Data Structures",
     courseNumber: "600.226",
     semester: "Spring",
-    calendarYear: 2023,
+    calendarYear: "2023",
     code: "444444",
   },
 ];

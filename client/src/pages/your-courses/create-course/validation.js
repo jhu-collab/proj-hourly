@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
-  number: yup
+  courseNumber: yup
     .string()
     .matches(/^\d{3}\..{3}$/, "Course number is invalid. Must be xxx.xxx")
     .required("Course number is required"),
@@ -14,7 +14,7 @@ export const createCourseSchema = yup.object().shape({
       "Please enter a valid semester"
     )
     .required("Semester is required"),
-  year: yup
+  calendarYear: yup
     .string()
     .matches(/^[0-9]{4}$/, "Please enter a valid year")
     .required("Year is required"),
