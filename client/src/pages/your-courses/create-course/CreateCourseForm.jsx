@@ -7,6 +7,7 @@ import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { staffCourses } from "../courses-data";
+import { toast } from "react-toastify";
 
 const options = [
   {
@@ -60,6 +61,9 @@ function CreateCourseForm({ handlePopupToggle }) {
       code: "ABCABC",
     });
     handlePopupToggle();
+    toast.success(
+      `Successfully created the ${data.title} course for ${data.semester} ${data.calendarYear}`
+    );
   };
 
   return (
