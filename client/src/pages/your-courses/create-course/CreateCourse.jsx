@@ -4,7 +4,7 @@ import CreateCourseForm from "./CreateCourseForm";
 function CreateCourse({ open, handlePopupToggle }) {
   return (
     <Popup open={open} onClose={handlePopupToggle} title="Create Course">
-        <CreateCourseForm />
+        <CreateCourseForm handlePopupToggle={handlePopupToggle} />
     </Popup>
   );
 }
