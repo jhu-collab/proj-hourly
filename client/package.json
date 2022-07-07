@@ -38,7 +38,7 @@
     "dev": "vite",
     "build": "vite build && cp ./_redirects ./dist/_redirects",
     "preview": "vite preview",
-    "prettier": "prettier --write 'src/**/*.{jsx,js}' --config '.prettierrc'"
+    "prettier": "prettier --write 'src/**/*.jsx' --config '.prettierrc.json'"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

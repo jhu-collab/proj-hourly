@@ -25,11 +25,13 @@ import React from "react";
 function Popup({ open, onClose, title, children }) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle sx={{mb: -2, mt: 2}}>
-        <Typography variant="h2" align="center">{title}</Typography>
+      <DialogTitle sx={{ mb: -2, mt: 2 }}>
+        <Typography variant="h2" align="center">
+          {title}
+        </Typography>
       </DialogTitle>
       <Box position="absolute" top={2} right={2}>
-        <IconButton sx={{fontSize: "22px"}} onClick={onClose}>
+        <IconButton sx={{ fontSize: "22px" }} onClick={onClose}>
           <CloseOutlined />
         </IconButton>
       </Box>

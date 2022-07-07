@@ -1,4 +1,10 @@
-import { Box, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  CardActionArea,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import MainCard from "../../components/MainCard";
 
@@ -17,7 +23,9 @@ function CourseCard({ course }) {
           <Stack direction="column">
             <Typography variant="h5">{course.title}</Typography>
             <Typography variant="h6">{course.courseNumber}</Typography>
-            <Typography variant="h6">{course.semester} {course.calendarYear}</Typography>
+            <Typography variant="h6">
+              {course.semester} {course.calendarYear}
+            </Typography>
           </Stack>
         </Box>
       </CardActionArea>

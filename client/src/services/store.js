@@ -23,14 +23,13 @@ const useStore = create(
       courseType: "student",
       toggleCourseType: (value) =>
         set((state) => ({
-          courseType: 
-             value || (state.courseType === "staff" ? "student" : "staff"),
+          courseType:
+            value || (state.courseType === "staff" ? "student" : "staff"),
         })),
       createCoursePopup: false,
       toggleCreateCoursePopup: (value) =>
         set((state) => ({
-          createCoursePopup: 
-             value || !state.createCoursePopup,
+          createCoursePopup: value || !state.createCoursePopup,
         })),
     }),
     {

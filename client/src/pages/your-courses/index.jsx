@@ -1,9 +1,4 @@
-import {
-  Grid,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Grid, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
