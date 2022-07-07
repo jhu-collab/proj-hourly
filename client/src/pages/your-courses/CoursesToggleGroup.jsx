@@ -11,7 +11,9 @@ function CoursesToggleGroup() {
   const { courseType, toggleCourseType } = useStore();
 
   const handleChange = (event, newValue) => {
-    toggleCourseType(newValue);
+    if (newValue != null) {
+      toggleCourseType(newValue);
+    }
   };
 
   return (
