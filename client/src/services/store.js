@@ -31,6 +31,11 @@ const useStore = create(
         set((state) => ({
           createCoursePopup: value || !state.createCoursePopup,
         })),
+      joinCoursePopup: false,
+      toggleJoinCoursePopup: (value) =>
+        set((state) => ({
+          joinCoursePopup: value || !state.joinCoursePopup,
+        })),
     }),
     {
       name: "theme",
