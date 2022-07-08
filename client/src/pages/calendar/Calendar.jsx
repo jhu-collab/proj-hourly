@@ -90,7 +90,7 @@ function Calendar() {
           events={events}
         />
       </Box>
-      <CalendarSpeedDial />
+      {isStaff && (<CalendarSpeedDial />)}
     </>
   );
 }
