@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
 import { menuItems } from "../../menu-items";
 import useStore from "../../services/store";
 import NavGroup from "./NavGroup";
@@ -7,7 +8,13 @@ import NavGroup from "./NavGroup";
 
 function Navigation() {
   const { currentCourse } = useStore();
-  const navGroups = menuItems(currentCourse).items.map((item) => {
+  const [ menu, setMenu] = useState({items: []});
+
+  useEffect(() => {
+    setMenu(menuItems(currentCourse));
+  }, [currentCourse])
+  
+  const navGroups = menu.items.map((item) => {
     switch (item.type) {
       case "group":
         return <NavGroup key={item.id} item={item} />;

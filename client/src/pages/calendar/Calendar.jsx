@@ -3,7 +3,9 @@ import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
+import useStore from "../../services/store";
+import { useCallback, useEffect, useState } from "react";
 
 const events = [
   {
@@ -54,21 +56,33 @@ const events = [
 function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const { courseType } = useStore();
+  const [isStaff, setIsStaff] = useState(false);
+
+  useEffect(() => {
+    setIsStaff(courseType === "staff");
+  }, [courseType])
 
   return (
-    <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-      headerToolbar={
-        matchUpSm
-          ? {
-              start: 'dayGridMonth,timeGridWeek,timeGridDay',
-              center: 'title',
-            }
-          : { start: 'title', end: 'prev,next' }
-      }
-      initialView="timeGridWeek"
-      events={events}
-    />
+    <Box height="86vh">
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        headerToolbar={
+          matchUpSm
+            ? {
+                start: "dayGridMonth,timeGridWeek,timeGridDay",
+                center: "title",
+              }
+            : { start: "title", end: "prev,next" }
+        }
+        initialView="timeGridWeek"
+        height="100%"
+        editable={isStaff ? true : false}
+        selectable={isStaff ? true : false}
+        selectMirror={isStaff ? true : false}
+        events={events}
+      />
+    </Box>
   );
 }
 
