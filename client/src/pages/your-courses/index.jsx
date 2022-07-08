@@ -1,8 +1,9 @@
 import { Grid, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 import CoursesSpeedDial from "./CoursesSpeedDial";
+import useStore from "../../services/store";
 
 /**
  * Component that represents the "Your Courses" page.
@@ -10,6 +11,12 @@ import CoursesSpeedDial from "./CoursesSpeedDial";
  */
 function YourCourses() {
   const theme = useTheme();
+  const {currentCourse, updateCurrentCourse} = useStore();
+
+  useEffect(() => {
+   currentCourse && updateCurrentCourse(); 
+  }, [currentCourse])
+  
 
   return (
     <>

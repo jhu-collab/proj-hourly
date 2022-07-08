@@ -31,6 +31,10 @@ const useStore = create(
         set((state) => ({
           createCoursePopup: value || !state.createCoursePopup,
         })),
+      currentCourse: null,
+      updateCurrentCourse: (newCourse) => set((state) => ({
+        currentCourse: newCourse || null,
+      })),
     }),
     {
       name: "theme",
