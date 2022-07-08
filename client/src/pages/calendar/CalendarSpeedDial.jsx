@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import useStore from "../../services/store";
+import CreateEvent from "./create-event/CreateEvent";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -66,7 +67,7 @@ function CalendarSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      {/* <CreateCourse open={openPopup} handlePopupToggle={handlePopupToggle} /> */}
+      <CreateEvent open={openPopup} handlePopupToggle={handlePopupToggle}/>
     </>
   );
 }
