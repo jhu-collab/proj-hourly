@@ -15,7 +15,6 @@ export const createCourseSchema = yup.object().shape({
     )
     .required("Semester is required"),
   calendarYear: yup
-    .string()
-    .matches(/^[0-9]{4}$/, "Please enter a valid year")
+    .string().length(4, "Please enter a valid year")
     .required("Year is required"),
 });
