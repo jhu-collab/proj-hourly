@@ -88,6 +88,8 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           events={events}
+          slotMinTime={"08:00:00"}
+          slotMaxTime={"32:00:00"}
         />
       </Box>
       {isStaff && (<CalendarSpeedDial />)}
