@@ -5,7 +5,8 @@ import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClic
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import useStore from "../../services/store";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import CalendarSpeedDial from "./CalendarSpeedDial";
 
 const events = [
   {
@@ -61,28 +62,36 @@ function Calendar() {
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
-  }, [courseType])
+  }, [courseType]);
+
+  const handleEventClick = (info) => {
+    alert("Event: " + info.event.title);
+  };
 
   return (
-    <Box height="86vh">
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        headerToolbar={
-          matchUpSm
-            ? {
-                start: "dayGridMonth,timeGridWeek,timeGridDay",
-                center: "title",
-              }
-            : { start: "title", end: "prev,next" }
-        }
-        initialView="timeGridWeek"
-        height="100%"
-        editable={isStaff ? true : false}
-        selectable={isStaff ? true : false}
-        selectMirror={isStaff ? true : false}
-        events={events}
-      />
-    </Box>
+    <>
+      <Box height="76vh">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          headerToolbar={
+            matchUpSm
+              ? {
+                  start: "dayGridMonth,timeGridWeek,timeGridDay",
+                  center: "title",
+                }
+              : { start: "title", end: "prev,next" }
+          }
+          initialView="timeGridWeek"
+          height="100%"
+          eventClick={handleEventClick}
+          editable={isStaff ? true : false}
+          selectable={isStaff ? true : false}
+          selectMirror={isStaff ? true : false}
+          events={events}
+        />
+      </Box>
+      <CalendarSpeedDial />
+    </>
   );
 }
 

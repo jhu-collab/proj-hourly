@@ -35,6 +35,11 @@ const useStore = create(
       updateCurrentCourse: (newCourse) => set((state) => ({
         currentCourse: newCourse || null,
       })),
+      createEventPopup: false,
+      toggleCreateEventPopup: (value) =>
+        set((state) => ({
+          createEventPopup: value || !state.createEventPopup,
+        })),
     }),
     {
       name: "theme",
