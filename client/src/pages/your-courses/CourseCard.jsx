@@ -19,12 +19,12 @@ function CourseCard({ course }) {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const {updateCurrentCourse} = useStore();
+  const { updateCurrentCourse } = useStore();
 
   const onClick = () => {
     updateCurrentCourse(course);
     navigate("/calendar");
-  }
+  };
 
   return (
     <MainCard sx={{ mt: theme.spacing(2) }} content={false}>

@@ -11,12 +11,11 @@ import useStore from "../../services/store";
  */
 function YourCourses() {
   const theme = useTheme();
-  const {currentCourse, updateCurrentCourse} = useStore();
+  const { currentCourse, updateCurrentCourse } = useStore();
 
   useEffect(() => {
-   currentCourse && updateCurrentCourse(); 
-  }, [currentCourse])
-  
+    currentCourse && updateCurrentCourse();
+  }, [currentCourse]);
 
   return (
     <>
