@@ -2,7 +2,7 @@ import { Button, Stack, useTheme } from "@mui/material";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createCourseSchema } from "./validation";
+import { createCourseSchema } from "../../../utils/validators";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
