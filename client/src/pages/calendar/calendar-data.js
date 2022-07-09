@@ -1,6 +1,6 @@
 import ical from "ical-generator";
 
-export const ics1 = () => {
+export const ics = () => {
   const calendar = ical({ name: "Gateway Computing: Java" });
 
   calendar.createEvent({
