@@ -8,6 +8,7 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { staffCourses } from "../courses-data";
 import { toast } from "react-toastify";
+import ical from "ical-generator";
 
 const options = [
   {
@@ -52,6 +53,9 @@ function CreateCourseForm({ handlePopupToggle }) {
 
   const onSubmit = (data) => {
     console.log(data);
+
+    const calendar = ical({name: data.title});
+
     staffCourses.push({
       id: 10,
       title: data.title,
@@ -59,6 +63,7 @@ function CreateCourseForm({ handlePopupToggle }) {
       semester: data.semester,
       calendarYear: data.calendarYear,
       code: "ABCABC",
+      calendar: JSON.stringify(calendar)
     });
     handlePopupToggle();
     toast.success(
