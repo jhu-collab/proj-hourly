@@ -67,7 +67,7 @@ function CalendarSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateEvent open={openPopup} handlePopupToggle={handlePopupToggle}/>
+      <CreateEvent open={openPopup} handlePopupToggle={handlePopupToggle} />
     </>
   );
 }

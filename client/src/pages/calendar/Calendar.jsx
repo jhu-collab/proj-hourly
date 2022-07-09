@@ -92,7 +92,7 @@ function Calendar() {
           slotMaxTime={"32:00:00"}
         />
       </Box>
-      {isStaff && (<CalendarSpeedDial />)}
+      {isStaff && <CalendarSpeedDial />}
     </>
   );
 }
