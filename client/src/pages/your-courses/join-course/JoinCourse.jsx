@@ -5,7 +5,7 @@ import JoinCourseForm from "./JoinCourseForm";
 function JoinCourse({ open, handlePopupToggle }) {
   return (
     <Popup open={open} onClose={handlePopupToggle} title="Join Course">
-      <JoinCourseForm />
+      <JoinCourseForm onClose={handlePopupToggle} />
     </Popup>
   );
 }
