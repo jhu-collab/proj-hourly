@@ -12,8 +12,8 @@ import CreateEvent from "./create-event/CreateEvent";
 
 /**
  * Component that represents the MUI SpeedDial component for the
- * "Your Courses" page.
- * @returns A component representing the "Your Courses" expandable FAB.
+ * "Calendar" page.
+ * @returns A component representing the "Calendar" expandable FAB.
  */
 function CalendarSpeedDial() {
   const theme = useTheme();
