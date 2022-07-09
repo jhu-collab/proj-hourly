@@ -36,14 +36,15 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp ./_redirects ./dist/_redirects",
+    "build": "vite build && ncp ./_redirects ./dist/_redirects",
     "preview": "vite preview",
-    "prettier": "prettier --write 'src/**/*.jsx' --config '.prettierrc.json'"
+    "prettier": "prettier --write \"src/**/*.{jsx,js}\" --config \".prettierrc\""
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
+    "ncp": "^2.0.0",
     "prettier": "2.7.1",
     "vite": "^2.9.9"
   }

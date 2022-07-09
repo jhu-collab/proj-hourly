@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import CardContent from "@mui/material/CardContent";
