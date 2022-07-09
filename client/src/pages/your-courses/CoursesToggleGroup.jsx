@@ -1,4 +1,5 @@
-import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
 import React from "react";
 import useStore from "../../services/store";
 

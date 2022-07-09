@@ -1,4 +1,7 @@
-import { Alert, AlertTitle, Grid, useTheme } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Grid from "@mui/material/Grid";
+import { useTheme } from "@mui/material/styles";
 import React from "react";
 import useStore from "../../services/store";
 import CourseCard from "./CourseCard";

@@ -1,11 +1,8 @@
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import {
-  Box,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
-  useTheme,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialAction from "@mui/material/SpeedDialIcon";
+import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
 import useStore from "../../services/store";
 import CreateCourse from "./create-course/CreateCourse";

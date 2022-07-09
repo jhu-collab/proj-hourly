@@ -1,10 +1,8 @@
-import {
-  Typography,
-  Chip,
-  Grid,
-  BottomNavigation,
-  useTheme,
-} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import BottomNavigation from "@mui/material/BottomNavigation";
+import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
 
 function DrawerFooter() {
