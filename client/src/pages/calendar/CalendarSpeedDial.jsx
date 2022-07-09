@@ -18,9 +18,13 @@ import CreateEvent from "./create-event/CreateEvent";
 function CalendarSpeedDial() {
   const theme = useTheme();
 
-  const { createEventPopup, toggleCreateEventPopup, setCreateEventDate,
+  const {
+    createEventPopup,
+    toggleCreateEventPopup,
+    setCreateEventDate,
     setCreateEventStartTime,
-    setCreateEventEndTime } = useStore();
+    setCreateEventEndTime,
+  } = useStore();
 
   // speed dial toggler
   const [open, setOpen] = useState(false);

@@ -8,12 +8,18 @@ import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
 import { getLocaleTime } from "../../../utils/helpers";
 import useStore from "../../../services/store";
+import ical from "ical-generator";
 
 function CreateEventForm({ handlePopupToggle }) {
   const theme = useTheme();
 
-  const { createEventDate, createEventStartTime, createEventEndTime,
-    setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime } = useStore();
+  const {
+    currentCourse,
+    updateCurrentCourse,
+    createEventDate,
+    createEventStartTime,
+    createEventEndTime,
+  } = useStore();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -26,8 +32,31 @@ function CreateEventForm({ handlePopupToggle }) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-    handlePopupToggle();
+    const calendar = ical(JSON.parse(currentCourse.calendar));
+    const start = new Date(data.date.getTime());
+    const end = new Date(data.date.getTime());
+
+    const [startHours, startMin] = data.startTime.split(":");
+    const [endHours, endMin] = data.endTime.split(":");
+
+    start.setHours(startHours);
+    start.setMinutes(startMin);
+    end.setHours(endHours);
+    end.setMinutes(endMin);
+
+    calendar.createEvent({
+      summary: "Bob's Office Hours",
+      start: start,
+      end: end,
+      location: data.location,
+    });
+
+    const updatedCourse = currentCourse;
+    updatedCourse.calendar = JSON.stringify(calendar);
+    // Update course with new ics URL (TODO: This will be altered once backend is connected)
+    updateCurrentCourse(updatedCourse);
+
+    handlePopupToggle(); // Close popup
     toast.success(
       `Successfully created an event on ${data.date.toLocaleDateString()} from ${getLocaleTime(
         data.startTime
