@@ -1,3 +1,5 @@
+import { ics1 } from "../calendar/calendar-data";
+
 export const studentCourses = [
   {
     id: 1,
@@ -6,6 +8,7 @@ export const studentCourses = [
     semester: "Fall",
     calendarYear: 2022,
     code: "111111",
+    calendar: ics1(),
   },
   {
     id: 2,
@@ -14,6 +17,7 @@ export const studentCourses = [
     semester: "Spring",
     calendarYear: 2023,
     code: "222222",
+    calendar: ics1(),
   },
 ];
 
@@ -25,6 +29,7 @@ export const staffCourses = [
     semester: "Fall",
     calendarYear: "2022",
     code: "333333",
+    calendar: ics1(),
   },
   {
     id: 4,
@@ -33,5 +38,6 @@ export const staffCourses = [
     semester: "Spring",
     calendarYear: "2023",
     code: "444444",
+    calendar: ics1(),
   },
 ];

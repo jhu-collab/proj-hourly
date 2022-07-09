@@ -3,10 +3,13 @@ import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
+import iCalendarPlugin from '@fullcalendar/icalendar';
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import useStore from "../../services/store";
 import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
+import ical from "ical-generator";
+
 
 const events = [
   {
@@ -57,8 +60,12 @@ const events = [
 function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-  const { courseType, toggleCreateEventPopup, setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime } = useStore();
+  const { currentCourse, courseType, toggleCreateEventPopup, setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime } = useStore();
   const [isStaff, setIsStaff] = useState(false);
+
+  const calendar = ical(JSON.parse(currentCourse.calendar));
+    console.log(currentCourse.calendar);
+    console.log(calendar.toJSON());
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
@@ -81,7 +88,7 @@ function Calendar() {
     <>
       <Box height="76vh">
         <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, iCalendarPlugin]}
           headerToolbar={
             matchUpSm
               ? {
@@ -96,7 +103,10 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
-          events={events}
+          events={{
+            url: calendar.toURL(),
+            format: 'ics'
+          }}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}

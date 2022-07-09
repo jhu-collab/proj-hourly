@@ -402,6 +402,15 @@
     "@fullcalendar/common" "~5.11.0"
     tslib "^2.1.0"
 
+"@fullcalendar/icalendar@^5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/icalendar/-/icalendar-5.11.0.tgz#f0cf0584b265078c72471cf851c460c75b36cac6"
+  integrity sha512-5GwitBIgMNPMAmQ9B9WETMCbEYy+gDVNWdWt2nzthY37pCmP4VCVcgRG8JOp0j2ntlMNuy6EqgG0BG6rusqOFw==
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    ical.js "^1.4.0"
+    tslib "^2.1.0"
+
 "@fullcalendar/interaction@^5.11.0":
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-5.11.0.tgz#9cfb46cc5f75690394ef553d2c5cf4955782ff05"
@@ -1123,6 +1132,11 @@ ical-generator@^3.4.3:
   integrity sha512-9NkhRZ1cnfgIeXfv9iPPXIqBLYlKBUq8iteSDQxf1qEzhrmWgwb4jitTDGKOLvCoHB/pPmmtBTVHQw1WgCK3dg==
   dependencies:
     uuid-random "^1.3.2"
+
+ical.js@^1.4.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/ical.js/-/ical.js-1.5.0.tgz#23213accd1d8f7248d01705acb06270a70d20662"
+  integrity sha512-7ZxMkogUkkaCx810yp0ZGKvq1ZpRgJeornPttpoxe6nYZ3NLesZe1wWMXDdwTkj/b5NtXT+Y16Aakph/ao98ZQ==
 
 import-fresh@^3.1.0:
   version "3.3.0"
