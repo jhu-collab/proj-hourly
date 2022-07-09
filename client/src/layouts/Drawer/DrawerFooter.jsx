@@ -1,10 +1,9 @@
-import {
-  Typography,
-  Chip,
-  Grid,
-  BottomNavigation,
-  useTheme,
-} from "@mui/material";
+import useTheme from "@mui/material/styles/useTheme";
+import BottomNavigation from "@mui/material/BottomNavigation";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Chip from "@mui/material/Chip";
+
 import { useState } from "react";
 
 function DrawerFooter() {
@@ -13,44 +12,23 @@ function DrawerFooter() {
 
   return (
     <BottomNavigation sx={{ padding: theme.spacing(1) }}>
-      <Grid container justifyContent="space-between" alignItems="center">
-        <Grid item>
-          <Typography>Application footer</Typography>
-        </Grid>
+      <List>
         {value === "local" && (
-          <Grid item>
-            <Chip
-              label="Dev (Local)"
-              sx={{
-                color: "white",
-                background: "linear-gradient(to right bottom, indigo, cyan)",
-              }}
-            />
-          </Grid>
+          <ListItem>
+            <Chip label="Dev (Local)" size="small" color="secondary" />
+          </ListItem>
         )}
         {value === "dev" && (
-          <Grid item>
-            <Chip
-              label="Dev (Staging)"
-              sx={{
-                color: "white",
-                background: "linear-gradient(to right bottom, teal, lime)",
-              }}
-            />
-          </Grid>
+          <ListItem>
+            <Chip label="Dev (Staging)" size="small" />
+          </ListItem>
         )}
         {value === "prod" && (
-          <Grid item>
-            <Chip
-              label="PRODUCTION"
-              sx={{
-                color: "white",
-                background: "linear-gradient(to right bottom, orange, red)",
-              }}
-            />
-          </Grid>
+          <ListItem>
+            <Chip label="PRODUCTION" size="small" variant="outlined" />
+          </ListItem>
         )}
-      </Grid>
+      </List>
     </BottomNavigation>
   );
 }

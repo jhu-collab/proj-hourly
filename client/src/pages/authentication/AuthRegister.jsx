@@ -162,7 +162,7 @@ function AuthRegister() {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="demo@company.com"
-                    inputProps={{autoComplete: "username"}}
+                    inputProps={{ autoComplete: "username" }}
                   />
                   {touched.email && errors.email && (
                     <FormHelperText error id="helper-text-email-signup">
@@ -204,7 +204,7 @@ function AuthRegister() {
                       </InputAdornment>
                     }
                     placeholder="******"
-                    inputProps={{autoComplete: "username"}}
+                    inputProps={{ autoComplete: "username" }}
                   />
                   {touched.password && errors.password && (
                     <FormHelperText error id="helper-text-password-signup">
