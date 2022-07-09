@@ -1,0 +1,3 @@
+web: yarn run start
+
+release: if [[ $NODE_ENV == "staging" ]]; then yarn prisma db seed; fi && yarn prisma migrate deploy
