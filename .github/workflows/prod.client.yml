@@ -10,6 +10,8 @@ on:
 
 env:
   VITE_RUN_MODE: prod
+  VITE_DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
+  VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
 
 defaults:
   run:
