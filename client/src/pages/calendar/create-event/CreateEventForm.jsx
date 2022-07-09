@@ -10,7 +10,6 @@ import { getLocaleTime } from "../../../utils/helpers";
 import useStore from "../../../services/store";
 import ical from "ical-generator";
 
-
 /**
  * Component that represents the form that is used to create an event.
  * @param {*} handlePopupToggle: function that toggles whether the popup is open

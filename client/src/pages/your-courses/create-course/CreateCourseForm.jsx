@@ -54,7 +54,7 @@ function CreateCourseForm({ handlePopupToggle }) {
   const onSubmit = (data) => {
     console.log(data);
 
-    const calendar = ical({name: data.title});
+    const calendar = ical({ name: data.title });
 
     staffCourses.push({
       id: 10,
@@ -63,7 +63,7 @@ function CreateCourseForm({ handlePopupToggle }) {
       semester: data.semester,
       calendarYear: data.calendarYear,
       code: "ABCABC",
-      calendar: JSON.stringify(calendar)
+      calendar: JSON.stringify(calendar),
     });
     handlePopupToggle();
     toast.success(
