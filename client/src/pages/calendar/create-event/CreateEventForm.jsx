@@ -7,15 +7,19 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
 import { getLocaleTime } from "../../../utils/helpers";
+import useStore from "../../../services/store";
 
 function CreateEventForm({ handlePopupToggle }) {
   const theme = useTheme();
 
+  const { createEventDate, createEventStartTime, createEventEndTime,
+    setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime } = useStore();
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      date: "",
-      startTime: "",
-      endTime: "",
+      date: createEventDate,
+      startTime: createEventStartTime,
+      endTime: createEventEndTime,
       location: "",
     },
     resolver: yupResolver(createEventSchema),

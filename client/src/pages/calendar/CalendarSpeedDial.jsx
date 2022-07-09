@@ -18,7 +18,9 @@ import CreateEvent from "./create-event/CreateEvent";
 function CalendarSpeedDial() {
   const theme = useTheme();
 
-  const { createEventPopup, toggleCreateEventPopup } = useStore();
+  const { createEventPopup, toggleCreateEventPopup, setCreateEventDate,
+    setCreateEventStartTime,
+    setCreateEventEndTime } = useStore();
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
@@ -28,10 +30,11 @@ function CalendarSpeedDial() {
   };
 
   // popup toggler
-  const [openPopup, setOpenPopup] = useState(createEventPopup);
   const handlePopupToggle = () => {
-    setOpenPopup(!openPopup);
-    toggleCreateEventPopup(!openPopup);
+    toggleCreateEventPopup(!createEventPopup);
+    !createEventPopup && setCreateEventDate();
+    !createEventPopup && setCreateEventStartTime();
+    !createEventPopup && setCreateEventEndTime();
   };
 
   const actions = [
@@ -67,7 +70,10 @@ function CalendarSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateEvent open={openPopup} handlePopupToggle={handlePopupToggle} />
+      <CreateEvent
+        open={createEventPopup}
+        handlePopupToggle={handlePopupToggle}
+      />
     </>
   );
 }

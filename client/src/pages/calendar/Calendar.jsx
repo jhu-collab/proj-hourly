@@ -57,7 +57,7 @@ const events = [
 function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-  const { courseType } = useStore();
+  const { courseType, toggleCreateEventPopup, setCreateEventDate, setCreateEventStartTime, setCreateEventEndTime } = useStore();
   const [isStaff, setIsStaff] = useState(false);
 
   useEffect(() => {
@@ -66,6 +66,15 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     alert("Event: " + info.event.title);
+  };
+
+  const handleSelect = (info) => {
+    const start = new Date(info.start);
+    const end = new Date(info.end);
+    setCreateEventDate(start.toISOString().split('T')[0]);
+    setCreateEventStartTime(start.toLocaleTimeString('it-IT').substring(0, 5));
+    setCreateEventEndTime(end.toLocaleTimeString('it-IT').substring(0, 5));
+    toggleCreateEventPopup(true);
   };
 
   return (
@@ -88,6 +97,7 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           events={events}
+          select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
         />
