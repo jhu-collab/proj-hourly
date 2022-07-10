@@ -7,6 +7,11 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { joinCourseSchema } from "../../../utils/validators";
 
+/**
+ * Component that represents the form that is used to join a course.
+ * @param {*} handlePopupToggle: function that toggles whether the popup is open
+ * @returns A component representing the Join Course form.
+ */
 function JoinCourseForm({ onClose }) {
   const { control, handleSubmit } = useForm({
     defaultValues: {
