@@ -20,9 +20,14 @@ function CourseList() {
 
   const { isLoading, error, data } = useQuery(["courses"], getCourses);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+if (isLoading) {
+    return (
+      <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
+        <AlertTitle>Loading courses ...</AlertTitle>
+      </Alert>
+    );
+}
+
 
   if (error) {
     return (
