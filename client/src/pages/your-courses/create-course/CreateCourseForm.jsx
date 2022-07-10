@@ -10,9 +10,8 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { BASE_URL } from "../../../services/common";
 import Loader from "../../../components/Loader";
+import { createCourse } from "../../../utils/requests";
 
 const options = [
   {
@@ -56,27 +55,20 @@ function CreateCourseForm({ handlePopupToggle }) {
     resolver: yupResolver(createCourseSchema),
   });
 
-  const { mutate, isLoading } = useMutation(
-    (course) => {
-      return axios.post(`${BASE_URL}/api/course/`, course, {
-        headers: { id: 1 },
-      });
-    },
-    {
-      onSuccess: (data) => {
-        const course = data.data.course;
-        toast.success(
-          `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
-        );
+  const { mutate, isLoading } = useMutation(createCourse, {
+    onSuccess: (data) => {
+      const course = data.course;
 
-        queryClient.invalidateQueries(["courses"]);
-        handlePopupToggle();
-      },
-      onError: (error) => {
-        toast.error("An error has occurred: " + error.message);
-      },
-    }
-  );
+      queryClient.invalidateQueries(["courses"]);
+      handlePopupToggle();
+      toast.success(
+        `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
+      );
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
 
   const onSubmit = (data) => {
     mutate({ ...data, id: 1 });

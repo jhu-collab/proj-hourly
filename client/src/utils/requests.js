@@ -10,3 +10,12 @@ export const getCourses = async () => {
   });
   return res.data;
 };
+
+// POST REQUESTS
+
+export const createCourse = async (course) => {
+  const res = await axios.post(`${BASE_URL}/api/course/`, course, {
+    headers: { id: 1 },
+  });
+  return res.data;
+};

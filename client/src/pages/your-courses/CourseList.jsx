@@ -18,7 +18,7 @@ function CourseList() {
 
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQuery(["courses"], () => getCourses());
+  const { isLoading, error, data } = useQuery(["courses"], getCourses);
 
   if (isLoading) {
     return <Loader />;
