@@ -9,7 +9,7 @@ const useStore = create(
         set((state) => ({
           openSidebar: value || !state.openSidebar,
         })),
-      selectedSidebarItem: "dashboard",
+      selectedSidebarItem: "your-courses",
       selectSidebarItem: (value) =>
         set((state) => ({
           selectedSidebarItem: value,
@@ -19,6 +19,17 @@ const useStore = create(
         set((state) => ({
           colorScheme:
             value || (state.colorScheme === "dark" ? "light" : "dark"),
+        })),
+      courseType: "student",
+      toggleCourseType: (value) =>
+        set((state) => ({
+          courseType:
+            value || (state.courseType === "staff" ? "student" : "staff"),
+        })),
+      createCoursePopup: false,
+      toggleCreateCoursePopup: (value) =>
+        set((state) => ({
+          createCoursePopup: value || !state.createCoursePopup,
         })),
     }),
     {

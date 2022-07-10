@@ -4,8 +4,8 @@ import cors from "cors";
 import helmet from "helmet";
 import users from "./routes/users.js";
 import courses from "./routes/courses.js";
-import officeHours from "./routes/officeHours.js"
-import account from "./routes/accounts.js"
+import officeHours from "./routes/officeHours.js";
+import account from "./routes/accounts.js";
 import { globalErrorHandler } from "./util/middleware.js";
 
 const app = express();
