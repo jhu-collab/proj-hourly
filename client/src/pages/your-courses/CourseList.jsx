@@ -19,10 +19,10 @@ function CourseList() {
 
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQuery("myCourses", () =>
+  const { isLoading, error, data } = useQuery(["courses"], () =>
     axios
       .get(`${BASE_URL}/api/account/me/courses`, {
-        // TODO: Need to remove once backend implements user tokens
+        // TODO: Need to remove id key once backend implements user tokens
         headers: { id: 1 },
       })
       .then((res) => res.data)
