@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
@@ -14,7 +14,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
-import { useMediaQuery } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import { BellOutlined, CloseOutlined, GiftOutlined } from "@ant-design/icons";

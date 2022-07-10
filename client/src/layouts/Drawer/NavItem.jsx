@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { forwardRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Avatar from "@mui/material/Avatar";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";

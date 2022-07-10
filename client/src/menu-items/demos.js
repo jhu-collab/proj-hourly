@@ -38,5 +38,12 @@ export const demos = {
       url: "/toastify",
       icon: icons.ChromeOutlined,
     },
+    {
+      id: "backend",
+      title: "Check the Backend",
+      type: "item",
+      url: "/backend",
+      icon: icons.ChromeOutlined,
+    },
   ],
 };

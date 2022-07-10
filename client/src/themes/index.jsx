@@ -1,7 +1,9 @@
 import PropTypes from "prop-types";
 import { useMemo } from "react";
-import { CssBaseline, StyledEngineProvider } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import StyledEngineProvider from "@mui/material/StyledEngineProvider";
+import createTheme from "@mui/material/styles/createTheme";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { Palette } from "./palette";
 import { Typography } from "./typography";
 import { CustomShadows } from "./shadows";
