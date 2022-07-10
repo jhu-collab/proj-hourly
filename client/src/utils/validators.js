@@ -15,6 +15,8 @@ export const createCourseSchema = yup.object().shape({
     )
     .required("Semester is required"),
   year: yup
-    .number().typeError("Please enter valid year").min(new Date().getFullYear(), "Please enter current or future year")
+    .number()
+    .typeError("Please enter valid year")
+    .min(new Date().getFullYear(), "Please enter current or future year")
     .required("Year is required"),
 });

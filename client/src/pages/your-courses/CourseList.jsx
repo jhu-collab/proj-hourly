@@ -7,8 +7,7 @@ import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
 import { useQuery } from "react-query";
 import Loader from "../../components/Loader";
-import axios from "axios";
-import { BASE_URL } from "../../services/common";
+import { getCourses } from "../../utils/requests";
 
 /**
  * Represents a list of courses that a user is associated with.
@@ -19,14 +18,7 @@ function CourseList() {
 
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQuery(["courses"], () =>
-    axios
-      .get(`${BASE_URL}/api/account/me/courses`, {
-        // TODO: Need to remove id key once backend implements user tokens
-        headers: { id: 1 },
-      })
-      .then((res) => res.data)
-  );
+  const { isLoading, error, data } = useQuery(["courses"], () => getCourses());
 
   if (isLoading) {
     return <Loader />;
