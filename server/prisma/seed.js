@@ -1,0 +1,32 @@
+import { faker } from "@faker-js/faker";
+import prisma from "./client.js";
+
+const generateFakeUsers = async (numFakeUsers) => {
+  for (let index = 0; index < numFakeUsers; index++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    const email = faker.internet.email(firstName, lastName, "fakerjs.dev");
+    const phoneNumber = faker.phone.number();
+    await prisma.account.create({
+      data: {
+        email: email.toLowerCase(),
+        userName: `${firstName} ${lastName}`,
+        phoneNumber,
+      },
+    });
+  }
+};
+
+const generateFakeData = async () => {
+  await prisma.account.deleteMany();
+  await generateFakeUsers(3);
+};
+
+try {
+  generateFakeData();
+} catch (err) {
+  console.log(err);
+  process.exit(1);
+} finally {
+  prisma.$disconnect();
+}
