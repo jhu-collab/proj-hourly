@@ -5,7 +5,6 @@ import useTheme from "@mui/material/styles/useTheme";
 import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
 import { useQuery } from "react-query";
-import Loader from "../../components/Loader";
 import { getCourses } from "../../utils/requests";
 
 /**

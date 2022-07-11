@@ -9,7 +9,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import reactElementToJSXString from "react-element-to-jsx-string";
-import { CodeOutlined, CopyOutlined } from "@ant-design/icons";
+import CodeOutlined from "@ant-design/icons/CodeOutlined";
+import CopyOutlined from "@ant-design/icons/CopyOutlined";
 
 function MainCardFooter({ children }) {
   const [showFooter, setShowFooter] = useState(false);

@@ -17,7 +17,9 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
-import { BellOutlined, CloseOutlined, GiftOutlined } from "@ant-design/icons";
+import BellOutlined from "@ant-design/icons/BellOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import GiftOutlined from "@ant-design/icons/GiftOutlined";
 
 const avatarSX = {
   width: 36,

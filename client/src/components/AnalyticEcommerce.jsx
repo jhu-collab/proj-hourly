@@ -5,7 +5,8 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import MainCard from "./MainCard";
-import { RiseOutlined, FallOutlined } from "@ant-design/icons";
+import RiseOutlined from "@ant-design/icons/RiseOutlined";
+import FallOutlined from "@ant-design/icons/FallOutlined";
 
 function AnalyticEcommerce({ color, title, count, percentage, isLoss, extra }) {
   return (

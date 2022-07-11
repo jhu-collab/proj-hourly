@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import ProfileMenu from "./ProfileMenu";
-import { LogoutOutlined } from "@ant-design/icons";
+import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
 
 function Profile() {
   const theme = useTheme();
