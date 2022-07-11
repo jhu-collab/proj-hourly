@@ -45,7 +45,7 @@ function MainLayout() {
       >
         <Toolbar />
         <Breadcrumbs
-          navigation={menuItems}
+          navigation={menuItems()}
           title
           // titleBottom
           // card={false}
