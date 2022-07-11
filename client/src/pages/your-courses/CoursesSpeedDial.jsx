@@ -20,7 +20,7 @@ function CoursesSpeedDial() {
   const { createCoursePopup, toggleCreateCoursePopup } = useStore();
 
   // speed dial toggler
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleOpen = (event) => {
     setOpen(!open);
