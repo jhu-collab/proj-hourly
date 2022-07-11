@@ -1,10 +1,8 @@
-import {
-  Box,
-  CardActionArea,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import CardActionArea from "@mui/material/CardActionArea";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";

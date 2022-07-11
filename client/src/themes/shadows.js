@@ -1,4 +1,4 @@
-import { alpha } from "@mui/material/styles";
+import { alpha } from "@mui/system/colorManipulator";
 
 export const CustomShadows = (theme) => ({
   button: `0 2px #0000000b`,

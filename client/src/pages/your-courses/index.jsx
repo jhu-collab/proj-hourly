@@ -1,4 +1,7 @@
-import { Grid, Stack, Typography, useTheme } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Grid";
+import useTheme  from "@mui/material/styles/useTheme";
 import React, { useEffect } from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";

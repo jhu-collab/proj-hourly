@@ -1,8 +1,13 @@
-import { Alert, AlertTitle, Grid, useTheme } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Grid from "@mui/material/Grid";
+import useTheme from "@mui/material/styles/useTheme";
 import React from "react";
 import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
-import { staffCourses, studentCourses } from "./courses-data";
+import { useQuery } from "react-query";
+import Loader from "../../components/Loader";
+import { getCourses } from "../../utils/requests";
 
 /**
  * Represents a list of courses that a user is associated with.
@@ -12,6 +17,25 @@ function CourseList() {
   const { courseType } = useStore();
 
   const theme = useTheme();
+
+  const { isLoading, error, data } = useQuery(["courses"], getCourses);
+
+  if (isLoading) {
+    return (
+      <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
+        <AlertTitle>Loading courses ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mt: theme.spacing(2) }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   const courseList = (courses, type) => {
     if (courses.length > 0) {
@@ -36,7 +60,9 @@ function CourseList() {
   };
 
   return courseList(
-    courseType === "student" ? studentCourses : staffCourses,
+    courseType === "student"
+      ? data.student
+      : [...data.instructor, ...data.staff],
     courseType === "student" ? "student" : "staff member"
   );
 }

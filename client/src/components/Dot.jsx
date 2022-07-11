@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 
 function Dot({ color, size }) {
