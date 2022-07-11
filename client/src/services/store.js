@@ -31,6 +31,32 @@ const useStore = create(
         set((state) => ({
           createCoursePopup: value || !state.createCoursePopup,
         })),
+      currentCourse: null,
+      updateCurrentCourse: (value) =>
+        set((state) => ({
+          currentCourse: value || null,
+        })),
+      createEventPopup: false,
+      toggleCreateEventPopup: (value) =>
+        set((state) => ({
+          createEventPopup: value || !state.createEventPopup,
+        })),
+
+      createEventDate: "",
+      setCreateEventDate: (value) =>
+        set((state) => ({
+          createEventDate: value || "",
+        })),
+      createEventStartTime: "",
+      setCreateEventStartTime: (value) =>
+        set((state) => ({
+          createEventStartTime: value || "",
+        })),
+      createEventEndTime: "",
+      setCreateEventEndTime: (value) =>
+        set((state) => ({
+          createEventEndTime: value || "",
+        })),
     }),
     {
       name: "theme",

@@ -17,7 +17,8 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import AnimateButton from "../../components/AnimateButton";
 import { strengthColor, strengthIndicator } from "../../utils/password.util";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import OtherLogin from "./OtherLogin";
 
 function AuthRegister() {

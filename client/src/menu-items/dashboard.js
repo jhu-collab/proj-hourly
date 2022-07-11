@@ -1,4 +1,5 @@
-import { DashboardOutlined, BookOutlined } from "@ant-design/icons";
+import DashboardOutlined from "@ant-design/icons/DashboardOutlined";
+import BookOutlined from "@ant-design/icons/BookOutlined";
 const icons = {
   DashboardOutlined,
   BookOutlined,

@@ -3,8 +3,10 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
+import useStore from "../../services/store";
+import { ics } from "../calendar/calendar-data";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -13,10 +15,18 @@ import MainCard from "../../components/MainCard";
  */
 function CourseCard({ course }) {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const { updateCurrentCourse } = useStore();
+
+  const onClick = () => {
+    updateCurrentCourse({ ...course, calendar: ics() });
+    navigate("/calendar");
+  };
 
   return (
     <MainCard sx={{ mt: theme.spacing(2) }} content={false}>
-      <CardActionArea component="a" to="/calendar">
+      <CardActionArea onClick={onClick}>
         <Box sx={{ p: theme.spacing(3) }}>
           <Stack direction="column">
             <Typography variant="h5">{course.title}</Typography>

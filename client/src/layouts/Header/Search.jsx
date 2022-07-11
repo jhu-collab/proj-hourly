@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import { SearchOutlined } from "@ant-design/icons";
+import SearchOutlined from "@ant-design/icons/SearchOutlined";
 
 function Search() {
   return (

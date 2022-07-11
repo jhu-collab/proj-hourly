@@ -1,23 +1,28 @@
-import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
 import useStore from "../../services/store";
-import CreateCourse from "./create-course/CreateCourse";
+import CreateEvent from "./create-event/CreateEvent";
 
 /**
  * Component that represents the MUI SpeedDial component for the
- * "Your Courses" page.
- * @returns A component representing the "Your Courses" expandable FAB.
+ * "Calendar" page.
+ * @returns A component representing the "Calendar" expandable FAB.
  */
-function CoursesSpeedDial() {
+function CalendarSpeedDial() {
   const theme = useTheme();
 
-  const { createCoursePopup, toggleCreateCoursePopup } = useStore();
+  const {
+    createEventPopup,
+    toggleCreateEventPopup,
+    setCreateEventDate,
+    setCreateEventStartTime,
+    setCreateEventEndTime,
+  } = useStore();
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
@@ -27,15 +32,15 @@ function CoursesSpeedDial() {
   };
 
   // popup toggler
-  const [openPopup, setOpenPopup] = useState(createCoursePopup);
   const handlePopupToggle = () => {
-    setOpenPopup(!openPopup);
-    toggleCreateCoursePopup(!openPopup);
+    toggleCreateEventPopup(!createEventPopup);
+    !createEventPopup && setCreateEventDate();
+    !createEventPopup && setCreateEventStartTime();
+    !createEventPopup && setCreateEventEndTime();
   };
 
   const actions = [
     { icon: <PlusOutlined />, name: "Create", onClick: handlePopupToggle },
-    { icon: <ArrowRightOutlined />, name: "Join" },
   ];
 
   return (
@@ -43,15 +48,15 @@ function CoursesSpeedDial() {
       <Box
         sx={{
           position: "fixed",
-          bottom: theme.spacing(2),
-          right: theme.spacing(2),
+          bottom: 1,
+          right: 2,
           transform: "translateZ(0px)",
           flexGrow: 1,
           zIndex: theme.zIndex.speedDial,
         }}
       >
         <SpeedDial
-          ariaLabel="Courses SpeedDial"
+          ariaLabel="Calendar SpeedDial"
           sx={{ position: "absolute", bottom: 16, right: 16 }}
           icon={<SpeedDialIcon />}
           onClick={handleOpen}
@@ -67,9 +72,12 @@ function CoursesSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateCourse open={openPopup} handlePopupToggle={handlePopupToggle} />
+      <CreateEvent
+        open={createEventPopup}
+        handlePopupToggle={handlePopupToggle}
+      />
     </>
   );
 }
 
-export default CoursesSpeedDial;
+export default CalendarSpeedDial;

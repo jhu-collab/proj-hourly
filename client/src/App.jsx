@@ -10,6 +10,7 @@ import MinimalLayout from "./layouts/MinimalLayout";
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const DashboardDefault = Loadable(lazy(() => import("./pages/dashboard")));
 const YourCourses = Loadable(lazy(() => import("./pages/your-courses")));
+const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
 const SamplePage = Loadable(lazy(() => import("./pages/demos/SamplePage")));
 const ReactToastifyDemo = Loadable(
   lazy(() => import("./pages/demos/ReactToastifyDemo"))
@@ -34,6 +35,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<MainLayout />}>
             <Route path="/" element={<YourCourses />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="/dashboard" element={<DashboardDefault />} />
             <Route path="sample-page" element={<SamplePage />} />
             <Route path="react-query" element={<ReactQueryDemo />} />

@@ -10,7 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Search from "./Search";
 import Profile from "./Profile";
 import Transitions from "../../components/Transitions";
-import { MoreOutlined } from "@ant-design/icons";
+import MoreOutlined from "@ant-design/icons/MoreOutlined";
 
 function MobileSection() {
   const theme = useTheme();

@@ -2,11 +2,9 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
-import React from "react";
 import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
 import { useQuery } from "react-query";
-import Loader from "../../components/Loader";
 import { getCourses } from "../../utils/requests";
 
 /**
