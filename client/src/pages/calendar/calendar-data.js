@@ -9,9 +9,9 @@ export const ics = () => {
     end: new Date("2022-06-26T11:30:00"),
     location: "Zoom",
     repeating: {
-        freq: 'WEEKLY',
-        byDay: ['mo', 'we', 'fr']
-    }
+      freq: "WEEKLY",
+      byDay: ["mo", "we", "fr"],
+    },
   });
 
   calendar.createEvent({
@@ -20,9 +20,9 @@ export const ics = () => {
     end: new Date("2022-06-27T15:00:00"),
     location: "Zoom",
     repeating: {
-        freq: 'WEEKLY',
-        byDay: ['mo', 'we', 'fr']
-    }
+      freq: "WEEKLY",
+      byDay: ["mo", "we", "fr"],
+    },
   });
 
   calendar.createEvent({
@@ -31,9 +31,9 @@ export const ics = () => {
     end: new Date("2022-06-27T13:00:00"),
     location: "Zoom",
     repeating: {
-        freq: 'WEEKLY',
-        byDay: ['tu', 'th', 'sa']
-    }
+      freq: "WEEKLY",
+      byDay: ["tu", "th", "sa"],
+    },
   });
 
   calendar.createEvent({
@@ -42,9 +42,9 @@ export const ics = () => {
     end: new Date("2022-06-27T18:00:00"),
     location: "Zoom",
     repeating: {
-        freq: 'WEEKLY',
-        byDay: ['tu', 'th', 'sa']
-    }
+      freq: "WEEKLY",
+      byDay: ["tu", "th", "sa"],
+    },
   });
 
   calendar.createEvent({

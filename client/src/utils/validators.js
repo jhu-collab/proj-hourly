@@ -24,13 +24,13 @@ export const createCourseSchema = yup.object().shape({
 });
 
 export const createEventSchema = yup.object().shape({
-  date: yup.date().typeError("Please enter a valid date").min(CURRENT_DATE_STR, `Date must be on or after ${CURRENT_DATE_STR}`).required("Date is required"),
+  date: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(CURRENT_DATE_STR, `Date must be on or after ${CURRENT_DATE_STR}`)
+    .required("Date is required"),
   // TODO: Add further validation for the startTime and endTime fields
-  startTime: yup.
-  string().required('Start time is required'),
-  endTime: yup.
-  string().required('End time is required'),
-  location: yup
-    .string().required('Location is required'),
+  startTime: yup.string().required("Start time is required"),
+  endTime: yup.string().required("End time is required"),
+  location: yup.string().required("Location is required"),
 });
-

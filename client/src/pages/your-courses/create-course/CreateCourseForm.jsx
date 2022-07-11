@@ -9,7 +9,6 @@ import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import ical from "ical-generator";
 import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
@@ -72,23 +71,6 @@ function CreateCourseForm({ handlePopupToggle }) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-
-    const calendar = ical({ name: data.title });
-
-    staffCourses.push({
-      id: 10,
-      title: data.title,
-      courseNumber: data.courseNumber,
-      semester: data.semester,
-      calendarYear: data.calendarYear,
-      code: "ABCABC",
-      calendar: JSON.stringify(calendar),
-    });
-    handlePopupToggle();
-    toast.success(
-      `Successfully created the ${data.title} course for ${data.semester} ${data.calendarYear}`
-    );
     mutate({ ...data, id: 1 });
   };
 
