@@ -6,13 +6,13 @@ Hourly is Calendly for instructors, students, and TAs. The app helps schedule, b
 
 **Production**
 
-- [Client]()
-- [Server]()
+- [Client](https://proj-hourly-prod.netlify.app/ )
+- [Server](https://proj-hourly-prod.herokuapp.com/)
 
 **Development**
 
-- [Client]()
-- [Server]()
+- [Client](https://proj-hourly-dev.netlify.app/ )
+- [Server](https://proj-hourly-dev.herokuapp.com/)
 
 **Documentation**
 
