@@ -1,7 +1,6 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import useTheme from "@mui/material/styles/useTheme";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createCourseSchema } from "../../../utils/validators";

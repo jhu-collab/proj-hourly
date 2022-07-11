@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 import CoursesSpeedDial from "./CoursesSpeedDial";

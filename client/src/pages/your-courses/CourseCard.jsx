@@ -3,7 +3,6 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import useStore from "../../services/store";

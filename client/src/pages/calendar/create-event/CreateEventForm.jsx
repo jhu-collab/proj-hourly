@@ -1,6 +1,7 @@
-import React from "react";
 import { createEventSchema } from "../../../utils/validators";
-import { Button, Stack, useTheme } from "@mui/material";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import useTheme from "@mui/material/styles/useTheme";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";

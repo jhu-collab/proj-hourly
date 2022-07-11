@@ -4,7 +4,9 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
 import iCalendarPlugin from "@fullcalendar/icalendar";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from "@mui/material/styles/useTheme";
 import useStore from "../../services/store";
 import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
