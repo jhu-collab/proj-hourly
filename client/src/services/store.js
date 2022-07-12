@@ -35,6 +35,7 @@ const useStore = create(
       toggleJoinCoursePopup: (value) =>
         set((state) => ({
           joinCoursePopup: value || !state.joinCoursePopup,
+        })),
       currentCourse: null,
       updateCurrentCourse: (value) =>
         set((state) => ({
