@@ -24,7 +24,7 @@ export const createCourseSchema = yup.object().shape({
 });
 
 export const joinCourseSchema = yup.object().shape({
-  courseCode: yup
+  code: yup
     .string()
     .required("Course code is required")
     .length(6, "Course code must be 6 characters"),
