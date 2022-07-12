@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import { config } from "../config";
 // import logoDark from '../assets/images/logo-dark.svg';
 import logo from "../assets/images/logo.svg";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 
 function LogoSection({ sx, to }) {
   const theme = useTheme();

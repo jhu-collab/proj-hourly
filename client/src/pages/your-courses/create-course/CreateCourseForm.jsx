@@ -1,13 +1,16 @@
-import { Button, Stack, useTheme } from "@mui/material";
-import React from "react";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import useTheme from "@mui/material/styles/useTheme";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createCourseSchema } from "../../../utils/validators";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
-import { staffCourses } from "../courses-data";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "react-query";
+import Loader from "../../../components/Loader";
+import { createCourse } from "../../../utils/requests";
 
 const options = [
   {
@@ -39,54 +42,61 @@ const options = [
  */
 function CreateCourseForm({ handlePopupToggle }) {
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
       title: "",
-      courseNumber: "",
+      number: "",
       semester: "",
-      calendarYear: "",
+      year: null,
     },
     resolver: yupResolver(createCourseSchema),
   });
 
+  const { mutate, isLoading } = useMutation(createCourse, {
+    onSuccess: (data) => {
+      const course = data.course;
+
+      queryClient.invalidateQueries(["courses"]);
+      handlePopupToggle();
+      toast.success(
+        `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
+      );
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
+
   const onSubmit = (data) => {
-    console.log(data);
-    staffCourses.push({
-      id: 10,
-      title: data.title,
-      courseNumber: data.courseNumber,
-      semester: data.semester,
-      calendarYear: data.calendarYear,
-      code: "ABCABC",
-    });
-    handlePopupToggle();
-    toast.success(
-      `Successfully created the ${data.title} course for ${data.semester} ${data.calendarYear}`
-    );
+    mutate({ ...data, id: 1 });
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack direction="column" spacing={theme.spacing(3)}>
-        <FormInputText name="title" control={control} label="Course Title" />
-        <FormInputText
-          name="courseNumber"
-          control={control}
-          label="Course Number"
-        />
-        <FormInputDropdown
-          name="semester"
-          control={control}
-          label="Semester"
-          options={options}
-        />
-        <FormInputText name="calendarYear" control={control} label="Year" />
-        <Button type="submit" variant="contained" fullWidth>
-          Create
-        </Button>
-      </Stack>
-    </Form>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column" spacing={theme.spacing(3)}>
+          <FormInputText name="title" control={control} label="Course Title" />
+          <FormInputText
+            name="number"
+            control={control}
+            label="Course Number"
+          />
+          <FormInputDropdown
+            name="semester"
+            control={control}
+            label="Semester"
+            options={options}
+          />
+          <FormInputText name="year" control={control} label="Year" />
+          <Button type="submit" variant="contained" fullWidth>
+            Create
+          </Button>
+        </Stack>
+      </Form>
+      {isLoading && <Loader />}
+    </>
   );
 }
 

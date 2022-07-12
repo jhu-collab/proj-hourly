@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import { useMediaQuery } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Drawer from "./Drawer";
 import Header from "./Header";
 import { menuItems } from "../menu-items";
@@ -45,10 +45,10 @@ function MainLayout() {
       >
         <Toolbar />
         <Breadcrumbs
-          navigation={menuItems}
+          navigation={menuItems()}
           title
-          titleBottom
-          card={false}
+          // titleBottom
+          // card={false}
           divider={false}
         />
         <Outlet />

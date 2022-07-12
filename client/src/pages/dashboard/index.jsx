@@ -19,11 +19,9 @@ import ReportAreaChart from "./ReportAreaChart";
 import SalesColumnChart from "./SalesColumnChart";
 import MainCard from "../../components/MainCard";
 import AnalyticEcommerce from "../../components/AnalyticEcommerce";
-import {
-  GiftOutlined,
-  MessageOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import GiftOutlined from "@ant-design/icons/GiftOutlined";
+import MessageOutlined from "@ant-design/icons/MessageOutlined";
+import SettingOutlined from "@ant-design/icons/SettingOutlined";
 
 const avatarSX = {
   width: 36,

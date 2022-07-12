@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import ReactApexChart from "react-apexcharts";
 
 const columnChartOptions = {

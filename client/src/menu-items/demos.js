@@ -1,4 +1,5 @@
-import { ChromeOutlined, QuestionOutlined } from "@ant-design/icons";
+import ChromeOutlined from "@ant-design/icons/ChromeOutlined";
+import QuestionOutlined from "@ant-design/icons/QuestionOutlined";
 
 const icons = {
   ChromeOutlined,
@@ -36,6 +37,13 @@ export const demos = {
       title: "React Toastify",
       type: "item",
       url: "/toastify",
+      icon: icons.ChromeOutlined,
+    },
+    {
+      id: "backend",
+      title: "Check the Backend",
+      type: "item",
+      url: "/backend",
       icon: icons.ChromeOutlined,
     },
   ],

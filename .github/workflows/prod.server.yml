@@ -13,4 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # Add steps to build and deploy the backend
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_AUTH_TOKEN}}
+          heroku_app_name: ${{secrets.PROD_HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_AUTH_EMAIL}}
+          appdir: "server"

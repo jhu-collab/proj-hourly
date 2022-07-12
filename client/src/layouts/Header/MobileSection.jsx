@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import IconButton from "@mui/material/IconButton";
@@ -10,7 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Search from "./Search";
 import Profile from "./Profile";
 import Transitions from "../../components/Transitions";
-import { MoreOutlined } from "@ant-design/icons";
+import MoreOutlined from "@ant-design/icons/MoreOutlined";
 
 function MobileSection() {
   const theme = useTheme();

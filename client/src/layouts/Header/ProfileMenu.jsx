@@ -1,11 +1,13 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { EditOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
+import UserOutlined from "@ant-design/icons/UserOutlined";
 
 function ProfileMenu({ handleLogout }) {
   const theme = useTheme();

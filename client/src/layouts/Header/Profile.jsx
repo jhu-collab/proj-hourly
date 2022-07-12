@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import CardContent from "@mui/material/CardContent";
@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import ProfileMenu from "./ProfileMenu";
-import { LogoutOutlined } from "@ant-design/icons";
+import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
 
 function Profile() {
   const theme = useTheme();

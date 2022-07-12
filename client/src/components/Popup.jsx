@@ -1,14 +1,10 @@
-import { CloseOutlined } from "@ant-design/icons";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 import React from "react";
 
 /**

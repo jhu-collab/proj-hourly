@@ -17,7 +17,8 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import AnimateButton from "../../components/AnimateButton";
 import { strengthColor, strengthIndicator } from "../../utils/password.util";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import OtherLogin from "./OtherLogin";
 
 function AuthRegister() {
@@ -162,7 +163,7 @@ function AuthRegister() {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="demo@company.com"
-                    inputProps={{}}
+                    inputProps={{ autoComplete: "username" }}
                   />
                   {touched.email && errors.email && (
                     <FormHelperText error id="helper-text-email-signup">
@@ -204,7 +205,7 @@ function AuthRegister() {
                       </InputAdornment>
                     }
                     placeholder="******"
-                    inputProps={{}}
+                    inputProps={{ autoComplete: "username" }}
                   />
                   {touched.password && errors.password && (
                     <FormHelperText error id="helper-text-password-signup">
