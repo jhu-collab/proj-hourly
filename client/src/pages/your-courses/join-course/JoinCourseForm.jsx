@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { joinCourseSchema } from "../../../utils/validators";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
+import { useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
 
 /**
