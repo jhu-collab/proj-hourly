@@ -1,6 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
+import ical from "ical-generator";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -30,8 +31,8 @@ export const create = async (req, res) => {
       codeIsUnique = true;
     }
   }
-
   const { title, number, semester, year, id } = req.body;
+  const cal = ical({ name: title });
   await prisma.Course.create({
     data: {
       title,
@@ -44,6 +45,7 @@ export const create = async (req, res) => {
           id,
         },
       },
+      iCalJson: cal.toJSON(),
     },
   });
   const course = await prisma.Course.findUnique({

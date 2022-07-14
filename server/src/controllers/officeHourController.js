@@ -82,7 +82,7 @@ export const create = async (req, res) => {
     },
   });
   const calendar = await generateCalendar(courseId);
-  return res.status(StatusCodes.CREATED).json({ calendar });
+  return res.status(StatusCodes.CREATED).json({ officeHour: officeHourWithData });
 };
 
 export const getForCourse = async (req, res) => {
@@ -150,7 +150,7 @@ export const cancelOnDate = async (req, res) => {
     },
   });
   const calendar = await generateCalendar(courseId);
-  return res.status(StatusCodes.ACCEPTED).json(calendar);
+  return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
 export const cancelAll = async (req, res) => {
@@ -188,5 +188,5 @@ export const cancelAll = async (req, res) => {
       .json({ msg: "ERROR: office hours already over" });
   }
   const calendar = await generateCalendar(courseId);
-  return res.status(StatusCodes.ACCEPTED).json({ calendar });
+  return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
