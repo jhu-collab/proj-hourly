@@ -19,6 +19,7 @@ import ical from "ical-generator";
 function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
   const {
     currentCourse,
     courseType,
@@ -28,8 +29,11 @@ function Calendar() {
     setCreateEventStartTime,
     setCreateEventEndTime,
   } = useStore();
+
   const [isStaff, setIsStaff] = useState(false);
-  const [icsURL, setIcsURL] = useState("");
+
+  const calendar = ical(JSON.parse(currentCourse.calendar));
+  const [icsURL, setIcsURL] = useState(calendar.toURL());
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
@@ -77,7 +81,7 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
-          events={{
+          initialEvents={{
             url: icsURL,
             format: "ics",
           }}
