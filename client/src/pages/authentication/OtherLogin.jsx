@@ -1,7 +1,9 @@
 import Button from "@mui/material/Button";
+import AnimateButton from "../../components/AnimateButton";
 
 function OtherLogin() {
   return (
+    <AnimateButton>
     <Button
       variant="outlined"
       color="primary"
@@ -10,6 +12,7 @@ function OtherLogin() {
     >
       JHU SSO
     </Button>
+    </AnimateButton>
   );
 }
 
