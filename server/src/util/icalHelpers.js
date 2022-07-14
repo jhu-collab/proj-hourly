@@ -42,7 +42,6 @@ export const generateCalendar = async (courseId) => {
     endTime.setMinutes(officeHour.endTime.getMinutes());
     endTime.setSeconds(officeHour.endTime.getSeconds());
     let summary = "";
-    console.log(officeHour.hosts);
     if (officeHour.hosts.length > 1) {
       summary = "Office Hours for " + course.title;
     } else if (officeHour.hosts.length === 1) {
@@ -66,7 +65,16 @@ export const generateCalendar = async (courseId) => {
       event.repeating(rule);
     }
   });
-  console.log(calendar.toJSON());
+  const jsonCal = calendar.toJSON();
+  await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      iCalJson: jsonCal,
+    },
+  });
+  return jsonCal;
 };
 
 const generateRRule = (officeHour) => {

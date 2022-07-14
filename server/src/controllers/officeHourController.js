@@ -81,31 +81,19 @@ export const create = async (req, res) => {
       },
     },
   });
-  generateCalendar(courseId);
-  return res.status(StatusCodes.CREATED).json({ officeHourWithData });
+  const calendar = await generateCalendar(courseId);
+  return res.status(StatusCodes.CREATED).json({ calendar });
 };
 
 export const getForCourse = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
-  const officeHours = await prisma.officeHour.findMany({
+  const course = await prisma.course.findUnique({
     where: {
-      courseId,
-    },
-    include: {
-      hosts: {
-        select: {
-          id: true,
-        },
-      },
-      isOnDayOfWeek: {
-        select: {
-          dayOfWeek: true,
-        },
-      },
+      id: courseId,
     },
   });
-  res.status(StatusCodes.ACCEPTED).json({ officeHours });
+  res.status(StatusCodes.ACCEPTED).json({ calendar: course.iCalJson });
 };
 
 export const register = async (req, res) => {
@@ -161,7 +149,8 @@ export const cancelOnDate = async (req, res) => {
       isCancelledOn: [...officehour.isCancelledOn, dateObj],
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json(officeHourUpdate);
+  const calendar = await generateCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json(calendar);
 };
 
 export const cancelAll = async (req, res) => {
@@ -198,5 +187,6 @@ export const cancelAll = async (req, res) => {
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hours already over" });
   }
-  return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
+  const calendar = await generateCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ calendar });
 };
