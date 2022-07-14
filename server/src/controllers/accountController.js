@@ -38,7 +38,7 @@ export const login = async (req, res) => {
       email,
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ id: account.id });
+  return res.status(StatusCodes.ACCEPTED).json({ account });
 };
 
 export const getCourses = async (req, res) => {
@@ -76,4 +76,82 @@ export const getCourses = async (req, res) => {
     staff: staffCourses,
     instructor: instructorCourses,
   });
+};
+
+export const deleteAccount = async (req, res) => {
+  validate(req);
+  const id = parseInt(req.get("id"), 10);
+  await prisma.registration.deleteMany({
+    where: {
+      accountId: id,
+    },
+  });
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      hosts: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  officeHours.forEach(async (officeHour) => {
+    if (officeHour.hosts.length === 1) {
+      await prisma.officeHour.delete({
+        where: {
+          id: officeHour.id,
+        },
+      });
+    } else {
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour,
+        },
+        data: {
+          hosts: {
+            disconnect: {
+              id,
+            },
+          },
+        },
+      });
+    }
+  });
+  const courses = await prisma.course.findMany({
+    where: {
+      instructors: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  courses.forEach(async (course) => {
+    if (course.instructors.length === 1) {
+      await prisma.course.delete({
+        where: {
+          id: course.id,
+        },
+      });
+    } else {
+      await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          instructors: {
+            disconnect: {
+              id,
+            },
+          },
+        },
+      });
+    }
+  });
+  await prisma.account.delete({
+    where: {
+      id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
