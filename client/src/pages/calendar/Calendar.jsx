@@ -11,6 +11,7 @@ import useStore from "../../services/store";
 import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
+import { Popover, Typography } from "@mui/material";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -44,10 +45,6 @@ function Calendar() {
     !createEventPopup && setIcsURL(calendar.toURL());
   }, [createEventPopup]);
 
-  const handleEventClick = (info) => {
-    alert("Event: " + info.event.title);
-  };
-
   const handleSelect = (info) => {
     const start = new Date(info.start);
     const end = new Date(info.end);
@@ -56,6 +53,19 @@ function Calendar() {
     setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
     toggleCreateEventPopup(true);
   };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleEventClick = (info) => {
+    setAnchorEl(info.el);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <>
@@ -90,6 +100,18 @@ function Calendar() {
           slotMaxTime={"32:00:00"}
         />
       </Box>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
+      </Popover>
       {isStaff && <CalendarSpeedDial />}
     </>
   );
