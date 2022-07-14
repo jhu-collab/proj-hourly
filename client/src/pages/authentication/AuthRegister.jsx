@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -6,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import AnimateButton from "../../components/AnimateButton";
-import { strengthColor, strengthIndicator } from "../../utils/password.util";
 import OtherLogin from "./OtherLogin";
 import Form from "../../components/form-ui/Form";
 import { useMutation } from "react-query";
