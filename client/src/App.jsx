@@ -33,8 +33,12 @@ function App() {
       <ScrollTop>
         <Routes>
           <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<MinimalLayout />}>
+            <Route path="/" element={<AuthLogin />} />
+            <Route path="register" element={<AuthRegister />} />
+          </Route>
           <Route path="/" element={<MainLayout />}>
-            <Route path="/" element={<YourCourses />} />
+            <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/dashboard" element={<DashboardDefault />} />
             <Route path="sample-page" element={<SamplePage />} />
@@ -42,10 +46,6 @@ function App() {
             <Route path="full-cal" element={<FullCalendarDemo />} />
             <Route path="toastify" element={<ReactToastifyDemo />} />
             <Route path="backend" element={<Backend />} />
-          </Route>
-          <Route path="/" element={<MinimalLayout />}>
-            <Route path="login" element={<AuthLogin />} />
-            <Route path="register" element={<AuthRegister />} />
           </Route>
         </Routes>
       </ScrollTop>
