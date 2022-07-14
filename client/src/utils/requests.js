@@ -18,7 +18,7 @@ export const login = async (body) => {
   return res.data;
 };
 
-export const signup = async (body) => {
+export const signUp = async (body) => {
   const res = await axios.post(`${BASE_URL}/api/account/signup`, body);
   return res.data;
 };
