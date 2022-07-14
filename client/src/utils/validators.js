@@ -8,6 +8,16 @@ export const loginSchema = yup.object().shape({
     .required("Email is required"),
 });
 
+export const signUpSchema = yup.object().shape({
+    name: yup.string().max(255).required("Name is required"),
+    email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
+    phoneNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+});
+
 const CURRENT_DATE_STR = new Date().toLocaleDateString();
 
 export const createCourseSchema = yup.object().shape({
