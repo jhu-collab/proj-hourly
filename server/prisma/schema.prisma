@@ -34,6 +34,7 @@ model Course {
   instructors  Account[]    @relation("isInstructor")
   officeHours  OfficeHour[]
   topics       Topic[]
+  iCalJson     Json?
 }
 
 model OfficeHour {

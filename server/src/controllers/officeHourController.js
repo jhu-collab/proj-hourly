@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import validate from "../util/checkValidation.js";
+import { generateCalendar } from "../util/icalHelpers.js";
 
 export const create = async (req, res) => {
   validate(req);
@@ -68,10 +69,19 @@ export const create = async (req, res) => {
       id: officeHour.id,
     },
     include: {
-      hosts: {},
-      isOnDayOfWeek: {},
+      hosts: {
+        select: {
+          id: true,
+        },
+      },
+      isOnDayOfWeek: {
+        select: {
+          dayOfWeek: true,
+        },
+      },
     },
   });
+  generateCalendar(courseId);
   return res.status(StatusCodes.CREATED).json({ officeHourWithData });
 };
 
@@ -83,8 +93,16 @@ export const getForCourse = async (req, res) => {
       courseId,
     },
     include: {
-      hosts: {},
-      isOnDayOfWeek: {},
+      hosts: {
+        select: {
+          id: true,
+        },
+      },
+      isOnDayOfWeek: {
+        select: {
+          dayOfWeek: true,
+        },
+      },
     },
   });
   res.status(StatusCodes.ACCEPTED).json({ officeHours });
