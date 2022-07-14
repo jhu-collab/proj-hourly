@@ -34,6 +34,7 @@ function Calendar() {
 
   const [isStaff, setIsStaff] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [event, setEvent] = useState({});
 
   const calendar = ical(JSON.parse(currentCourse.calendar));
   const [icsURL, setIcsURL] = useState(calendar.toURL());
@@ -49,6 +50,7 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     setAnchorEl(info.el);
+    setEvent(info.event);
   };
 
   const handleClose = () => {
@@ -97,7 +99,7 @@ function Calendar() {
           slotMaxTime={"32:00:00"}
         />
       </Box>
-      <EventDetails anchorEl={anchorEl} handleClose={handleClose} />
+      <EventDetails anchorEl={anchorEl} handleClose={handleClose} event={event} />
       {isStaff && <CalendarSpeedDial />}
     </>
   );
