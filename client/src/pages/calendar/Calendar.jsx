@@ -33,9 +33,6 @@ function Calendar() {
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
-  const calendar = ical(data.calendar);
-  const url = calendar.toURL();
-
   useEffect(() => {
     setIsStaff(courseType === "staff");
   }, [courseType]);
@@ -52,6 +49,10 @@ function Calendar() {
     setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
     toggleCreateEventPopup(true);
   };
+
+  if (isLoading) {
+    return (<Loader />);
+  }
 
   return (
     <>
@@ -78,7 +79,7 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           initialEvents={{
-            url: url,
+            url: ical(data.calendar).toURL(),
             format: "ics",
           }}
           select={handleSelect}

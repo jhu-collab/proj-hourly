@@ -48,3 +48,8 @@ export const createCourse = async (body) => {
   const res = await axios.post(`${BASE_URL}/api/course/`, body);
   return res.data;
 };
+
+export const createOfficeHour = async (body) => {
+    const res = await axios.post(`${BASE_URL}/api/officeHour/create`, body);
+    return res.data;
+  };

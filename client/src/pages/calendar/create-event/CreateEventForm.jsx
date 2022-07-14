@@ -7,9 +7,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import { getLocaleTime } from "../../../utils/helpers";
 import useStore from "../../../services/store";
-import ical from "ical-generator";
+import { useMutation } from "react-query";
+import { createOfficeHour } from "../../../utils/requests";
+
+const DAYS = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
 /**
  * Component that represents the form that is used to create an event.
@@ -20,6 +30,7 @@ function CreateEventForm({ handlePopupToggle }) {
   const theme = useTheme();
 
   const {
+    userId,
     currentCourse,
     updateCurrentCourse,
     createEventDate,
@@ -37,37 +48,43 @@ function CreateEventForm({ handlePopupToggle }) {
     resolver: yupResolver(createEventSchema),
   });
 
+  const { mutate, isLoading } = useMutation(createOfficeHour, {
+    onSuccess: (data) => {
+      const officeHour = data.officeHour;
+      const date = officeHour.startDate.toDateString();
+      const startTime = officeHour.startTime.toLocaleTimeString([], {
+        timeStyle: "short",
+      });
+      const endTime = officeHour.endTime.toLocaleTimeString({
+        timeStyle: "short",
+      });
+
+      queryClient.invalidateQueries(["officeHours"]);
+      handlePopupToggle();
+      // TODO: Will need to be refactored once we deal with recurring events.
+      toast.success(
+        `Successfully created office hour on ${date} from 
+         ${startTime} to ${endTime}`
+      );
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
+
   const onSubmit = (data) => {
-    const calendar = ical(JSON.parse(currentCourse.calendar));
-    const start = new Date(data.date.getTime());
-    const end = new Date(data.date.getTime());
-
-    const [startHours, startMin] = data.startTime.split(":");
-    const [endHours, endMin] = data.endTime.split(":");
-
-    start.setHours(startHours);
-    start.setMinutes(startMin);
-    end.setHours(endHours);
-    end.setMinutes(endMin);
-
-    calendar.createEvent({
-      summary: "Bob's Office Hours",
-      start: start,
-      end: end,
-      location: data.location,
-    });
-
-    const updatedCourse = currentCourse;
-    updatedCourse.calendar = JSON.stringify(calendar);
-    // Update course with new ics URL (TODO: This will be altered once backend is connected)
-    updateCurrentCourse(updatedCourse);
-
-    handlePopupToggle(); // Close popup
-    toast.success(
-      `Successfully created an event on ${data.date.toLocaleDateString()} from ${getLocaleTime(
-        data.startTime
-      )} to ${getLocaleTime(data.endTime)}`
-    );
+    mutate({
+        courseId: currentCourse.id,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        recurringEvent: false, // TODO: For now, the default is false
+        startDate: data.date,
+        endDate: data.date,
+        location: data.location,
+        daysOfWeek: [data.date.getDay()], // TODO: Will need to be altered later
+        timeInterval: 10, // TODO: For now, the default is 10,
+        hosts: [userId] // TOOD: For now, there will be no additional hosts
+    })
   };
 
   return (
