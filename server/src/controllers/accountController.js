@@ -38,7 +38,7 @@ export const login = async (req, res) => {
       email,
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ id: account.id });
+  return res.status(StatusCodes.ACCEPTED).json({ account });
 };
 
 export const getCourses = async (req, res) => {
