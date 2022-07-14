@@ -13,9 +13,15 @@ export const getCourses = async () => {
 
 // POST REQUESTS
 
-export const createCourse = async (course) => {
-  const res = await axios.post(`${BASE_URL}/api/course/`, course, {
+export const login = async (body) => {
+    const res = await axios.post(`${BASE_URL}/api/account/login`, body);
+    return res.data;
+  };
+
+export const createCourse = async (body) => {
+  const res = await axios.post(`${BASE_URL}/api/course/`, body, {
     headers: { id: 1 },
   });
   return res.data;
 };
+
