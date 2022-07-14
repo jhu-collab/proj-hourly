@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AnimateButton from "../../components/AnimateButton";
-import OtherLogin from "./OtherLogin";
+import SingleSignOn from "./SingleSignOn";
 import Form from "../../components/form-ui/Form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -77,7 +77,7 @@ function AuthLogin() {
           </Divider>
         </Grid>
         <Grid item xs={12}>
-          <OtherLogin />
+          <SingleSignOn />
         </Grid>
       </Grid>
     </Form>
