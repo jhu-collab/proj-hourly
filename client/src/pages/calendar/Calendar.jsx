@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
 import { Popover, Typography } from "@mui/material";
+import EventDetails from "./event-details/EventDetails";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -32,6 +33,7 @@ function Calendar() {
   } = useStore();
 
   const [isStaff, setIsStaff] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const calendar = ical(JSON.parse(currentCourse.calendar));
   const [icsURL, setIcsURL] = useState(calendar.toURL());
@@ -45,17 +47,6 @@ function Calendar() {
     !createEventPopup && setIcsURL(calendar.toURL());
   }, [createEventPopup]);
 
-  const handleSelect = (info) => {
-    const start = new Date(info.start);
-    const end = new Date(info.end);
-    setCreateEventDate(start.toISOString().split("T")[0]);
-    setCreateEventStartTime(start.toLocaleTimeString("it-IT").substring(0, 5));
-    setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
-    toggleCreateEventPopup(true);
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
   const handleEventClick = (info) => {
     setAnchorEl(info.el);
   };
@@ -64,8 +55,14 @@ function Calendar() {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const handleSelect = (info) => {
+    const start = new Date(info.start);
+    const end = new Date(info.end);
+    setCreateEventDate(start.toISOString().split("T")[0]);
+    setCreateEventStartTime(start.toLocaleTimeString("it-IT").substring(0, 5));
+    setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
+    toggleCreateEventPopup(true);
+  };
 
   return (
     <>
@@ -100,18 +97,7 @@ function Calendar() {
           slotMaxTime={"32:00:00"}
         />
       </Box>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-      >
-        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-      </Popover>
+      <EventDetails anchorEl={anchorEl} handleClose={handleClose} />
       {isStaff && <CalendarSpeedDial />}
     </>
   );
