@@ -13,6 +13,7 @@ import { login } from "../../utils/requests";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
+import useStore from "../../services/store";
 
 function AuthLogin() {
   const { control, handleSubmit } = useForm({
@@ -22,13 +23,15 @@ function AuthLogin() {
     resolver: yupResolver(loginSchema),
   });
 
+  const { setUserId, setUserName } = useStore();
+
   const navigate = useNavigate();
 
   const { mutate, isLoading } = useMutation(login, {
     onSuccess: (data) => {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
-      const id = data.id;
+      setUserId(data.id);
       navigate("/courses");
     },
     onError: (error) => {

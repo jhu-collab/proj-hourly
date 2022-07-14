@@ -16,23 +16,27 @@ import { signUpSchema } from "../../utils/validators";
 import { useForm } from "react-hook-form";
 import { signUp } from "../../utils/requests";
 import FormInputText from "../../components/form-ui/FormInputText";
+import useStore from "../../services/store";
 
 function AuthRegister() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
+      name: "",
       email: "",
+      phoneNumber: "",
     },
     resolver: yupResolver(signUpSchema),
   });
 
   const navigate = useNavigate();
+  const { setUserId, setUserName } = useStore();
 
   const { mutate, isLoading } = useMutation(signUp, {
     onSuccess: (data) => {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
-      const id = data.id;
-      const name = data.userName;
+      setUserId(data.account.id);
+      setUserName(data.account.userName);
       navigate("/courses");
     },
     onError: (error) => {

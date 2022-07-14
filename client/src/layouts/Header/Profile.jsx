@@ -14,9 +14,12 @@ import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import ProfileMenu from "./ProfileMenu";
 import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
+import useStore from "../../services/store";
 
 function Profile() {
   const theme = useTheme();
+
+  const { userName } = useStore();
 
   const handleLogout = async () => {
     // logout
@@ -59,7 +62,7 @@ function Profile() {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Typography variant="subtitle1">{userName}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -109,7 +112,7 @@ function Profile() {
                             alignItems="center"
                           >
                             <Stack>
-                              <Typography variant="h6">John Doe</Typography>
+                              <Typography variant="h6">{userName}</Typography>
                               <Typography variant="body2" color="textSecondary">
                                 UI/UX Designer
                               </Typography>
