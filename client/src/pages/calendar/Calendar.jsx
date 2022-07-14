@@ -11,6 +11,9 @@ import useStore from "../../services/store";
 import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
+import { useQuery } from "react-query";
+import { getOfficeHours } from "../../utils/requests";
+import Loader from "../../components/Loader";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -20,25 +23,22 @@ function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
   const {
-    currentCourse,
     courseType,
-    createEventPopup,
     toggleCreateEventPopup,
     setCreateEventDate,
     setCreateEventStartTime,
     setCreateEventEndTime,
   } = useStore();
   const [isStaff, setIsStaff] = useState(false);
-  const [icsURL, setIcsURL] = useState("");
+
+  const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
+
+  const calendar = ical(data.calendar);
+  const url = calendar.toURL();
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
   }, [courseType]);
-
-  useEffect(() => {
-    const calendar = ical(JSON.parse(currentCourse.calendar));
-    !createEventPopup && setIcsURL(calendar.toURL());
-  }, [createEventPopup]);
 
   const handleEventClick = (info) => {
     alert("Event: " + info.event.title);
@@ -77,8 +77,8 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
-          events={{
-            url: icsURL,
+          initialEvents={{
+            url: url,
             format: "ics",
           }}
           select={handleSelect}
@@ -87,6 +87,7 @@ function Calendar() {
         />
       </Box>
       {isStaff && <CalendarSpeedDial />}
+      {isLoading && <Loader />}
     </>
   );
 }

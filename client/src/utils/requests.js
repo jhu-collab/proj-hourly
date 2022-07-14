@@ -6,6 +6,10 @@ function getUserId() {
   return useStore.getState().userId;
 }
 
+function getCourseId() {
+  return useStore.getState().currentCourse.id;
+}
+
 // GET REQUESTS
 
 // TODO: Once token authorization is set up, id will be replaced.
@@ -14,6 +18,17 @@ export const getCourses = async () => {
     // TODO: Need to remove id key once backend implements user tokens
     headers: { id: getUserId() },
   });
+  return res.data;
+};
+
+export const getOfficeHours = async (courseId) => {
+  const res = await axios.get(
+    `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
+    {
+      // TODO: Need to remove id key once backend implements user tokens
+      headers: { id: getUserId() },
+    }
+  );
   return res.data;
 };
 
