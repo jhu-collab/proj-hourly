@@ -32,6 +32,7 @@ function AuthLogin() {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
       setUserId(data.id);
+      setUserName(data.account.userName);
       navigate("/courses");
     },
     onError: (error) => {
