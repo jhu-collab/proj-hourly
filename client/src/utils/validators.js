@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import "yup-phone";
 
 export const loginSchema = yup.object().shape({
   email: yup
@@ -8,6 +7,8 @@ export const loginSchema = yup.object().shape({
     .max(255)
     .required("Email is required"),
 });
+
+const PHONE_NO_REGEX = /^\(?([0-9]{3})\)?[-]{1}([0-9]{3})[-]{1}([0-9]{4})$/;
 
 export const signUpSchema = yup.object().shape({
   name: yup.string().max(255).required("Name is required"),
@@ -18,8 +19,9 @@ export const signUpSchema = yup.object().shape({
     .required("Email is required"),
   phoneNumber: yup
     .string()
-    .phone("US", false, "Phone number is invalid")
-    .typeError("Phone number is not valid"),
+    .matches(PHONE_NO_REGEX, "Phone number is invalid")
+    .nullable()
+    .transform((value) => (!!value ? value : undefined)),
 });
 
 const CURRENT_DATE_STR = new Date().toLocaleDateString();
