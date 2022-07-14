@@ -1,28 +1,18 @@
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
-import Link from "@mui/material/Link";
-import InputLabel from "@mui/material/InputLabel";
-import { Formik } from "formik";
 import AnimateButton from "../../components/AnimateButton";
-import EyeOutlined from "@ant-design/icons/EyeOutlined";
-import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import OtherLogin from "./OtherLogin";
 import Form from "../../components/form-ui/Form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validators";
 import FormInputText from "../../components/form-ui/FormInputText";
+import { login } from "../../utils/requests";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 
 function AuthLogin() {
   const { control, handleSubmit } = useForm({
@@ -32,8 +22,22 @@ function AuthLogin() {
     resolver: yupResolver(loginSchema),
   });
 
+  const navigate = useNavigate();
+
+  const { mutate, isLoading } = useMutation(login, {
+    onSuccess: (data) => {
+      // TODO: Later, this will be replaced with token once that is set
+      // up in the backend
+      const id = data.id;
+      navigate("/courses");
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
+
   const onSubmit = (data) => {
-    console.log(data);
+    mutate(data);
   };
 
   return (
@@ -52,7 +56,7 @@ function AuthLogin() {
           <AnimateButton>
             <Button
               disableElevation
-              // disabled={isSubmitting}
+              disabled={isLoading}
               fullWidth
               size="large"
               type="submit"
