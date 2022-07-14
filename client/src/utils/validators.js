@@ -1,5 +1,13 @@
 import * as yup from "yup";
 
+export const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
+});
+
 const CURRENT_DATE_STR = new Date().toLocaleDateString();
 
 export const createCourseSchema = yup.object().shape({
