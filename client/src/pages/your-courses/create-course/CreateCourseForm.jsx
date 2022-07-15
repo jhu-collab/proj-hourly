@@ -51,7 +51,7 @@ function CreateCourseForm({ handlePopupToggle }) {
       title: "",
       number: "",
       semester: "",
-      year: null,
+      year: "",
     },
     resolver: yupResolver(createCourseSchema),
   });
