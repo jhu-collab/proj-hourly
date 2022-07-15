@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import useStore from "../../services/store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
 import { useQuery } from "react-query";
@@ -51,8 +51,11 @@ function Calendar() {
   };
 
   if (isLoading) {
-    return (<Loader />);
+    return <Loader />;
   }
+
+  
+  
 
   return (
     <>
@@ -79,12 +82,14 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           initialEvents={{
-            url: ical(data.calendar).toURL(),
+            url: data,
             format: "ics",
+            cache: false,
           }}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
+          
         />
       </Box>
       {isStaff && <CalendarSpeedDial />}

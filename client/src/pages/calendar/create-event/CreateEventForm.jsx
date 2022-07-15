@@ -8,18 +8,19 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
 import useStore from "../../../services/store";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
+import Loader from "../../../components/Loader";
 
 const DAYS = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 /**
  * Component that represents the form that is used to create an event.
@@ -28,6 +29,7 @@ const DAYS = [
  */
 function CreateEventForm({ handlePopupToggle }) {
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const {
     userId,
@@ -51,11 +53,11 @@ function CreateEventForm({ handlePopupToggle }) {
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = officeHour.startDate.toDateString();
-      const startTime = officeHour.startTime.toLocaleTimeString([], {
+      const date = new Date(officeHour.startDate).toDateString();
+      const startTime = new Date(officeHour.startTime).toLocaleTimeString([], {
         timeStyle: "short",
       });
-      const endTime = officeHour.endTime.toLocaleTimeString({
+      const endTime = new Date(officeHour.endTime).toLocaleTimeString({
         timeStyle: "short",
       });
 
@@ -72,19 +74,23 @@ function CreateEventForm({ handlePopupToggle }) {
     },
   });
 
+  if (isLoading) {
+    return <Loader />
+  }
+
   const onSubmit = (data) => {
     mutate({
-        courseId: currentCourse.id,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        recurringEvent: false, // TODO: For now, the default is false
-        startDate: data.date,
-        endDate: data.date,
-        location: data.location,
-        daysOfWeek: [data.date.getDay()], // TODO: Will need to be altered later
-        timeInterval: 10, // TODO: For now, the default is 10,
-        hosts: [userId] // TOOD: For now, there will be no additional hosts
-    })
+      courseId: currentCourse.id,
+      startTime: `${data.startTime}:00`,
+      endTime: `${data.endTime}:00`,
+      recurringEvent: false, // TODO: For now, the default is false
+      startDate: data.date,
+      endDate: data.date,
+      location: data.location,
+      daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
+      timeInterval: 10, // TODO: For now, the default is 10,
+      hosts: [userId], // TOOD: For now, there will be no additional hosts
+    });
   };
 
   return (
