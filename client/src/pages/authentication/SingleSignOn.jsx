@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import AnimateButton from "../../components/AnimateButton";
 
-function OtherLogin() {
+function SingleSignOn() {
   return (
     <AnimateButton>
       <Button
@@ -16,4 +16,4 @@ function OtherLogin() {
   );
 }
 
-export default OtherLogin;
+export default SingleSignOn;
