@@ -21,7 +21,7 @@ export const getCourses = async () => {
   return res.data;
 };
 
-export const getOfficeHours = async (courseId) => {
+export const getOfficeHours = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
     {
@@ -50,6 +50,6 @@ export const createCourse = async (body) => {
 };
 
 export const createOfficeHour = async (body) => {
-    const res = await axios.post(`${BASE_URL}/api/officeHour/create`, body);
-    return res.data;
-  };
+  const res = await axios.post(`${BASE_URL}/api/officeHour/create`, body);
+  return res.data;
+};

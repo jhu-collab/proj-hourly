@@ -14,6 +14,7 @@ import ical from "ical-generator";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
+import { createRef } from "react";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -33,9 +34,18 @@ function Calendar() {
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
+  const [url, setUrl] = useState("");
+
   useEffect(() => {
     setIsStaff(courseType === "staff");
   }, [courseType]);
+
+  useEffect(() => {
+    if (data) {
+      const calendar = ical(data.calendar);
+      setUrl(calendar.toURL());
+    }
+  }, [data]);
 
   const handleEventClick = (info) => {
     alert("Event: " + info.event.title);
@@ -53,9 +63,6 @@ function Calendar() {
   if (isLoading) {
     return <Loader />;
   }
-
-  
-  
 
   return (
     <>
@@ -81,15 +88,13 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
-          initialEvents={{
-            url: data,
+          events={{
+            url: url,
             format: "ics",
-            cache: false,
           }}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
-          
         />
       </Box>
       {isStaff && <CalendarSpeedDial />}
