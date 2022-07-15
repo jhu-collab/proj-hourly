@@ -39,7 +39,7 @@ function CourseList() {
     if (courses.length > 0) {
       return courses.map((course, index) => {
         return (
-          <Grid item xs={12}>
+          <Grid item xs={12} key={index}>
             <CourseCard course={course} />
           </Grid>
         );
