@@ -19,7 +19,7 @@ function Register() {
             <Typography variant="h3">Sign up</Typography>
             <Typography
               component={Link}
-              to="/login"
+              to="/"
               variant="body1"
               sx={{ textDecoration: "none" }}
               color="primary"

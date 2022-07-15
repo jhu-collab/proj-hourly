@@ -20,6 +20,20 @@ const useStore = create(
           colorScheme:
             value || (state.colorScheme === "dark" ? "light" : "dark"),
         })),
+
+      // TODO: Once backend has set up tokens, this will be replaced.
+      userId: -1,
+      setUserId: (value) =>
+        set((state) => ({
+          userId: value || -1,
+        })),
+
+      userName: "John Doe",
+      setUserName: (value) =>
+        set((state) => ({
+          userName: value || "John Doe",
+        })),
+
       courseType: "student",
       toggleCourseType: (value) =>
         set((state) => ({
