@@ -19,15 +19,15 @@ export function getLocaleTime(time) {
  * @param {*} dateStr - A string in the format of yyyy-mm-dd
  * @returns A string in the format of yyyy/mm/dd
  */
- export const getExpectedDate = (dateStr) => {
-    return dateStr.replace(/-/g, "/");
-  };
-  
-  /**
-   * Retrives only the date portion of the Date.toIsoString method.
-   * @param {*} dateObj - Java string date object
-   * @returns A string in the format of yyyy-mm-dd
-   */
-  export const getIsoDate = (dateObj) => {
-    return dateObj.toISOString().split("T")[0];
-  };
+export const getExpectedDate = (dateStr) => {
+  return dateStr.replace(/-/g, "/");
+};
+
+/**
+ * Retrives only the date portion of the Date.toIsoString method.
+ * @param {*} dateObj - Java string date object
+ * @returns A string in the format of yyyy-mm-dd
+ */
+export const getIsoDate = (dateObj) => {
+  return dateObj.toISOString().split("T")[0];
+};

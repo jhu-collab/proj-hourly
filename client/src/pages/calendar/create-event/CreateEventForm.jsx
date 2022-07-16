@@ -34,7 +34,6 @@ function CreateEventForm({ handlePopupToggle }) {
   const {
     userId,
     currentCourse,
-    updateCurrentCourse,
     createEventDate,
     createEventStartTime,
     createEventEndTime,
@@ -74,18 +73,14 @@ function CreateEventForm({ handlePopupToggle }) {
     },
   });
 
-  if (isLoading) {
-    return <Loader />
-  }
-
   const onSubmit = (data) => {
     mutate({
       courseId: currentCourse.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
-      startDate: data.date,
-      endDate: data.date,
+      startDate: data.date.toISOString().split("T")[0].replace(/-/g, "/"),
+      endDate: data.date.toISOString().split("T")[0].replace(/-/g, "/"),
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
@@ -94,37 +89,40 @@ function CreateEventForm({ handlePopupToggle }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack direction="column" spacing={theme.spacing(3)}>
-        <FormInputText
-          name="date"
-          control={control}
-          label="Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-        />
-        <Stack direction="row" spacing={theme.spacing(3)}>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column" spacing={theme.spacing(3)}>
           <FormInputText
-            name="startTime"
+            name="date"
             control={control}
-            label="Start Time"
-            type="time"
+            label="Date"
+            type="date"
             InputLabelProps={{ shrink: true }}
           />
-          <FormInputText
-            name="endTime"
-            control={control}
-            label="End Time"
-            type="time"
-            InputLabelProps={{ shrink: true }}
-          />
+          <Stack direction="row" spacing={theme.spacing(3)}>
+            <FormInputText
+              name="startTime"
+              control={control}
+              label="Start Time"
+              type="time"
+              InputLabelProps={{ shrink: true }}
+            />
+            <FormInputText
+              name="endTime"
+              control={control}
+              label="End Time"
+              type="time"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Stack>
+          <FormInputText name="location" control={control} label="Location" />
+          <Button type="submit" variant="contained" disabled={isLoading} fullWidth>
+            Create
+          </Button>
         </Stack>
-        <FormInputText name="location" control={control} label="Location" />
-        <Button type="submit" variant="contained" fullWidth>
-          Create
-        </Button>
-      </Stack>
-    </Form>
+      </Form>
+      {isLoading && <Loader />}
+    </>
   );
 }
 
