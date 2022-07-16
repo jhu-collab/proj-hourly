@@ -6,7 +6,6 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import useStore from "../../services/store";
-import { ics } from "../calendar/calendar-data";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -20,7 +19,7 @@ function CourseCard({ course }) {
   const { updateCurrentCourse } = useStore();
 
   const onClick = () => {
-    updateCurrentCourse({ ...course, calendar: ics() });
+    updateCurrentCourse(course);
     navigate("/calendar");
   };
 

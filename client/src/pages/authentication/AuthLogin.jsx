@@ -31,7 +31,7 @@ function AuthLogin() {
     onSuccess: (data) => {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
-      setUserId(data.id);
+      setUserId(data.account.id);
       setUserName(data.account.userName);
       navigate("/courses");
     },
