@@ -11,7 +11,7 @@ import useStore from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
-import { getLocaleTime } from "../../../utils/helpers";
+import { getExpectedDate, getLocaleTime } from "../../../utils/helpers";
 
 const DAYS = [
   "Sunday",
@@ -77,8 +77,8 @@ function CreateEventForm({ handlePopupToggle }) {
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
-      startDate: data.date.toISOString().split("T")[0].replace(/-/g, "/"),
-      endDate: data.date.toISOString().split("T")[0].replace(/-/g, "/"),
+      startDate: getExpectedDate(getIsoDate(data.date)),
+      endDate: getExpectedDate(getIsoDate(data.date)),
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
