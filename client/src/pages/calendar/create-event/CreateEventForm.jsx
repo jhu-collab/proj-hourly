@@ -11,6 +11,7 @@ import useStore from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
+import { getLocaleTime } from "../../../utils/helpers";
 
 const DAYS = [
   "Sunday",
@@ -53,19 +54,16 @@ function CreateEventForm({ handlePopupToggle }) {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
       const date = new Date(officeHour.startDate).toDateString();
-      const startTime = new Date(officeHour.startTime).toLocaleTimeString([], {
-        timeStyle: "short",
-      });
-      const endTime = new Date(officeHour.endTime).toLocaleTimeString({
-        timeStyle: "short",
-      });
+
+      const startTime = officeHour.startTime.substring(11,19);
+      const endTime = officeHour.endTime.substring(11,19);
 
       queryClient.invalidateQueries(["officeHours"]);
       handlePopupToggle();
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
-         ${startTime} to ${endTime}`
+         ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`
       );
     },
     onError: (error) => {
