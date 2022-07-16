@@ -55,8 +55,8 @@ function CreateEventForm({ handlePopupToggle }) {
       const officeHour = data.officeHour;
       const date = new Date(officeHour.startDate).toDateString();
 
-      const startTime = officeHour.startTime.substring(11,19);
-      const endTime = officeHour.endTime.substring(11,19);
+      const startTime = officeHour.startTime.substring(11, 19);
+      const endTime = officeHour.endTime.substring(11, 19);
 
       queryClient.invalidateQueries(["officeHours"]);
       handlePopupToggle();
@@ -114,7 +114,12 @@ function CreateEventForm({ handlePopupToggle }) {
             />
           </Stack>
           <FormInputText name="location" control={control} label="Location" />
-          <Button type="submit" variant="contained" disabled={isLoading} fullWidth>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isLoading}
+            fullWidth
+          >
             Create
           </Button>
         </Stack>
