@@ -26,8 +26,13 @@ function EventDetails({ anchorEl, handleClose, event }) {
         horizontal: "right",
       }}
     >
-      <Grid container direction="row" columnSpacing={3} sx={{ padding: 2, pr: 1  }}>
-        <Grid item xs={8} sx={{mt: 0.5}}>
+      <Grid
+        container
+        direction="row"
+        columnSpacing={3}
+        sx={{ padding: 2, pr: 1 }}
+      >
+        <Grid item xs={8} sx={{ mt: 0.5 }}>
           <Stack direction="column" spacing={1}>
             <Typography variant="h4">{event.title}</Typography>
             <Typography>
@@ -46,16 +51,16 @@ function EventDetails({ anchorEl, handleClose, event }) {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-          <IconButton sx={{ fontSize: "20px"  }} onClick={handleClose}>
+            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
-          <IconButton sx={{ fontSize: "20px"  }} onClick={handleClose}>
+            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
-          <IconButton sx={{ fontSize: "20px"  }} onClick={handleClose}>
+            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
-            <IconButton sx={{ fontSize: "20px"  }} onClick={handleClose}>
+            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
           </Stack>
