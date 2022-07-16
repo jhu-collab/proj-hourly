@@ -1,4 +1,7 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { Grid, IconButton, Popover, Stack, Typography } from "@mui/material";
 import React from "react";
 
@@ -51,14 +54,14 @@ function EventDetails({ anchorEl, handleClose, event }) {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
-              <CloseOutlined />
+            <IconButton sx={{ fontSize: "20px" }}>
+              <InfoCircleOutlined />
             </IconButton>
-            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
-              <CloseOutlined />
+            <IconButton sx={{ fontSize: "20px" }}>
+              <EditOutlined />
             </IconButton>
-            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
-              <CloseOutlined />
+            <IconButton sx={{ fontSize: "20px" }}>
+              <DeleteOutlined />
             </IconButton>
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
