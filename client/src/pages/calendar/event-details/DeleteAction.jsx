@@ -9,14 +9,22 @@ import useStore from "../../../services/store";
 import { getIsoDate, getLocaleTime } from "../../../utils/helpers";
 import { cancelOnDate } from "../../../utils/requests";
 
-function DeleteAction({ event, handleClose }) {
+/**
+ * Represents the Trash IconButton on the EventDetails component
+ * and the associated ConfirmPopup component.
+ * @param {*} event - FullCalendar Event object
+ * @param {*} handlePopoverClose - closes EventDetails popover
+ * @returns Delete action button and confirmation popup.
+ */
+function DeleteAction({ event, handlePopoverClose }) {
   const [open, setOpen] = useState(false);
-  const { start, extendedProps } = event;
   const [date, setDate] = useState("");
   const [id, setId] = useState(-1);
+
+  const { start, extendedProps } = event;
   const { currentCourse } = useStore();
+
   const queryClient = useQueryClient();
-  console.log(event);
 
   useEffect(() => {
     if (extendedProps.description) {
@@ -27,6 +35,10 @@ function DeleteAction({ event, handleClose }) {
     start && setDate(getIsoDate(start));
   }, [extendedProps, start]);
 
+  const handlePopupToggle = () => {
+    setOpen(!open);
+  };
+
   const { mutate, isLoading } = useMutation(cancelOnDate, {
     onSuccess: (data) => {
       const officeHour = data.officeHourUpdate;
@@ -36,8 +48,9 @@ function DeleteAction({ event, handleClose }) {
       const endTime = officeHour.endTime.substring(11, 19);
 
       queryClient.invalidateQueries(["officeHours"]);
+
+      handlePopoverClose();
       handlePopupToggle();
-      handleClose();
 
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
@@ -49,10 +62,6 @@ function DeleteAction({ event, handleClose }) {
       toast.error("An error has occurred: " + error.message);
     },
   });
-
-  const handlePopupToggle = () => {
-    setOpen(!open);
-  };
 
   return (
     <>
