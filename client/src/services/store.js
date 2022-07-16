@@ -1,6 +1,7 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
+//TODO: Refactor this into separate stores
 const useStore = create(
   persist(
     (set) => ({
@@ -79,5 +80,11 @@ const useStore = create(
     }
   )
 );
+
+export const useConfirmDialogStore = create((set) => ({
+  message: "",
+  onSubmit: undefined,
+  close: () => set({ onSubmit: undefined }),
+}));
 
 export default useStore;

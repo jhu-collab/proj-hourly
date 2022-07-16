@@ -1,7 +1,7 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { IconButton } from "@mui/material";
 import { useState } from "react";
-import ConfirmActionDialog from "../../../components/ConfirmActionDialog";
+import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 
 function DeleteAction() {
   const [open, setOpen] = useState(false);
@@ -12,10 +12,17 @@ function DeleteAction() {
 
   return (
     <>
-      <IconButton sx={{ fontSize: "20px" }} onClick={handlePopupToggle}>
+      <IconButton
+        sx={{ fontSize: "20px" }}
+        onClick={() => {
+          confirmDialog("Do you really want to delete all the data?", () =>
+            console.log("deleting all the data!")
+          );
+        }}
+      >
         <DeleteOutlined />
       </IconButton>
-      <ConfirmActionDialog open={open} onClose={handlePopupToggle} />
+      <ConfirmPopup open={open} onClose={handlePopupToggle} />
     </>
   );
 }
