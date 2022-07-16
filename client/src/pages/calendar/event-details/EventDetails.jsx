@@ -6,6 +6,7 @@ import { Grid, IconButton, Popover, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { getLocaleTime } from "../../../utils/helpers";
+import DeleteAction from "./DeleteAction";
 
 function EventDetails({ anchorEl, handleClose, event }) {
   const open = Boolean(anchorEl);
@@ -76,9 +77,7 @@ function EventDetails({ anchorEl, handleClose, event }) {
             <IconButton sx={{ fontSize: "20px" }}>
               <EditOutlined />
             </IconButton>
-            <IconButton sx={{ fontSize: "20px" }}>
-              <DeleteOutlined />
-            </IconButton>
+            <DeleteAction />
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
