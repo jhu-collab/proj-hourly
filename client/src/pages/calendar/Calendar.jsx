@@ -7,7 +7,10 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore, { useEventStore } from "../../services/store";
+import useStore, {
+  useEventPopupStore,
+  useEventStore,
+} from "../../services/store";
 import { useEffect, useMemo, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
@@ -16,6 +19,7 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import { getIsoDate } from "../../utils/helpers";
+import MobileEventPopup from "./event-details/MobileEventPopup";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -33,6 +37,8 @@ function Calendar() {
     setCreateEventEndTime,
   } = useStore();
   const { setEvent } = useEventStore();
+  const { togglePopup } = useEventPopupStore();
+  const [openMobile, setMobile] = useState(false);
 
   const [isStaff, setIsStaff] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -43,12 +49,17 @@ function Calendar() {
     setIsStaff(courseType === "staff");
   }, [courseType]);
 
+  const handleMobilePopup = () => {
+    togglePopup(!openMobile);
+    setMobile(!openMobile);
+  };
+
   const handleEventClick = (info) => {
-    setAnchorEl(info.el);
+    matchUpSm ? setAnchorEl(info.el) : handleMobilePopup();
     setEvent(info.event);
   };
 
-  const handleClose = () => {
+  const handleClosePopover = () => {
     setAnchorEl(null);
   };
 
@@ -69,10 +80,6 @@ function Calendar() {
     }
     return { url: ical().toURL(), format: "ics" };
   }, [data]);
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <>
@@ -105,7 +112,14 @@ function Calendar() {
           timeZone="UTC"
         />
       </Box>
-      <EventPopover anchorEl={anchorEl} handleClose={handleClose} />
+      {matchUpSm ? (
+        <EventPopover anchorEl={anchorEl} handleClose={handleClosePopover} />
+      ) : (
+        <MobileEventPopup
+          open={openMobile}
+          handlePopupToggle={handleMobilePopup}
+        />
+      )}
       {isStaff && <CalendarSpeedDial />}
       {isLoading && <Loader />}
     </>

@@ -103,4 +103,12 @@ export const useEventStore = create((set) => ({
     }),
 }));
 
+export const useEventPopupStore = create((set) => ({
+  open: false,
+  togglePopup: (value) =>
+    set((state) => ({
+      open: value || !state.open,
+    })),
+}));
+
 export default useStore;
