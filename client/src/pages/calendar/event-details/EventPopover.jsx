@@ -8,6 +8,12 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 
+/**
+ * The popover the is rendered when a calendar event is clicked on
+ * @param {*} anchorEl - the element that popover is attached to
+ * @param {*} handleClose - function that closes the popover
+ * @returns a popover display event information.
+ */
 function EventPopover({ anchorEl, handleClose }) {
   return (
     <Popover
