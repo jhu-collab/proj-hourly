@@ -87,4 +87,20 @@ export const useConfirmDialogStore = create((set) => ({
   close: () => set({ onSubmit: undefined }),
 }));
 
+export const useEventStore = create((set) => ({
+  title: "",
+  start: new Date(),
+  end: new Date(),
+  location: "",
+  description: {},
+  setEvent: (event) =>
+    set({
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      location: event.extendedProps.location,
+      description: JSON.parse(event.extendedProps.description),
+    }),
+}));
+
 export default useStore;

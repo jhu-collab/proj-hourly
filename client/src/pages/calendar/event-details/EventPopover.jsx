@@ -8,7 +8,7 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 
-function EventPopover({ anchorEl, handleClose, event }) {
+function EventPopover({ anchorEl, handleClose }) {
   return (
     <Popover
       open={Boolean(anchorEl)}
@@ -30,7 +30,7 @@ function EventPopover({ anchorEl, handleClose, event }) {
         sx={{ padding: 2, pr: 1 }}
       >
         <Grid item xs={8} sx={{ mt: 0.5 }}>
-          <EventDetails event={event} />
+          <EventDetails />
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
@@ -40,7 +40,7 @@ function EventPopover({ anchorEl, handleClose, event }) {
             <IconButton sx={{ fontSize: "20px" }}>
               <EditOutlined />
             </IconButton>
-            <DeleteAction event={event} handlePopoverClose={handleClose} />
+            <DeleteAction handlePopoverClose={handleClose} />
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>

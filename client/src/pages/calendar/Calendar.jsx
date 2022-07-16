@@ -7,11 +7,11 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore from "../../services/store";
+import useStore, { useEventStore } from "../../services/store";
 import { useEffect, useMemo, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
-import EventDetails from "./event-details/EventDetails";
+import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
@@ -32,10 +32,10 @@ function Calendar() {
     setCreateEventStartTime,
     setCreateEventEndTime,
   } = useStore();
+  const { setEvent } = useEventStore();
 
   const [isStaff, setIsStaff] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [event, setEvent] = useState({});
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
@@ -105,11 +105,7 @@ function Calendar() {
           timeZone="UTC"
         />
       </Box>
-      <EventDetails
-        anchorEl={anchorEl}
-        handleClose={handleClose}
-        event={event}
-      />
+      <EventPopover anchorEl={anchorEl} handleClose={handleClose} />
       {isStaff && <CalendarSpeedDial />}
       {isLoading && <Loader />}
     </>
