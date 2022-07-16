@@ -3,17 +3,33 @@ import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { Grid, IconButton, Popover, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { getLocaleTime } from "../../../utils/helpers";
 
 function EventDetails({ anchorEl, handleClose, event }) {
   const open = Boolean(anchorEl);
+  const { start, end, extendedProps } = event;
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [location, setLocation] = useState("");
 
-  const date = event?.start?.toDateString();
-  const startTime = event?.start?.toLocaleTimeString([], {
-    timeStyle: "short",
-  });
-  const endTime = event?.end?.toLocaleTimeString([], { timeStyle: "short" });
-  const location = event?.extendedProps?.location;
+  useEffect(() => {
+    if (start) {
+      setDate(start.toDateString());
+
+      const startTimeStr = start.toUTCString().substring(17, 22);
+      setStartTime(getLocaleTime(startTimeStr));
+    }
+
+    if (end) {
+      const endTimeStr = end.toUTCString().substring(17, 22);
+      setEndTime(getLocaleTime(endTimeStr));
+    }
+
+    setLocation(extendedProps?.location);
+  }, [start, end, extendedProps]);
 
   return (
     <Popover
