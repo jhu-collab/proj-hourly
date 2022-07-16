@@ -1,17 +1,22 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  IconButton,
-  DialogContent,
-  Button,
-  Typography,
-} from "@mui/material";
-import React from "react";
+import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import DialogContent from "@mui/material/DialogContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useConfirmDialogStore } from "../services/store";
 
+/**
+ * State function that is responsible for displaying correct
+ * data and performing expected behavior for ConfirmPopup 
+ * component.
+ * @param {String} message - the message
+ * @param {*} onSubmit - function that handles what should
+ *                       happen on submission
+ */
 export const confirmDialog = (message, onSubmit) => {
   useConfirmDialogStore.setState({
     message,
@@ -19,6 +24,10 @@ export const confirmDialog = (message, onSubmit) => {
   });
 };
 
+/**
+ * Reusable component that can be used for confirmation dialog.
+ * @returns Confirmation popup.
+ */
 function ConfirmPopup() {
   const { message, onSubmit, close } = useConfirmDialogStore();
 
