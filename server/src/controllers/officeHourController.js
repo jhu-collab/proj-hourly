@@ -82,7 +82,9 @@ export const create = async (req, res) => {
     },
   });
   const calendar = await generateCalendar(courseId);
-  return res.status(StatusCodes.CREATED).json({ officeHour: officeHourWithData });
+  return res
+    .status(StatusCodes.CREATED)
+    .json({ officeHour: officeHourWithData });
 };
 
 export const getForCourse = async (req, res) => {

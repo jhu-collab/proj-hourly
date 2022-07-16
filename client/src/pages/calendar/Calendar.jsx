@@ -11,6 +11,10 @@ import useStore from "../../services/store";
 import { useEffect, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
+import { useQuery } from "react-query";
+import { getOfficeHours } from "../../utils/requests";
+import Loader from "../../components/Loader";
+import { getIsoDate } from "../../utils/helpers";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -20,25 +24,28 @@ function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
   const {
-    currentCourse,
     courseType,
-    createEventPopup,
     toggleCreateEventPopup,
     setCreateEventDate,
     setCreateEventStartTime,
     setCreateEventEndTime,
   } = useStore();
   const [isStaff, setIsStaff] = useState(false);
-  const [icsURL, setIcsURL] = useState("");
+
+  const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
+
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
   }, [courseType]);
 
   useEffect(() => {
-    const calendar = ical(JSON.parse(currentCourse.calendar));
-    !createEventPopup && setIcsURL(calendar.toURL());
-  }, [createEventPopup]);
+    if (data) {
+      const calendar = ical(data.calendar);
+      setUrl(calendar.toURL());
+    }
+  }, [data]);
 
   const handleEventClick = (info) => {
     alert("Event: " + info.event.title);
@@ -47,11 +54,16 @@ function Calendar() {
   const handleSelect = (info) => {
     const start = new Date(info.start);
     const end = new Date(info.end);
-    setCreateEventDate(start.toISOString().split("T")[0]);
-    setCreateEventStartTime(start.toLocaleTimeString("it-IT").substring(0, 5));
-    setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
+
+    setCreateEventDate(getIsoDate(start));
+    setCreateEventStartTime(start.toUTCString().substring(17, 22));
+    setCreateEventEndTime(end.toUTCString().substring(17, 22));
     toggleCreateEventPopup(true);
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -78,15 +90,17 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           events={{
-            url: icsURL,
+            url: url,
             format: "ics",
           }}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
+          timeZone="UTC"
         />
       </Box>
       {isStaff && <CalendarSpeedDial />}
+      {isLoading && <Loader />}
     </>
   );
 }

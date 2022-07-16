@@ -7,9 +7,25 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import { getLocaleTime } from "../../../utils/helpers";
 import useStore from "../../../services/store";
-import ical from "ical-generator";
+import { useMutation, useQueryClient } from "react-query";
+import { createOfficeHour } from "../../../utils/requests";
+import Loader from "../../../components/Loader";
+import {
+  getExpectedDate,
+  getIsoDate,
+  getLocaleTime,
+} from "../../../utils/helpers";
+
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 /**
  * Component that represents the form that is used to create an event.
@@ -18,10 +34,11 @@ import ical from "ical-generator";
  */
 function CreateEventForm({ handlePopupToggle }) {
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const {
+    userId,
     currentCourse,
-    updateCurrentCourse,
     createEventDate,
     createEventStartTime,
     createEventEndTime,
@@ -37,71 +54,82 @@ function CreateEventForm({ handlePopupToggle }) {
     resolver: yupResolver(createEventSchema),
   });
 
+  const { mutate, isLoading } = useMutation(createOfficeHour, {
+    onSuccess: (data) => {
+      const officeHour = data.officeHour;
+      const date = new Date(officeHour.startDate).toDateString();
+
+      const startTime = officeHour.startTime.substring(11, 19);
+      const endTime = officeHour.endTime.substring(11, 19);
+
+      queryClient.invalidateQueries(["officeHours"]);
+      handlePopupToggle();
+      // TODO: Will need to be refactored once we deal with recurring events.
+      toast.success(
+        `Successfully created office hour on ${date} from 
+         ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`
+      );
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
+
   const onSubmit = (data) => {
-    const calendar = ical(JSON.parse(currentCourse.calendar));
-    const start = new Date(data.date.getTime());
-    const end = new Date(data.date.getTime());
-
-    const [startHours, startMin] = data.startTime.split(":");
-    const [endHours, endMin] = data.endTime.split(":");
-
-    start.setHours(startHours);
-    start.setMinutes(startMin);
-    end.setHours(endHours);
-    end.setMinutes(endMin);
-
-    calendar.createEvent({
-      summary: "Bob's Office Hours",
-      start: start,
-      end: end,
+    mutate({
+      courseId: currentCourse.id,
+      startTime: `${data.startTime}:00`,
+      endTime: `${data.endTime}:00`,
+      recurringEvent: false, // TODO: For now, the default is false
+      startDate: getExpectedDate(getIsoDate(data.date)),
+      endDate: getExpectedDate(getIsoDate(data.date)),
       location: data.location,
+      daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
+      timeInterval: 10, // TODO: For now, the default is 10,
+      hosts: [userId], // TOOD: For now, there will be no additional hosts
     });
-
-    const updatedCourse = currentCourse;
-    updatedCourse.calendar = JSON.stringify(calendar);
-    // Update course with new ics URL (TODO: This will be altered once backend is connected)
-    updateCurrentCourse(updatedCourse);
-
-    handlePopupToggle(); // Close popup
-    toast.success(
-      `Successfully created an event on ${data.date.toLocaleDateString()} from ${getLocaleTime(
-        data.startTime
-      )} to ${getLocaleTime(data.endTime)}`
-    );
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack direction="column" spacing={theme.spacing(3)}>
-        <FormInputText
-          name="date"
-          control={control}
-          label="Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-        />
-        <Stack direction="row" spacing={theme.spacing(3)}>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column" spacing={theme.spacing(3)}>
           <FormInputText
-            name="startTime"
+            name="date"
             control={control}
-            label="Start Time"
-            type="time"
+            label="Date"
+            type="date"
             InputLabelProps={{ shrink: true }}
           />
-          <FormInputText
-            name="endTime"
-            control={control}
-            label="End Time"
-            type="time"
-            InputLabelProps={{ shrink: true }}
-          />
+          <Stack direction="row" spacing={theme.spacing(3)}>
+            <FormInputText
+              name="startTime"
+              control={control}
+              label="Start Time"
+              type="time"
+              InputLabelProps={{ shrink: true }}
+            />
+            <FormInputText
+              name="endTime"
+              control={control}
+              label="End Time"
+              type="time"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Stack>
+          <FormInputText name="location" control={control} label="Location" />
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isLoading}
+            fullWidth
+          >
+            Create
+          </Button>
         </Stack>
-        <FormInputText name="location" control={control} label="Location" />
-        <Button type="submit" variant="contained" fullWidth>
-          Create
-        </Button>
-      </Stack>
-    </Form>
+      </Form>
+      {isLoading && <Loader />}
+    </>
   );
 }
 

@@ -26,8 +26,6 @@ router.post(
 // requires the id in the header for now, will be replaced with token later
 router.get("/me/courses", controller.getCourses);
 
-router.delete("/me",
-  controller.deleteAccount
-)
+router.delete("/me", controller.deleteAccount);
 
 export default router;

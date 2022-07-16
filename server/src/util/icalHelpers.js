@@ -3,6 +3,27 @@ import prisma from "../../prisma/client.js";
 import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
 
+/**
+ * Javascript Date object will often be one day off if you provide
+ * it with the format of yyyy-mm-dd. However, if you pass in
+ * yyyy/mm/dd into a the Date constructor, you will get the
+ * date in which you expected.
+ * @param {*} dateStr - A string in the format of yyyy-mm-dd
+ * @returns A string in the format of yyyy/mm/dd
+ */
+export const getExpectedDate = (dateStr) => {
+  return dateStr.replace(/-/g, "/");
+};
+
+/**
+ * Retrives only the date portion of the Date.toIsoString method.
+ * @param {*} dateObj - Java string date object
+ * @returns A string in the format of yyyy-mm-dd
+ */
+export const getIsoDate = (dateObj) => {
+  return dateObj.toISOString().split("T")[0];
+};
+
 export const generateCalendar = async (courseId) => {
   const course = await prisma.course.findUnique({
     where: {
@@ -33,11 +54,13 @@ export const generateCalendar = async (courseId) => {
     },
   });
   officeHours.forEach((officeHour) => {
-    const startTime = new Date(officeHour.startDate);
+    const startTime = new Date(
+      getExpectedDate(getIsoDate(officeHour.startDate))
+    );
     startTime.setHours(officeHour.startTime.getHours() + 1);
     startTime.setMinutes(officeHour.startTime.getMinutes());
     startTime.setSeconds(officeHour.startTime.getSeconds());
-    const endTime = new Date(officeHour.endDate);
+    const endTime = new Date(getExpectedDate(getIsoDate(officeHour.endDate)));
     endTime.setHours(officeHour.endTime.getHours() + 1);
     endTime.setMinutes(officeHour.endTime.getMinutes());
     endTime.setSeconds(officeHour.endTime.getSeconds());
@@ -52,6 +75,7 @@ export const generateCalendar = async (courseId) => {
     const event = calendar.createEvent({
       start: startTime,
       end: endTime,
+      timezone: "UTC",
       summary,
       description: JSON.stringify({
         hosts: officeHour.hosts,
@@ -64,7 +88,10 @@ export const generateCalendar = async (courseId) => {
       const rule = generateRRule(officeHour);
       event.repeating(rule);
     }
+
+    console.log(event);
   });
+
   const jsonCal = calendar.toJSON();
   await prisma.course.update({
     where: {
