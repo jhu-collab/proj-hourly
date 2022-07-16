@@ -15,7 +15,7 @@ function DeleteAction() {
       <IconButton
         sx={{ fontSize: "20px" }}
         onClick={() => {
-          confirmDialog("Do you really want to delete all the data?", () =>
+          confirmDialog("Do you really want to delete this event?", () =>
             console.log("deleting all the data!")
           );
         }}

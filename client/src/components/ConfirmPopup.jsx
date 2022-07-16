@@ -19,11 +19,11 @@ export const confirmDialog = (message, onSubmit) => {
   });
 };
 
-function ConfirmPopup({ open, onClose, title }) {
+function ConfirmPopup() {
   const { message, onSubmit, close } = useConfirmDialogStore();
 
   return (
-    <Dialog open={Boolean(onSubmit)} maxWidth="xs" fullWidth>
+    <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth>
       <DialogTitle variant="h4">Confirm the action</DialogTitle>
       <Box position="absolute" top={8} right={0}>
         <IconButton sx={{ fontSize: "20px" }} onClick={close}>
