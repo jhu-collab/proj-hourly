@@ -65,7 +65,7 @@ function DeleteAction({ handlePopoverClose }) {
       >
         <DeleteOutlined />
       </IconButton>
-      <ConfirmPopup open={open} onClose={handlePopupToggle} />
+      <ConfirmPopup />
       {isLoading && <Loader />}
     </>
   );
