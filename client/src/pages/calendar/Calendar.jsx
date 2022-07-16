@@ -15,6 +15,7 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import { createRef } from "react";
+import { getIsoDate } from "../../utils/helpers";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -54,9 +55,10 @@ function Calendar() {
   const handleSelect = (info) => {
     const start = new Date(info.start);
     const end = new Date(info.end);
-    setCreateEventDate(start.toISOString().split("T")[0]);
-    setCreateEventStartTime(start.toLocaleTimeString("it-IT").substring(0, 5));
-    setCreateEventEndTime(end.toLocaleTimeString("it-IT").substring(0, 5));
+
+    setCreateEventDate(getIsoDate(start));
+    setCreateEventStartTime(start.toUTCString().substring(17, 22));
+    setCreateEventEndTime(end.toUTCString().substring(17, 22));
     toggleCreateEventPopup(true);
   };
 
@@ -95,6 +97,7 @@ function Calendar() {
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
+          timeZone="UTC"
         />
       </Box>
       {isStaff && <CalendarSpeedDial />}
