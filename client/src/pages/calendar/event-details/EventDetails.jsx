@@ -3,6 +3,10 @@ import Stack from "@mui/material/Stack";
 import { getLocaleTime } from "../../../utils/helpers";
 import { useEventStore } from "../../../services/store";
 
+/**
+ * Child component that displays event details.
+ * @returns event-specific information
+ */
 function EventDetails() {
   const { title, start, end, location } = useEventStore();
   const date = start.toDateString();

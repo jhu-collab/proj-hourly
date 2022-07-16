@@ -11,7 +11,7 @@ import { useConfirmDialogStore } from "../services/store";
 
 /**
  * State function that is responsible for displaying correct
- * data and performing expected behavior for ConfirmPopup 
+ * data and performing expected behavior for ConfirmPopup
  * component.
  * @param {String} message - the message
  * @param {*} onSubmit - function that handles what should
