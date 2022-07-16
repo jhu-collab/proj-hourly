@@ -1,8 +1,11 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { Grid, IconButton, Popover, Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Popover from "@mui/material/Popover";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { getLocaleTime } from "../../../utils/helpers";
@@ -77,7 +80,7 @@ function EventDetails({ anchorEl, handleClose, event }) {
             <IconButton sx={{ fontSize: "20px" }}>
               <EditOutlined />
             </IconButton>
-            <DeleteAction />
+            <DeleteAction event={event} handleClose={handleClose} />
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
