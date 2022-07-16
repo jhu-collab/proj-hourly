@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import AnimateButton from "../../components/AnimateButton";
-import OtherLogin from "./OtherLogin";
+import SingleSignOn from "./SingleSignOn";
 import Form from "../../components/form-ui/Form";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
@@ -105,7 +105,7 @@ function AuthRegister() {
           </Divider>
         </Grid>
         <Grid item xs={12}>
-          <OtherLogin />
+          <SingleSignOn />
         </Grid>
       </Grid>
     </Form>
