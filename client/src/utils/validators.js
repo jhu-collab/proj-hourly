@@ -47,6 +47,13 @@ export const createCourseSchema = yup.object().shape({
     .required("Year is required"),
 });
 
+export const joinCourseSchema = yup.object().shape({
+  code: yup
+    .string()
+    .required("Course code is required")
+    .length(6, "Course code must be 6 characters"),
+});
+
 export const createEventSchema = yup.object().shape({
   date: yup
     .date()
