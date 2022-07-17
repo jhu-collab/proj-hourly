@@ -1,0 +1,40 @@
+name: Deploy the client (frontend) app
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "client/**"
+      - ".github/workflows/dev.client.yml"
+
+env:
+  VITE_RUN_MODE: dev
+  VITE_DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
+  VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+
+defaults:
+  run:
+    working-directory: client
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build the React App
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: yarn
+      - run: yarn run build
+      
+      - name: Deploy to netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.DEV_NETLIFY_SITE_ID }}
+        with:
+          args: deploy --dir=client/dist --prod
+          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
