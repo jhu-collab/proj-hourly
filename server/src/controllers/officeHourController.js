@@ -176,13 +176,13 @@ export const cancelAll = async (req, res) => {
     },
   });
   let officeHourUpdate;
-  if (new Date(officeHour.startDate) >= date) {
+  if (officeHour.startDate >= date) {
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
         id: officeHourId,
       },
     });
-  } else if (new Date(officeHour.endDate) > date) {
+  } else if (officeHour.endDate > date) {
     officeHourUpdate = await prisma.officeHour.update({
       where: {
         id: officeHourId,
@@ -196,6 +196,6 @@ export const cancelAll = async (req, res) => {
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hours already over" });
   }
-  const calendar = await generateCalendar(officeHour.course.courseId);
+  const calendar = await generateCalendar(officeHour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
