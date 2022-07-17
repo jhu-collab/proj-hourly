@@ -14,7 +14,7 @@ export const dashboard = {
       id: "your-courses",
       title: "Your Courses",
       type: "item",
-      url: "/",
+      url: "/courses",
       icon: icons.BookOutlined,
       breadcrumbs: false,
     },

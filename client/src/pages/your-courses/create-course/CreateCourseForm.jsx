@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
+import useStore from "../../../services/store";
 
 const options = [
   {
@@ -43,13 +44,14 @@ const options = [
 function CreateCourseForm({ handlePopupToggle }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const { userId } = useStore();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
       title: "",
       number: "",
       semester: "",
-      year: null,
+      year: "",
     },
     resolver: yupResolver(createCourseSchema),
   });
@@ -70,7 +72,7 @@ function CreateCourseForm({ handlePopupToggle }) {
   });
 
   const onSubmit = (data) => {
-    mutate({ ...data, id: 1 });
+    mutate({ ...data, id: userId });
   };
 
   return (

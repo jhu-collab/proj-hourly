@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import validate from "../util/checkValidation.js";
+import { generateCalendar } from "../util/icalHelpers.js";
 
 export const create = async (req, res) => {
   validate(req);
@@ -68,26 +69,33 @@ export const create = async (req, res) => {
       id: officeHour.id,
     },
     include: {
-      hosts: {},
-      isOnDayOfWeek: {},
+      hosts: {
+        select: {
+          id: true,
+        },
+      },
+      isOnDayOfWeek: {
+        select: {
+          dayOfWeek: true,
+        },
+      },
     },
   });
-  return res.status(StatusCodes.CREATED).json({ officeHourWithData });
+  const calendar = await generateCalendar(courseId);
+  return res
+    .status(StatusCodes.CREATED)
+    .json({ officeHour: officeHourWithData });
 };
 
 export const getForCourse = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
-  const officeHours = await prisma.officeHour.findMany({
+  const course = await prisma.course.findUnique({
     where: {
-      courseId,
-    },
-    include: {
-      hosts: {},
-      isOnDayOfWeek: {},
+      id: courseId,
     },
   });
-  res.status(StatusCodes.ACCEPTED).json({ officeHours });
+  res.status(StatusCodes.ACCEPTED).json({ calendar: course.iCalJson });
 };
 
 export const register = async (req, res) => {
@@ -134,6 +142,9 @@ export const cancelOnDate = async (req, res) => {
     where: {
       id: officeHourId,
     },
+    include: {
+      course: true,
+    },
   });
   const officeHourUpdate = await prisma.officeHour.update({
     where: {
@@ -143,7 +154,8 @@ export const cancelOnDate = async (req, res) => {
       isCancelledOn: [...officehour.isCancelledOn, dateObj],
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json(officeHourUpdate);
+  const calendar = await generateCalendar(officehour.course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
 export const cancelAll = async (req, res) => {
@@ -158,15 +170,18 @@ export const cancelAll = async (req, res) => {
     where: {
       id: officeHourId,
     },
+    include: {
+      course: true,
+    },
   });
   let officeHourUpdate;
-  if (new Date(officeHour.startDate) >= date) {
+  if (officeHour.startDate >= date) {
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
         id: officeHourId,
       },
     });
-  } else if (new Date(officeHour.endDate) > date) {
+  } else if (officeHour.endDate > date) {
     officeHourUpdate = await prisma.officeHour.update({
       where: {
         id: officeHourId,
@@ -180,5 +195,6 @@ export const cancelAll = async (req, res) => {
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hours already over" });
   }
+  const calendar = await generateCalendar(officeHour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };

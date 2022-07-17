@@ -124,11 +124,13 @@ export const isOfficeHourOnDay = async (req, res, next) => {
     },
   });
   let isCancelled = false;
-  officeHour.isCancelledOn.forEach((cancelledDate) => {
-    if (cancelledDate.toDateString() === dateObj.toDateString()) {
-      isCancelled = true;
-    }
-  });
+  if (officeHour !== null) {
+    officeHour.isCancelledOn.forEach((cancelledDate) => {
+      if (cancelledDate.toDateString() === dateObj.toDateString()) {
+        isCancelled = true;
+      }
+    });
+  }
   if (officeHour === null || isCancelled) {
     return res
       .status(StatusCodes.CONFLICT)

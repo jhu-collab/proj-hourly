@@ -14,18 +14,18 @@ import React from "react";
  *                  is opened
  * @param {*} onClose: (required) function that handles what happens when popup
  *             is closed
- * @param {string} title: (required) the title of the popup
+ * @param {string} title: (optional) the title of the popup
  * @param {*} children: (optional) children to fill up the component
  * @returns Reusable popup component.
  */
 function Popup({ open, onClose, title, children }) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle sx={{ mb: -2, mt: 2 }}>
-        <Typography variant="h2" align="center">
+      {title && (
+        <DialogTitle align="center" variant="h2" sx={{ mb: -2, mt: 2 }}>
           {title}
-        </Typography>
-      </DialogTitle>
+        </DialogTitle>
+      )}
       <Box position="absolute" top={2} right={2}>
         <IconButton sx={{ fontSize: "22px" }} onClick={onClose}>
           <CloseOutlined />
