@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Stack } from "@mui/material";
-import React from "react";
+import Button from "@mui/material";
+import Stack from "@mui/material";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
@@ -37,7 +37,6 @@ function JoinCourseForm({ onClose }) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     mutate({ ...data, id: 2 });
   };
   return (

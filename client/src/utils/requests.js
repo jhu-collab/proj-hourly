@@ -24,6 +24,5 @@ export const joinCourse = async (course) => {
   const res = await axios.post(`${BASE_URL}/api/course/signup/`, course, {
     headers: { id: 2 },
   });
-  console.log(res.data);
   return res.data;
 };
