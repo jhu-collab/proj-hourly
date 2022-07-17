@@ -141,10 +141,7 @@ const generateRRule = (officeHour) => {
     })
   );
   officeHour.isCancelledOn.forEach((date) => {
-    const dateArray = date.split("-");
-    rruleSet.exdate(
-      new Date(Date.UTC(dateArray[0], dateArray[1], dateArray[2].split("T")[0]))
-    );
+    rruleSet.exdate(date);
   });
   return rruleSet;
 };
