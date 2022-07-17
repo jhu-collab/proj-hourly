@@ -7,14 +7,19 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore from "../../services/store";
-import { useEffect, useState } from "react";
+import useStore, {
+  useEventPopupStore,
+  useEventStore,
+} from "../../services/store";
+import { useEffect, useMemo, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
+import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import { getIsoDate } from "../../utils/helpers";
+import MobileEventPopup from "./event-details/MobileEventPopup";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -23,6 +28,7 @@ import { getIsoDate } from "../../utils/helpers";
 function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
   const {
     courseType,
     toggleCreateEventPopup,
@@ -30,25 +36,31 @@ function Calendar() {
     setCreateEventStartTime,
     setCreateEventEndTime,
   } = useStore();
+  const { setEvent } = useEventStore();
+  const { togglePopup } = useEventPopupStore();
+  const [openMobile, setMobile] = useState(false);
+
   const [isStaff, setIsStaff] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
-
-  const [url, setUrl] = useState("");
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
   }, [courseType]);
 
-  useEffect(() => {
-    if (data) {
-      const calendar = ical(data.calendar);
-      setUrl(calendar.toURL());
-    }
-  }, [data]);
+  const handleMobilePopup = () => {
+    togglePopup(!openMobile);
+    setMobile(!openMobile);
+  };
 
   const handleEventClick = (info) => {
-    alert("Event: " + info.event.title);
+    matchUpSm ? setAnchorEl(info.el) : handleMobilePopup();
+    setEvent(info.event);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
   };
 
   const handleSelect = (info) => {
@@ -61,9 +73,13 @@ function Calendar() {
     toggleCreateEventPopup(true);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  const memoizedEventsFn = useMemo(() => {
+    if (data) {
+      const calendar = ical(data.calendar);
+      return { url: calendar.toURL(), format: "ics" };
+    }
+    return { url: ical().toURL(), format: "ics" };
+  }, [data]);
 
   return (
     <>
@@ -89,16 +105,21 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
-          events={{
-            url: url,
-            format: "ics",
-          }}
+          events={memoizedEventsFn}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
           timeZone="UTC"
         />
       </Box>
+      {matchUpSm ? (
+        <EventPopover anchorEl={anchorEl} handleClose={handleClosePopover} />
+      ) : (
+        <MobileEventPopup
+          open={openMobile}
+          handlePopupToggle={handleMobilePopup}
+        />
+      )}
       {isStaff && <CalendarSpeedDial />}
       {isLoading && <Loader />}
     </>
