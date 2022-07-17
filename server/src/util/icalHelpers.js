@@ -88,8 +88,6 @@ export const generateCalendar = async (courseId) => {
       const rule = generateRRule(officeHour);
       event.repeating(rule);
     }
-
-    console.log(event);
   });
 
   const jsonCal = calendar.toJSON();
