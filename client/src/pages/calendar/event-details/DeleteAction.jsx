@@ -5,9 +5,9 @@ import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
-import useStore, { useEventStore } from "../../../services/store";
+import { useEventStore } from "../../../services/store";
 import { getIsoDate, getLocaleTime } from "../../../utils/helpers";
-import { cancelOnDate } from "../../../utils/requests";
+import { cancelAll } from "../../../utils/requests";
 
 /**
  * Represents the Trash IconButton on the EventDetails component
@@ -18,9 +18,7 @@ import { cancelOnDate } from "../../../utils/requests";
 function DeleteAction({ handlePopoverClose }) {
   const [open, setOpen] = useState(false);
 
-  const { currentCourse } = useStore();
-  const { start, description } = useEventStore();
-  const date = getIsoDate(start);
+  const { description } = useEventStore();
   const id = description.id;
 
   const queryClient = useQueryClient();
@@ -29,7 +27,7 @@ function DeleteAction({ handlePopoverClose }) {
     setOpen(!open);
   };
 
-  const { mutate, isLoading } = useMutation(cancelOnDate, {
+  const { mutate, isLoading } = useMutation(cancelAll, {
     onSuccess: (data) => {
       const officeHour = data.officeHourUpdate;
       const date = new Date(officeHour.startDate).toDateString();
@@ -59,7 +57,7 @@ function DeleteAction({ handlePopoverClose }) {
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog("Do you really want to delete this event?", () =>
-            mutate({ officeHourId: id, date: date, courseId: currentCourse.id })
+            mutate({ officeHourId: id })
           );
         }}
       >

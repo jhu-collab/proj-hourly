@@ -54,11 +54,9 @@ export const createOfficeHour = async (body) => {
   return res.data;
 };
 
-export const cancelOnDate = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/cancelOnDate`,
-    body,
-    { headers: { id: getUserId() } }
-  );
+export const cancelAll = async (body) => {
+  const res = await axios.post(`${BASE_URL}/api/officeHour/cancelAll`, body, {
+    headers: { id: getUserId() },
+  });
   return res.data;
 };
