@@ -9,6 +9,7 @@ import { joinCourseSchema } from "../../../utils/validators";
 import { useMutation, useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
+import useStore from "../../../services/store";
 
 /**
  * Component that represents the form that is used to join a course.
@@ -16,6 +17,7 @@ import Loader from "../../../components/Loader";
  * @returns A component representing the Join Course form.
  */
 function JoinCourseForm({ onClose }) {
+  const { userId } = useStore();
   const queryClient = useQueryClient();
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -38,7 +40,7 @@ function JoinCourseForm({ onClose }) {
   });
 
   const onSubmit = (data) => {
-    mutate({ ...data, id: 2 });
+    mutate({ ...data, id: userId });
   };
   return (
     <>

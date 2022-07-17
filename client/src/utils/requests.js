@@ -63,7 +63,7 @@ export const cancelAll = async (body) => {
 
 export const joinCourse = async (course) => {
   const res = await axios.post(`${BASE_URL}/api/course/signup/`, course, {
-    headers: { id: 2 },
+    headers: { id: getUserId() },
   });
   return res.data;
 };
