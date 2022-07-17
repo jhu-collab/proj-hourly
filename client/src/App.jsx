@@ -27,6 +27,14 @@ const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
 );
 
+const Roster = Loadable(
+  lazy(() => import("./pages/roster-page/Roster"))
+);
+
+const RosterTest = Loadable(
+  lazy(() => import("./pages/roster-page/RosterTest"))
+);
+
 function App() {
   return (
     <ThemeCustomization>
@@ -41,6 +49,8 @@ function App() {
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/dashboard" element={<DashboardDefault />} />
+            <Route path="/roster" element={<Roster />} />
+            <Route path="/roster-test" element={<RosterTest />} />
             <Route path="sample-page" element={<SamplePage />} />
             <Route path="react-query" element={<ReactQueryDemo />} />
             <Route path="full-cal" element={<FullCalendarDemo />} />
