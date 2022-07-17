@@ -8,6 +8,7 @@ import FormInputText from "../../../components/form-ui/FormInputText";
 import { joinCourseSchema } from "../../../utils/validators";
 import { useMutation, useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
+import Loader from "../../../components/Loader";
 
 /**
  * Component that represents the form that is used to join a course.
@@ -40,18 +41,21 @@ function JoinCourseForm({ onClose }) {
     mutate({ ...data, id: 2 });
   };
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack direction="column" spacing={3}>
-        <FormInputText
-          name="code"
-          label="Course Code"
-          control={control}
-        ></FormInputText>
-        <Button variant="contained" fullWidth type="submit">
-          Submit
-        </Button>
-      </Stack>
-    </Form>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column" spacing={3}>
+          <FormInputText
+            name="code"
+            label="Course Code"
+            control={control}
+          ></FormInputText>
+          <Button variant="contained" fullWidth type="submit">
+            Submit
+          </Button>
+        </Stack>
+      </Form>
+      {isLoading && <Loader />}
+    </>
   );
 }
 
