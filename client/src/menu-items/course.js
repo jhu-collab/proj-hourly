@@ -21,6 +21,15 @@ export const course = (currentCourse) => {
         icon: icons.CalendarOutlined,
         breadcrumbs: false,
       },
+      {
+        id: "roster",
+        title: "Roster",
+        type: "item",
+        url: "/roster-test",
+        //TODO
+        icon: icons.CalendarOutlined,
+        breadcrumbs: false,
+      }
     ],
   };
 };
