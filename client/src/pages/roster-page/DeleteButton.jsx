@@ -28,7 +28,7 @@ function DeleteButton(props) {
         [courseId, token],
     );
 
-      function JoinCourse({ open, handlePopupToggle, id }) {
+      function DeleteUser({ open, handlePopupToggle, id }) {
         return (
             <Popup open={open} onClose={handlePopupToggle} title="Do you want to delete the user?">
                 <Box  textAlign="center">
@@ -51,7 +51,7 @@ function DeleteButton(props) {
             disabled={isButtonDisabled(params.id)}
             label="Delete"
             />  
-            <JoinCourse open = {open} onClose = {handleClose} id = {params.id}/>
+            <DeleteUser open = {open} onClose = {handleClose} id = {params.id}/>
         </>
 );
 }
