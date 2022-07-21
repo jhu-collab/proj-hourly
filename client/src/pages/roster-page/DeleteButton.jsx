@@ -1,11 +1,10 @@
 import { useState, useCallback } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import * as React from "react";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 import Popup from "../../components/Popup";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
-
+import Button from "@mui/material/Button";
+import { toast } from "react-toastify";
 
 function DeleteButton(props) {
   const { courseId, setRows, token, params, isButtonDisabled } = props;
@@ -25,6 +24,7 @@ function DeleteButton(props) {
   const deleteUser = useCallback(
     (id) => () => {
       setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      toast.success("Deleted user");
     },
     [courseId, token]
   );
@@ -37,9 +37,10 @@ function DeleteButton(props) {
         title="Do you want to delete the user?"
       >
         <Box textAlign="center">
-          <Button 
-          onClick={deleteUser(id)}
-          sx={{margin: 0, fontSize:17}}
+          <Button
+            onClick={deleteUser(id)}
+            sx={{ margin: 0, fontSize: 17 }}
+            variant="contained"
           >
             Delete User
           </Button>

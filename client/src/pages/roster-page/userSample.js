@@ -1,4 +1,4 @@
-export const Foo = {
+export const userSample = {
   students: [
     {
       username: "hi",
@@ -26,4 +26,4 @@ export const Foo = {
     },
   ],
 };
-export default Foo;
+export default userSample;

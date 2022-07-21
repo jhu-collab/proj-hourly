@@ -1,10 +1,8 @@
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import * as React from "react";
+import { DataGrid } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 function RosterTabs(props) {
   const { check, setCheck, columns, rows, value, setValue } = props;

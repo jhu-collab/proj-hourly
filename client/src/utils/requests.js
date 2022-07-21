@@ -25,7 +25,7 @@ export const fetchUsers = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/courses/${getCourseId()}/getRoster`,
     {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { id: getUserId() },
     }
   );
   return res.data;

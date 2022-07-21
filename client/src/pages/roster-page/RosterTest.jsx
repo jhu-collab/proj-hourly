@@ -1,27 +1,25 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Stack from "@mui/material/Stack";
 import InviteUser from "./InviteUser";
-import * as React from "react";
 import Typography from "@mui/material/Typography";
 import RosterTabs from "./RosterTabs";
 import { fetchUsers } from "../../utils/requests";
-import Foo from "./Foo";
+import userSample from "./userSample";
 import DeleteButton from "./DeleteButton";
 // ==============================|| Roster ||============================== //
 
 /**
  * A component that represents the roster page that the user visits after clicking the people icon in the nav drawer.
+ * @param user the current user
  * @returns The Roster component.
  */
 const RosterTest = ({ user, token }) => {
   const [rows, setRows] = useState([]);
-  // eslint-disable-next-line
   const [users, setUsers] = useState({});
-  // eslint-disable-next-line
   const [courseId, setCourseId] = useState();
   const [isInstructor, setIsInstructor] = useState(false);
-  const [value, setValue] = React.useState(0);
-  const [check, setCheck] = React.useState(1);
+  const [value, setValue] = useState(0);
+  const [check, setCheck] = useState(1);
 
   // Check if current user is an instructor
   useEffect(() => {
@@ -54,7 +52,7 @@ const RosterTest = ({ user, token }) => {
     //need to feetch the data instead of using fake data
     const newRoster = [];
     ["instructors", "staff", "students"].forEach((type) => {
-      Foo[type].map((item) => {
+      userSample[type].map((item) => {
         const newMember = {
           role: {
             instructors: "Instructor",

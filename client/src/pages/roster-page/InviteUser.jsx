@@ -1,11 +1,7 @@
 //seperate them
 import { Button, Stack } from "@mui/material";
 //seperate them
-import {
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
+import { RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import Popup from "../../components/Popup";
@@ -36,7 +32,7 @@ function InviteUser(props) {
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      email: ""
+      email: "",
     },
     resolver: yupResolver(inviteUserSchema),
   });
@@ -58,10 +54,7 @@ function InviteUser(props) {
       </Button>
       <Popup onClose={handleClose} open={open} title="Invite User">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
-            alignItems={"center"}
-            direction={"column"}
-            spacing={2}>
+          <Stack alignItems={"center"} direction={"column"} spacing={2}>
             <FormInputText
               name="email"
               control={control}
