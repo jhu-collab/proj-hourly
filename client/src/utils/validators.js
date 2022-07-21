@@ -65,3 +65,11 @@ export const createEventSchema = yup.object().shape({
   endTime: yup.string().required("End time is required"),
   location: yup.string().required("Location is required"),
 });
+
+export const inviteUserSchema = yup.object().shape({
+  email: yup
+  .string()
+  .email("Must be a valid email")
+  .max(255)
+  .required("Email is required"),
+});

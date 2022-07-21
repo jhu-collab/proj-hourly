@@ -3,8 +3,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import * as React from "react";
 import Popup from "../../components/Popup";
-import Button from "../../components/control/Button";
 import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
+
 
 function DeleteButton(props) {
   const { courseId, setRows, token, params, isButtonDisabled } = props;
@@ -36,12 +37,12 @@ function DeleteButton(props) {
         title="Do you want to delete the user?"
       >
         <Box textAlign="center">
-          <Button
-            text="Delete User"
-            margin="0px"
-            fontSize="17px"
-            onClick={deleteUser(id)}
-          />
+          <Button 
+          onClick={deleteUser(id)}
+          sx={{margin: 0, fontSize:17}}
+          >
+            Delete User
+          </Button>
         </Box>
       </Popup>
     );
