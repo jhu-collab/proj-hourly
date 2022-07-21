@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button as MuiButton } from '@mui/material';
+import React from "react";
+import { Button as MuiButton } from "@mui/material";
 
 /**
  * Represents a reusable component that is inspired by the Material UI Button component.
@@ -22,7 +22,7 @@ function Button(props) {
 
   const styles = {
     button: {
-      margin: margin || '10px',
+      margin: margin || "10px",
       width: width,
       height: height,
       fontSize: fontSize,
@@ -31,9 +31,9 @@ function Button(props) {
 
   return (
     <MuiButton
-      variant={variant || 'contained'}
-      size={!width ? size || 'large' : ''}
-      color={color || 'primary'}
+      variant={variant || "contained"}
+      size={!width ? size || "large" : ""}
+      color={color || "primary"}
       onClick={onClick}
       style={styles.button}
       {...other}

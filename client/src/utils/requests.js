@@ -22,9 +22,12 @@ export const getCourses = async () => {
 };
 
 export const fetchUsers = async () => {
-  const res = await axios.get(`${BASE_URL}/api/courses/${getCourseId()}/getRoster`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await axios.get(
+    `${BASE_URL}/api/courses/${getCourseId()}/getRoster`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return res.data;
 };
 

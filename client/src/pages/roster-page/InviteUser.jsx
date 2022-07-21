@@ -1,8 +1,8 @@
-import React from 'react';
-import { IconButton } from '@mui/material';
-import ClearIcon from '@mui/icons-material/Clear';
-import axios from 'axios';
-import validator from 'validator';
+import React from "react";
+import { Button, IconButton } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
+import axios from "axios";
+import validator from "validator";
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,12 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-} from '@mui/material';
-import Button from '../../components/control/Button';
-import Form from '../../components/form-ui/Form';
-import useForm from '../../components/form-ui/useForm';
-import Controls from '../../components/control/Controls';
+} from "@mui/material";
+
+import Form from "../../components/form-ui/Form";
+import FormInputText from "../../components/form-ui/FormInputText";
+import useForm from "../../components/form-ui/useForm";
+import Controls from "../../components/control/Controls";
 
 /**
  * Represents a Material UI Card component that allows staff to add users.
@@ -23,7 +24,7 @@ import Controls from '../../components/control/Controls';
  */
 function InviteUser(props) {
   const { id, isInstructor, token, preSelect } = props;
-  const [role, setRole] = React.useState('');
+  const [role, setRole] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [checked, setChecked] = React.useState(preSelect);
   const handleOpen = () => {
@@ -44,26 +45,26 @@ function InviteUser(props) {
   // Validation function to check if fields are correctly formatted.
   const validate = (fields = values) => {
     let temp = { ...errors };
-    if ('email' in fields)
+    if ("email" in fields)
       temp.email = validator.isEmail(fields.email)
-        ? ''
-        : 'Please include a valid email.';
+        ? ""
+        : "Please include a valid email.";
 
     setErrors({
       ...temp,
     });
 
-    if (fields === values) return Object.values(temp).every((x) => x === '');
+    if (fields === values) return Object.values(temp).every((x) => x === "");
   };
 
   const initialFValues = {
-    email: '',
+    email: "",
   };
 
   const { values, errors, setErrors, handleInputChange } = useForm(
     initialFValues,
     false,
-    validate,
+    validate
   );
 
   const handleSubmit = async (event) => {
@@ -74,7 +75,7 @@ function InviteUser(props) {
         .post(
           `/api/courses/${id}/roster`,
           { email: values.email, role },
-          config,
+          config
         )
         .then(() => {
           handleClose();
@@ -85,25 +86,25 @@ function InviteUser(props) {
 
   const styles = {
     dialog: {
-      height: '365px',
+      height: "365px",
     },
     input: {
-      width: '400px',
+      width: "400px",
     },
     addButton: {
-      width: '200px',
+      width: "200px",
     },
   };
 
   return (
     <>
       <Button
-        text="Invite User"
-        margin="0px"
-        fontSize="17px"
+        sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
         onClick={handleOpen}
-        other={{ justifyContent: 'flex-end' }}
-      />
+        variant="contained"
+      >
+        Invite User
+      </Button>
       <Dialog onClose={handleClose} open={open} disableEnforceFocus>
         <DialogContent style={styles.dialog}>
           <Grid direction="column" container>
@@ -145,23 +146,23 @@ function InviteUser(props) {
                           value="student"
                           control={<Radio />}
                           label="Student"
-                          checked = {checked == 0}
-                          onChange = {() => setChecked(0)}
+                          checked={checked == 0}
+                          onChange={() => setChecked(0)}
                         />
                         <FormControlLabel
                           value="staff"
                           control={<Radio />}
                           label="Staff"
-                          checked = {checked == 1}
-                          onChange = {() => setChecked(1)}
+                          checked={checked == 1}
+                          onChange={() => setChecked(1)}
                         />
                         <FormControlLabel
                           value="instructor"
                           control={<Radio />}
                           label="Instructor"
                           disabled={!isInstructor}
-                          checked = {isInstructor && checked == 2}
-                          onChange = {() => setChecked(2)}
+                          checked={isInstructor && checked == 2}
+                          onChange={() => setChecked(2)}
                         />
                       </RadioGroup>
                     </Grid>
@@ -169,7 +170,14 @@ function InviteUser(props) {
 
                   <Grid container justifyContent="center">
                     <Grid item>
-                      <Controls.Button text="Add" type="submit" />
+                      <Button
+                        sx={{ margin: 2, fontSize: 17 }}
+                        onClick={handleOpen}
+                        variant="contained"
+                        type="submit"
+                      >
+                        Add User
+                      </Button>
                     </Grid>
                   </Grid>
                 </Form>

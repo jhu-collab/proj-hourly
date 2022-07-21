@@ -29,7 +29,7 @@ export const course = (currentCourse) => {
         //TODO
         icon: icons.CalendarOutlined,
         breadcrumbs: false,
-      }
+      },
     ],
   };
 };

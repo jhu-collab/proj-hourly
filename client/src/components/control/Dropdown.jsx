@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import {
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
-} from '@mui/material';
+} from "@mui/material";
 
 /**
  * Represents a reusable component that is inspired by the Material UI Select component.
@@ -17,7 +17,7 @@ function Dropdown(props) {
     name,
     label,
     value,
-    idOrTitle = 'title',
+    idOrTitle = "title",
     error = null,
     onChange,
     options,
@@ -30,8 +30,8 @@ function Dropdown(props) {
 
   const styles = {
     dropdown: {
-      margin: margin || '20px',
-      width: width || '50vw',
+      margin: margin || "20px",
+      width: width || "50vw",
     },
   };
 
@@ -41,15 +41,15 @@ function Dropdown(props) {
       sx={styles.dropdown}
       {...(error && { error: true })}
     >
-      <InputLabel sx={{ fontSize: fontSize || '1.3rem' }}>{label}</InputLabel>
+      <InputLabel sx={{ fontSize: fontSize || "1.3rem" }}>{label}</InputLabel>
       <Select
         label={label}
         name={name}
         value={value}
         onChange={onChange}
         sx={{
-          fontSize: fontSize || '1.3rem',
-          paddingTop: '0.2vh',
+          fontSize: fontSize || "1.3rem",
+          paddingTop: "0.2vh",
           height: height,
         }}
         {...other}
@@ -57,8 +57,8 @@ function Dropdown(props) {
         {options.map((item) => (
           <MenuItem
             key={item.id}
-            value={idOrTitle === 'id' ? item.id : item.title}
-            sx={{ fontSize: fontSize || '1.3rem' }}
+            value={idOrTitle === "id" ? item.id : item.title}
+            sx={{ fontSize: fontSize || "1.3rem" }}
           >
             {item.title}
           </MenuItem>

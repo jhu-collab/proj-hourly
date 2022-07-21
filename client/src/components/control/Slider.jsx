@@ -1,8 +1,8 @@
-import React from 'react';
-import { Slider as MuiSlider } from '@mui/material';
-import { FormControl, FormHelperText, InputLabel } from '@mui/material';
-import { Box } from '@mui/material';
-import { Grid } from '@mui/material';
+import React from "react";
+import { Slider as MuiSlider } from "@mui/material";
+import { FormControl, FormHelperText, InputLabel } from "@mui/material";
+import { Box } from "@mui/material";
+import { Grid } from "@mui/material";
 
 /**
  * Represents a reusable component that is inspired by the Material UI Slider component.
@@ -28,8 +28,8 @@ function Slider(props) {
 
   const styles = {
     slider: {
-      margin: margin || '20px',
-      width: width || '700px',
+      margin: margin || "20px",
+      width: width || "700px",
     },
   };
 
@@ -37,7 +37,7 @@ function Slider(props) {
     <FormControl style={styles.slider} {...(error && { error: true })}>
       <Grid container direction="column" alignItems="center" spacing={4}>
         <Grid item>
-          <InputLabel style={{ fontSize: '13px' }}>{label}</InputLabel>
+          <InputLabel style={{ fontSize: "13px" }}>{label}</InputLabel>
         </Grid>
         <Grid item>
           <Box sx={{ width: width }}>

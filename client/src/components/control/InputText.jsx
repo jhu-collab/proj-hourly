@@ -1,5 +1,5 @@
-import { TextField } from '@mui/material';
-import React from 'react';
+import { TextField } from "@mui/material";
+import React from "react";
 
 /**
  * Represents a reusable component that is inspired by the Material UI TextField component.
@@ -22,8 +22,8 @@ function InputText(props) {
 
   const styles = {
     input: {
-      width: width || '700px',
-      margin: margin || '20px',
+      width: width || "700px",
+      margin: margin || "20px",
     },
   };
 
@@ -37,13 +37,13 @@ function InputText(props) {
       onChange={onChange}
       InputProps={{
         style: {
-          fontSize: fontSize || '1.3vw',
-          color: fontColor || 'black',
-          paddingTop: '0.2vh',
+          fontSize: fontSize || "1.3vw",
+          color: fontColor || "black",
+          paddingTop: "0.2vh",
         },
       }}
       InputLabelProps={{
-        style: { fontSize: fontSize || '1.3vw' },
+        style: { fontSize: fontSize || "1.3vw" },
       }}
       {...(error && { error: true, helperText: error })}
       {...other}

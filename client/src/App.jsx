@@ -27,9 +27,7 @@ const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
 );
 
-const Roster = Loadable(
-  lazy(() => import("./pages/roster-page/Roster"))
-);
+const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
 
 const RosterTest = Loadable(
   lazy(() => import("./pages/roster-page/RosterTest"))
