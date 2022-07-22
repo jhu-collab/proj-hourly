@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import validate from "../util/checkValidation.js";
 import { generateCalendar } from "../util/icalHelpers.js";
+import { createTimeString } from "../util/helpers.js";
 
 export const create = async (req, res) => {
   validate(req);
@@ -197,4 +198,36 @@ export const cancelAll = async (req, res) => {
   }
   const calendar = await generateCalendar(officeHour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
+};
+
+export const getTimeSlotsRemaining = async (req, res) => {
+  const date = new Date(req.params.date);
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const timeSlots = [];
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  let start = officeHour.startTime;
+  const end = officeHour.endTime;
+
+  while (start < end) {
+    const registration = await prisma.registration.findFirst({
+      where: {
+        officeHourId,
+        date,
+        startTime: start,
+      },
+    });
+    if (registration === null || registration === undefined) {
+      const startStr = createTimeString(start);
+      start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
+      const endStr = createTimeString(start);
+      timeSlots.push({ start: startStr, end: endStr });
+    } else {
+      start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
+    }
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
 };
