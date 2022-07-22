@@ -8,7 +8,7 @@ import Loadable from "./components/Loadable";
 import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
-const YourCourses = Loadable(lazy(() => import("./pages/your-courses")));
+const YourCourses = Loadable(lazy(() => import("./pages/your-courses/YourCourses")));
 const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const AuthRegister = Loadable(
