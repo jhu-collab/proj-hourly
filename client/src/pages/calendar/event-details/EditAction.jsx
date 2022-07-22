@@ -2,7 +2,7 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import { useEditEventPopupStore } from "../../../services/store";
-import CreateEvent from "../create-event/CreateEvent";
+import UpsertEvent from "../upsert-event/UpsertEvent";
 
 /**
  * Represents the Edit IconButton on the EventDetails component
@@ -26,7 +26,7 @@ function EditAction({ handlePopoverClose }) {
       <IconButton sx={{ fontSize: "20px" }} onClick={handlePopupToggle}>
         <EditOutlined />
       </IconButton>
-      <CreateEvent
+      <UpsertEvent
         open={openPopup}
         handlePopupToggle={handlePopupToggle}
         type="edit"

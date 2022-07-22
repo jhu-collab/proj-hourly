@@ -28,13 +28,13 @@ const DAYS = [
 ];
 
 /**
- * Component that represents the form that is used to create an event.
+ * Component that represents the form that is used to upsert an event.
  * @param {*} handlePopupToggle function that toggles whether the popup is open
  * @param {String} type String that decides when this is creating or editing an
  *                      event
- * @returns A component representing the Create Event form.
+ * @returns A component representing the Upsert Event form.
  */
-function CreateEventForm({ handlePopupToggle, type }) {
+function UpsertEventForm({ handlePopupToggle, type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
 
@@ -133,4 +133,4 @@ function CreateEventForm({ handlePopupToggle, type }) {
   );
 }
 
-export default CreateEventForm;
+export default UpsertEventForm;

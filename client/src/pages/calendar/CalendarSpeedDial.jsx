@@ -6,7 +6,7 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
 import useStore, { useEventStore } from "../../services/store";
-import CreateEvent from "./create-event/CreateEvent";
+import UpsertEvent from "./upsert-event/UpsertEvent";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -66,7 +66,7 @@ function CalendarSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateEvent
+      <UpsertEvent
         open={createEventPopup}
         handlePopupToggle={handlePopupToggle}
       />
