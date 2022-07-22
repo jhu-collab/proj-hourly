@@ -70,6 +70,17 @@ function Calendar() {
     toggleCreateEventPopup(true);
   };
 
+  const handleEventDrop = (info) => {
+    setEvent({
+      title: info.event.title,
+      start: info.event.start,
+      end: info.event.end,
+      location: info.event.extendedProps.location,
+      description: JSON.parse(info.event.extendedProps.description),
+    });
+    toggleCreateEventPopup(true);
+  };
+
   const memoizedEventsFn = useMemo(() => {
     if (data) {
       const calendar = ical(data.calendar);
@@ -99,6 +110,7 @@ function Calendar() {
           initialView="timeGridWeek"
           height="100%"
           eventClick={handleEventClick}
+          eventDrop={handleEventDrop}
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
