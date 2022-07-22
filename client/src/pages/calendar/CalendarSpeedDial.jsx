@@ -5,7 +5,7 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
-import useStore from "../../services/store";
+import useStore, { useEventStore } from "../../services/store";
 import CreateEvent from "./create-event/CreateEvent";
 
 /**
@@ -16,27 +16,21 @@ import CreateEvent from "./create-event/CreateEvent";
 function CalendarSpeedDial() {
   const theme = useTheme();
 
-  const {
-    createEventPopup,
-    toggleCreateEventPopup,
-    setCreateEventDate,
-    setCreateEventStartTime,
-    setCreateEventEndTime,
-  } = useStore();
+  const { createEventPopup, toggleCreateEventPopup } = useStore();
+
+  const { setEvent } = useEventStore();
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (event) => {
+  const handleOpen = () => {
     setOpen(!open);
   };
 
   // popup toggler
   const handlePopupToggle = () => {
+    open === true && setEvent({});
     toggleCreateEventPopup(!createEventPopup);
-    !createEventPopup && setCreateEventDate();
-    !createEventPopup && setCreateEventStartTime();
-    !createEventPopup && setCreateEventEndTime();
   };
 
   const actions = [
