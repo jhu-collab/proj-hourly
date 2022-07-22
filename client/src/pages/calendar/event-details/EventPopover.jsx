@@ -9,6 +9,7 @@ import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import useStore from "../../../services/store";
 import { Button, Typography } from "@mui/material";
+import StudentDetails from "./StudentDetails";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -61,16 +62,7 @@ function EventPopover({ anchorEl, handleClose }) {
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "student" && (
-        <Stack alignItems="center" spacing={2}>
-          <Typography color="red" paddingX={2}>
-            You are not registered for this session
-          </Typography>
-          <Button variant="contained" fullWidth>
-            Sign Up
-          </Button>
-        </Stack>
-      )}
+      {courseType === "student" && <StudentDetails />}
     </Popover>
   );
 }

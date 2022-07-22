@@ -11,6 +11,7 @@ import useStore from "../../../services/store";
 import DeleteAction from "./DeleteAction";
 import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
+import StudentDetails from "./StudentDetails";
 
 /**
  * Mimics the EventPopover component, however, this component is a Popup (Mui Dialog).
@@ -51,16 +52,7 @@ function MobileEventPopup({ open, handlePopupToggle }) {
           </Grid>
         </Grid>
       </DialogContent>
-      {courseType === "student" && (
-        <Stack alignItems="center" spacing={2}>
-          <Typography color="red">
-            You are not registered for this session
-          </Typography>
-          <Button variant="contained" fullWidth>
-            Sign Up
-          </Button>
-        </Stack>
-      )}
+      {courseType === "student" && <StudentDetails />}
     </Dialog>
   );
 }

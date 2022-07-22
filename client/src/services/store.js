@@ -108,4 +108,12 @@ export const useEditEventPopupStore = create((set) => ({
     })),
 }));
 
+export const useRegisterPopupStore = create((set) => ({
+  open: false,
+  togglePopup: (value) =>
+    set((state) => ({
+      open: value || !state.open,
+    })),
+}));
+
 export default useStore;
