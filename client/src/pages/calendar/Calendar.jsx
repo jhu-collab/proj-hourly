@@ -18,7 +18,6 @@ import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
-import { getIsoDate } from "../../utils/helpers";
 import MobileEventPopup from "./event-details/MobileEventPopup";
 
 /**
@@ -29,13 +28,7 @@ function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const {
-    courseType,
-    toggleCreateEventPopup,
-    setCreateEventDate,
-    setCreateEventStartTime,
-    setCreateEventEndTime,
-  } = useStore();
+  const { courseType, toggleCreateEventPopup } = useStore();
   const { setEvent } = useEventStore();
   const { togglePopup } = useEventPopupStore();
   const [openMobile, setMobile] = useState(false);
@@ -56,7 +49,13 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : handleMobilePopup();
-    setEvent(info.event);
+    setEvent({
+      title: info.event.title,
+      start: info.event.start,
+      end: info.event.end,
+      location: info.event.extendedProps.location,
+      description: JSON.parse(info.event.extendedProps.description),
+    });
   };
 
   const handleClosePopover = () => {
@@ -64,12 +63,10 @@ function Calendar() {
   };
 
   const handleSelect = (info) => {
-    const start = new Date(info.start);
-    const end = new Date(info.end);
-
-    setCreateEventDate(getIsoDate(start));
-    setCreateEventStartTime(start.toUTCString().substring(17, 22));
-    setCreateEventEndTime(end.toUTCString().substring(17, 22));
+    setEvent({
+      start: info.start,
+      end: info.end,
+    });
     toggleCreateEventPopup(true);
   };
 

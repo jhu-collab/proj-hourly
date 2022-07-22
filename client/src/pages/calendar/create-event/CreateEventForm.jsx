@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import useStore from "../../../services/store";
+import useStore, { useEventStore } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
@@ -29,31 +29,31 @@ const DAYS = [
 
 /**
  * Component that represents the form that is used to create an event.
- * @param {*} handlePopupToggle: function that toggles whether the popup is open
+ * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {String} type String that decides when this is creating or editing an
+ *                      event
  * @returns A component representing the Create Event form.
  */
-function CreateEventForm({ handlePopupToggle }) {
+function CreateEventForm({ handlePopupToggle, type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
 
-  const {
-    userId,
-    currentCourse,
-    createEventDate,
-    createEventStartTime,
-    createEventEndTime,
-  } = useStore();
+  const { userId, currentCourse } = useStore();
+
+  const { start, end, location } = useEventStore();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      date: createEventDate,
-      startTime: createEventStartTime,
-      endTime: createEventEndTime,
-      location: "",
+      date: start ? getIsoDate(start) : "",
+      startTime: start ? start.toUTCString().substring(17, 22) : "",
+      endTime: end ? end.toUTCString().substring(17, 22) : "",
+      location: location || "",
     },
     resolver: yupResolver(createEventSchema),
   });
 
+  // TODO: THis will need to be refactored once the route to
+  // edit an existing office hour is created
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
@@ -124,7 +124,7 @@ function CreateEventForm({ handlePopupToggle }) {
             disabled={isLoading}
             fullWidth
           >
-            Create
+            {type === "edit" ? "Update" : "Create"}
           </Button>
         </Stack>
       </Form>

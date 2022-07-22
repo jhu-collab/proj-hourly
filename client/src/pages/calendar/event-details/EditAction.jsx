@@ -2,7 +2,7 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import { useEditEventPopupStore } from "../../../services/store";
-import EditEventPopup from "../edit-event/EditEventPopup";
+import CreateEvent from "../create-event/CreateEvent";
 
 /**
  * Represents the Edit IconButton on the EventDetails component
@@ -16,6 +16,7 @@ function EditAction({ handlePopoverClose }) {
   const { open, togglePopup } = useEditEventPopupStore();
 
   const handlePopupToggle = () => {
+    open === true && handlePopoverClose();
     setOpenPopup(!open);
     togglePopup(!open);
   };
@@ -25,10 +26,10 @@ function EditAction({ handlePopoverClose }) {
       <IconButton sx={{ fontSize: "20px" }} onClick={handlePopupToggle}>
         <EditOutlined />
       </IconButton>
-      <EditEventPopup
+      <CreateEvent
         open={openPopup}
         handlePopupToggle={handlePopupToggle}
-        handlePopoverClose={handlePopoverClose}
+        type="edit"
       />
     </>
   );
