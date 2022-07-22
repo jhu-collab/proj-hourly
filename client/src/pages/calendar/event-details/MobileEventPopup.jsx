@@ -1,12 +1,15 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
+import { Button, Typography } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
+import useStore from "../../../services/store";
 import DeleteAction from "./DeleteAction";
+import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
 
 /**
@@ -18,6 +21,8 @@ import EventDetails from "./EventDetails";
  * @returns an event details popup component
  */
 function MobileEventPopup({ open, handlePopupToggle }) {
+  const { courseType } = useStore();
+
   // TODO: Maybe we can modify the Popup component to promote reusability!
   return (
     <Dialog open={open} onClose={handlePopupToggle} fullWidth maxWith="xs">
@@ -31,17 +36,31 @@ function MobileEventPopup({ open, handlePopupToggle }) {
               <IconButton sx={{ fontSize: "20px" }} onClick={handlePopupToggle}>
                 <CloseOutlined />
               </IconButton>
-              <IconButton sx={{ fontSize: "20px" }}>
-                <InfoCircleOutlined />
-              </IconButton>
-              <IconButton sx={{ fontSize: "20px" }}>
-                <EditOutlined />
-              </IconButton>
-              <DeleteAction handlePopoverClose={handlePopupToggle} />
+              {courseType === "staff" && (
+                <IconButton sx={{ fontSize: "20px" }}>
+                  <InfoCircleOutlined />
+                </IconButton>
+              )}
+              {courseType === "staff" && (
+                <EditAction handlePopoverClose={handlePopupToggle} />
+              )}
+              {courseType === "staff" && (
+                <DeleteAction handlePopoverClose={handlePopupToggle} />
+              )}
             </Stack>
           </Grid>
         </Grid>
       </DialogContent>
+      {courseType === "student" && (
+        <Stack alignItems="center" spacing={2}>
+          <Typography color="red">
+            You are not registered for this session
+          </Typography>
+          <Button variant="contained" fullWidth>
+            Sign Up
+          </Button>
+        </Stack>
+      )}
     </Dialog>
   );
 }

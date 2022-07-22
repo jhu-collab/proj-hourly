@@ -44,9 +44,11 @@ function EventPopover({ anchorEl, handleClose }) {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            {courseType === "staff" && <IconButton sx={{ fontSize: "20px" }}>
-              <InfoCircleOutlined />
-            </IconButton>}
+            {courseType === "staff" && (
+              <IconButton sx={{ fontSize: "20px" }}>
+                <InfoCircleOutlined />
+              </IconButton>
+            )}
             {courseType === "staff" && (
               <EditAction handlePopoverClose={handleClose} />
             )}
@@ -59,10 +61,16 @@ function EventPopover({ anchorEl, handleClose }) {
           </Stack>
         </Grid>
       </Grid>
-      <Stack alignItems="center" spacing={2}>
-        <Typography color="red" paddingX={2}>You are not registered for this session</Typography>
-        <Button variant="contained" fullWidth>Sign Up</Button>
-      </Stack>
+      {courseType === "student" && (
+        <Stack alignItems="center" spacing={2}>
+          <Typography color="red" paddingX={2}>
+            You are not registered for this session
+          </Typography>
+          <Button variant="contained" fullWidth>
+            Sign Up
+          </Button>
+        </Stack>
+      )}
     </Popover>
   );
 }
