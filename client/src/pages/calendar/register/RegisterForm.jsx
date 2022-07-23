@@ -29,6 +29,12 @@ const getOptions = (timeSlots) => {
   return options;
 };
 
+/**
+ * Component that represents the form that is used to register for a session.
+ * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {*} handlePopoverClose function that closes the EventPopover
+ * @returns A component representing the Register form.
+ */
 function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
   const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
     onError: (error) => {
