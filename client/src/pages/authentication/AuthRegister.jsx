@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { signUp } from "../../utils/requests";
 import FormInputText from "../../components/form-ui/FormInputText";
 import useStore from "../../services/store";
+import { errorToast } from "../../utils/toasts";
 
 function AuthRegister() {
   const { control, handleSubmit } = useForm({
@@ -38,7 +39,7 @@ function AuthRegister() {
       navigate("/courses");
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

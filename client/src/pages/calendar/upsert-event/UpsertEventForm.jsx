@@ -16,6 +16,7 @@ import {
   getIsoDate,
   getLocaleTime,
 } from "../../../utils/helpers";
+import { errorToast } from "../../../utils/toasts";
 
 const DAYS = [
   "Sunday",
@@ -71,7 +72,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

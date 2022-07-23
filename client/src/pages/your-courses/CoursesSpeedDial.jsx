@@ -6,6 +6,7 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import useStore from "../../services/store";
 import CreateCourse from "./create-course/CreateCourse";
 import JoinCourse from "./join-course/JoinCourse";

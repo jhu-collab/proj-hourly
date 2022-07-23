@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import useStore from "../../../services/store";
+import { errorToast } from "../../../utils/toasts";
 
 /**
  * Component that represents the form that is used to join a course.
@@ -35,7 +36,7 @@ function JoinCourseForm({ onClose }) {
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
