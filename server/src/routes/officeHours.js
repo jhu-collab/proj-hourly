@@ -85,4 +85,12 @@ router.post(
   controller.cancelAll
 );
 
+router.get(
+  "/:officeHourId/getRemainingTimeSlots/:date",
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  controller.getTimeSlotsRemaining
+);
+
 export default router;
