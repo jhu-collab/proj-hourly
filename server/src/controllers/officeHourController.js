@@ -316,6 +316,9 @@ export const editAll = async (req, res) => {
       startTime: startTimeObject,
       endTime: endTimeObject,
       location: location,
+      isOnDayOfWeek: {
+        set: [],
+      },
     },
   });
   daysOfWeek.forEach(async (dayOfWeek) => {
