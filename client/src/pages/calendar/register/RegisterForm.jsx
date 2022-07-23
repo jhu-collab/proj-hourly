@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useForm } from "react-hook-form";
 import Form from "../../../components/form-ui/Form";
@@ -49,9 +49,13 @@ function RegisterForm({ handlePopupToggle }) {
     resolver: yupResolver(registerSchema),
   });
 
+  const onSubmit = (data) => {
+    handlePopupToggle();
+  };
+
   return (
-    <Form>
-      <Stack alignItems="center" mt={2} direction="column" spacing={2}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Stack alignItems="center" mt={2} direction="column" spacing={3}>
         <Typography textAlign="center" variant="h4">
           You are about to register for <br /> <u> {title} </u> <br /> on{" "}
           <u> {date} </u> from{" "}
@@ -63,9 +67,17 @@ function RegisterForm({ handlePopupToggle }) {
         <FormInputDropdown
           name="times"
           control={control}
-          label="Available Timeslots"
+          label="Available Time Slots"
           options={options}
         />
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          // disabled={isLoading}
+        >
+          Submit
+        </Button>
       </Stack>
     </Form>
   );
