@@ -62,7 +62,9 @@ function EventPopover({ anchorEl, handleClose }) {
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "student" && <StudentDetails />}
+      {courseType === "student" && (
+        <StudentDetails handlePopoverClose={handleClose} />
+      )}
     </Popover>
   );
 }

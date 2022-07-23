@@ -28,7 +28,7 @@ const getOptions = (timeSlots) => {
   return options;
 };
 
-function RegisterForm({ handlePopupToggle }) {
+function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
   const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
     onError: (error) => {
       toast.error("An error has occurred: " + error.message);
@@ -44,6 +44,7 @@ function RegisterForm({ handlePopupToggle }) {
       const endTime = registration.endTime.substring(11, 19);
 
       handlePopupToggle();
+      handlePopoverClose();
       toast.success(
         `Successfully registered for session on ${date} from 
          ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`

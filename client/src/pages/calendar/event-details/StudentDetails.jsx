@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRegisterPopupStore } from "../../../services/store";
 import Register from "../register/Register";
 
-function StudentDetails() {
+function StudentDetails({ handlePopoverClose }) {
   const [openPopup, setOpenPopup] = useState(false);
 
   const { open, togglePopup } = useRegisterPopupStore();
@@ -23,7 +23,11 @@ function StudentDetails() {
           Sign Up
         </Button>
       </Stack>
-      <Register open={openPopup} handlePopupToggle={handlePopupToggle} />
+      <Register
+        open={openPopup}
+        handlePopupToggle={handlePopupToggle}
+        handlePopoverClose={handlePopoverClose}
+      />
     </>
   );
 }
