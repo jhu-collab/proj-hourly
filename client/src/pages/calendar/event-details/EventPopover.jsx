@@ -1,12 +1,12 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
-import EditOutlined from "@ant-design/icons/EditOutlined";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
+import EditAction from "./EditAction";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -43,9 +43,7 @@ function EventPopover({ anchorEl, handleClose }) {
             <IconButton sx={{ fontSize: "20px" }}>
               <InfoCircleOutlined />
             </IconButton>
-            <IconButton sx={{ fontSize: "20px" }}>
-              <EditOutlined />
-            </IconButton>
+            <EditAction handlePopoverClose={handleClose} />
             <DeleteAction handlePopoverClose={handleClose} />
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />

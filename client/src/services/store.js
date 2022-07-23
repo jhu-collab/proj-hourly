@@ -61,22 +61,6 @@ const useStore = create(
         set((state) => ({
           createEventPopup: value || !state.createEventPopup,
         })),
-
-      createEventDate: "",
-      setCreateEventDate: (value) =>
-        set((state) => ({
-          createEventDate: value || "",
-        })),
-      createEventStartTime: "",
-      setCreateEventStartTime: (value) =>
-        set((state) => ({
-          createEventStartTime: value || "",
-        })),
-      createEventEndTime: "",
-      setCreateEventEndTime: (value) =>
-        set((state) => ({
-          createEventEndTime: value || "",
-        })),
     }),
     {
       name: "theme",
@@ -94,21 +78,29 @@ export const useConfirmDialogStore = create((set) => ({
 
 export const useEventStore = create((set) => ({
   title: "",
-  start: new Date(),
-  end: new Date(),
+  start: null,
+  end: null,
   location: "",
   description: {},
   setEvent: (event) =>
     set({
-      title: event.title,
-      start: event.start,
-      end: event.end,
-      location: event.extendedProps.location,
-      description: JSON.parse(event.extendedProps.description),
+      title: event.title || "",
+      start: event.start || null,
+      end: event.end || null,
+      location: event.location || "",
+      description: event.description || {},
     }),
 }));
 
 export const useEventPopupStore = create((set) => ({
+  open: false,
+  togglePopup: (value) =>
+    set((state) => ({
+      open: value || !state.open,
+    })),
+}));
+
+export const useEditEventPopupStore = create((set) => ({
   open: false,
   togglePopup: (value) =>
     set((state) => ({
