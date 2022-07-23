@@ -10,6 +10,7 @@ import { Typography } from "./typography";
 import { CustomShadows } from "./shadows";
 import componentsOverride from "./overrides";
 import { ToastContainer } from "react-toastify";
+import { useMediaQuery } from "@mui/material";
 
 function ThemeCustomization({ children }) {
   const theme = Palette("light", "default");
@@ -44,12 +45,22 @@ function ThemeCustomization({ children }) {
 
   const themes = createTheme(themeOptions);
   themes.components = componentsOverride(themes);
+  const matchUpSm = useMediaQuery(themes.breakpoints.up("sm"));
 
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themes}>
         <CssBaseline />
-        <ToastContainer />
+        <ToastContainer
+          position={matchUpSm ? "bottom-center" : "top-center"}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          draggablePercent={60}
+          draggableDirection="y"
+          {...(!matchUpSm && { closeButton: false })}
+        />
         {children}
       </ThemeProvider>
     </StyledEngineProvider>
