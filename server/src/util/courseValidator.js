@@ -236,3 +236,39 @@ export const isNotDuplicateTopic = async (req, res, next) => {
   }
   next();
 };
+
+export const isNotInCourse = async (req, res, next) => {
+  const { code, id } = req.body;
+  const roster = await prisma.course.findUnique({
+    where: {
+      code,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  let inCourse = false;
+  roster.students.forEach((student) => {
+    if (student.id === id) {
+      inCourse = true;
+    }
+  });
+  roster.courseStaff.forEach((staff) => {
+    if (staff.id === id) {
+      inCourse = true;
+    }
+  });
+  roster.instructors.forEach((instructor) => {
+    if (instructor.id === id) {
+      inCourse = true;
+    }
+  });
+  if (inCourse) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "User is already in course" });
+  }
+  next();
+};

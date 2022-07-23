@@ -31,6 +31,7 @@ router.post(
   body("id", "Account id is required").isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
+  validator.isNotInCourse,
   controller.register
 );
 
