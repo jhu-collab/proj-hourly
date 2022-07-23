@@ -8,6 +8,7 @@ import Loader from "../../../components/Loader";
 import { useEventStore } from "../../../services/store";
 import { getIsoDate, getLocaleTime } from "../../../utils/helpers";
 import { cancelAll } from "../../../utils/requests";
+import { errorToast } from "../../../utils/toasts";
 
 /**
  * Represents the Trash IconButton on the EventDetails component
@@ -47,7 +48,7 @@ function DeleteAction({ handlePopoverClose }) {
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

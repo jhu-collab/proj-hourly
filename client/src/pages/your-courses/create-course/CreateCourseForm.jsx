@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
 import useStore from "../../../services/store";
+import { errorToast } from "../../../utils/toasts";
 
 const options = [
   {
@@ -67,7 +68,7 @@ function CreateCourseForm({ handlePopupToggle }) {
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
