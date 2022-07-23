@@ -8,7 +8,6 @@ import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import useStore from "../../../services/store";
-import { Button, Typography } from "@mui/material";
 import StudentDetails from "./StudentDetails";
 
 /**

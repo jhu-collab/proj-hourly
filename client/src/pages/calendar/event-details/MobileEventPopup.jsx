@@ -1,7 +1,5 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
-import EditOutlined from "@ant-design/icons/EditOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
-import { Button, Typography } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
