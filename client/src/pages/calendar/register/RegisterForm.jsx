@@ -2,36 +2,39 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
+import Loader from "../../../components/Loader";
 import { useEventStore } from "../../../services/store";
 import { getLocaleTime } from "../../../utils/helpers";
+import { getTimeSlots } from "../../../utils/requests";
 import { registerSchema } from "../../../utils/validators";
 
-const options = [
-  {
-    id: "1",
-    label: "10:30 AM - 10:40 AM",
-    value: "10:30 AM - 10:40 AM",
-  },
-  {
-    id: "2",
-    label: "10:40 AM - 10:50 AM",
-    value: "10:40 AM - 10:50 AM",
-  },
-  {
-    id: "3",
-    label: "10:50 AM - 11:00 AM",
-    value: "10:50 AM - 11:00 AM",
-  },
-  {
-    id: "4",
-    label: "11:00 AM - 11:10 AM",
-    value: "11:00 AM - 11:10 AM",
-  },
-];
+const getOptions = (timeSlots) => {
+  const options = [];
+
+  for (let i = 0; i < timeSlots.length; i++) {
+    const localeStartTime = getLocaleTime(timeSlots[i].start);
+    const localeEndTime = getLocaleTime(timeSlots[i].end);
+    options.push({
+      id: i,
+      label: `${localeStartTime} - ${localeEndTime}`,
+      value: `${timeSlots[i].start} - ${timeSlots[i].end}`,
+    });
+  }
+
+  return options;
+};
 
 function RegisterForm({ handlePopupToggle }) {
+  const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
+
   const { title, start, end } = useEventStore();
 
   const date = start.toLocaleDateString();
@@ -53,6 +56,10 @@ function RegisterForm({ handlePopupToggle }) {
     handlePopupToggle();
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack alignItems="center" mt={2} direction="column" spacing={3}>
@@ -68,7 +75,7 @@ function RegisterForm({ handlePopupToggle }) {
           name="times"
           control={control}
           label="Available Time Slots"
-          options={options}
+          options={getOptions(data.timeSlots)}
         />
         <Button
           type="submit"
