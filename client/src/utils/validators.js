@@ -58,7 +58,7 @@ export const createEventSchema = yup.object().shape({
   date: yup
     .date()
     .typeError("Please enter a valid date")
-    .min(CURRENT_DATE_STR, `Date must be on or after ${CURRENT_DATE_STR}`)
+    .min(new Date(), `Date must be on or after ${CURRENT_DATE_STR}`)
     .required("Date is required"),
   // TODO: Add further validation for the startTime and endTime fields
   startTime: yup.string().required("Start time is required"),
