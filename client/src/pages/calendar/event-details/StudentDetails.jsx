@@ -9,7 +9,6 @@ function StudentDetails() {
   const { open, togglePopup } = useRegisterPopupStore();
 
   const handlePopupToggle = () => {
-    open === true && handlePopoverClose();
     setOpenPopup(!open);
     togglePopup(!open);
   };
