@@ -231,3 +231,71 @@ export const getTimeSlotsRemaining = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
 };
+
+export const rescheduleSingleOfficeHour = async (req, res) => {
+  const { date } = req.params;
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const { startTime, endTime, timePerStudent, location } = req.body;
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(0);
+  const officehour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      course: true,
+      hosts: true,
+    },
+  });
+  const officeHourUpdate = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isCancelledOn: [...officehour.isCancelledOn, dateObj],
+    },
+  });
+  const timeInterval =
+    timePerStudent === null || timePerStudent === undefined
+      ? officehour.timePerStudent
+      : timePerStudent;
+  const newLocation =
+    location === null || location === undefined
+      ? officehour.location
+      : location;
+  const startTimeObject = stringToTimeObj(startTime);
+  const endTimeObject = stringToTimeObj(endTime);
+  const newOfficeHour = await prisma.officeHour.create({
+    data: {
+      startTime: startTimeObject,
+      endTime: endTimeObject,
+      startDate: new Date(date),
+      endDate: new Date(date),
+      timePerStudent: timeInterval,
+      course: {
+        connect: {
+          id: officehour.course.id,
+        },
+      },
+      location: newLocation,
+      isRecurring: false,
+    },
+  });
+  officehour.hosts.forEach(async (account) => {
+    const id = account.id;
+    await prisma.officeHour.update({
+      where: {
+        id: officehour.id,
+      },
+      data: {
+        hosts: {
+          connect: {
+            id,
+          },
+        },
+      },
+    });
+  });
+  const calendar = await generateCalendar(officehour.course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
+};

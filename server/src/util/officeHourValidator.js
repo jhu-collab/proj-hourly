@@ -262,3 +262,30 @@ export const isOfficeHourHost = async (req, res, next) => {
   }
   next();
 };
+
+export const isInFuture = async (req, res, next) => {
+  const { date } = req.params;
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const dateObj = new Date(date);
+  const current = new Date();
+  if (dateObj < current) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: office hour date is before current date" });
+  }
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const officehourstart = officeHour.startTime;
+  officehourstart.setMonth(dateObj.getMonth());
+  officehourstart.setDate(dateObj.getDate());
+  officehourstart.setFullYear(dateObj.getFullYear());
+  if (current >= officehourstart) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: office hour has already started" });
+  }
+  next();
+};

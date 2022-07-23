@@ -93,4 +93,19 @@ router.get(
   controller.getTimeSlotsRemaining
 );
 
+router.post(
+  "/:officeHourId/editForDate/:date",
+  body("startTime", "start time is required").notEmpty(),
+  body("endTime", "end time is required").notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "location must be a string").optional().isString(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  validator.isInFuture,
+  controller.rescheduleSingleOfficeHour
+);
+
+router.post("/:officeHourId/editAll");
+
 export default router;
