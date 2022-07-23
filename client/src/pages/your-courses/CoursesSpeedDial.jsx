@@ -31,7 +31,6 @@ function CoursesSpeedDial() {
 
   const handleOpen = (event) => {
     setOpen(!open);
-    toast.success("What's up!");
   };
 
   // create popup toggler
