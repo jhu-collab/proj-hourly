@@ -249,22 +249,10 @@ export const isNotInCourse = async (req, res, next) => {
       instructors: true,
     },
   });
-  let inCourse = false;
-  roster.students.forEach((student) => {
-    if (student.id === id) {
-      inCourse = true;
-    }
-  });
-  roster.courseStaff.forEach((staff) => {
-    if (staff.id === id) {
-      inCourse = true;
-    }
-  });
-  roster.instructors.forEach((instructor) => {
-    if (instructor.id === id) {
-      inCourse = true;
-    }
-  });
+  const inCourse =
+    roster.students.some((student) => student.id === id) ||
+    roster.courseStaff.some((staff) => staff.id === id) ||
+    roster.instructors.some((instructor) => instructor.id === id);
   if (inCourse) {
     return res
       .status(StatusCodes.CONFLICT)
