@@ -90,3 +90,10 @@ export const joinCourse = async (course) => {
   });
   return res.data;
 };
+
+export const register = async (body) => {
+  const res = await axios.post(`${BASE_URL}/api/officeHour/register`, body, {
+    headers: { id: getUserId() },
+  });
+  return res.data;
+};

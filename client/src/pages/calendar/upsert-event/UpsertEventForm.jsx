@@ -57,7 +57,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = new Date(officeHour.startDate).toDateString();
+      const date = new Date(officeHour.startDate).toLocaleDateString();
 
       const startTime = officeHour.startTime.substring(11, 19);
       const endTime = officeHour.endTime.substring(11, 19);
