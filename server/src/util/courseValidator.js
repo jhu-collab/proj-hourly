@@ -194,6 +194,34 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
   next();
 };
 
+export const isInCourseForOfficeHourParam = async (req, res, next) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const studentQuery = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (studentQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: student is not enrolled in course" });
+  }
+  next();
+};
+
 export const areTopicsForCourse = async (req, res, next) => {
   const { officeHourId, TopicIds } = req.body;
   const officeHour = await prisma.officeHour.findUnique({
@@ -233,6 +261,30 @@ export const isNotDuplicateTopic = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: topic already exists" });
+  }
+  next();
+};
+
+export const isNotInCourse = async (req, res, next) => {
+  const { code, id } = req.body;
+  const roster = await prisma.course.findUnique({
+    where: {
+      code,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const inCourse =
+    roster.students.some((student) => student.id === id) ||
+    roster.courseStaff.some((staff) => staff.id === id) ||
+    roster.instructors.some((instructor) => instructor.id === id);
+  if (inCourse) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "User is already in course" });
   }
   next();
 };
