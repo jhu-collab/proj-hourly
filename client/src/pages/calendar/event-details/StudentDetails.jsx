@@ -27,7 +27,12 @@ function StudentDetails({ handlePopoverClose }) {
         <Typography color="red" paddingX={2}>
           You are not registered for this session
         </Typography>
-        <Button variant="contained" fullWidth onClick={handlePopupToggle}>
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handlePopupToggle}
+          sx={{ borderRadius: 0 }}
+        >
           Sign Up
         </Button>
       </Stack>
