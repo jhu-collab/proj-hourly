@@ -101,11 +101,31 @@ router.post(
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
   controller.rescheduleSingleOfficeHour
 );
 
-router.post("/:officeHourId/editAll");
+router.post(
+  "/:officeHourId/editAll",
+  body("startTime", "Please specify what time this event starts").notEmpty(),
+  body("endTime", "Please specify what time this event ends").notEmpty(),
+  body("startDate", "Please specify what date this event starts").notEmpty(),
+  body("endDate", "Please specify what date this event ends").notEmpty(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
+  body(
+    "daysOfWeek",
+    "Please include which days of the week for the office hours"
+  ),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
+  timeValidator.isTime,
+  controller.editAll
+);
 
 export default router;

@@ -299,3 +299,57 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   const calendar = await generateCalendar(officehour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
+
+export const editAll = async (req, res) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const { startDate, endDate, startTime, endTime, location, daysOfWeek } =
+    req.body;
+  const startTimeObject = stringToTimeObj(startTime);
+  const endTimeObject = stringToTimeObj(endTime);
+  const update = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      startTime: startTimeObject,
+      endTime: endTimeObject,
+      location: location,
+    },
+  });
+  daysOfWeek.forEach(async (dayOfWeek) => {
+    await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isOnDayOfWeek: {
+          connect: {
+            dayOfWeek,
+          },
+        },
+      },
+    });
+  });
+  const officeHourWithData = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      hosts: {
+        select: {
+          id: true,
+        },
+      },
+      isOnDayOfWeek: {
+        select: {
+          dayOfWeek: true,
+        },
+      },
+      course: true,
+    },
+  });
+  const calendar = await generateCalendar(officeHourWithData.course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ officeHourWithData });
+};
