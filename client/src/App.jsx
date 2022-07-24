@@ -12,6 +12,7 @@ const DashboardDefault = Loadable(lazy(() => import("./pages/dashboard")));
 const YourCourses = Loadable(lazy(() => import("./pages/your-courses")));
 const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
 const SamplePage = Loadable(lazy(() => import("./pages/demos/SamplePage")));
+const CourseInfoPage = Loadable(lazy(() =>import ("./pages/course-information/CourseInfoPage")))
 const ReactToastifyDemo = Loadable(
   lazy(() => import("./pages/demos/ReactToastifyDemo"))
 );
@@ -41,6 +42,7 @@ function App() {
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/dashboard" element={<DashboardDefault />} />
+            <Route path="courseinformation" element = {<CourseInfoPage />} />
             <Route path="sample-page" element={<SamplePage />} />
             <Route path="react-query" element={<ReactQueryDemo />} />
             <Route path="full-cal" element={<FullCalendarDemo />} />

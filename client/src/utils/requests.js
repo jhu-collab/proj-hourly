@@ -60,3 +60,11 @@ export const cancelAll = async (body) => {
   });
   return res.data;
 };
+
+// DELETE
+export const leaveCourse = async (courseid) => {
+  const res = await axios.delete(`${BASE_URL}/api/courses/leave/${courseid}`, {
+    headers: { id: getUserId() },
+  });
+  return res.data;
+};
