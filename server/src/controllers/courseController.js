@@ -76,7 +76,7 @@ export const register = async (req, res) => {
       },
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ updateAccount });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
 export const getTopicCounts = async (req, res) => {

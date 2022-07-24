@@ -24,8 +24,6 @@ export const signUpSchema = yup.object().shape({
     .transform((value) => (!!value ? value : undefined)),
 });
 
-const CURRENT_DATE_STR = new Date().toLocaleDateString();
-
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
   number: yup
@@ -54,11 +52,14 @@ export const joinCourseSchema = yup.object().shape({
     .length(6, "Course code must be 6 characters"),
 });
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 export const createEventSchema = yup.object().shape({
   date: yup
     .date()
     .typeError("Please enter a valid date")
-    .min(CURRENT_DATE_STR, `Date must be on or after ${CURRENT_DATE_STR}`)
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
   // TODO: Add further validation for the startTime and endTime fields
   startTime: yup.string().required("Start time is required"),

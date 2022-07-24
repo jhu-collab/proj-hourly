@@ -264,3 +264,27 @@ export const isNotDuplicateTopic = async (req, res, next) => {
   }
   next();
 };
+
+export const isNotInCourse = async (req, res, next) => {
+  const { code, id } = req.body;
+  const roster = await prisma.course.findUnique({
+    where: {
+      code,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const inCourse =
+    roster.students.some((student) => student.id === id) ||
+    roster.courseStaff.some((staff) => staff.id === id) ||
+    roster.instructors.some((instructor) => instructor.id === id);
+  if (inCourse) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "User is already in course" });
+  }
+  next();
+};

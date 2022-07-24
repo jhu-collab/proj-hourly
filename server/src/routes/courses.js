@@ -4,6 +4,7 @@ import * as validator from "../util/courseValidator.js";
 import * as controller from "../controllers/courseController.js";
 import * as accountValidator from "../util/accountValidator.js";
 import * as officeHourController from "../controllers/officeHourController.js";
+import * as accountController from "../controllers/accountController.js";
 
 const router = express.Router();
 const body = express_validator.body;
@@ -31,8 +32,11 @@ router.post(
   body("id", "Account id is required").isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
+  validator.isNotInCourse,
   controller.register
 );
+
+router.get("/", accountController.getCourses);
 
 // account id will be stored in header until we get a token
 router.delete(

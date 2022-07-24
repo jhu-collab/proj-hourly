@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import useStore from "../../services/store";
+import { errorToast } from "../../utils/toasts";
 
 function AuthLogin() {
   const { control, handleSubmit } = useForm({
@@ -36,7 +37,7 @@ function AuthLogin() {
       navigate("/courses");
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

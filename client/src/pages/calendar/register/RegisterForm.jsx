@@ -11,6 +11,7 @@ import Loader from "../../../components/Loader";
 import { useEventStore } from "../../../services/store";
 import { getIsoDate, getLocaleTime } from "../../../utils/helpers";
 import { getTimeSlots, register } from "../../../utils/requests";
+import { errorToast } from "../../../utils/toasts";
 import { registerSchema } from "../../../utils/validators";
 
 const getOptions = (timeSlots) => {
@@ -38,7 +39,7 @@ const getOptions = (timeSlots) => {
 function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
   const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
@@ -58,7 +59,7 @@ function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

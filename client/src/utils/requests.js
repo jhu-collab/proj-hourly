@@ -23,7 +23,7 @@ function getEventDate() {
 
 // TODO: Once token authorization is set up, id will be replaced.
 export const getCourses = async () => {
-  const res = await axios.get(`${BASE_URL}/api/account/me/courses`, {
+  const res = await axios.get(`${BASE_URL}/api/course/`, {
     // TODO: Need to remove id key once backend implements user tokens
     headers: { id: getUserId() },
   });
