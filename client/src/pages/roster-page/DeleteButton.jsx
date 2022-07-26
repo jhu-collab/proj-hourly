@@ -5,21 +5,11 @@ import Popup from "../../components/Popup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
+import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
 function DeleteButton(props) {
   const { courseId, setRows, token, params, isButtonDisabled } = props;
 
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-    console.log(open);
-  };
-
-  const handleClose = () => {
-    //need to fetch users here
-    setOpen(false);
-  };
 
   const deleteUser = useCallback(
     (id) => () => {
@@ -31,21 +21,23 @@ function DeleteButton(props) {
 
   function DeleteUser({ open, handlePopupToggle, id }) {
     return (
-      <Popup
-        open={open}
-        onClose={handlePopupToggle}
-        title="Do you want to delete the user?"
-      >
-        <Box textAlign="center">
-          <Button
-            onClick={deleteUser(id)}
-            sx={{ margin: 0, fontSize: 17 }}
-            variant="contained"
-          >
-            Delete User
-          </Button>
-        </Box>
-      </Popup>
+      // <Popup
+      //   open={open}
+      //   onClose={handlePopupToggle}
+      //   title="Do you want to delete the user?"
+      // >
+      //   <Box textAlign="center">
+      //     <Button
+      //       onClick={deleteUser(id)}
+      //       sx={{ margin: 0, fontSize: 17 }}
+      //       variant="contained"
+      //     >
+      //       Delete User
+      //     </Button>
+      //   </Box>
+      // </Popup>
+      //<DeleteUser open={open} onClose={handleClose} id={params.id} />
+      <ConfirmPopup message="hi" onSubmit={deleteUser}/>
     );
   }
 
@@ -53,11 +45,11 @@ function DeleteButton(props) {
     <>
       <GridActionsCellItem
         icon={<DeleteIcon />}
-        onClick={handleOpen}
+        onClick={() => {confirmDialog("Do you want to delete this user", deleteUser(params.id))}}
         disabled={isButtonDisabled(params.id)}
         label="Delete"
       />
-      <DeleteUser open={open} onClose={handleClose} id={params.id} />
+      <ConfirmPopup/>
     </>
   );
 }
