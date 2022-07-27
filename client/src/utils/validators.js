@@ -1,3 +1,5 @@
+import moment from "moment";
+import { string } from "prop-types";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
@@ -61,9 +63,14 @@ export const createEventSchema = yup.object().shape({
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  // TODO: Add further validation for the startTime and endTime fields
   startTime: yup.string().required("Start time is required"),
-  endTime: yup.string().required("End time is required"),
+  endTime: yup
+    .string()
+    .required("End time is required")
+    .test("is-greater", "End time must be past start time", function (value) {
+      const { startTime } = this.parent;
+      return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
+    }),
   location: yup.string().required("Location is required"),
 });
 
