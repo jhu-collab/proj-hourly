@@ -7,6 +7,8 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
+import useStore from "../../../services/store";
+import StudentDetails from "./StudentDetails";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -15,6 +17,8 @@ import EditAction from "./EditAction";
  * @returns a popover display event information.
  */
 function EventPopover({ anchorEl, handleClose }) {
+  const { courseType } = useStore();
+
   return (
     <Popover
       open={Boolean(anchorEl)}
@@ -40,17 +44,26 @@ function EventPopover({ anchorEl, handleClose }) {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            <IconButton sx={{ fontSize: "20px" }}>
-              <InfoCircleOutlined />
-            </IconButton>
-            <EditAction handlePopoverClose={handleClose} />
-            <DeleteAction handlePopoverClose={handleClose} />
+            {courseType === "staff" && (
+              <IconButton sx={{ fontSize: "20px" }}>
+                <InfoCircleOutlined />
+              </IconButton>
+            )}
+            {courseType === "staff" && (
+              <EditAction handlePopoverClose={handleClose} />
+            )}
+            {courseType === "staff" && (
+              <DeleteAction handlePopoverClose={handleClose} />
+            )}
             <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
               <CloseOutlined />
             </IconButton>
           </Stack>
         </Grid>
       </Grid>
+      {courseType === "student" && (
+        <StudentDetails handlePopoverClose={handleClose} />
+      )}
     </Popover>
   );
 }

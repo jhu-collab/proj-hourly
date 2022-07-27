@@ -1,6 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../services/common";
-import useStore from "../services/store";
+import useStore, { useEventStore } from "../services/store";
+import { getIsoDate } from "./helpers";
 
 function getUserId() {
   return useStore.getState().userId;
@@ -8,6 +9,14 @@ function getUserId() {
 
 function getCourseId() {
   return useStore.getState().currentCourse.id;
+}
+
+function getOfficeHourId() {
+  return useEventStore.getState().description.id;
+}
+
+function getEventDate() {
+  return getIsoDate(useEventStore.getState().start);
 }
 
 // GET REQUESTS
@@ -24,6 +33,20 @@ export const getCourses = async () => {
 export const getOfficeHours = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
+    {
+      // TODO: Need to remove id key once backend implements user tokens
+      headers: { id: getUserId() },
+    }
+  );
+  return res.data;
+};
+
+export const getTimeSlots = async () => {
+  console.log(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`
+  );
+  const res = await axios.get(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`,
     {
       // TODO: Need to remove id key once backend implements user tokens
       headers: { id: getUserId() },
@@ -63,6 +86,13 @@ export const cancelAll = async (body) => {
 
 export const joinCourse = async (course) => {
   const res = await axios.post(`${BASE_URL}/api/course/signup/`, course, {
+    headers: { id: getUserId() },
+  });
+  return res.data;
+};
+
+export const register = async (body) => {
+  const res = await axios.post(`${BASE_URL}/api/officeHour/register`, body, {
     headers: { id: getUserId() },
   });
   return res.data;

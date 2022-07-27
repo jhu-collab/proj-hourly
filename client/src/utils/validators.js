@@ -66,3 +66,7 @@ export const createEventSchema = yup.object().shape({
   endTime: yup.string().required("End time is required"),
   location: yup.string().required("Location is required"),
 });
+
+export const registerSchema = yup.object().shape({
+  times: yup.string().required("Please select a time slot"),
+});
