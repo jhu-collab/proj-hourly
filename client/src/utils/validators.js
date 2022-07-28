@@ -36,7 +36,7 @@ export const signUpSchema = yup.object().shape({
  * of the specified semester and year
  */
 const getLastDaySemester = (semester, year) => {
-  // TODO: Is there a way to retrieve last days
+  // TODO: Is there a way to retrieve the last day
   // of each semester automatically?
   if (semester === "Fall") {
     return new Date(`${year}-12-07`);
