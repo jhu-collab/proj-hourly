@@ -1,7 +1,7 @@
 import axios from "axios";
+import moment from "moment";
 import { BASE_URL } from "../services/common";
 import useStore, { useEventStore } from "../services/store";
-import { getIsoDate } from "./helpers";
 
 function getUserId() {
   return useStore.getState().userId;
@@ -16,7 +16,7 @@ function getOfficeHourId() {
 }
 
 function getEventDate() {
-  return getIsoDate(useEventStore.getState().start);
+  return moment(useEventStore.getState().start).format("MM-DD-YYYY");
 }
 
 // GET REQUESTS

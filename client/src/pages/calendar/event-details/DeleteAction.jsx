@@ -1,12 +1,12 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import IconButton from "@mui/material/IconButton";
+import moment from "moment";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
 import { useEventStore } from "../../../services/store";
-import { getLocaleTime } from "../../../utils/helpers";
 import { cancelAll } from "../../../utils/requests";
 import { errorToast } from "../../../utils/toasts";
 
@@ -31,10 +31,10 @@ function DeleteAction({ handlePopoverClose }) {
   const { mutate, isLoading } = useMutation(cancelAll, {
     onSuccess: (data) => {
       const officeHour = data.officeHourUpdate;
-      const date = new Date(officeHour.startDate).toDateString();
 
-      const startTime = officeHour.startTime.substring(11, 19);
-      const endTime = officeHour.endTime.substring(11, 19);
+      const date = moment(officeHour.startDate).utc().format("L");
+      const startTime = moment(officeHour.startTime).utc().format("LT");
+      const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
 
@@ -44,7 +44,7 @@ function DeleteAction({ handlePopoverClose }) {
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully deleted office hour on ${date} from 
-         ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`
+         ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
