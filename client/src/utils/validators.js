@@ -1,5 +1,4 @@
 import moment from "moment";
-import { string } from "prop-types";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
@@ -26,20 +25,57 @@ export const signUpSchema = yup.object().shape({
     .transform((value) => (!!value ? value : undefined)),
 });
 
+/**
+ * Returns a Date object that represents the last day
+ * of a specified semester and year. Currently, we are using fixed
+ * values, however, it would be nice if the dates updated for every
+ * new academic year.
+ * @param {String} semester String representing the semester
+ * @param {String} year String representing the year
+ * @return A Date object that represents the last day
+ * of the specified semester and year
+ */
+const getLastDaySemester = (semester, year) => {
+  // TODO: Is there a way to retrieve last days
+  // of each semester automatically?
+  if (semester === "Fall") {
+    return new Date(`${year}-12-07`);
+  } else if (semester === "Winter") {
+    return new Date(`${year}-01-22`);
+  } else if (semester === "Summer") {
+    return new Date(`${year}-08-18`);
+  }
+  return new Date(`${year}-04-30`);
+};
+
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
   number: yup
     .string()
     .matches(/^\d{3}\..{3}$/, "Course number is invalid. Must be xxx.xxx")
     .required("Course number is required"),
-  // Need to add validation to ensure semester and year are not before current year
   semester: yup
     .string()
     .oneOf(
       ["Fall", "Winter", "Spring", "Summer"],
       "Please enter a valid semester"
     )
-    .required("Semester is required"),
+    .required("Semester is required")
+    .test(
+      "is-semester-before",
+      "Please enter a current or future semester",
+      function (value) {
+        const { year } = this.parent;
+
+        let semesterObj = getLastDaySemester(value, year);
+        const now = new Date();
+
+        if (now.getTime() < semesterObj.getTime()) {
+          return true;
+        }
+        return false;
+      }
+    ),
   year: yup
     .number()
     .typeError("Please enter valid year")
