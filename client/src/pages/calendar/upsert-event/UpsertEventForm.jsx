@@ -17,6 +17,7 @@ import {
   getLocaleTime,
 } from "../../../utils/helpers";
 import { errorToast } from "../../../utils/toasts";
+import moment from "moment";
 
 const DAYS = [
   "Sunday",
@@ -58,7 +59,10 @@ function UpsertEventForm({ handlePopupToggle, type }) {
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = new Date(officeHour.startDate).toLocaleDateString();
+      console.log(officeHour.startDate);
+      // const date = new Date(officeHour.startDate).toLocaleDateString();
+      const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
+      console.log(date);
 
       const startTime = officeHour.startTime.substring(11, 19);
       const endTime = officeHour.endTime.substring(11, 19);
@@ -82,8 +86,8 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
-      startDate: getExpectedDate(getIsoDate(data.date)),
-      endDate: getExpectedDate(getIsoDate(data.date)),
+      startDate: moment(data.date).format("MM-DD-YYYY"),
+      endDate: moment(data.date).format("MM-DD-YYYY"),
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
