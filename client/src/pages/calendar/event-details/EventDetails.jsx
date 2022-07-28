@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { getLocaleTime } from "../../../utils/helpers";
 import { useEventStore } from "../../../services/store";
+import moment from "moment";
 
 /**
  * Child component that displays event details.
@@ -10,12 +10,8 @@ import { useEventStore } from "../../../services/store";
 function EventDetails() {
   const { title, start, end, location } = useEventStore();
   const date = start.toDateString();
-
-  const startTimeStr = start.toUTCString().substring(17, 22);
-  const startTime = getLocaleTime(startTimeStr);
-
-  const endTimeStr = end.toUTCString().substring(17, 22);
-  const endTime = getLocaleTime(endTimeStr);
+  const startTime = moment(start).utc().format("LT");
+  const endTime = moment(end).utc().format("LT");
 
   return (
     <Stack direction="column" spacing={1}>
