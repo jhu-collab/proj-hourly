@@ -11,9 +11,11 @@ import UpsertEvent from "./upsert-event/UpsertEvent";
 /**
  * Component that represents the MUI SpeedDial component for the
  * "Calendar" page.
+ * @param calendarRef reference to the FullCalendar component in
+ *                    Calendar.jsx
  * @returns A component representing the "Calendar" expandable FAB.
  */
-function CalendarSpeedDial() {
+function CalendarSpeedDial({ calendarRef }) {
   const theme = useTheme();
 
   const { createEventPopup, toggleCreateEventPopup } = useStore();
@@ -30,6 +32,10 @@ function CalendarSpeedDial() {
   // popup toggler
   const handlePopupToggle = () => {
     open === true && setEvent({});
+    if (open === false) {
+      let calendarApi = calendarRef.current.getApi();
+      calendarApi.unselect();
+    }
     toggleCreateEventPopup(!createEventPopup);
   };
 

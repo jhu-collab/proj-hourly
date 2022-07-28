@@ -11,7 +11,7 @@ import useStore, {
   useEventPopupStore,
   useEventStore,
 } from "../../services/store";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
 import EventPopover from "./event-details/EventPopover";
@@ -28,6 +28,7 @@ function Calendar() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
+  const calendarRef = useRef();
   const { courseType, toggleCreateEventPopup } = useStore();
   const { setEvent } = useEventStore();
   const { togglePopup } = useEventPopupStore();
@@ -114,11 +115,13 @@ function Calendar() {
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
+          unselectAuto={false}
           events={memoizedEventsFn}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
           timeZone="UTC"
+          ref={calendarRef}
         />
       </Box>
       {matchUpSm ? (
@@ -129,7 +132,7 @@ function Calendar() {
           handlePopupToggle={handleMobilePopup}
         />
       )}
-      {isStaff && <CalendarSpeedDial />}
+      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
       {isLoading && <Loader />}
     </>
   );
