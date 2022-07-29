@@ -6,10 +6,10 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import useStore from "../../services/store";
 import CreateCourse from "./create-course/CreateCourse";
 import JoinCourse from "./join-course/JoinCourse";
+import { usePopupState } from "material-ui-popup-state/hooks";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -18,26 +18,18 @@ import JoinCourse from "./join-course/JoinCourse";
  */
 function CoursesSpeedDial() {
   const theme = useTheme();
+  const createPopupState = usePopupState({
+    variant: "dialog",
+    popupId: "createCourse",
+  });
 
-  const {
-    createCoursePopup,
-    toggleCreateCoursePopup,
-    joinCoursePopup,
-    toggleJoinCoursePopup,
-  } = useStore();
+  const { joinCoursePopup, toggleJoinCoursePopup } = useStore();
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
 
   const handleOpen = (event) => {
     setOpen(!open);
-  };
-
-  // create popup toggler
-  const [openCreatePopup, setOpenCreatePopup] = useState(createCoursePopup);
-  const handleCreatePopupToggle = () => {
-    setOpenCreatePopup(!openCreatePopup);
-    toggleCreateCoursePopup(!openCreatePopup);
   };
 
   // join popup toggler
@@ -51,7 +43,7 @@ function CoursesSpeedDial() {
     {
       icon: <PlusOutlined />,
       name: "Create",
-      onClick: handleCreatePopupToggle,
+      onClick: createPopupState.open,
     },
     {
       icon: <ArrowRightOutlined />,
@@ -89,14 +81,11 @@ function CoursesSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateCourse
-        open={openCreatePopup}
-        handlePopupToggle={handleCreatePopupToggle}
-      />
-      <JoinCourse
+      <CreateCourse popupState={createPopupState} />
+      {/* <JoinCourse
         open={openJoinPopup}
         handlePopupToggle={handleJoinPopupToggle}
-      />
+      /> */}
     </>
   );
 }

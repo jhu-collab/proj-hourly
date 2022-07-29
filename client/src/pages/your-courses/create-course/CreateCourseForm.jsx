@@ -39,10 +39,10 @@ const options = [
 
 /**
  * Component that represents the form that is used to create a course.
- * @param {*} handlePopupToggle: function that toggles whether the popup is open
+ * @param {*} onClose: function that closes the popup
  * @returns A component representing the Create Course form.
  */
-function CreateCourseForm({ handlePopupToggle }) {
+function CreateCourseForm({ onClose }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const id = useAccountStore((state) => state.id);
@@ -62,7 +62,7 @@ function CreateCourseForm({ handlePopupToggle }) {
       const course = data.course;
 
       queryClient.invalidateQueries(["courses"]);
-      handlePopupToggle();
+      onClose();
       toast.success(
         `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
       );

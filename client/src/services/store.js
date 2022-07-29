@@ -10,7 +10,7 @@ export const useLayoutStore = create((set) => ({
     })),
   selectedSidebarItem: "your-courses",
   selectSidebarItem: (value) =>
-    set((state) => ({
+    set(() => ({
       selectedSidebarItem: value,
     })),
   courseType: "student",
@@ -46,13 +46,13 @@ export const useAccountStore = create(
       // TODO: Once backend has set up tokens, this will be replaced.
       id: -1,
       setId: (value) =>
-        set((state) => ({
+        set(() => ({
           id: value || -1,
         })),
 
       name: "John Doe",
       setName: (value) =>
-        set((state) => ({
+        set(() => ({
           name: value || "John Doe",
         })),
     }),
@@ -68,11 +68,6 @@ export const useAccountStore = create(
 const useStore = create(
   persist(
     (set) => ({
-      createCoursePopup: false,
-      toggleCreateCoursePopup: (value) =>
-        set((state) => ({
-          createCoursePopup: value || !state.createCoursePopup,
-        })),
       joinCoursePopup: false,
       toggleJoinCoursePopup: (value) =>
         set((state) => ({
