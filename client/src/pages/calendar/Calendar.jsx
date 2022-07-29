@@ -7,7 +7,7 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore, {
+import {
   useEventPopupStore,
   useEventStore,
   useLayoutStore,
@@ -20,6 +20,7 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import MobileEventPopup from "./event-details/MobileEventPopup";
+import { usePopupState } from "material-ui-popup-state/hooks";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -31,7 +32,11 @@ function Calendar() {
 
   const calendarRef = useRef();
   const courseType = useLayoutStore((state) => state.courseType);
-  const { toggleCreateEventPopup } = useStore();
+  const createPopupState = usePopupState({
+    variant: "dialog",
+    popupId: "createEvent",
+  });
+
   const { setEvent } = useEventStore();
   const { togglePopup } = useEventPopupStore();
   const [openMobile, setMobile] = useState(false);
@@ -70,7 +75,7 @@ function Calendar() {
       start: info.start,
       end: info.end,
     });
-    toggleCreateEventPopup(true);
+    createPopupState.open();
   };
 
   const handleEventDrop = (info) => {
@@ -81,7 +86,7 @@ function Calendar() {
       location: info.event.extendedProps.location,
       description: JSON.parse(info.event.extendedProps.description),
     });
-    toggleCreateEventPopup(true);
+    createPopupState.open();
   };
 
   const memoizedEventsFn = useMemo(() => {
@@ -134,7 +139,12 @@ function Calendar() {
           handlePopupToggle={handleMobilePopup}
         />
       )}
-      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
+      {isStaff && (
+        <CalendarSpeedDial
+          calendarRef={calendarRef}
+          popupState={createPopupState}
+        />
+      )}
       {isLoading && <Loader />}
     </>
   );

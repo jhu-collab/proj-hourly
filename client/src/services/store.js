@@ -83,24 +83,6 @@ export const useCourseStore = create(
   )
 );
 
-//TODO: Refactor this into separate stores
-const useStore = create(
-  persist(
-    (set) => ({
-      createEventPopup: false,
-      toggleCreateEventPopup: (value) =>
-        set((state) => ({
-          createEventPopup: value || !state.createEventPopup,
-        })),
-    }),
-    {
-      name: "theme",
-      getStorage: () => localStorage,
-      partialize: (state) => ({ colorScheme: state.colorScheme }),
-    }
-  )
-);
-
 export const useConfirmDialogStore = create((set) => ({
   message: "",
   onSubmit: undefined,
@@ -146,5 +128,3 @@ export const useRegisterPopupStore = create((set) => ({
       open: value || !state.open,
     })),
 }));
-
-export default useStore;

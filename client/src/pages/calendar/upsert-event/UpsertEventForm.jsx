@@ -30,12 +30,12 @@ const DAYS = [
 
 /**
  * Component that represents the form that is used to upsert an event.
- * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {*} onClose function that closes the popup
  * @param {String} type String that decides when this is creating or editing an
  *                      event
  * @returns A component representing the Upsert Event form.
  */
-function UpsertEventForm({ handlePopupToggle, type }) {
+function UpsertEventForm({ onClose, type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
 
@@ -64,7 +64,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
-      handlePopupToggle();
+      onClose();
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
