@@ -1,6 +1,37 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
+export const useLayoutStore = create((set) => ({
+  openSidebar: false,
+  toggleOpenSidebar: (value) =>
+    set((state) => ({
+      openSidebar: value || !state.openSidebar,
+    })),
+  selectedSidebarItem: "your-courses",
+  selectSidebarItem: (value) =>
+    set((state) => ({
+      selectedSidebarItem: value,
+    })),
+}));
+
+export const useThemeStore = create(
+  persist(
+    (set) => ({
+      colorScheme: "light",
+      toggleColorScheme: (value) =>
+        set((state) => ({
+          colorScheme:
+            value || (state.colorScheme === "dark" ? "light" : "dark"),
+        })),
+    }),
+    {
+      name: "theme",
+      getStorage: () => localStorage,
+      partialize: (state) => ({ colorScheme: state.colorScheme }),
+    }
+  )
+);
+
 //TODO: Refactor this into separate stores
 const useStore = create(
   persist(
