@@ -1,9 +1,8 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
-import { useRegisterPopupStore } from "../../../services/store";
 import Register from "../register/Register";
+import { usePopupState } from "material-ui-popup-state/hooks";
 
 /**
  * Child component that displays information about an office hour
@@ -12,14 +11,10 @@ import Register from "../register/Register";
  * @returns a student registration information section
  */
 function StudentDetails({ onClose }) {
-  const [openPopup, setOpenPopup] = useState(false);
-
-  const { open, togglePopup } = useRegisterPopupStore();
-
-  const handlePopupToggle = () => {
-    setOpenPopup(!open);
-    togglePopup(!open);
-  };
+  const registerPopupState = usePopupState({
+    variant: "dialog",
+    popupId: "register",
+  });
 
   return (
     <>
@@ -30,17 +25,13 @@ function StudentDetails({ onClose }) {
         <Button
           variant="contained"
           fullWidth
-          onClick={handlePopupToggle}
+          onClick={registerPopupState.open}
           sx={{ borderRadius: 0 }}
         >
           Sign Up
         </Button>
       </Stack>
-      <Register
-        open={openPopup}
-        handlePopupToggle={handlePopupToggle}
-        handlePopoverClose={onClose}
-      />
+      <Register popupState={registerPopupState} handlePopoverClose={onClose} />
     </>
   );
 }

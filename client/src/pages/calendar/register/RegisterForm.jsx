@@ -32,11 +32,11 @@ const getOptions = (timeSlots) => {
 
 /**
  * Component that represents the form that is used to register for a session.
- * @param {*} handlePopupToggle function that toggles whether the popup is open
- * @param {*} handlePopoverClose function that closes the EventPopover
+ * @param {*} closePopup function that closes the popup
+ * @param {*} closePopover function that closes the EventPopover
  * @returns A component representing the Register form.
  */
-function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
+function RegisterForm({ closePopup, closePopover }) {
   const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
     onError: (error) => {
       errorToast(error);
@@ -51,8 +51,8 @@ function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
       const startTime = moment(registration.startTime).utc().format("LT");
       const endTime = moment(registration.endTime).utc().format("LT");
 
-      handlePopupToggle();
-      handlePopoverClose();
+      closePopover();
+      closePopup();
       toast.success(
         `Successfully registered for session on ${date} from 
          ${startTime} to ${endTime}`
@@ -63,7 +63,10 @@ function RegisterForm({ handlePopupToggle, handlePopoverClose }) {
     },
   });
 
-  const { title, start, end, description } = useEventStore();
+  const title = useEventStore((state) => state.title);
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const description = useEventStore((state) => state.description);
 
   const date = start.toDateString();
   const startTime = moment(start).utc().format("LT");

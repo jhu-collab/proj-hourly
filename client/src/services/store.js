@@ -108,11 +108,3 @@ export const useEventStore = create((set) => ({
       description: event.description || {},
     }),
 }));
-
-export const useRegisterPopupStore = create((set) => ({
-  open: false,
-  togglePopup: (value) =>
-    set((state) => ({
-      open: value || !state.open,
-    })),
-}));
