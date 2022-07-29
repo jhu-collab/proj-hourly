@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import useStore, { useEventStore } from "../../../services/store";
+import useStore, { useEventStore, useAccountStore } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
@@ -35,7 +35,8 @@ function UpsertEventForm({ handlePopupToggle, type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
 
-  const { userId, currentCourse } = useStore();
+  const id = useAccountStore((state) => state.id);
+  const { currentCourse } = useStore();
 
   const { start, end, location } = useEventStore();
 
@@ -82,7 +83,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
-      hosts: [userId], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
 

@@ -1,6 +1,7 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
+// Manages states that involve layout control
 export const useLayoutStore = create((set) => ({
   openSidebar: false,
   toggleOpenSidebar: (value) =>
@@ -14,6 +15,7 @@ export const useLayoutStore = create((set) => ({
     })),
 }));
 
+// Manages states that involve theme control
 export const useThemeStore = create(
   persist(
     (set) => ({
@@ -32,40 +34,35 @@ export const useThemeStore = create(
   )
 );
 
+// Manages states that involves user information
+export const useAccountStore =  create(
+  persist(
+    (set) => ({
+      // TODO: Once backend has set up tokens, this will be replaced.
+      id: -1,
+      setId: (value) =>
+        set((state) => ({
+          id: value || -1,
+        })),
+
+      name: "John Doe",
+      setName: (value) =>
+        set((state) => ({
+          name: value || "John Doe",
+        })),
+    }),
+    {
+      name: "account",
+      getStorage: () => localStorage,
+      partialize: (state) => ({ id: state.id, name: state.name }),
+    }
+  )
+);
+
 //TODO: Refactor this into separate stores
 const useStore = create(
   persist(
     (set) => ({
-      openSidebar: false,
-      toggleOpenSidebar: (value) =>
-        set((state) => ({
-          openSidebar: value || !state.openSidebar,
-        })),
-      selectedSidebarItem: "your-courses",
-      selectSidebarItem: (value) =>
-        set((state) => ({
-          selectedSidebarItem: value,
-        })),
-      colorScheme: "light",
-      toggleColorScheme: (value) =>
-        set((state) => ({
-          colorScheme:
-            value || (state.colorScheme === "dark" ? "light" : "dark"),
-        })),
-
-      // TODO: Once backend has set up tokens, this will be replaced.
-      userId: -1,
-      setUserId: (value) =>
-        set((state) => ({
-          userId: value || -1,
-        })),
-
-      userName: "John Doe",
-      setUserName: (value) =>
-        set((state) => ({
-          userName: value || "John Doe",
-        })),
-
       courseType: "student",
       toggleCourseType: (value) =>
         set((state) => ({

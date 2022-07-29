@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
-import useStore from "../../../services/store";
+import { useAccountStore } from "../../../services/store";
 import { errorToast } from "../../../utils/toasts";
 
 const options = [
@@ -45,7 +45,7 @@ const options = [
 function CreateCourseForm({ handlePopupToggle }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const { userId } = useStore();
+  const id = useAccountStore((state) => state.id);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -73,7 +73,7 @@ function CreateCourseForm({ handlePopupToggle }) {
   });
 
   const onSubmit = (data) => {
-    mutate({ ...data, id: userId });
+    mutate({ ...data, id: id });
   };
 
   return (
