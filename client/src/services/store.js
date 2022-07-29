@@ -13,6 +13,11 @@ export const useLayoutStore = create((set) => ({
     set((state) => ({
       selectedSidebarItem: value,
     })),
+  courseType: "student",
+  toggleCourseType: (value) =>
+    set((state) => ({
+      courseType: value || (state.courseType === "staff" ? "student" : "staff"),
+    })),
 }));
 
 // Manages states that involve theme control
@@ -35,7 +40,7 @@ export const useThemeStore = create(
 );
 
 // Manages states that involves user information
-export const useAccountStore =  create(
+export const useAccountStore = create(
   persist(
     (set) => ({
       // TODO: Once backend has set up tokens, this will be replaced.
@@ -63,12 +68,6 @@ export const useAccountStore =  create(
 const useStore = create(
   persist(
     (set) => ({
-      courseType: "student",
-      toggleCourseType: (value) =>
-        set((state) => ({
-          courseType:
-            value || (state.courseType === "staff" ? "student" : "staff"),
-        })),
       createCoursePopup: false,
       toggleCreateCoursePopup: (value) =>
         set((state) => ({

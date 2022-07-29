@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
-import useStore from "../../../services/store";
+import { useLayoutStore } from "../../../services/store";
 import StudentDetails from "./StudentDetails";
 
 /**
@@ -17,7 +17,7 @@ import StudentDetails from "./StudentDetails";
  * @returns a popover display event information.
  */
 function EventPopover({ anchorEl, handleClose }) {
-  const { courseType } = useStore();
+  const courseType = useLayoutStore((state) => state.courseType);
 
   return (
     <Popover

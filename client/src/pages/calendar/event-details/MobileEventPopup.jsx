@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import useStore from "../../../services/store";
+import { useLayoutStore } from "../../../services/store";
 import DeleteAction from "./DeleteAction";
 import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
@@ -20,7 +20,7 @@ import StudentDetails from "./StudentDetails";
  * @returns an event details popup component
  */
 function MobileEventPopup({ open, handlePopupToggle }) {
-  const { courseType } = useStore();
+  const courseType = useLayoutStore((state) => state.courseType);
 
   // TODO: Maybe we can modify the Popup component to promote reusability!
   return (

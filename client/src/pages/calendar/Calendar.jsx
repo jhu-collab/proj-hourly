@@ -10,6 +10,7 @@ import useTheme from "@mui/material/styles/useTheme";
 import useStore, {
   useEventPopupStore,
   useEventStore,
+  useLayoutStore,
 } from "../../services/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
@@ -29,7 +30,8 @@ function Calendar() {
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const calendarRef = useRef();
-  const { courseType, toggleCreateEventPopup } = useStore();
+  const courseType = useLayoutStore((state) => state.courseType);
+  const { toggleCreateEventPopup } = useStore();
   const { setEvent } = useEventStore();
   const { togglePopup } = useEventPopupStore();
   const [openMobile, setMobile] = useState(false);
