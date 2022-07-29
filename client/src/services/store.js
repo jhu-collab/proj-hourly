@@ -64,15 +64,29 @@ export const useAccountStore = create(
   )
 );
 
+// Manages states that involves the currently
+// selected course
+export const useCourseStore = create(
+  persist(
+    (set) => ({
+      course: null,
+      setCourse: (value) =>
+        set(() => ({
+          course: value || null,
+        })),
+    }),
+    {
+      name: "course",
+      getStorage: () => localStorage,
+      partialize: (state) => ({ course: state.course }),
+    }
+  )
+);
+
 //TODO: Refactor this into separate stores
 const useStore = create(
   persist(
     (set) => ({
-      currentCourse: null,
-      updateCurrentCourse: (value) =>
-        set((state) => ({
-          currentCourse: value || null,
-        })),
       createEventPopup: false,
       toggleCreateEventPopup: (value) =>
         set((state) => ({

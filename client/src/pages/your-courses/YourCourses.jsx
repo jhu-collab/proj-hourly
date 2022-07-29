@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 import CoursesSpeedDial from "./CoursesSpeedDial";
-import useStore from "../../services/store";
+import { useCourseStore } from "../../services/store";
 
 /**
  * Component that represents the "Your Courses" page.
@@ -14,11 +14,12 @@ import useStore from "../../services/store";
  */
 function YourCourses() {
   const theme = useTheme();
-  const { currentCourse, updateCurrentCourse } = useStore();
+  const course = useCourseStore((state) => state.course);
+  const setCourse = useCourseStore((state) => state.setCourse);
 
   useEffect(() => {
-    currentCourse && updateCurrentCourse();
-  }, [currentCourse]);
+    course && setCourse();
+  }, [course]);
 
   return (
     <>

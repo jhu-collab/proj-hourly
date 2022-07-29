@@ -7,9 +7,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import useStore, {
+import {
   useEventStore,
   useAccountStore,
+  useCourseStore,
 } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
@@ -39,7 +40,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
   const queryClient = useQueryClient();
 
   const id = useAccountStore((state) => state.id);
-  const { currentCourse } = useStore();
+  const course = useCourseStore((state) => state.course);
 
   const { start, end, location } = useEventStore();
 
@@ -77,7 +78,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
 
   const onSubmit = (data) => {
     mutate({
-      courseId: currentCourse.id,
+      courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
