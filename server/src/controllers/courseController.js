@@ -217,7 +217,7 @@ export const getCourse = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
   const accountId = parseInt(req.get("id"), 10);
-  const isInstructor = await prisma.course.findUnique({
+  const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
@@ -229,14 +229,9 @@ export const getCourse = async (req, res) => {
       },
     },
   });
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-  });
-  console.log(isInstructor);
-  if (isInstructor.instructors.length === 0) {
+  if (course.instructors.length === 0) {
     delete course["code"];
   }
+  delete course["instructors"];
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
