@@ -24,6 +24,7 @@ export const stringToTimeObj = (timeStr) => {
   return time;
 };
 
+//TODO: check conflicts with host and fix query
 export const noConflictsWithHosts = async (req, res, next) => {
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
     req.body;

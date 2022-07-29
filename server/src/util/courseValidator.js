@@ -81,37 +81,38 @@ export const isCourseIdParams = async (req, res, next) => {
 
 export const areCourseStaffOrInstructor = async (req, res, next) => {
   const { courseId, hosts } = req.body;
-  hosts.forEach(async (element) => {
-    const instructorQuery = await prisma.course.findFirst({
-      where: {
-        id: courseId,
-      },
-      include: {
-        instructors: {
-          where: {
-            id: element,
+  let roleQuery = [];
+  hosts.forEach((element) => {
+    roleQuery.push({
+      OR: [
+        {
+          instructors: {
+            some: {
+              id: element,
+            },
           },
         },
-      },
-    });
-    const staffQuery = await prisma.course.findUnique({
-      where: {
-        id: courseId,
-      },
-      include: {
-        courseStaff: {
-          where: {
-            id: element,
+        {
+          courseStaff: {
+            some: {
+              id: element,
+            },
           },
         },
-      },
+      ],
     });
-    if (staffQuery === null && instructorQuery == null) {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ msg: "User is not a member of course staff" });
-    }
   });
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff" });
+  }
   next();
 };
 
@@ -230,21 +231,25 @@ export const areTopicsForCourse = async (req, res, next) => {
     },
   });
   if (TopicIds !== null && TopicIds !== undefined) {
+    let topicQuery = [];
     TopicIds.forEach(async (topicId) => {
-      const topic = await prisma.topic({
-        where: {
+      topicQuery.push({
+        AND: {
           id: topicId,
-        },
-        include: {
           courseId: officeHour.courseId,
         },
       });
-      if (topic === null) {
-        return res
-          .status(StatusCodes.FORBIDDEN)
-          .json({ msg: "ERROR: topic is not for course" });
-      }
     });
+    const topic = await prisma.topic.findMany({
+      where: {
+        OR: topicQuery,
+      },
+    });
+    if (topic.length !== TopicIds.length) {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ msg: "ERROR: topic is not for course" });
+    }
   }
   next();
 };
