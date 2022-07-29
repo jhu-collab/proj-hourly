@@ -7,10 +7,7 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore, {
-  useEventPopupStore,
-  useEventStore,
-} from "../../services/store";
+import { useEventStore, useLayoutStore } from "../../services/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import ical from "ical-generator";
@@ -19,6 +16,7 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import MobileEventPopup from "./event-details/MobileEventPopup";
+import { usePopupState } from "material-ui-popup-state/hooks";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -29,13 +27,24 @@ function Calendar() {
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const calendarRef = useRef();
-  const { courseType, toggleCreateEventPopup } = useStore();
-  const { setEvent } = useEventStore();
-  const { togglePopup } = useEventPopupStore();
-  const [openMobile, setMobile] = useState(false);
+
+  const setEvent = useEventStore((state) => state.setEvent);
+  const courseType = useLayoutStore((state) => state.courseType);
+
+  const createPopupState = usePopupState({
+    variant: "dialog",
+    popupId: "createEvent",
+  });
+  const editPopupState = usePopupState({
+    variant: "dialog",
+    popupId: "editEvent",
+  });
+  const eventPopState = usePopupState({
+    variant: matchUpSm ? "popover" : "dialog",
+    popupId: "eventPop",
+  });
 
   const [isStaff, setIsStaff] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
@@ -43,13 +52,8 @@ function Calendar() {
     setIsStaff(courseType === "staff");
   }, [courseType]);
 
-  const handleMobilePopup = () => {
-    togglePopup(!openMobile);
-    setMobile(!openMobile);
-  };
-
   const handleEventClick = (info) => {
-    matchUpSm ? setAnchorEl(info.el) : handleMobilePopup();
+    matchUpSm ? eventPopState.open(info.el) : eventPopState.open();
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -57,10 +61,6 @@ function Calendar() {
       location: info.event.extendedProps.location,
       description: JSON.parse(info.event.extendedProps.description),
     });
-  };
-
-  const handleClosePopover = () => {
-    setAnchorEl(null);
   };
 
   const handleSelect = (info) => {
@@ -68,19 +68,21 @@ function Calendar() {
       start: info.start,
       end: info.end,
     });
-    toggleCreateEventPopup(true);
+    createPopupState.open();
   };
 
-  const handleEventDrop = (info) => {
-    setEvent({
-      title: info.event.title,
-      start: info.event.start,
-      end: info.event.end,
-      location: info.event.extendedProps.location,
-      description: JSON.parse(info.event.extendedProps.description),
-    });
-    toggleCreateEventPopup(true);
-  };
+  // TODO: Resolve confusion between edit and create
+  // popup
+  // const handleEventDrop = (info) => {
+  //   setEvent({
+  //     title: info.event.title,
+  //     start: info.event.start,
+  //     end: info.event.end,
+  //     location: info.event.extendedProps.location,
+  //     description: JSON.parse(info.event.extendedProps.description),
+  //   });
+  //   editPopupState.open();
+  // };
 
   const memoizedEventsFn = useMemo(() => {
     if (data) {
@@ -111,7 +113,7 @@ function Calendar() {
           initialView="timeGridWeek"
           height="100%"
           eventClick={handleEventClick}
-          eventDrop={handleEventDrop}
+          eventStartEditable={false} // Disabled for now
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
@@ -125,14 +127,22 @@ function Calendar() {
         />
       </Box>
       {matchUpSm ? (
-        <EventPopover anchorEl={anchorEl} handleClose={handleClosePopover} />
+        <EventPopover
+          editPopupState={editPopupState}
+          popoverState={eventPopState}
+        />
       ) : (
         <MobileEventPopup
-          open={openMobile}
-          handlePopupToggle={handleMobilePopup}
+          editPopupState={editPopupState}
+          popupState={eventPopState}
         />
       )}
-      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
+      {isStaff && (
+        <CalendarSpeedDial
+          calendarRef={calendarRef}
+          popupState={createPopupState}
+        />
+      )}
       {isLoading && <Loader />}
     </>
   );

@@ -3,14 +3,14 @@ import JoinCourseForm from "./JoinCourseForm";
 
 /**
  * Parent component for the JoinCourseForm component.
- * @param {boolean} open: state variable that signifies when
- *                  the popup is opened
- * @param {*} handlePopupToggle: function that toggles whether the popup is open
+ * @param {*} popupState (required) object that handles that state
+ *                       of the popup component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
  * @returns The Join Course popup. */
-function JoinCourse({ open, handlePopupToggle }) {
+function JoinCourse({ popupState }) {
   return (
-    <Popup open={open} onClose={handlePopupToggle} title="Join Course">
-      <JoinCourseForm onClose={handlePopupToggle} />
+    <Popup popupState={popupState} title="Join Course">
+      <JoinCourseForm onClose={popupState.close} />
     </Popup>
   );
 }

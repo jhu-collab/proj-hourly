@@ -3,21 +3,21 @@ import UpsertEventForm from "./UpsertEventForm";
 
 /**
  * Parent component for the UpsertForm component.
- * @param {boolean} open state variable that signifies when
- *                  the popup is opened
- * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {*} popupState (required) object that handles that state
+ *                       of the popup component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
  * @param {String} type String that decides when this is creating or editing
  *                      an event
+ * @param {*} onClose function that handles what happens when popup is closed
  * @returns The Upsert Event popup.
  */
-function UpsertEvent({ open, handlePopupToggle, type }) {
+function UpsertEvent({ popupState, type, onClose }) {
   return (
     <Popup
-      open={open}
-      onClose={handlePopupToggle}
+      popupState={popupState}
       title={type === "edit" ? "Edit Event" : "Create Event"}
     >
-      <UpsertEventForm handlePopupToggle={handlePopupToggle} type={type} />
+      <UpsertEventForm onClose={onClose} type={type} />
     </Popup>
   );
 }

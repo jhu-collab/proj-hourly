@@ -12,8 +12,7 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import { login } from "../../utils/requests";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
-import { toast } from "react-toastify";
-import useStore from "../../services/store";
+import { useAccountStore } from "../../services/store";
 import { errorToast } from "../../utils/toasts";
 
 function AuthLogin() {
@@ -24,7 +23,8 @@ function AuthLogin() {
     resolver: yupResolver(loginSchema),
   });
 
-  const { setUserId, setUserName } = useStore();
+  const setId = useAccountStore((state) => state.setId);
+  const setName = useAccountStore((state) => state.setName);
 
   const navigate = useNavigate();
 
@@ -32,8 +32,8 @@ function AuthLogin() {
     onSuccess: (data) => {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
-      setUserId(data.account.id);
-      setUserName(data.account.userName);
+      setId(data.account.id);
+      setName(data.account.userName);
       navigate("/courses");
     },
     onError: (error) => {

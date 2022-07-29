@@ -7,23 +7,24 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
-import useStore from "../../../services/store";
+import { useLayoutStore } from "../../../services/store";
 import StudentDetails from "./StudentDetails";
+import { bindPopover } from "material-ui-popup-state/hooks";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
- * @param {*} anchorEl - the element that popover is attached to
- * @param {*} handleClose - function that closes the popover
+ * @param {*} editPopupState (required) object that handles that state
+ *                       of the UpsertEventPopup component
+ * @param {*} popoverState (required) object that handles that state
+ *                       of the popover component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
  * @returns a popover display event information.
  */
-function EventPopover({ anchorEl, handleClose }) {
-  const { courseType } = useStore();
+function EventPopover({ editPopupState, popoverState }) {
+  const courseType = useLayoutStore((state) => state.courseType);
 
   return (
     <Popover
-      open={Boolean(anchorEl)}
-      anchorEl={anchorEl}
-      onClose={handleClose}
       anchorOrigin={{
         vertical: "top",
         horizontal: "left",
@@ -32,6 +33,7 @@ function EventPopover({ anchorEl, handleClose }) {
         vertical: "top",
         horizontal: "right",
       }}
+      {...bindPopover(popoverState)}
     >
       <Grid
         container
@@ -50,19 +52,22 @@ function EventPopover({ anchorEl, handleClose }) {
               </IconButton>
             )}
             {courseType === "staff" && (
-              <EditAction handlePopoverClose={handleClose} />
+              <EditAction
+                popupState={editPopupState}
+                onClose={popoverState.close}
+              />
             )}
             {courseType === "staff" && (
-              <DeleteAction handlePopoverClose={handleClose} />
+              <DeleteAction onClose={popoverState.close} />
             )}
-            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
+            <IconButton sx={{ fontSize: "20px" }} onClick={popoverState.close}>
               <CloseOutlined />
             </IconButton>
           </Stack>
         </Grid>
       </Grid>
       {courseType === "student" && (
-        <StudentDetails handlePopoverClose={handleClose} />
+        <StudentDetails onClose={popoverState.close} />
       )}
     </Popover>
   );

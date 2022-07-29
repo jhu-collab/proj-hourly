@@ -4,8 +4,8 @@ import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
-import { useState } from "react";
-import useStore, { useEventStore } from "../../services/store";
+import { useEffect, useState } from "react";
+import { useEventStore } from "../../services/store";
 import UpsertEvent from "./upsert-event/UpsertEvent";
 
 /**
@@ -13,14 +13,15 @@ import UpsertEvent from "./upsert-event/UpsertEvent";
  * "Calendar" page.
  * @param calendarRef reference to the FullCalendar component in
  *                    Calendar.jsx
+ * @param {*} popupState (required) object that handles that state
+ *                       of the popup component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
  * @returns A component representing the "Calendar" expandable FAB.
  */
-function CalendarSpeedDial({ calendarRef }) {
+function CalendarSpeedDial({ calendarRef, popupState }) {
   const theme = useTheme();
 
-  const { createEventPopup, toggleCreateEventPopup } = useStore();
-
-  const { setEvent } = useEventStore();
+  const setEvent = useEventStore((state) => state.setEvent);
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
@@ -29,18 +30,20 @@ function CalendarSpeedDial({ calendarRef }) {
     setOpen(!open);
   };
 
-  // popup toggler
-  const handlePopupToggle = () => {
-    open === true && setEvent({});
-    if (open === false) {
+  const handleClick = () => {
+    popupState.open();
+    setEvent({});
+  };
+
+  useEffect(() => {
+    if (popupState.isOpen === false) {
       let calendarApi = calendarRef.current.getApi();
       calendarApi.unselect();
     }
-    toggleCreateEventPopup(!createEventPopup);
-  };
+  }, [popupState.isOpen]);
 
   const actions = [
-    { icon: <PlusOutlined />, name: "Create", onClick: handlePopupToggle },
+    { icon: <PlusOutlined />, name: "Create", onClick: handleClick },
   ];
 
   return (
@@ -72,10 +75,7 @@ function CalendarSpeedDial({ calendarRef }) {
           ))}
         </SpeedDial>
       </Box>
-      <UpsertEvent
-        open={createEventPopup}
-        handlePopupToggle={handlePopupToggle}
-      />
+      <UpsertEvent popupState={popupState} onClose={popupState.close} />
     </>
   );
 }

@@ -7,7 +7,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import useStore, { useEventStore } from "../../../services/store";
+import {
+  useEventStore,
+  useAccountStore,
+  useCourseStore,
+} from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
@@ -26,18 +30,21 @@ const DAYS = [
 
 /**
  * Component that represents the form that is used to upsert an event.
- * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {*} onClose function that closes the popup
  * @param {String} type String that decides when this is creating or editing an
  *                      event
  * @returns A component representing the Upsert Event form.
  */
-function UpsertEventForm({ handlePopupToggle, type }) {
+function UpsertEventForm({ onClose, type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
 
-  const { userId, currentCourse } = useStore();
+  const id = useAccountStore((state) => state.id);
+  const course = useCourseStore((state) => state.course);
 
-  const { start, end, location } = useEventStore();
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const location = useEventStore((state) => state.location);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -59,7 +66,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
-      handlePopupToggle();
+      onClose();
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
@@ -73,7 +80,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
 
   const onSubmit = (data) => {
     mutate({
-      courseId: currentCourse.id,
+      courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
@@ -82,7 +89,7 @@ function UpsertEventForm({ handlePopupToggle, type }) {
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
-      hosts: [userId], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
 

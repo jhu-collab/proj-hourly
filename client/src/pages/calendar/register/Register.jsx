@@ -3,18 +3,18 @@ import RegisterForm from "./RegisterForm";
 
 /**
  * Parent component for the RegisterForm component.
- * @param {boolean} open state variable that signifies when
- *                  the popup is opened
- * @param {*} handlePopupToggle function that toggles whether the popup is open
+ * @param {*} popupState (required) object that handles that state
+ *                       of the popup component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
  * @param {*} handlePopoverClose function that closes the EventPopover
  * @returns The Register popup.
  */
-function Register({ open, handlePopupToggle, handlePopoverClose }) {
+function Register({ popupState, handlePopoverClose }) {
   return (
-    <Popup open={open} onClose={handlePopupToggle}>
+    <Popup popupState={popupState}>
       <RegisterForm
-        handlePopupToggle={handlePopupToggle}
-        handlePopoverClose={handlePopoverClose}
+        closePopup={popupState.close}
+        closePopover={handlePopoverClose}
       />
     </Popup>
   );

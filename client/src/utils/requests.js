@@ -1,14 +1,18 @@
 import axios from "axios";
 import moment from "moment";
 import { BASE_URL } from "../services/common";
-import useStore, { useEventStore } from "../services/store";
+import {
+  useEventStore,
+  useAccountStore,
+  useCourseStore,
+} from "../services/store";
 
 function getUserId() {
-  return useStore.getState().userId;
+  return useAccountStore.getState().id;
 }
 
 function getCourseId() {
-  return useStore.getState().currentCourse.id;
+  return useCourseStore.getState().course.id;
 }
 
 function getOfficeHourId() {

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
-import useStore from "../../services/store";
+import { useCourseStore } from "../../services/store";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -16,10 +16,10 @@ function CourseCard({ course }) {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { updateCurrentCourse } = useStore();
+  const setCourse = useCourseStore((state) => state.setCourse);
 
   const onClick = () => {
-    updateCurrentCourse(course);
+    setCourse(course);
     navigate("/calendar");
   };
 
