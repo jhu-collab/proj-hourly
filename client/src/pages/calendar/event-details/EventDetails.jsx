@@ -8,7 +8,11 @@ import moment from "moment";
  * @returns event-specific information
  */
 function EventDetails() {
-  const { title, start, end, location } = useEventStore();
+  const title = useEventStore((state) => state.title);
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const location = useEventStore((state) => state.location);
+
   const date = start.toDateString();
   const startTime = moment(start).utc().format("LT");
   const endTime = moment(end).utc().format("LT");

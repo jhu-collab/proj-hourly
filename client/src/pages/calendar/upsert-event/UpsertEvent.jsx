@@ -8,15 +8,16 @@ import UpsertEventForm from "./UpsertEventForm";
  *                       usePopupState hook from material-ui-popup-state)
  * @param {String} type String that decides when this is creating or editing
  *                      an event
+ * @param {*} onClose function that handles what happens when popup is closed
  * @returns The Upsert Event popup.
  */
-function UpsertEvent({ popupState, type }) {
+function UpsertEvent({ popupState, type, onClose }) {
   return (
     <Popup
       popupState={popupState}
       title={type === "edit" ? "Edit Event" : "Create Event"}
     >
-      <UpsertEventForm onClose={popupState.close} type={type} />
+      <UpsertEventForm onClose={onClose} type={type} />
     </Popup>
   );
 }

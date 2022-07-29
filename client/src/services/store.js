@@ -83,12 +83,16 @@ export const useCourseStore = create(
   )
 );
 
+// Manages states that involves the ConfirmPopup
+// component
 export const useConfirmDialogStore = create((set) => ({
   message: "",
   onSubmit: undefined,
   close: () => set({ onSubmit: undefined }),
 }));
 
+// Manages states that involves the currently
+// selected event
 export const useEventStore = create((set) => ({
   title: "",
   start: null,
@@ -103,22 +107,6 @@ export const useEventStore = create((set) => ({
       location: event.location || "",
       description: event.description || {},
     }),
-}));
-
-export const useEventPopupStore = create((set) => ({
-  open: false,
-  togglePopup: (value) =>
-    set((state) => ({
-      open: value || !state.open,
-    })),
-}));
-
-export const useEditEventPopupStore = create((set) => ({
-  open: false,
-  togglePopup: (value) =>
-    set((state) => ({
-      open: value || !state.open,
-    })),
 }));
 
 export const useRegisterPopupStore = create((set) => ({

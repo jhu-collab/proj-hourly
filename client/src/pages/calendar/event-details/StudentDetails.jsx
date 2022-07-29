@@ -8,10 +8,10 @@ import Register from "../register/Register";
 /**
  * Child component that displays information about an office hour
  * that is relevant for student registration.
- * @param {*} handlePopoverClose - closes the EventPopover component
+ * @param {*} onClose - closes the EventPopover component
  * @returns a student registration information section
  */
-function StudentDetails({ handlePopoverClose }) {
+function StudentDetails({ onClose }) {
   const [openPopup, setOpenPopup] = useState(false);
 
   const { open, togglePopup } = useRegisterPopupStore();
@@ -39,7 +39,7 @@ function StudentDetails({ handlePopoverClose }) {
       <Register
         open={openPopup}
         handlePopupToggle={handlePopupToggle}
-        handlePopoverClose={handlePopoverClose}
+        handlePopoverClose={onClose}
       />
     </>
   );

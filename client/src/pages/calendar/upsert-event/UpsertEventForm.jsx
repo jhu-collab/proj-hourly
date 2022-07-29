@@ -42,7 +42,9 @@ function UpsertEventForm({ onClose, type }) {
   const id = useAccountStore((state) => state.id);
   const course = useCourseStore((state) => state.course);
 
-  const { start, end, location } = useEventStore();
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const location = useEventStore((state) => state.location);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {

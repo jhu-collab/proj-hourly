@@ -1,36 +1,28 @@
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
-import { useEditEventPopupStore } from "../../../services/store";
 import UpsertEvent from "../upsert-event/UpsertEvent";
 
 /**
- * Represents the Edit IconButton on the EventDetails component
+ * Represents the Edit IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
- * @param {*} handlePopoverClose - closes EventDetails popover
+ * @param {*} popupState (required) object that handles that state
+ *                       of the popup component (object returned from
+ *                       usePopupState hook from material-ui-popup-state)
+ * @param {*} onClose - closes EventPopup/MobileEventPopup
  * @returns Edit action button and popup.
  */
-function EditAction({ handlePopoverClose }) {
-  const [openPopup, setOpenPopup] = useState(false);
-
-  const { open, togglePopup } = useEditEventPopupStore();
-
-  const handlePopupToggle = () => {
-    open === true && handlePopoverClose();
-    setOpenPopup(!open);
-    togglePopup(!open);
+function EditAction({ popupState, onClose }) {
+  const handleClose = () => {
+    onClose();
+    popupState.close();
   };
 
   return (
     <>
-      <IconButton sx={{ fontSize: "20px" }} onClick={handlePopupToggle}>
+      <IconButton sx={{ fontSize: "20px" }} onClick={popupState.open}>
         <EditOutlined />
       </IconButton>
-      <UpsertEvent
-        open={openPopup}
-        handlePopupToggle={handlePopupToggle}
-        type="edit"
-      />
+      <UpsertEvent popupState={popupState} type="edit" onClose={handleClose} />
     </>
   );
 }

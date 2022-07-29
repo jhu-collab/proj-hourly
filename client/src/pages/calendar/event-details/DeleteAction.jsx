@@ -11,15 +11,15 @@ import { cancelAll } from "../../../utils/requests";
 import { errorToast } from "../../../utils/toasts";
 
 /**
- * Represents the Trash IconButton on the EventDetails component
+ * Represents the Trash IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
- * @param {*} handlePopoverClose - closes EventDetails popover
+ * @param {*} onClose - closes EventPopover/MobileEventPopup
  * @returns Delete action button and confirmation popup.
  */
-function DeleteAction({ handlePopoverClose }) {
+function DeleteAction({ onClose }) {
   const [open, setOpen] = useState(false);
 
-  const { description } = useEventStore();
+  const description = useEventStore((state) => state.description);
   const id = description.id;
 
   const queryClient = useQueryClient();
@@ -38,7 +38,7 @@ function DeleteAction({ handlePopoverClose }) {
 
       queryClient.invalidateQueries(["officeHours"]);
 
-      handlePopoverClose();
+      onClose();
       handlePopupToggle();
 
       // TODO: Will need to be refactored once we deal with recurring events.

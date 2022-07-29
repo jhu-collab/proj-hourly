@@ -7,7 +7,6 @@ import useTheme from "@mui/material/styles/useTheme";
 import { useEffect, useState } from "react";
 import { useEventStore } from "../../services/store";
 import UpsertEvent from "./upsert-event/UpsertEvent";
-import { usePopupState } from "material-ui-popup-state/hooks";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -22,7 +21,7 @@ import { usePopupState } from "material-ui-popup-state/hooks";
 function CalendarSpeedDial({ calendarRef, popupState }) {
   const theme = useTheme();
 
-  const { setEvent } = useEventStore();
+  const setEvent = useEventStore((state) => state.setEvent);
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
@@ -31,8 +30,12 @@ function CalendarSpeedDial({ calendarRef, popupState }) {
     setOpen(!open);
   };
 
+  const handleClick = () => {
+    popupState.open();
+    setEvent({});
+  };
+
   useEffect(() => {
-    popupState.isOpen && setEvent({});
     if (popupState.isOpen === false) {
       let calendarApi = calendarRef.current.getApi();
       calendarApi.unselect();
@@ -40,7 +43,7 @@ function CalendarSpeedDial({ calendarRef, popupState }) {
   }, [popupState.isOpen]);
 
   const actions = [
-    { icon: <PlusOutlined />, name: "Create", onClick: popupState.open },
+    { icon: <PlusOutlined />, name: "Create", onClick: handleClick },
   ];
 
   return (
@@ -72,7 +75,7 @@ function CalendarSpeedDial({ calendarRef, popupState }) {
           ))}
         </SpeedDial>
       </Box>
-      <UpsertEvent popupState={popupState} />
+      <UpsertEvent popupState={popupState} onClose={popupState.close} />
     </>
   );
 }
