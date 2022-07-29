@@ -68,11 +68,6 @@ export const useAccountStore = create(
 const useStore = create(
   persist(
     (set) => ({
-      joinCoursePopup: false,
-      toggleJoinCoursePopup: (value) =>
-        set((state) => ({
-          joinCoursePopup: value || !state.joinCoursePopup,
-        })),
       currentCourse: null,
       updateCurrentCourse: (value) =>
         set((state) => ({

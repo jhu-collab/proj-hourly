@@ -14,7 +14,7 @@ import { errorToast } from "../../../utils/toasts";
 
 /**
  * Component that represents the form that is used to join a course.
- * @param {*} onClose: function that toggles whether the popup is open
+ * @param {*} onClose: function that closes the popup component
  * @returns A component representing the Join Course form.
  */
 function JoinCourseForm({ onClose }) {
