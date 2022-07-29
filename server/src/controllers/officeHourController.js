@@ -162,6 +162,8 @@ export const cancelOnDate = async (req, res) => {
 export const cancelAll = async (req, res) => {
   const { officeHourId } = req.body;
   const date = new Date();
+  date.setUTCHours(date.getHours());
+  date.setUTCMinutes(date.getMinutes());
   const dateObj = new Date(
     date.getUTCFullYear(),
     date.getUTCMonth(),
@@ -175,6 +177,10 @@ export const cancelAll = async (req, res) => {
       course: true,
     },
   });
+  const startObj = officeHour.startDate;
+  startObj.setUTCHours(officeHour.startTime.getUTCHours() - 2);
+  startObj.setUTCMinutes(officeHour.startTime.getUTCMinutes());
+  startObj.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
     officeHourUpdate = await prisma.officeHour.delete({
@@ -191,10 +197,10 @@ export const cancelAll = async (req, res) => {
         endDate: dateObj,
       },
     });
-  } else {
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: office hours already over" });
+  } else if (date > startObj) {
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: "ERROR: office hours already over or too close to start time",
+    });
   }
   const calendar = await generateCalendar(officeHour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
@@ -212,7 +218,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let start = officeHour.startTime;
   const end = officeHour.endTime;
 
-  while (start < end) {
+  while (start > end) {
     const registration = await prisma.registration.findFirst({
       where: {
         officeHourId,
