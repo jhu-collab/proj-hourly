@@ -212,3 +212,26 @@ export const leaveCourse = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+export const getCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  if (course.instructors.length === 0) {
+    delete course["code"];
+  }
+  delete course["instructors"];
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};

@@ -63,6 +63,14 @@ router.get(
 );
 
 router.get(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getCourse
+);
+
+router.get(
   "/:courseId/topicCounts",
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
