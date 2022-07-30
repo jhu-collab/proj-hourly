@@ -227,11 +227,17 @@ export const getCourse = async (req, res) => {
           id: accountId,
         },
       },
+      courseStaff: {
+        where: {
+          id: accountId,
+        },
+      },
     },
   });
-  if (course.instructors.length === 0) {
+  if (course.instructors.length === 0 && course.courseStaff.length === 0) {
     delete course["code"];
   }
   delete course["instructors"];
+  delete course["courseStaff"];
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
