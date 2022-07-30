@@ -9,18 +9,19 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
 import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useNavigate } from "react-router-dom";
-import useStore from "../../services/store";
+import { useAccountStore } from "../../services/store";
 
 function ProfileMenu() {
   const theme = useTheme();
 
-  const { setUserId, setUserName } = useStore();
+  const setId = useAccountStore((state) => state.setId);
+  const setName = useAccountStore((state) => state.setName);
 
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    setUserId();
-    setUserName();
+    setId();
+    setName();
     navigate("/");
   };
 
