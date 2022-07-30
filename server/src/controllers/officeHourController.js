@@ -37,33 +37,33 @@ export const create = async (req, res) => {
       isRecurring: recurringEvent,
     },
   });
+  let hostIds = [];
   hosts.forEach(async (id) => {
-    await prisma.officeHour.update({
-      where: {
-        id: officeHour.id,
-      },
-      data: {
-        hosts: {
-          connect: {
-            id,
-          },
-        },
-      },
-    });
+    hostIds.push({ id: id });
   });
+  await prisma.officeHour.update({
+    where: {
+      id: officeHour.id,
+    },
+    data: {
+      hosts: {
+        connect: hostIds,
+      },
+    },
+  });
+  let dowArr = [];
   daysOfWeek.forEach(async (dayOfWeek) => {
-    await prisma.officeHour.update({
-      where: {
-        id: officeHour.id,
+    dowArr.push({ dayOfWeek: dayOfWeek });
+  });
+  await prisma.officeHour.update({
+    where: {
+      id: officeHour.id,
+    },
+    data: {
+      isOnDayOfWeek: {
+        connect: dowArr,
       },
-      data: {
-        isOnDayOfWeek: {
-          connect: {
-            dayOfWeek,
-          },
-        },
-      },
-    });
+    },
   });
   const officeHourWithData = await prisma.officeHour.findUnique({
     where: {
@@ -117,19 +117,19 @@ export const register = async (req, res) => {
     },
   });
   if (TopicIds !== null && TopicIds !== undefined) {
+    let topicIdArr = [];
     TopicIds.forEach(async (topicId) => {
-      await prisma.registration.update({
-        where: {
-          id: registration.id,
+      topicIdArr.push({ id: topicId });
+    });
+    await prisma.registration.update({
+      where: {
+        id: registration.id,
+      },
+      data: {
+        topics: {
+          connect: topicIdArr,
         },
-        data: {
-          topics: {
-            connect: {
-              id: topicId,
-            },
-          },
-        },
-      });
+      },
     });
   }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
