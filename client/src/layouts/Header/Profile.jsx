@@ -14,11 +14,16 @@ import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import ProfileMenu from "./ProfileMenu";
 import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
-import { useAccountStore } from "../../services/store";
+import useStore from "../../services/store";
 
 function Profile() {
   const theme = useTheme();
-  const name = useAccountStore((state) => state.name);
+
+  const { userName } = useStore();
+
+  const handleLogout = async () => {
+    // logout
+  };
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -57,7 +62,7 @@ function Profile() {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Typography variant="subtitle1">{name}</Typography>
+          <Typography variant="subtitle1">{userName}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -107,16 +112,25 @@ function Profile() {
                             alignItems="center"
                           >
                             <Stack>
-                              <Typography variant="h6">{name}</Typography>
+                              <Typography variant="h6">{userName}</Typography>
                               <Typography variant="body2" color="textSecondary">
                                 UI/UX Designer
                               </Typography>
                             </Stack>
                           </Stack>
                         </Grid>
+                        <Grid item>
+                          <IconButton
+                            size="large"
+                            color="secondary"
+                            onClick={handleLogout}
+                          >
+                            <LogoutOutlined />
+                          </IconButton>
+                        </Grid>
                       </Grid>
                     </CardContent>
-                    {open && <ProfileMenu />}
+                    {open && <ProfileMenu handleLogout={handleLogout} />}
                   </MainCard>
                 </ClickAwayListener>
               </Paper>
