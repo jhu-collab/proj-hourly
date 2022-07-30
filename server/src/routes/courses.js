@@ -85,6 +85,4 @@ router.get(
   controller.getRegistrationStudentCounts
 );
 
-//reach to chris for getting the data
-
 export default router;
