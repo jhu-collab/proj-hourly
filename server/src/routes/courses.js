@@ -85,4 +85,13 @@ router.get(
   controller.getRegistrationStudentCounts
 );
 
+//reach to chris for getting the data
+
+router.get(
+  "/:courseId/getRoster",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  controller.getRoster
+);
+
 export default router;

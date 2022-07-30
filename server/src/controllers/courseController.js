@@ -212,3 +212,20 @@ export const leaveCourse = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+
+export const getRoster = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const curCourse = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    }, include: {
+      instructors: true,
+      students: true,
+      courseStaff: true
+    },
+  }
+  );
+  return res.status(StatusCodes.ACCEPTED).json({instructors: curCourse.instructors, staff: curCourse.courseStaff, students: curCourse.students});
+};
