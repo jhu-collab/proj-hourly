@@ -19,7 +19,7 @@ function ProfileMenu({ handleLogout }) {
 
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleLogout1 = async () => {
     setId();
     setName();
     navigate("/");
@@ -59,7 +59,7 @@ function ProfileMenu({ handleLogout }) {
         </ListItemIcon>
         <ListItemText primary="Account Setting" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
+      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout1}>
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>
