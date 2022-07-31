@@ -11,12 +11,15 @@ import {
   useEventStore,
   useAccountStore,
   useCourseStore,
+  useLayoutStore,
 } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
+import { useMediaQuery } from "@mui/material";
+import NiceModal from "@ebay/nice-modal-react";
 
 const DAYS = [
   "Sunday",
@@ -30,17 +33,19 @@ const DAYS = [
 
 /**
  * Component that represents the form that is used to upsert an event.
- * @param {*} onClose function that closes the popup
  * @param {String} type String that decides when this is creating or editing an
  *                      event
  * @returns A component representing the Upsert Event form.
  */
-function UpsertEventForm({ onClose, type }) {
+function UpsertEventForm({ type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const id = useAccountStore((state) => state.id);
   const course = useCourseStore((state) => state.course);
+
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
@@ -66,7 +71,9 @@ function UpsertEventForm({ onClose, type }) {
       const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
-      onClose();
+      NiceModal.hide("upsert-event");
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
