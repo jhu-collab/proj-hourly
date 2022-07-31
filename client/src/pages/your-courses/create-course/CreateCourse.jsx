@@ -10,7 +10,7 @@ const CreateCourse = NiceModal.create(() => {
   const modal = useModal();
   return (
     <Popup modal={modal} title="Create Course">
-      <CreateCourseForm onClose={modal.hide} />
+      <CreateCourseForm />
     </Popup>
   );
 });
