@@ -11,7 +11,7 @@ import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useNavigate } from "react-router-dom";
 import { useAccountStore } from "../../services/store";
 
-function ProfileMenu() {
+function ProfileMenu({ handleLogout }) {
   const theme = useTheme();
 
   const setId = useAccountStore((state) => state.setId);

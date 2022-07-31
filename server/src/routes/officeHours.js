@@ -93,4 +93,12 @@ router.get(
   controller.getTimeSlotsRemaining
 );
 
+router.get(
+  "/:officeHourId/date/:date/registrationStatus",
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  controller.getRegistrationStatus
+);
+
 export default router;
