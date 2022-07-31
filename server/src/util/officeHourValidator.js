@@ -256,7 +256,7 @@ export const isOfficeHourHost = async (req, res, next) => {
       },
     },
   });
-  if (officeHour === null) {
+  if (officeHour.hosts.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: must be host to cancel office hours" });
