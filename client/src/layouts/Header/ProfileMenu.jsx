@@ -11,7 +11,7 @@ import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useNavigate } from "react-router-dom";
 import { useAccountStore } from "../../services/store";
 
-function ProfileMenu({ handleLogout }) {
+function ProfileMenu() {
   const theme = useTheme();
 
   const setId = useAccountStore((state) => state.setId);
@@ -19,7 +19,7 @@ function ProfileMenu({ handleLogout }) {
 
   const navigate = useNavigate();
 
-  const handleLogout1 = async () => {
+  const handleLogout = async () => {
     setId();
     setName();
     navigate("/");
@@ -59,7 +59,7 @@ function ProfileMenu({ handleLogout }) {
         </ListItemIcon>
         <ListItemText primary="Account Setting" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout1}>
+      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>

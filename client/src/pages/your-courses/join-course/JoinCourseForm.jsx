@@ -32,7 +32,7 @@ function JoinCourseForm({ onClose }) {
       queryClient.invalidateQueries(["courses"]);
       onClose();
       toast.success(
-        `Successfully joined ${data.course.title} course for ${data.course.semester}, ${data.course.calendarYear}`
+        `Successfully joined ${data.course.title} course for ${data.course.semester} ${data.course.calendarYear}`
       );
     },
     onError: (error) => {
