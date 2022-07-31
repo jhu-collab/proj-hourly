@@ -6,20 +6,18 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useEffect, useState } from "react";
 import { useEventStore } from "../../services/store";
-import UpsertEvent from "./upsert-event/UpsertEvent";
+import { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Component that represents the MUI SpeedDial component for the
  * "Calendar" page.
  * @param calendarRef reference to the FullCalendar component in
  *                    Calendar.jsx
- * @param {*} popupState (required) object that handles that state
- *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
  * @returns A component representing the "Calendar" expandable FAB.
  */
-function CalendarSpeedDial({ calendarRef, popupState }) {
+function CalendarSpeedDial({ calendarRef }) {
   const theme = useTheme();
+  const modal = useModal("upsert-event");
 
   const setEvent = useEventStore((state) => state.setEvent);
 
@@ -31,16 +29,15 @@ function CalendarSpeedDial({ calendarRef, popupState }) {
   };
 
   const handleClick = () => {
-    popupState.open();
-    setEvent({});
+    modal.show("upsert-event", { type: "create" }).then(() => setEvent({}));
   };
 
   useEffect(() => {
-    if (popupState.isOpen === false) {
+    if (modal.visible === false) {
       let calendarApi = calendarRef.current.getApi();
       calendarApi.unselect();
     }
-  }, [popupState.isOpen]);
+  }, [modal.visible]);
 
   const actions = [
     { icon: <PlusOutlined />, name: "Create", onClick: handleClick },
@@ -75,7 +72,6 @@ function CalendarSpeedDial({ calendarRef, popupState }) {
           ))}
         </SpeedDial>
       </Box>
-      <UpsertEvent popupState={popupState} onClose={popupState.close} />
     </>
   );
 }

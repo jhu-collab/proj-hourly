@@ -11,6 +11,8 @@ import { CustomShadows } from "./shadows";
 import componentsOverride from "./overrides";
 import { ToastContainer } from "react-toastify";
 import { useMediaQuery } from "@mui/material";
+import NiceModal from "@ebay/nice-modal-react";
+import "../utils/modals";
 
 function ThemeCustomization({ children }) {
   const theme = Palette("light", "default");
@@ -50,18 +52,21 @@ function ThemeCustomization({ children }) {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themes}>
-        <CssBaseline />
-        <ToastContainer
-          position={matchUpSm ? "bottom-center" : "top-center"}
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          draggablePercent={60}
-          draggableDirection="y"
-          {...(!matchUpSm && { closeButton: false })}
-        />
-        {children}
+        <NiceModal.Provider>
+          <CssBaseline />
+          <ToastContainer
+            position={matchUpSm ? "bottom-center" : "top-center"}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            draggablePercent={60}
+            draggableDirection="y"
+            theme="colored"
+            {...(!matchUpSm && { closeButton: false })}
+          />
+          {children}
+        </NiceModal.Provider>
       </ThemeProvider>
     </StyledEngineProvider>
   );

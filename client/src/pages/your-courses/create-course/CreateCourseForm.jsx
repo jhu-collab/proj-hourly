@@ -13,6 +13,7 @@ import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
 import { useAccountStore } from "../../../services/store";
 import { errorToast } from "../../../utils/toasts";
+import NiceModal from "@ebay/nice-modal-react";
 
 const options = [
   {
@@ -39,10 +40,9 @@ const options = [
 
 /**
  * Component that represents the form that is used to create a course.
- * @param {*} onClose: function that closes the popup
  * @returns A component representing the Create Course form.
  */
-function CreateCourseForm({ onClose }) {
+function CreateCourseForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const id = useAccountStore((state) => state.id);
@@ -62,7 +62,7 @@ function CreateCourseForm({ onClose }) {
       const course = data.course;
 
       queryClient.invalidateQueries(["courses"]);
-      onClose();
+      NiceModal.hide("create-course");
       toast.success(
         `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
       );

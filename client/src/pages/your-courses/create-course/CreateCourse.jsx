@@ -1,19 +1,18 @@
 import Popup from "../../../components/Popup";
 import CreateCourseForm from "./CreateCourseForm";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Parent component for the CreateCourseForm component.
- * @param {*} popupState (required) object that handles that state
- *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
  * @returns The Create Course popup.
  */
-function CreateCourse({ popupState }) {
+const CreateCourse = NiceModal.create(() => {
+  const modal = useModal();
   return (
-    <Popup popupState={popupState} title="Create Course">
-      <CreateCourseForm onClose={popupState.close} />
+    <Popup modal={modal} title="Create Course">
+      <CreateCourseForm />
     </Popup>
   );
-}
+});
 
 export default CreateCourse;

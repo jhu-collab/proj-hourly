@@ -1,18 +1,17 @@
 import Popup from "../../../components/Popup";
 import JoinCourseForm from "./JoinCourseForm";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Parent component for the JoinCourseForm component.
- * @param {*} popupState (required) object that handles that state
- *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
  * @returns The Join Course popup. */
-function JoinCourse({ popupState }) {
+const JoinCourse = NiceModal.create(() => {
+  const modal = useModal();
   return (
-    <Popup popupState={popupState} title="Join Course">
-      <JoinCourseForm onClose={popupState.close} />
+    <Popup modal={modal} title="Join Course">
+      <JoinCourseForm onClose={modal.hide} />
     </Popup>
   );
-}
+});
 
 export default JoinCourse;

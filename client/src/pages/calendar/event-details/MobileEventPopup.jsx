@@ -10,25 +10,21 @@ import DeleteAction from "./DeleteAction";
 import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
 import StudentDetails from "./StudentDetails";
-import { bindDialog } from "material-ui-popup-state/hooks";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Mimics the EventPopover component, however, this component is a Popup (Mui Dialog).
  * This component was created because popovers don't translate too well to
  * mobile devices.
- * @param {*} editPopupState (required) object that handles that state
- *                       of the UpsertEventPopup component
- * @param {*} popupState (required) object that handles that state
- *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
  * @returns an event details popup component
  */
-function MobileEventPopup({ editPopupState, popupState }) {
+const MobileEventPopup = NiceModal.create(() => {
+  const modal = useModal();
   const courseType = useLayoutStore((state) => state.courseType);
 
   // TODO: Maybe we can modify the Popup component to promote reusability!
   return (
-    <Dialog fullWidth maxWidth="xs" {...bindDialog(popupState)}>
+    <Dialog fullWidth maxWidth="xs" open={modal.visible} onClose={modal.hide}>
       <DialogContent>
         <Grid container direction="row" columnSpacing={3}>
           <Grid item xs={10} sx={{ mt: 0.5 }}>
@@ -36,7 +32,7 @@ function MobileEventPopup({ editPopupState, popupState }) {
           </Grid>
           <Grid item xs={2}>
             <Stack direction="column" alignItems="flex-end">
-              <IconButton sx={{ fontSize: "20px" }} onClick={popupState.close}>
+              <IconButton sx={{ fontSize: "20px" }} onClick={modal.hide}>
                 <CloseOutlined />
               </IconButton>
               {courseType === "staff" && (
@@ -44,15 +40,8 @@ function MobileEventPopup({ editPopupState, popupState }) {
                   <InfoCircleOutlined />
                 </IconButton>
               )}
-              {courseType === "staff" && (
-                <EditAction
-                  popupState={editPopupState}
-                  onClose={popupState.close}
-                />
-              )}
-              {courseType === "staff" && (
-                <DeleteAction onClose={popupState.close} />
-              )}
+              {courseType === "staff" && <EditAction />}
+              {courseType === "staff" && <DeleteAction />}
             </Stack>
           </Grid>
         </Grid>
@@ -60,6 +49,6 @@ function MobileEventPopup({ editPopupState, popupState }) {
       {courseType === "student" && <StudentDetails />}
     </Dialog>
   );
-}
+});
 
 export default MobileEventPopup;
