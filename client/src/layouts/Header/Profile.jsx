@@ -18,10 +18,6 @@ function Profile() {
   const theme = useTheme();
   const name = useAccountStore((state) => state.name);
 
-  const handleLogout = async () => {
-    // logout
-  };
-
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -110,18 +106,9 @@ function Profile() {
                             </Stack>
                           </Stack>
                         </Grid>
-                        <Grid item>
-                          <IconButton
-                            size="large"
-                            color="secondary"
-                            onClick={handleLogout}
-                          >
-                            <LogoutOutlined />
-                          </IconButton>
-                        </Grid>
                       </Grid>
                     </CardContent>
-                    {open && <ProfileMenu handleLogout={handleLogout} />}
+                    {open && <ProfileMenu />}
                   </MainCard>
                 </ClickAwayListener>
               </Paper>
