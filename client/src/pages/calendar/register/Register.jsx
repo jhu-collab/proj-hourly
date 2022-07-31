@@ -1,23 +1,18 @@
 import Popup from "../../../components/Popup";
 import RegisterForm from "./RegisterForm";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Parent component for the RegisterForm component.
- * @param {*} popupState (required) object that handles that state
- *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
- * @param {*} handlePopoverClose function that closes the EventPopover
  * @returns The Register popup.
  */
-function Register({ popupState, handlePopoverClose }) {
+const Register = NiceModal.create(() => {
+  const modal = useModal("register-event");
   return (
-    <Popup popupState={popupState}>
-      <RegisterForm
-        closePopup={popupState.close}
-        closePopover={handlePopoverClose}
-      />
+    <Popup modal={modal}>
+      <RegisterForm />
     </Popup>
   );
-}
+});
 
 export default Register;

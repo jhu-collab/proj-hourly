@@ -12,6 +12,7 @@ import componentsOverride from "./overrides";
 import { ToastContainer } from "react-toastify";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import "../utils/modals";
 
 function ThemeCustomization({ children }) {
   const theme = Palette("light", "default");

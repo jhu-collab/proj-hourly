@@ -9,10 +9,13 @@ import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
-import { useEventStore } from "../../../services/store";
+import { useEventStore, useLayoutStore } from "../../../services/store";
 import { getTimeSlots, register } from "../../../utils/requests";
 import { errorToast } from "../../../utils/toasts";
 import { registerSchema } from "../../../utils/validators";
+import useTheme from "@mui/material/styles/useTheme";
+import { useMediaQuery } from "@mui/material";
+import NiceModal from "@ebay/nice-modal-react";
 
 const getOptions = (timeSlots) => {
   const options = [];
@@ -32,11 +35,14 @@ const getOptions = (timeSlots) => {
 
 /**
  * Component that represents the form that is used to register for a session.
- * @param {*} closePopup function that closes the popup
- * @param {*} closePopover function that closes the EventPopover
  * @returns A component representing the Register form.
  */
-function RegisterForm({ closePopup, closePopover }) {
+function RegisterForm() {
+  const theme = useTheme();
+  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+
   const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
     onError: (error) => {
       errorToast(error);
@@ -51,8 +57,8 @@ function RegisterForm({ closePopup, closePopover }) {
       const startTime = moment(registration.startTime).utc().format("LT");
       const endTime = moment(registration.endTime).utc().format("LT");
 
-      closePopover();
-      closePopup();
+      NiceModal.hide("register-event");
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
       toast.success(
         `Successfully registered for session on ${date} from 
          ${startTime} to ${endTime}`
