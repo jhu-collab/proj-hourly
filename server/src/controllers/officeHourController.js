@@ -237,3 +237,23 @@ export const getTimeSlotsRemaining = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
 };
+
+export const getRegistrationStatus = async (req, res) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const date = new Date(req.params.date);
+  const id = parseInt(req.get("id"), 10);
+  const status = await prisma.registration.findFirst({
+    where: {
+      officeHourId,
+      accountId: id,
+      date: date,
+    },
+  });
+  if (status === null || status === undefined) {
+    return res.status(StatusCodes.ACCEPTED).json({ status: "Not Registered" });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({
+    status: "Registered",
+    registration: status,
+  });
+};

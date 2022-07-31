@@ -241,3 +241,43 @@ export const getCourse = async (req, res) => {
   delete course["courseStaff"];
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+export const getRoleInCourse = async (req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  if (role === "Student") {
+    delete course["code"];
+  }
+  return res.status(StatusCodes.ACCEPTED).json({
+    role,
+    course,
+  });
+};

@@ -97,4 +97,12 @@ router.get(
   controller.getRegistrationStudentCounts
 );
 
+router.get(
+  "/:courseId/role",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getRoleInCourse
+);
+
 export default router;
