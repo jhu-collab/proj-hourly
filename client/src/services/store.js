@@ -21,6 +21,11 @@ export const useLayoutStore = create(
           courseType:
             value || (state.courseType === "staff" ? "student" : "staff"),
         })),
+      eventAnchorEl: null,
+      setEventAnchorEl: (value) =>
+        set((state) => ({
+          eventAnchorEl: value || null,
+        })),
     }),
     {
       name: "layout",

@@ -9,22 +9,21 @@ import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import { useLayoutStore } from "../../../services/store";
 import StudentDetails from "./StudentDetails";
-import { bindPopover } from "material-ui-popup-state/hooks";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
- * @param {*} editPopupState (required) object that handles that state
- *                       of the UpsertEventPopup component
- * @param {*} popoverState (required) object that handles that state
- *                       of the popover component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
  * @returns a popover display event information.
  */
-function EventPopover({ editPopupState, popoverState }) {
+function EventPopover() {
   const courseType = useLayoutStore((state) => state.courseType);
+  const anchorEl = useLayoutStore((state) => state.eventAnchorEl);
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
   return (
     <Popover
+      open={Boolean(anchorEl)}
+      anchorEl={anchorEl}
+      onClose={() => setAnchorEl(null)}
       anchorOrigin={{
         vertical: "top",
         horizontal: "left",
@@ -33,7 +32,6 @@ function EventPopover({ editPopupState, popoverState }) {
         vertical: "top",
         horizontal: "right",
       }}
-      {...bindPopover(popoverState)}
     >
       <Grid
         container
@@ -51,24 +49,18 @@ function EventPopover({ editPopupState, popoverState }) {
                 <InfoCircleOutlined />
               </IconButton>
             )}
-            {courseType === "staff" && (
-              <EditAction
-                popupState={editPopupState}
-                onClose={popoverState.close}
-              />
-            )}
-            {courseType === "staff" && (
-              <DeleteAction onClose={popoverState.close} />
-            )}
-            <IconButton sx={{ fontSize: "20px" }} onClick={popoverState.close}>
+            {courseType === "staff" && <EditAction />}
+            {courseType === "staff" && <DeleteAction />}
+            <IconButton
+              sx={{ fontSize: "20px" }}
+              onClick={() => setAnchorEl(null)}
+            >
               <CloseOutlined />
             </IconButton>
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "student" && (
-        <StudentDetails onClose={popoverState.close} />
-      )}
+      {courseType === "student" && <StudentDetails />}
     </Popover>
   );
 }
