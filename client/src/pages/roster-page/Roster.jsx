@@ -46,17 +46,19 @@ const Roster = () => {
   
 
   const deleteUser = () => {
-    (id) => () => {
-      axios
-        .delete(`/api/courses/${courseId}/roster/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then(() => {
-          //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-        })
-        .catch((err) => {});
-    },
-    [courseId, token]
+    // (id) => () => {
+    //   axios
+    //     .delete(`/api/courses/${courseId}/roster/${id}`, {
+    //       headers: { Authorization: `Bearer ${token}` },
+    //     })
+    //     .then(() => {
+    //       //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+    //     })
+    //     .catch((err) => {});
+    // },
+    // [courseId, token]
+
+    //TODO add the delete user finctionality
   }
 
  
@@ -81,29 +83,3 @@ const Roster = () => {
 };
 
 export default Roster;
-
-  // if (isSuccess) {
-  //   console.log(data)
-  //   useEffect(() => {
-  //     const newRoster = [];
-  //     ["instructors", "staff", "students"].forEach((type) => {
-  //       //console.log(1)
-  //       data[type].map((item) => {
-  //         const newMember = {
-  //           role: {
-  //             instructors: "Instructor",
-  //             staff: "Staff",
-  //             students: "Student",
-  //           }[type],
-  //           id: item.accountid,
-  //           ...item,
-  //         };
-  //         //console.log(newMember);
-  //         newRoster.push(newMember);
-  //       });
-  //     });
-  //     console.log(1);
-  //     setRows(newRoster);
-  //   }, [user]);
-
-  // }

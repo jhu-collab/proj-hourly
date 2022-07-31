@@ -17,27 +17,6 @@ function DeleteButton(props) {
     [courseId, token]
   );
 
-  // function DeleteUser({ open, handlePopupToggle, id }) {
-  //   return (
-  //     // <Popup
-  //     //   open={open}
-  //     //   onClose={handlePopupToggle}
-  //     //   title="Do you want to delete the user?"
-  //     // >
-  //     //   <Box textAlign="center">
-  //     //     <Button
-  //     //       onClick={deleteUser(id)}
-  //     //       sx={{ margin: 0, fontSize: 17 }}
-  //     //       variant="contained"
-  //     //     >
-  //     //       Delete User
-  //     //     </Button>
-  //     //   </Box>
-  //     // </Popup>
-  //     //<DeleteUser open={open} onClose={handleClose} id={params.id} />
-  //     <ConfirmPopup message="hi" onSubmit={deleteUser}/>
-  //   );
-  // }
 
   const isButtonDisabled = () => {
     // Return true if member is the current user
