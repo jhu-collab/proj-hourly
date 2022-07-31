@@ -61,6 +61,7 @@ function ThemeCustomization({ children }) {
             rtl={false}
             draggablePercent={60}
             draggableDirection="y"
+            theme="colored"
             {...(!matchUpSm && { closeButton: false })}
           />
           {children}
