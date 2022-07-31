@@ -1,21 +1,14 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Register from "../register/Register";
-import { usePopupState } from "material-ui-popup-state/hooks";
+import NiceModal from "@ebay/nice-modal-react";
 
 /**
  * Child component that displays information about an office hour
  * that is relevant for student registration.
- * @param {*} onClose - closes the EventPopover component
  * @returns a student registration information section
  */
-function StudentDetails({ onClose }) {
-  const registerPopupState = usePopupState({
-    variant: "dialog",
-    popupId: "register",
-  });
-
+function StudentDetails() {
   return (
     <>
       <Stack alignItems="center" spacing={2}>
@@ -25,13 +18,12 @@ function StudentDetails({ onClose }) {
         <Button
           variant="contained"
           fullWidth
-          onClick={registerPopupState.open}
+          onClick={() => NiceModal.show("register-event")}
           sx={{ borderRadius: 0 }}
         >
           Sign Up
         </Button>
       </Stack>
-      <Register popupState={registerPopupState} handlePopoverClose={onClose} />
     </>
   );
 }
