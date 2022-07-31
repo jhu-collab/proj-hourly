@@ -4,29 +4,27 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
-import React from "react";
-import { bindDialog } from "material-ui-popup-state/hooks";
 
 /**
  * Reusable MUI Dialog component. The popup has an clear icon
  * attached by default.
- * @param {*} popupState (required) object that handles that state
+ * @param {*} modal (required) object that handles that state
  *                       of the popup component (object returned from
- *                       usePopupState hook from material-ui-popup-state)
+ *                       useModal hook from @ebay/nice-modal-react)
  * @param {string} title (optional) the title of the popup
  * @param {*} children (optional) children to fill up the component
  * @returns Reusable popup component.
  */
-function Popup({ popupState, title, children }) {
+function Popup({ modal, title, children }) {
   return (
-    <Dialog fullWidth maxWidth="xs" {...bindDialog(popupState)}>
+    <Dialog fullWidth maxWidth="xs" open={modal.visible} onClose={modal.hide}>
       {title && (
         <DialogTitle align="center" variant="h2" sx={{ mb: -2, mt: 2 }}>
           {title}
         </DialogTitle>
       )}
       <Box position="absolute" top={2} right={2}>
-        <IconButton sx={{ fontSize: "22px" }} onClick={popupState.close}>
+        <IconButton sx={{ fontSize: "22px" }} onClick={modal.hide}>
           <CloseOutlined />
         </IconButton>
       </Box>
