@@ -6,8 +6,6 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
-import CreateCourse from "./create-course/CreateCourse";
-import JoinCourse from "./join-course/JoinCourse";
 import NiceModal from "@ebay/nice-modal-react";
 
 /**
@@ -29,12 +27,12 @@ function CoursesSpeedDial() {
     {
       icon: <PlusOutlined />,
       name: "Create",
-      onClick: () => NiceModal.show(CreateCourse),
+      onClick: () => NiceModal.show("create-course"),
     },
     {
       icon: <ArrowRightOutlined />,
       name: "Join",
-      onClick: () => NiceModal.show(JoinCourse),
+      onClick: () => NiceModal.show("join-course"),
     },
   ];
 
