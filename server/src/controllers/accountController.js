@@ -53,6 +53,9 @@ export const getCourses = async (req, res) => {
       },
     },
   });
+  studentCourses.forEach((course) => {
+    delete course["code"];
+  });
   const staffCourses = await prisma.course.findMany({
     where: {
       courseStaff: {

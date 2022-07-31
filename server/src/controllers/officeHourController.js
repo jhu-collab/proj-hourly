@@ -218,7 +218,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let start = officeHour.startTime;
   const end = officeHour.endTime;
 
-  while (start > end) {
+  while (start < end) {
     const registration = await prisma.registration.findFirst({
       where: {
         officeHourId,
