@@ -15,8 +15,7 @@ import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
-import MobileEventPopup from "./event-details/MobileEventPopup";
-import { usePopupState } from "material-ui-popup-state/hooks";
+import NiceModal from "@ebay/nice-modal-react";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -30,19 +29,7 @@ function Calendar() {
 
   const setEvent = useEventStore((state) => state.setEvent);
   const courseType = useLayoutStore((state) => state.courseType);
-
-  const createPopupState = usePopupState({
-    variant: "dialog",
-    popupId: "createEvent",
-  });
-  const editPopupState = usePopupState({
-    variant: "dialog",
-    popupId: "editEvent",
-  });
-  const eventPopState = usePopupState({
-    variant: matchUpSm ? "popover" : "dialog",
-    popupId: "eventPop",
-  });
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
   const [isStaff, setIsStaff] = useState(false);
 
@@ -53,7 +40,7 @@ function Calendar() {
   }, [courseType]);
 
   const handleEventClick = (info) => {
-    matchUpSm ? eventPopState.open(info.el) : eventPopState.open();
+    matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -68,7 +55,7 @@ function Calendar() {
       start: info.start,
       end: info.end,
     });
-    createPopupState.open();
+    NiceModal.show("upsert-event", { type: "create" });
   };
 
   // TODO: Resolve confusion between edit and create
@@ -126,23 +113,8 @@ function Calendar() {
           ref={calendarRef}
         />
       </Box>
-      {matchUpSm ? (
-        <EventPopover
-          editPopupState={editPopupState}
-          popoverState={eventPopState}
-        />
-      ) : (
-        <MobileEventPopup
-          editPopupState={editPopupState}
-          popupState={eventPopState}
-        />
-      )}
-      {isStaff && (
-        <CalendarSpeedDial
-          calendarRef={calendarRef}
-          popupState={createPopupState}
-        />
-      )}
+      {matchUpSm && <EventPopover />}
+      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
       {isLoading && <Loader />}
     </>
   );
