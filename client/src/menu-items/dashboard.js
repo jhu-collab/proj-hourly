@@ -18,13 +18,5 @@ export const dashboard = {
       icon: icons.BookOutlined,
       breadcrumbs: false,
     },
-    {
-      id: "dashboard",
-      title: "Dashboard",
-      type: "item",
-      url: "/dashboard",
-      icon: icons.DashboardOutlined,
-      breadcrumbs: false,
-    },
   ],
 };

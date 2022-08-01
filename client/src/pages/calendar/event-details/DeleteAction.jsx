@@ -1,53 +1,53 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
+import moment from "moment";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
-import { useEventStore } from "../../../services/store";
-import { getIsoDate, getLocaleTime } from "../../../utils/helpers";
+import { useEventStore, useLayoutStore } from "../../../services/store";
 import { cancelAll } from "../../../utils/requests";
+import { errorToast } from "../../../utils/toasts";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from "@mui/material/styles/useTheme";
+import NiceModal from "@ebay/nice-modal-react";
 
 /**
- * Represents the Trash IconButton on the EventDetails component
+ * Represents the Trash IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
- * @param {*} handlePopoverClose - closes EventDetails popover
  * @returns Delete action button and confirmation popup.
  */
-function DeleteAction({ handlePopoverClose }) {
-  const [open, setOpen] = useState(false);
+function DeleteAction() {
+  const theme = useTheme();
+  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const { description } = useEventStore();
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+
+  const description = useEventStore((state) => state.description);
   const id = description.id;
 
   const queryClient = useQueryClient();
 
-  const handlePopupToggle = () => {
-    setOpen(!open);
-  };
-
   const { mutate, isLoading } = useMutation(cancelAll, {
     onSuccess: (data) => {
       const officeHour = data.officeHourUpdate;
-      const date = new Date(officeHour.startDate).toDateString();
 
-      const startTime = officeHour.startTime.substring(11, 19);
-      const endTime = officeHour.endTime.substring(11, 19);
+      const date = moment(officeHour.startDate).utc().format("L");
+      const startTime = moment(officeHour.startTime).utc().format("LT");
+      const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
 
-      handlePopoverClose();
-      handlePopupToggle();
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully deleted office hour on ${date} from 
-         ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`
+         ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

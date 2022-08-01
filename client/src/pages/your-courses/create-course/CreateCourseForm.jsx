@@ -11,7 +11,9 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
-import useStore from "../../../services/store";
+import { useAccountStore } from "../../../services/store";
+import { errorToast } from "../../../utils/toasts";
+import NiceModal from "@ebay/nice-modal-react";
 
 const options = [
   {
@@ -38,13 +40,12 @@ const options = [
 
 /**
  * Component that represents the form that is used to create a course.
- * @param {*} handlePopupToggle: function that toggles whether the popup is open
  * @returns A component representing the Create Course form.
  */
-function CreateCourseForm({ handlePopupToggle }) {
+function CreateCourseForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const { userId } = useStore();
+  const id = useAccountStore((state) => state.id);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -61,18 +62,18 @@ function CreateCourseForm({ handlePopupToggle }) {
       const course = data.course;
 
       queryClient.invalidateQueries(["courses"]);
-      handlePopupToggle();
+      NiceModal.hide("create-course");
       toast.success(
         `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
   const onSubmit = (data) => {
-    mutate({ ...data, id: userId });
+    mutate({ ...data, id: id });
   };
 
   return (

@@ -6,9 +6,7 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
-import useStore from "../../services/store";
-import CreateCourse from "./create-course/CreateCourse";
-import JoinCourse from "./join-course/JoinCourse";
+import NiceModal from "@ebay/nice-modal-react";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -18,44 +16,23 @@ import JoinCourse from "./join-course/JoinCourse";
 function CoursesSpeedDial() {
   const theme = useTheme();
 
-  const {
-    createCoursePopup,
-    toggleCreateCoursePopup,
-    joinCoursePopup,
-    toggleJoinCoursePopup,
-  } = useStore();
-
   // speed dial toggler
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (event) => {
+  const handleOpen = () => {
     setOpen(!open);
-  };
-
-  // create popup toggler
-  const [openCreatePopup, setOpenCreatePopup] = useState(createCoursePopup);
-  const handleCreatePopupToggle = () => {
-    setOpenCreatePopup(!openCreatePopup);
-    toggleCreateCoursePopup(!openCreatePopup);
-  };
-
-  // join popup toggler
-  const [openJoinPopup, setOpenJoinPopup] = useState(joinCoursePopup);
-  const handleJoinPopupToggle = () => {
-    setOpenJoinPopup(!openJoinPopup);
-    toggleJoinCoursePopup(!openJoinPopup);
   };
 
   const actions = [
     {
       icon: <PlusOutlined />,
       name: "Create",
-      onClick: handleCreatePopupToggle,
+      onClick: () => NiceModal.show("create-course"),
     },
     {
       icon: <ArrowRightOutlined />,
       name: "Join",
-      onClick: handleJoinPopupToggle,
+      onClick: () => NiceModal.show("join-course"),
     },
   ];
 
@@ -88,14 +65,6 @@ function CoursesSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateCourse
-        open={openCreatePopup}
-        handlePopupToggle={handleCreatePopupToggle}
-      />
-      <JoinCourse
-        open={openJoinPopup}
-        handlePopupToggle={handleJoinPopupToggle}
-      />
     </>
   );
 }

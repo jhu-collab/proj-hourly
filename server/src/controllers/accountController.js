@@ -53,6 +53,9 @@ export const getCourses = async (req, res) => {
       },
     },
   });
+  studentCourses.forEach((course) => {
+    delete course["code"];
+  });
   const staffCourses = await prisma.course.findMany({
     where: {
       courseStaff: {
@@ -95,27 +98,35 @@ export const deleteAccount = async (req, res) => {
       },
     },
   });
+  let deleteOH = [];
+  let updateOH = [];
   officeHours.forEach(async (officeHour) => {
     if (officeHour.hosts.length === 1) {
-      await prisma.officeHour.delete({
-        where: {
-          id: officeHour.id,
-        },
-      });
+      deleteOH.push(officeHour.id);
     } else {
-      await prisma.officeHour.update({
-        where: {
-          id: officeHour,
-        },
-        data: {
-          hosts: {
-            disconnect: {
-              id,
-            },
-          },
-        },
-      });
+      updateOH.push(officeHour.id);
     }
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      id: {
+        in: deleteOH,
+      },
+    },
+  });
+  await prisma.officeHour.updateMany({
+    where: {
+      id: {
+        in: updateOH,
+      },
+    },
+    data: {
+      hosts: {
+        disconnect: {
+          id,
+        },
+      },
+    },
   });
   const courses = await prisma.course.findMany({
     where: {
@@ -126,27 +137,35 @@ export const deleteAccount = async (req, res) => {
       },
     },
   });
+  let deleteCourse = [];
+  let updateCourse = [];
   courses.forEach(async (course) => {
     if (course.instructors.length === 1) {
-      await prisma.course.delete({
-        where: {
-          id: course.id,
-        },
-      });
+      deleteCourse.push(course.id);
     } else {
-      await prisma.course.update({
-        where: {
-          id: course.id,
-        },
-        data: {
-          instructors: {
-            disconnect: {
-              id,
-            },
-          },
-        },
-      });
+      updateCourse.push(course.id);
     }
+  });
+  await prisma.course.delete({
+    where: {
+      id: {
+        in: deleteCourse,
+      },
+    },
+  });
+  await prisma.course.update({
+    where: {
+      id: {
+        in: updateCourse,
+      },
+    },
+    data: {
+      instructors: {
+        disconnect: {
+          id,
+        },
+      },
+    },
   });
   await prisma.account.delete({
     where: {

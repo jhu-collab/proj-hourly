@@ -1,20 +1,33 @@
 import axios from "axios";
+import moment from "moment";
 import { BASE_URL } from "../services/common";
-import useStore from "../services/store";
+import {
+  useEventStore,
+  useAccountStore,
+  useCourseStore,
+} from "../services/store";
 
 function getUserId() {
-  return useStore.getState().userId;
+  return useAccountStore.getState().id;
 }
 
 function getCourseId() {
-  return useStore.getState().currentCourse.id;
+  return useCourseStore.getState().course.id;
+}
+
+function getOfficeHourId() {
+  return useEventStore.getState().description.id;
+}
+
+function getEventDate() {
+  return moment(useEventStore.getState().start).format("MM-DD-YYYY");
 }
 
 // GET REQUESTS
 
 // TODO: Once token authorization is set up, id will be replaced.
 export const getCourses = async () => {
-  const res = await axios.get(`${BASE_URL}/api/account/me/courses`, {
+  const res = await axios.get(`${BASE_URL}/api/course/`, {
     // TODO: Need to remove id key once backend implements user tokens
     headers: { id: getUserId() },
   });
@@ -24,6 +37,20 @@ export const getCourses = async () => {
 export const getOfficeHours = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
+    {
+      // TODO: Need to remove id key once backend implements user tokens
+      headers: { id: getUserId() },
+    }
+  );
+  return res.data;
+};
+
+export const getTimeSlots = async () => {
+  console.log(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`
+  );
+  const res = await axios.get(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`,
     {
       // TODO: Need to remove id key once backend implements user tokens
       headers: { id: getUserId() },
@@ -63,6 +90,13 @@ export const cancelAll = async (body) => {
 
 export const joinCourse = async (course) => {
   const res = await axios.post(`${BASE_URL}/api/course/signup/`, course, {
+    headers: { id: getUserId() },
+  });
+  return res.data;
+};
+
+export const register = async (body) => {
+  const res = await axios.post(`${BASE_URL}/api/officeHour/register`, body, {
     headers: { id: getUserId() },
   });
   return res.data;

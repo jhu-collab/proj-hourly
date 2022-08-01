@@ -2,17 +2,17 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
-import useStore from "../../services/store";
 import CourseCard from "./CourseCard";
 import { useQuery } from "react-query";
 import { getCourses } from "../../utils/requests";
+import { useLayoutStore } from "../../services/store";
 
 /**
  * Represents a list of courses that a user is associated with.
  * @returns A component in which a user can see their courses.
  */
 function CourseList() {
-  const { courseType } = useStore();
+  const courseType = useLayoutStore((state) => state.courseType);
 
   const theme = useTheme();
 
