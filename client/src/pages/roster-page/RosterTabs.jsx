@@ -50,7 +50,6 @@ function RosterTabs(props) {
            // token={token}
             params={params}
             rows={rows}
-            //isButtonDisabled={isButtonDisabled}
           />,
         ],
       },
@@ -115,7 +114,7 @@ function RosterTabs(props) {
           <DataGrid
             //rows={rows.filter((row) => row.role == "Instructor")}
             rows = {rows.instructors}
-            columns={columns}
+            columns={columns.slice(0,2)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />
