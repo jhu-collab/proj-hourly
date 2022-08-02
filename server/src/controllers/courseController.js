@@ -76,7 +76,7 @@ export const register = async (req, res) => {
       },
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ updateAccount });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
 export const getTopicCounts = async (req, res) => {
@@ -211,4 +211,73 @@ export const leaveCourse = async (req, res) => {
     },
   });
   return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const getCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id: accountId,
+        },
+      },
+      courseStaff: {
+        where: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  if (course.instructors.length === 0 && course.courseStaff.length === 0) {
+    delete course["code"];
+  }
+  delete course["instructors"];
+  delete course["courseStaff"];
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const getRoleInCourse = async (req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  if (role === "Student") {
+    delete course["code"];
+  }
+  return res.status(StatusCodes.ACCEPTED).json({
+    role,
+    course,
+  });
 };

@@ -7,15 +7,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import useStore from "../../../services/store";
+import {
+  useEventStore,
+  useAccountStore,
+  useCourseStore,
+  useLayoutStore,
+} from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
-import {
-  getExpectedDate,
-  getIsoDate,
-  getLocaleTime,
-} from "../../../utils/helpers";
+import { errorToast } from "../../../utils/toasts";
+import moment from "moment";
+import { useMediaQuery } from "@mui/material";
+import NiceModal from "@ebay/nice-modal-react";
 
 const DAYS = [
   "Sunday",
@@ -28,65 +32,71 @@ const DAYS = [
 ];
 
 /**
- * Component that represents the form that is used to create an event.
- * @param {*} handlePopupToggle: function that toggles whether the popup is open
- * @returns A component representing the Create Event form.
+ * Component that represents the form that is used to upsert an event.
+ * @param {String} type String that decides when this is creating or editing an
+ *                      event
+ * @returns A component representing the Upsert Event form.
  */
-function CreateEventForm({ handlePopupToggle }) {
+function UpsertEventForm({ type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const {
-    userId,
-    currentCourse,
-    createEventDate,
-    createEventStartTime,
-    createEventEndTime,
-  } = useStore();
+  const id = useAccountStore((state) => state.id);
+  const course = useCourseStore((state) => state.course);
+
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const location = useEventStore((state) => state.location);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      date: createEventDate,
-      startTime: createEventStartTime,
-      endTime: createEventEndTime,
-      location: "",
+      date: start ? moment(start).format("YYYY-MM-DD") : "",
+      startTime: start ? moment(start).utc().format("HH:mm") : "",
+      endTime: end ? moment(end).utc().format("HH:mm") : "",
+      location: location || "",
     },
     resolver: yupResolver(createEventSchema),
   });
 
+  // TODO: THis will need to be refactored once the route to
+  // edit an existing office hour is created
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = new Date(officeHour.startDate).toDateString();
-
-      const startTime = officeHour.startTime.substring(11, 19);
-      const endTime = officeHour.endTime.substring(11, 19);
+      const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
+      const startTime = moment(officeHour.startTime).utc().format("LT");
+      const endTime = moment(officeHour.endTime).utc().format("LT");
 
       queryClient.invalidateQueries(["officeHours"]);
-      handlePopupToggle();
+      NiceModal.hide("upsert-event");
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
-         ${getLocaleTime(startTime)} to ${getLocaleTime(endTime)}`
+         ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
   const onSubmit = (data) => {
     mutate({
-      courseId: currentCourse.id,
+      courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
-      startDate: getExpectedDate(getIsoDate(data.date)),
-      endDate: getExpectedDate(getIsoDate(data.date)),
+      startDate: moment(data.date).format("MM-DD-YYYY"),
+      endDate: moment(data.date).format("MM-DD-YYYY"),
       location: data.location,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
-      hosts: [userId], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
 
@@ -124,7 +134,7 @@ function CreateEventForm({ handlePopupToggle }) {
             disabled={isLoading}
             fullWidth
           >
-            Create
+            {type === "edit" ? "Update" : "Create"}
           </Button>
         </Stack>
       </Form>
@@ -133,4 +143,4 @@ function CreateEventForm({ handlePopupToggle }) {
   );
 }
 
-export default CreateEventForm;
+export default UpsertEventForm;

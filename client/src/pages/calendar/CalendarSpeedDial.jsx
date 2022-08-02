@@ -4,43 +4,43 @@ import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
-import { useState } from "react";
-import useStore from "../../services/store";
-import CreateEvent from "./create-event/CreateEvent";
+import { useEffect, useState } from "react";
+import { useEventStore } from "../../services/store";
+import { useModal } from "@ebay/nice-modal-react";
 
 /**
  * Component that represents the MUI SpeedDial component for the
  * "Calendar" page.
+ * @param calendarRef reference to the FullCalendar component in
+ *                    Calendar.jsx
  * @returns A component representing the "Calendar" expandable FAB.
  */
-function CalendarSpeedDial() {
+function CalendarSpeedDial({ calendarRef }) {
   const theme = useTheme();
+  const modal = useModal("upsert-event");
 
-  const {
-    createEventPopup,
-    toggleCreateEventPopup,
-    setCreateEventDate,
-    setCreateEventStartTime,
-    setCreateEventEndTime,
-  } = useStore();
+  const setEvent = useEventStore((state) => state.setEvent);
 
   // speed dial toggler
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (event) => {
+  const handleOpen = () => {
     setOpen(!open);
   };
 
-  // popup toggler
-  const handlePopupToggle = () => {
-    toggleCreateEventPopup(!createEventPopup);
-    !createEventPopup && setCreateEventDate();
-    !createEventPopup && setCreateEventStartTime();
-    !createEventPopup && setCreateEventEndTime();
+  const handleClick = () => {
+    modal.show("upsert-event", { type: "create" }).then(() => setEvent({}));
   };
 
+  useEffect(() => {
+    if (modal.visible === false) {
+      let calendarApi = calendarRef.current.getApi();
+      calendarApi.unselect();
+    }
+  }, [modal.visible]);
+
   const actions = [
-    { icon: <PlusOutlined />, name: "Create", onClick: handlePopupToggle },
+    { icon: <PlusOutlined />, name: "Create", onClick: handleClick },
   ];
 
   return (
@@ -72,10 +72,6 @@ function CalendarSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateEvent
-        open={createEventPopup}
-        handlePopupToggle={handlePopupToggle}
-      />
     </>
   );
 }

@@ -32,6 +32,7 @@ router.post(
   body("id", "Account id is required").isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
+  validator.isNotInCourse,
   controller.register
 );
 
@@ -62,6 +63,14 @@ router.get(
 );
 
 router.get(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getCourse
+);
+
+router.get(
   "/:courseId/topicCounts",
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
@@ -86,6 +95,14 @@ router.get(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   controller.getRegistrationStudentCounts
+);
+
+router.get(
+  "/:courseId/role",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getRoleInCourse
 );
 
 export default router;

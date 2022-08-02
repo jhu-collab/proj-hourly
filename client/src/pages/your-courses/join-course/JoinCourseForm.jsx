@@ -9,15 +9,16 @@ import { joinCourseSchema } from "../../../utils/validators";
 import { useMutation, useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
-import useStore from "../../../services/store";
+import { useAccountStore } from "../../../services/store";
+import { errorToast } from "../../../utils/toasts";
 
 /**
  * Component that represents the form that is used to join a course.
- * @param {*} onClose: function that toggles whether the popup is open
+ * @param {*} onClose: function that closes the popup component
  * @returns A component representing the Join Course form.
  */
 function JoinCourseForm({ onClose }) {
-  const { userId } = useStore();
+  const id = useAccountStore((state) => state.id);
   const queryClient = useQueryClient();
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -31,16 +32,16 @@ function JoinCourseForm({ onClose }) {
       queryClient.invalidateQueries(["courses"]);
       onClose();
       toast.success(
-        `Successfully joined the course` // TO:DO backend needs to return the course in the response
+        `Successfully joined ${data.course.title} course for ${data.course.semester} ${data.course.calendarYear}`
       );
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 
   const onSubmit = (data) => {
-    mutate({ ...data, id: userId });
+    mutate({ ...data, id: id });
   };
   return (
     <>

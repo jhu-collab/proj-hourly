@@ -1,6 +1,6 @@
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
-import useStore from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 
 /**
  * Represents a Material UI ToggleButtonGroup component that handles
@@ -8,7 +8,8 @@ import useStore from "../../services/store";
  * @returns A component can select between student and staff courses.
  */
 function CoursesToggleGroup() {
-  const { courseType, toggleCourseType } = useStore();
+  const courseType = useLayoutStore((state) => state.courseType);
+  const toggleCourseType = useLayoutStore((state) => state.toggleCourseType);
 
   const handleChange = (event, newValue) => {
     if (newValue != null) {
