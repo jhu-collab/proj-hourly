@@ -21,6 +21,7 @@ import moment from "moment";
 import { Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import { useState } from "react";
+import ToggleRecurringDay from "./ToggleRecurringDay";
 
 const DAYS = [
   "Sunday",
@@ -47,7 +48,7 @@ function UpsertEventForm({ type }) {
 
   const handleRecurringChange = () => {
     setRecurring(!recurring);
-  }
+  };
 
   const id = useAccountStore((state) => state.id);
   const course = useCourseStore((state) => state.course);
@@ -130,6 +131,11 @@ function UpsertEventForm({ type }) {
               label="Recurring event"
             />
           </Stack>
+          {recurring && (
+            <Stack alignItems="center">
+              <ToggleRecurringDay />
+            </Stack>
+          )}
           <Stack direction="row" spacing={theme.spacing(3)}>
             <FormInputText
               name="startTime"

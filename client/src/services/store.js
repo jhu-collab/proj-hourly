@@ -122,4 +122,10 @@ export const useEventStore = create((set) => ({
       location: event.location || "",
       description: event.description || {},
     }),
+
+  days: "",
+  setDays: (days) =>
+    set(() => ({
+      days: days || "",
+    })),
 }));
