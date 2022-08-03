@@ -18,8 +18,9 @@ import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
-import { useMediaQuery } from "@mui/material";
+import { Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import { useState } from "react";
 
 const DAYS = [
   "Sunday",
@@ -41,6 +42,12 @@ function UpsertEventForm({ type }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const [recurring, setRecurring] = useState(true);
+
+  const handleRecurringChange = () => {
+    setRecurring(!recurring);
+  }
 
   const id = useAccountStore((state) => state.id);
   const course = useCourseStore((state) => state.course);
@@ -111,6 +118,18 @@ function UpsertEventForm({ type }) {
             type="date"
             InputLabelProps={{ shrink: true }}
           />
+          <Stack alignItems="center">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  defaultChecked
+                  checked={recurring}
+                  onChange={handleRecurringChange}
+                />
+              }
+              label="Recurring event"
+            />
+          </Stack>
           <Stack direction="row" spacing={theme.spacing(3)}>
             <FormInputText
               name="startTime"
