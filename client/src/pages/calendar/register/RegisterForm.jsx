@@ -21,8 +21,8 @@ const getOptions = (timeSlots) => {
   const options = [];
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].start, "hh:mm").format("LT");
-    const localeEndTime = moment(timeSlots[i].end, "hh:mm").format("LT");
+    const localeStartTime = moment(timeSlots[i].startTime).format("LT");
+    const localeEndTime = moment(timeSlots[i].endTime).format("LT");
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
