@@ -22,6 +22,7 @@ import { Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import { useState } from "react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
+import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 
 const DAYS = [
   "Sunday",
@@ -44,12 +45,6 @@ function UpsertEventForm({ type }) {
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const [recurring, setRecurring] = useState(true);
-
-  const handleRecurringChange = () => {
-    setRecurring(!recurring);
-  };
-
   const id = useAccountStore((state) => state.id);
   const course = useCourseStore((state) => state.course);
 
@@ -59,15 +54,18 @@ function UpsertEventForm({ type }) {
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       date: start ? moment(start).format("YYYY-MM-DD") : "",
       startTime: start ? moment(start).utc().format("HH:mm") : "",
+      recurringEvent: false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
     },
     resolver: yupResolver(createEventSchema),
   });
+
+  const recurring = watch("recurringEvent");
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
@@ -98,7 +96,7 @@ function UpsertEventForm({ type }) {
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
-      recurringEvent: false, // TODO: For now, the default is false
+      recurringEvent: data.recurringEvent, // TODO: For now, the default is false
       startDate: moment(data.startDate).format("MM-DD-YYYY"),
       endDate: moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
@@ -129,14 +127,9 @@ function UpsertEventForm({ type }) {
             />
           )}
           <Stack alignItems="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked
-                  checked={recurring}
-                  onChange={handleRecurringChange}
-                />
-              }
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
               label="Recurring event"
             />
           </Stack>
