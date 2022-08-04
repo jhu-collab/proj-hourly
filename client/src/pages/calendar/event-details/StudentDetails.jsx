@@ -2,6 +2,9 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NiceModal from "@ebay/nice-modal-react";
+import Alert from "@mui/material/Alert";
+import { useQuery } from "react-query";
+import { getRegistrationStatus } from "../../../utils/requests";
 
 /**
  * Child component that displays information about an office hour
@@ -9,19 +12,41 @@ import NiceModal from "@ebay/nice-modal-react";
  * @returns a student registration information section
  */
 function StudentDetails() {
+  const { isLoading, error, data } = useQuery(
+    ["registrationStatus"],
+    getRegistrationStatus
+  );
+
+  if (isLoading) {
+    return <Alert severity="warning">Retrieving registration status ...</Alert>;
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error">Unable to retrieve registration status</Alert>
+    );
+  }
+
+  const isRegistered = data.status === "Registered";
+
   return (
     <>
       <Stack alignItems="center" spacing={2}>
-        <Typography color="red" paddingX={2}>
-          You are not registered for this session
+        <Typography color={isRegistered ? "green" : "red"} paddingX={2}>
+          {isRegistered
+            ? `You are currently registered for this session`
+            : `You are not registered for this session`}
         </Typography>
         <Button
           variant="contained"
           fullWidth
-          onClick={() => NiceModal.show("register-event")}
           sx={{ borderRadius: 0 }}
+          color={isRegistered ? "error" : "primary"}
+          {...(!isRegistered && {
+            onClick: () => NiceModal.show("register-event"),
+          })}
         >
-          Sign Up
+          {isRegistered ? `Cancel` : `Sign Up`}
         </Button>
       </Stack>
     </>
