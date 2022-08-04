@@ -26,7 +26,7 @@ const getOptions = (timeSlots) => {
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].start} - ${timeSlots[i].end}`,
+      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
     });
   }
 
