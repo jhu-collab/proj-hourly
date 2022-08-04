@@ -99,10 +99,10 @@ function UpsertEventForm({ type }) {
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: false, // TODO: For now, the default is false
-      startDate: moment(data.date).format("MM-DD-YYYY"),
-      endDate: moment(data.date).format("MM-DD-YYYY"),
+      startDate: moment(data.startDate).format("MM-DD-YYYY"),
+      endDate: moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
-      daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
+      daysOfWeek: [DAYS[data.startDate.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
@@ -113,12 +113,21 @@ function UpsertEventForm({ type }) {
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" spacing={theme.spacing(3)}>
           <FormInputText
-            name="date"
+            name="startDate"
             control={control}
-            label="Date"
+            label={recurring ? "Start Date" : "Date"}
             type="date"
             InputLabelProps={{ shrink: true }}
           />
+          {recurring && (
+            <FormInputText
+              name="endDate"
+              control={control}
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          )}
           <Stack alignItems="center">
             <FormControlLabel
               control={

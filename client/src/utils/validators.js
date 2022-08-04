@@ -94,11 +94,20 @@ const today = new Date();
 today.setHours(0, 0, 0, 0);
 
 export const createEventSchema = yup.object().shape({
-  date: yup
+  startDate: yup
     .date()
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
+  endDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required")
+    .test("is-greater", "End date must be after start date", function (value) {
+      const { startDate } = this.parent;
+      return moment(value).isAfter(moment(startDate));
+    }),
   startTime: yup.string().required("Start time is required"),
   endTime: yup
     .string()
