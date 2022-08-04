@@ -5,9 +5,12 @@ import * as courseValidator from "../util/courseValidator.js";
 import * as validator from "../util/officeHourValidator.js";
 import * as timeValidator from "../util/timeValidator.js";
 import * as controller from "../controllers/officeHourController.js";
+import { checkToken } from "../util/checkToken.js";
 
 const router = express.Router();
 const body = express_validator.body;
+
+router.use(checkToken);
 
 router.post(
   "/create",
