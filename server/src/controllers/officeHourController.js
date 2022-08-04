@@ -297,12 +297,13 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     },
   });
   let hostArr = [];
-  officehour.hosts.forEach(async (account) => {
+  console.log(officehour.hosts);
+  officehour.hosts.forEach((account) => {
     hostArr.push({ id: account.id });
   });
   await prisma.officeHour.update({
     where: {
-      id: officehour.id,
+      id: newOfficeHour.id,
     },
     data: {
       hosts: {
@@ -316,8 +317,15 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
 
 export const editAll = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const { startDate, endDate, startTime, endTime, location, daysOfWeek } =
-    req.body;
+  const {
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+    location,
+    daysOfWeek,
+    timePerStudent,
+  } = req.body;
   const startTimeObject = stringToTimeObj(startTime);
   const endTimeObject = stringToTimeObj(endTime);
   const update = await prisma.officeHour.update({
@@ -333,6 +341,7 @@ export const editAll = async (req, res) => {
       isOnDayOfWeek: {
         set: [],
       },
+      timePerStudent: timePerStudent,
     },
   });
   let dowArr = [];

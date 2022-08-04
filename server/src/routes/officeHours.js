@@ -114,10 +114,10 @@ router.post(
   body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body(
-    "location",
-    "Please specify a location for your office hours"
-  ).notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "Please specify a location for your office hours")
+    .optional()
+    .notEmpty(),
   body(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
