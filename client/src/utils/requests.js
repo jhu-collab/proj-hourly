@@ -46,11 +46,19 @@ export const getOfficeHours = async () => {
 };
 
 export const getTimeSlots = async () => {
-  console.log(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`
-  );
   const res = await axios.get(
     `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`,
+    {
+      // TODO: Need to remove id key once backend implements user tokens
+      headers: { id: getUserId() },
+    }
+  );
+  return res.data;
+};
+
+export const getRegistrationStatus = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/date/${getEventDate()}/registrationStatus`,
     {
       // TODO: Need to remove id key once backend implements user tokens
       headers: { id: getUserId() },
