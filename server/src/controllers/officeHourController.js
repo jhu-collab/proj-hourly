@@ -306,9 +306,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     },
     data: {
       hosts: {
-        connect: {
-          hostArr,
-        },
+        connect: hostArr,
       },
     },
   });
