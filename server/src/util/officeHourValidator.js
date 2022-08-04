@@ -2,7 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
 
-const weekday = [
+export const weekday = [
   "Sunday",
   "Monday",
   "Tuesday",

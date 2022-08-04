@@ -4,6 +4,7 @@ import { stringToTimeObj } from "../util/officeHourValidator.js";
 import validate from "../util/checkValidation.js";
 import { generateCalendar } from "../util/icalHelpers.js";
 import { createTimeString } from "../util/helpers.js";
+import { weekday } from "../util/officeHourValidator.js";
 
 export const create = async (req, res) => {
   validate(req);
@@ -244,6 +245,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   const { startTime, endTime, timePerStudent, location } = req.body;
   const dateObj = new Date(date);
   dateObj.setUTCHours(0);
+  const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -297,7 +299,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     },
   });
   let hostArr = [];
-  console.log(officehour.hosts);
   officehour.hosts.forEach((account) => {
     hostArr.push({ id: account.id });
   });
@@ -308,6 +309,11 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     data: {
       hosts: {
         connect: hostArr,
+      },
+      isOnDayOfWeek: {
+        connect: {
+          dayOfWeek: dow,
+        },
       },
     },
   });
