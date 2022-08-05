@@ -1,9 +1,10 @@
 import { useCallback } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+//import DeleteIcon from "@mui/icons-material/Delete";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import useStore from "../../services/store";
+import  { useAccountStore } from "../../services/store";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 
 function DeleteButton(props) {
   const { courseId, rows, token, params } = props;
@@ -19,7 +20,7 @@ function DeleteButton(props) {
   const isButtonDisabled = () => {
     // Return true if member is the current user
     // Or if member is an instructor and user is not an instructor
-    const { userId } = useStore();
+    const userId = useAccountStore((state) => state.id);
     const instructorIds = rows.instructors?.map((user) => user.id);
     const isMemberInstructor = instructorIds?.indexOf(userId) !== -1;
     return !isMemberInstructor;
@@ -28,7 +29,7 @@ function DeleteButton(props) {
   return (
     <>
       <GridActionsCellItem
-        icon={<DeleteIcon />}
+        icon={<DeleteOutlined/>}
         onClick={() => {
           confirmDialog(
             "Do you want to delete this user",

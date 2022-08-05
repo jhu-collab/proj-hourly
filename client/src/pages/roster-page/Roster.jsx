@@ -1,17 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import axios from "axios";
+import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import InviteUser from "./InviteUser";
 import Typography from "@mui/material/Typography";
 import RosterTabs from "./RosterTabs";
-import DeleteButton from "./DeleteButton";
 import { useQuery } from "react-query";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
 import { fetchUsers } from "../../utils/requests";
 import { useCourseStore } from "../../services/store";
-
+import NiceModal from "@ebay/nice-modal-react";
+import { Button } from "@mui/material";
 // ==============================|| Roster ||============================== //
 
 /**
@@ -20,13 +18,10 @@ import { useCourseStore } from "../../services/store";
  */
 const Roster = () => {
   //delete it and use currenCourse.id instead
-  const [courseId, setCourseId] = useState();
   const [value, setValue] = useState(0);
-  const [check, setCheck] = useState(1);
   const theme = useTheme();
 
   const course = useCourseStore((state) => state.course);
-  setCourseId(course.id);
 
   const { isLoading, error, data } = useQuery(["users"], fetchUsers);
 
@@ -66,16 +61,19 @@ const Roster = () => {
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">Roster</Typography>
-        <InviteUser preSelect={check} key={check} />
+        <Button
+          sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
+          onClick={() => NiceModal.show("invite-user", {isInstructor: true})}
+          variant="contained"
+        >
+          Invite User
+        </Button>
       </Stack>
       <RosterTabs
         rows={data}
-        setCheck={setCheck}
-        key={check}
-        check={check}
         value={value}
         setValue={setValue}
-        deleteUser={deleteUser()}
+        deleteUser={deleteUser}
       />
     </>
   );
