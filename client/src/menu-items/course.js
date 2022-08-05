@@ -25,8 +25,8 @@ export const course = (currentCourse) => {
         id: "roster",
         title: "Roster",
         type: "item",
-        //TODO change it to roster once backend is done
-        url: "/roster-test",
+        url: "/roster",
+        //TODO
         icon: icons.CalendarOutlined,
         breadcrumbs: false,
       },

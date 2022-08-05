@@ -36,7 +36,7 @@ export const getCourses = async () => {
 
 export const fetchUsers = async () => {
   const res = await axios.get(
-    `${BASE_URL}/api/courses/${getCourseId()}/getRoster`,
+    `${BASE_URL}/api/course/${getCourseId()}/getRoster`,
     {
       headers: { id: getUserId() },
     }
