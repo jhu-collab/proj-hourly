@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { useMemo} from "react";
+import { useMemo } from "react";
 import DeleteButton from "./DeleteButton";
-
 
 function RosterTabs(props) {
   const isInstructor = true;
@@ -26,7 +25,6 @@ function RosterTabs(props) {
     );
   }
 
-
   const columns = useMemo(() => {
     return [
       {
@@ -46,8 +44,8 @@ function RosterTabs(props) {
         getActions: (params) => [
           <DeleteButton
             //setRows={setRows}
-           // courseId={courseId}
-           // token={token}
+            // courseId={courseId}
+            // token={token}
             params={params}
             rows={rows}
           />,
@@ -91,7 +89,7 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             //rows={rows.filter((row) => row.role == "Student")}
-            rows= {rows.students}
+            rows={rows.students}
             columns={columns}
             autoPageSize
             sx={{ fontSize: "20px" }}
@@ -102,7 +100,7 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             //rows={rows.filter((row) => row.role == "Staff")}
-            rows= {rows.staff}
+            rows={rows.staff}
             columns={columns}
             autoPageSize
             sx={{ fontSize: "20px" }}
@@ -113,8 +111,8 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             //rows={rows.filter((row) => row.role == "Instructor")}
-            rows = {rows.instructors}
-            columns={columns.slice(0,2)}
+            rows={rows.instructors}
+            columns={columns.slice(0, 2)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />

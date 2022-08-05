@@ -24,7 +24,6 @@ const Roster = () => {
   const token = 2;
   const theme = useTheme();
 
-
   const { isLoading, error, data } = useQuery(["users"], fetchUsers);
 
   if (isLoading) {
@@ -43,7 +42,6 @@ const Roster = () => {
       </Alert>
     );
   }
-  
 
   const deleteUser = () => {
     // (id) => () => {
@@ -57,11 +55,8 @@ const Roster = () => {
     //     .catch((err) => {});
     // },
     // [courseId, token]
-
     //TODO add the delete user finctionality
-  }
-
- 
+  };
 
   return (
     <>
@@ -76,7 +71,7 @@ const Roster = () => {
         check={check}
         value={value}
         setValue={setValue}
-        deleteUser = {deleteUser()}
+        deleteUser={deleteUser()}
       />
     </>
   );

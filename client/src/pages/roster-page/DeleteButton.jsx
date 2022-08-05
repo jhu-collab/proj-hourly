@@ -8,7 +8,6 @@ import useStore from "../../services/store";
 function DeleteButton(props) {
   const { courseId, rows, token, params } = props;
 
-
   const deleteUser = useCallback(
     (id) => () => {
       //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
@@ -16,7 +15,6 @@ function DeleteButton(props) {
     },
     [courseId, token]
   );
-
 
   const isButtonDisabled = () => {
     // Return true if member is the current user
@@ -31,11 +29,16 @@ function DeleteButton(props) {
     <>
       <GridActionsCellItem
         icon={<DeleteIcon />}
-        onClick={() => {confirmDialog("Do you want to delete this user", deleteUser(params.id))}}
+        onClick={() => {
+          confirmDialog(
+            "Do you want to delete this user",
+            deleteUser(params.id)
+          );
+        }}
         disabled={isButtonDisabled()}
         label="Delete"
       />
-      <ConfirmPopup/>
+      <ConfirmPopup />
     </>
   );
 }
