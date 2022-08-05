@@ -105,4 +105,11 @@ router.get(
   controller.getRoleInCourse
 );
 
+router.get(
+  "/:courseId/getRoster",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  controller.getRoster
+);
+
 export default router;
