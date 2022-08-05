@@ -9,8 +9,7 @@ import useTheme from "@mui/material/styles/useTheme";
 import { fetchUsers } from "../../utils/requests";
 import { useCourseStore } from "../../services/store";
 import NiceModal from "@ebay/nice-modal-react";
-import { Button } from "@mui/material";
-// ==============================|| Roster ||============================== //
+import Button from "@mui/material/Button";
 
 /**
  * A component that represents the roster page that the user visits after clicking the people icon in the nav drawer.

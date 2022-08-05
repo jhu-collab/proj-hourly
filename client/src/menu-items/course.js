@@ -1,10 +1,8 @@
-import DashboardOutlined from "@ant-design/icons/DashboardOutlined";
-import BookOutlined from "@ant-design/icons/BookOutlined";
 import CalendarOutlined from "@ant-design/icons/CalendarOutlined";
+import UsergroupAddOutlined from "@ant-design/icons/UsergroupAddOutlined";
 const icons = {
-  DashboardOutlined,
-  BookOutlined,
   CalendarOutlined,
+  UsergroupAddOutlined,
 };
 
 export const course = (currentCourse) => {
@@ -26,8 +24,7 @@ export const course = (currentCourse) => {
         title: "Roster",
         type: "item",
         url: "/roster",
-        //TODO
-        icon: icons.CalendarOutlined,
+        icon: icons.UsergroupAddOutlined,
         breadcrumbs: false,
       },
     ],

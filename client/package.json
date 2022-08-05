@@ -19,7 +19,6 @@
     "@mui/x-data-grid": "^5.13.1",
     "apexcharts": "^3.27.3",
     "axios": "^0.27.2",
-    "formik": "^2.2.9",
     "framer-motion": "^6.3.16",
     "ical-generator": "^3.4.3",
     "lodash": "^4.17.21",
@@ -38,7 +37,6 @@
     "react-toastify": "^9.0.5",
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.4.1",
-    "validator": "^13.7.0",
     "yup": "^0.32.11",
     "zustand": "^4.0.0-rc.1"
   },

@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import InviteUserForm from "./InviteUserForm";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import Popup from "../../components/Popup";

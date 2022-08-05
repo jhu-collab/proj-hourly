@@ -14,12 +14,7 @@ const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
 );
-
 const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
-
-const RosterTest = Loadable(
-  lazy(() => import("./pages/roster-page/RosterTest"))
-);
 
 function App() {
   return (
@@ -35,7 +30,6 @@ function App() {
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/roster" element={<Roster />} />
-            <Route path="/roster-test" element={<RosterTest />} />
           </Route>
         </Routes>
       </ScrollTop>
