@@ -295,11 +295,9 @@ export const getRoster = async (req, res) => {
       courseStaff: true,
     },
   });
-  return res
-    .status(StatusCodes.ACCEPTED)
-    .json({
-      instructors: curCourse.instructors,
-      staff: curCourse.courseStaff,
-      students: curCourse.students,
-    });
+  return res.status(StatusCodes.ACCEPTED).json({
+    instructors: curCourse.instructors,
+    staff: curCourse.courseStaff,
+    students: curCourse.students,
+  });
 };

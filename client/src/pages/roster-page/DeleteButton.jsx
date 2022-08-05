@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import  { useAccountStore } from "../../services/store";
+import { useAccountStore } from "../../services/store";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 
 function DeleteButton(props) {
@@ -29,7 +29,7 @@ function DeleteButton(props) {
   return (
     <>
       <GridActionsCellItem
-        icon={<DeleteOutlined/>}
+        icon={<DeleteOutlined />}
         onClick={() => {
           confirmDialog(
             "Do you want to delete this user",

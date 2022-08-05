@@ -9,12 +9,11 @@ import Popup from "../../components/Popup";
  * @returns A card for adding user.
  */
 const InviteUser = NiceModal.create(({ isInstructor }) => {
-
   const modal = useModal();
   return (
     <>
       <Popup modal={modal} title="Invite User">
-       <InviteUserForm isInstructor={isInstructor}/>
+        <InviteUserForm isInstructor={isInstructor} />
       </Popup>
     </>
   );

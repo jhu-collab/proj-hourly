@@ -63,7 +63,7 @@ const Roster = () => {
         <Typography variant="h4">Roster</Typography>
         <Button
           sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
-          onClick={() => NiceModal.show("invite-user", {isInstructor: true})}
+          onClick={() => NiceModal.show("invite-user", { isInstructor: true })}
           variant="contained"
         >
           Invite User
