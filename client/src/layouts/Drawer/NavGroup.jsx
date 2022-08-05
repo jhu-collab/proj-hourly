@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import NavItem from "./NavItem";
-import useStore from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 
 function NavGroup({ item }) {
-  const { openSidebar } = useStore();
+  const openSidebar = useLayoutStore((state) => state.openSidebar);
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {

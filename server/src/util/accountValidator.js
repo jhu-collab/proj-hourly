@@ -110,18 +110,22 @@ export const isUrlStaff = async (req, res, next) => {
 };
 export const areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;
-  hosts.forEach(async (element) => {
-    const query = await prisma.Account.findUnique({
-      where: {
-        id: element,
-      },
+  let checkAllAccounts = [];
+  hosts.forEach((element) => {
+    checkAllAccounts.push({
+      id: element,
     });
-    if (query === null) {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ msg: "Account does not exists" });
-    }
   });
+  const query = await prisma.account.findMany({
+    where: {
+      OR: checkAllAccounts,
+    },
+  });
+  if (query.length !== checkAllAccounts.length) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account does not exists" });
+  }
   next();
 };
 

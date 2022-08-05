@@ -1,3 +1,4 @@
+import moment from "moment";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
@@ -24,7 +25,28 @@ export const signUpSchema = yup.object().shape({
     .transform((value) => (!!value ? value : undefined)),
 });
 
-const CURRENT_DATE_STR = new Date().toLocaleDateString();
+/**
+ * Returns a Date object that represents the last day
+ * of a specified semester and year. Currently, we are using fixed
+ * values, however, it would be nice if the dates updated for every
+ * new academic year.
+ * @param {String} semester String representing the semester
+ * @param {String} year String representing the year
+ * @return A Date object that represents the last day
+ * of the specified semester and year
+ */
+const getLastDaySemester = (semester, year) => {
+  // TODO: Is there a way to retrieve the last day
+  // of each semester automatically?
+  if (semester === "Fall") {
+    return new Date(`${year}-12-07`);
+  } else if (semester === "Winter") {
+    return new Date(`${year}-01-22`);
+  } else if (semester === "Summer") {
+    return new Date(`${year}-08-18`);
+  }
+  return new Date(`${year}-04-30`);
+};
 
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
@@ -32,14 +54,28 @@ export const createCourseSchema = yup.object().shape({
     .string()
     .matches(/^\d{3}\..{3}$/, "Course number is invalid. Must be xxx.xxx")
     .required("Course number is required"),
-  // Need to add validation to ensure semester and year are not before current year
   semester: yup
     .string()
     .oneOf(
       ["Fall", "Winter", "Spring", "Summer"],
       "Please enter a valid semester"
     )
-    .required("Semester is required"),
+    .required("Semester is required")
+    .test(
+      "is-semester-before",
+      "Please enter a current or future semester",
+      function (value) {
+        const { year } = this.parent;
+
+        let semesterObj = getLastDaySemester(value, year);
+        const now = new Date();
+
+        if (now.getTime() < semesterObj.getTime()) {
+          return true;
+        }
+        return false;
+      }
+    ),
   year: yup
     .number()
     .typeError("Please enter valid year")
@@ -54,15 +90,23 @@ export const joinCourseSchema = yup.object().shape({
     .length(6, "Course code must be 6 characters"),
 });
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 export const createEventSchema = yup.object().shape({
   date: yup
     .date()
     .typeError("Please enter a valid date")
-    .min(CURRENT_DATE_STR, `Date must be on or after ${CURRENT_DATE_STR}`)
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  // TODO: Add further validation for the startTime and endTime fields
   startTime: yup.string().required("Start time is required"),
-  endTime: yup.string().required("End time is required"),
+  endTime: yup
+    .string()
+    .required("End time is required")
+    .test("is-greater", "End time must be past start time", function (value) {
+      const { startTime } = this.parent;
+      return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
+    }),
   location: yup.string().required("Location is required"),
 });
 
@@ -72,4 +116,8 @@ export const inviteUserSchema = yup.object().shape({
     .email("Must be a valid email")
     .max(255)
     .required("Email is required"),
+});
+
+export const registerSchema = yup.object().shape({
+  times: yup.string().required("Please select a time slot"),
 });

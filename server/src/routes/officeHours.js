@@ -61,6 +61,7 @@ router.post(
   validator.isWithinTimeOffering,
   validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
+  validator.isUserNotRegistered,
   courseValidator.areTopicsForCourse,
   controller.register
 );
@@ -83,6 +84,22 @@ router.post(
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   controller.cancelAll
+);
+
+router.get(
+  "/:officeHourId/getRemainingTimeSlots/:date",
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  controller.getTimeSlotsRemaining
+);
+
+router.get(
+  "/:officeHourId/date/:date/registrationStatus",
+  accountValidator.isAccountValidHeader,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  controller.getRegistrationStatus
 );
 
 export default router;

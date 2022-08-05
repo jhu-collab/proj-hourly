@@ -1,5 +1,6 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
+import { STATUS_CODES } from "http";
 
 const weekday = [
   "Sunday",
@@ -24,6 +25,7 @@ export const stringToTimeObj = (timeStr) => {
   return time;
 };
 
+//TODO: check conflicts with host and fix query
 export const noConflictsWithHosts = async (req, res, next) => {
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
     req.body;
@@ -139,6 +141,38 @@ export const isOfficeHourOnDay = async (req, res, next) => {
   next();
 };
 
+export const isOfficeHourOnDayParam = async (req, res, next) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const date = req.params.date;
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(0);
+  const dow = weekday[dateObj.getUTCDay()];
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+      isOnDayOfWeek: {
+        some: {
+          dayOfWeek: dow,
+        },
+      },
+    },
+  });
+  let isCancelled = false;
+  if (officeHour !== null) {
+    officeHour.isCancelledOn.forEach((cancelledDate) => {
+      if (cancelledDate.toDateString() === dateObj.toDateString()) {
+        isCancelled = true;
+      }
+    });
+  }
+  if (officeHour === null || isCancelled) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: office hours is not available on day" });
+  }
+  next();
+};
+
 export const isWithinTimeOffering = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
@@ -223,10 +257,29 @@ export const isOfficeHourHost = async (req, res, next) => {
       },
     },
   });
-  if (officeHour === null) {
+  if (officeHour.hosts.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: must be host to cancel office hours" });
+  }
+  next();
+};
+
+export const isUserNotRegistered = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const date = new Date(req.body.date);
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      officeHourId,
+      date,
+      accountId: id,
+    },
+  });
+  if (registration !== null && registration !== undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is already registered" });
   }
   next();
 };
