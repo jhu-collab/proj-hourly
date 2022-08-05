@@ -53,8 +53,9 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
+  const days = useEventStore((state) => state.days);
 
-  const { control, handleSubmit, watch, setValue } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       startDate: start ? moment(start).format("YYYY-MM-DD") : "",
       endDate: null,
@@ -67,11 +68,6 @@ function UpsertEventForm({ type }) {
   });
 
   const recurring = watch("recurringEvent");
-
-  useEffect(() => {
-    !recurring && setValue("endDate", null);
-  }, [recurring])
-  
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
@@ -102,11 +98,13 @@ function UpsertEventForm({ type }) {
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
-      recurringEvent: data.recurringEvent, // TODO: For now, the default is false
+      recurringEvent: data.recurringEvent,
       startDate: moment(data.startDate).format("MM-DD-YYYY"),
-      endDate: moment(data.startDate).format("MM-DD-YYYY"),
+      endDate: recurring
+        ? moment(data.endDate).format("MM-DD-YYYY")
+        : moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
-      daysOfWeek: [DAYS[data.startDate.getDay()]], // TODO: Will need to be altered later
+      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]], 
       timeInterval: 10, // TODO: For now, the default is 10,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });

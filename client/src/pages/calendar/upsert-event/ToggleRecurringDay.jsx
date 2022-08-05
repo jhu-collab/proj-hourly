@@ -7,18 +7,17 @@ function ToggleRecurringDay() {
 
   const handleChange = (event, newDays) => {
     setDays(newDays);
-    console.log(newDays);
   };
 
   return (
     <ToggleButtonGroup value={days} onChange={handleChange}>
-      <ToggleButton value="monday">Mon</ToggleButton>
-      <ToggleButton value="tuesday">Tue</ToggleButton>
-      <ToggleButton value="wednesday">Wed</ToggleButton>
-      <ToggleButton value="thursday">Thu</ToggleButton>
-      <ToggleButton value="friday">Fri</ToggleButton>
-      <ToggleButton value="saturday">Sat</ToggleButton>
-      <ToggleButton value="sunday">Sun</ToggleButton>
+      <ToggleButton value="Monday">Mon</ToggleButton>
+      <ToggleButton value="Tuesday">Tue</ToggleButton>
+      <ToggleButton value="Wednesday">Wed</ToggleButton>
+      <ToggleButton value="Thursday">Thu</ToggleButton>
+      <ToggleButton value="Friday">Fri</ToggleButton>
+      <ToggleButton value="Saturday">Sat</ToggleButton>
+      <ToggleButton value="Sunday">Sun</ToggleButton>
     </ToggleButtonGroup>
   );
 }

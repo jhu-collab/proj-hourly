@@ -1,5 +1,6 @@
 import "@fullcalendar/react/dist/vdom"; // necessary to work with vite configuration
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import rrulePlugin from '@fullcalendar/rrule';
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -84,6 +85,7 @@ function Calendar() {
       <Box height="76vh">
         <FullCalendar
           plugins={[
+            rrulePlugin,
             dayGridPlugin,
             timeGridPlugin,
             interactionPlugin,
