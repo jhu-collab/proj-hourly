@@ -122,6 +122,10 @@ router.post(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
   ),
+  body(
+    "endDateOldOfficeHour",
+    "Please specify when the new edited office hours should take effect"
+  ).notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,

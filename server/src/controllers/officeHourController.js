@@ -6,6 +6,55 @@ import { generateCalendar } from "../util/icalHelpers.js";
 import { createTimeString } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 
+const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
+  let dowArr = [];
+  daysOfWeek.forEach(async (dayOfWeek) => {
+    dowArr.push({ dayOfWeek: dayOfWeek });
+  });
+  await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isOnDayOfWeek: {
+        connect: dowArr,
+      },
+    },
+  });
+};
+
+const connectOfficeHourToHosts = async (officeHourId, hosts) => {
+  let hostIds = [];
+  hosts.forEach(async (id) => {
+    hostIds.push({ id: id });
+  });
+  await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      hosts: {
+        connect: hostIds,
+      },
+    },
+  });
+};
+
+const createJustTimeObject = (time) => {
+  time.setUTCDate(1);
+  time.setUTCMonth(0);
+  time.setUTCFullYear(1970);
+  return time;
+};
+
+const createJustDateObject = (date) => {
+  date.setUTCHours(0);
+  date.setUTCMinutes(0);
+  date.setUTCSeconds(0);
+  date.setUTCMilliseconds(0);
+  return date;
+};
+
 export const create = async (req, res) => {
   validate(req);
   const {
@@ -38,34 +87,8 @@ export const create = async (req, res) => {
       isRecurring: recurringEvent,
     },
   });
-  let hostIds = [];
-  hosts.forEach(async (id) => {
-    hostIds.push({ id: id });
-  });
-  await prisma.officeHour.update({
-    where: {
-      id: officeHour.id,
-    },
-    data: {
-      hosts: {
-        connect: hostIds,
-      },
-    },
-  });
-  let dowArr = [];
-  daysOfWeek.forEach(async (dayOfWeek) => {
-    dowArr.push({ dayOfWeek: dayOfWeek });
-  });
-  await prisma.officeHour.update({
-    where: {
-      id: officeHour.id,
-    },
-    data: {
-      isOnDayOfWeek: {
-        connect: dowArr,
-      },
-    },
-  });
+  await connectOfficeHourToHosts(officeHour.id, hosts);
+  await connectOfficeHourToDOW(officeHour.id, daysOfWeek);
   const officeHourWithData = await prisma.officeHour.findUnique({
     where: {
       id: officeHour.id,
@@ -243,8 +266,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const { startTime, endTime, timePerStudent, location } = req.body;
-  const dateObj = new Date(date);
-  dateObj.setUTCHours(0);
+  const dateObj = createJustDateObject(new Date(date));
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
     where: {
@@ -331,6 +353,7 @@ export const editAll = async (req, res) => {
     location,
     daysOfWeek,
     timePerStudent,
+    endDateOldOfficeHour,
   } = req.body;
   const startTimeObject = stringToTimeObj(startTime);
   const endTimeObject = stringToTimeObj(endTime);
@@ -339,41 +362,36 @@ export const editAll = async (req, res) => {
       id: officeHourId,
     },
     data: {
+      endDate: new Date(endDateOldOfficeHour),
+    },
+    include: {
+      hosts: true,
+    },
+  });
+  const newOfficeHour = await prisma.officeHour.create({
+    data: {
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       startTime: startTimeObject,
       endTime: endTimeObject,
-      location: location,
-      isOnDayOfWeek: {
-        set: [],
-      },
-      timePerStudent: timePerStudent,
-    },
-  });
-  let dowArr = [];
-  daysOfWeek.forEach(async (dayOfWeek) => {
-    dowArr.push({ dayOfWeek: dayOfWeek });
-  });
-  await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isOnDayOfWeek: {
-        connect: dowArr,
+      location: location === undefined ? update.location : location,
+      timePerStudent:
+        timePerStudent === undefined ? update.timePerStudent : timePerStudent,
+      isRecurring: true,
+      course: {
+        connect: {
+          id: update.courseId,
+        },
       },
     },
   });
-  const startTimeObj = new Date();
-  startTimeObj.setFullYear(1970);
-  startTimeObj.setUTCDate(1);
-  startTimeObj.setUTCMonth(0);
-  startTimeObj.setUTCFullYear(1970);
-  const today = new Date();
-  today.setUTCHours(0);
-  today.setUTCMinutes(0);
-  today.setUTCSeconds(0);
-  today.setUTCMilliseconds(0);
+  await connectOfficeHourToDOW(newOfficeHour.id, daysOfWeek);
+  await connectOfficeHourToHosts(
+    newOfficeHour.id,
+    update.hosts.map((hosts) => hosts.id)
+  );
+  const startTimeObj = createJustTimeObject(new Date());
+  const today = createJustDateObject(new Date());
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -384,9 +402,7 @@ export const editAll = async (req, res) => {
           },
         },
         {
-          date: {
-            today,
-          },
+          date: today,
           startTime: {
             gte: startTimeObj,
           },
@@ -416,7 +432,9 @@ export const editAll = async (req, res) => {
     },
   });
   const calendar = await generateCalendar(officeHourWithData.course.id);
-  return res.status(StatusCodes.ACCEPTED).json({ officeHourWithData });
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ oldOfficeHour: officeHourWithData, newOfficeHour: newOfficeHour });
 };
 
 export const getRegistrationStatus = async (req, res) => {
