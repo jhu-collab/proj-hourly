@@ -34,14 +34,8 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/dashboard" element={<DashboardDefault />} />
             <Route path="/roster" element={<Roster />} />
             <Route path="/roster-test" element={<RosterTest />} />
-            <Route path="sample-page" element={<SamplePage />} />
-            <Route path="react-query" element={<ReactQueryDemo />} />
-            <Route path="full-cal" element={<FullCalendarDemo />} />
-            <Route path="toastify" element={<ReactToastifyDemo />} />
-            <Route path="backend" element={<Backend />} />
           </Route>
         </Routes>
       </ScrollTop>

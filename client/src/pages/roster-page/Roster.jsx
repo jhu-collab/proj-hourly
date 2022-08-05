@@ -10,7 +10,7 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
 import { fetchUsers } from "../../utils/requests";
-import useStore from "../../services/store";
+import { useCourseStore } from "../../services/store";
 
 // ==============================|| Roster ||============================== //
 
@@ -30,8 +30,8 @@ const Roster = ({ user }) => {
 
   const theme = useTheme();
 
-  const { currenCourse } = useStore();
-  setCourseId(currenCourse.id);
+  const course = useCourseStore((state) => state.course);
+  setCourseId(course.id);
 
   const { isLoading, error, data } = useQuery(["users"], fetchUsers);
 
