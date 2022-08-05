@@ -18,11 +18,11 @@ import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
-import { Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
-import { useState } from "react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import { useEffect } from "react";
 
 const DAYS = [
   "Sunday",
@@ -54,9 +54,10 @@ function UpsertEventForm({ type }) {
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
 
-  const { control, handleSubmit, watch } = useForm({
+  const { control, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
-      date: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
       recurringEvent: false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
@@ -66,6 +67,11 @@ function UpsertEventForm({ type }) {
   });
 
   const recurring = watch("recurringEvent");
+
+  useEffect(() => {
+    !recurring && setValue("endDate", null);
+  }, [recurring])
+  
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
