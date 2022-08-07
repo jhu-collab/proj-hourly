@@ -41,7 +41,6 @@ const Roster = () => {
     );
   }
 
-
   return (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -54,11 +53,7 @@ const Roster = () => {
           Invite User
         </Button>
       </Stack>
-      <RosterTabs
-        rows={data}
-        value={value}
-        setValue={setValue}
-      />
+      <RosterTabs rows={data} value={value} setValue={setValue} />
     </>
   );
 };

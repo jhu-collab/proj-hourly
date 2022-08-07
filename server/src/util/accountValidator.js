@@ -64,7 +64,7 @@ export const isAccountIdValid = async (req, res, next) => {
 };
 
 export const isAccountStudent = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = parseInt(req.params.studentId, 10);
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -108,7 +108,6 @@ export const isUrlStaff = async (req, res, next) => {
   }
   next();
 };
-
 
 export const areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;

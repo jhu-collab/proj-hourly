@@ -171,22 +171,59 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
-  await prisma.officeHour.update({
+  // await prisma.officeHour.upadate({
+  //   where: {
+  //     id: courseId,
+  //   },
+  //   data: {
+  //     hosts: {
+  //       disconnect: {
+  //         id,
+  //       },
+  //     },
+  //   },
+  // });
+  await prisma.officeHour.deleteMany({
     where: {
-      courseId,
+      hosts: {
+        none: {},
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const removeStudent = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.params.studentId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
     },
     data: {
-      hosts: {
+      students: {
         disconnect: {
           id,
         },
       },
     },
   });
-  await prisma.officeHour.delete({
+  // await prisma.officeHour.upadate({
+  //   where: {
+  //     id: courseId,
+  //   },
+  //   data: {
+  //     registrations: {
+  //       disconnect: {
+  //         id,
+  //       },
+  //     },
+  //   },
+  // });
+  await prisma.officeHour.deleteMany({
     where: {
-      courseId,
-      hosts: {
+      registrations: {
         none: {},
       },
     },

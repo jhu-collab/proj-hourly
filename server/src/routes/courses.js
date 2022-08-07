@@ -49,6 +49,22 @@ router.delete(
 router.delete(
   "/:courseId/removeStaff/:staffId",
   validator.isCourseIdUrlValid,
+  //accountValidator.isAccountInstructor,
+  accountValidator.isUrlStaff,
+  controller.removeStaff
+);
+
+router.delete(
+  "/:courseId/removeStudent/:studentId",
+  validator.isCourseIdUrlValid,
+  //accountValidator.isAccountInstructor,
+  accountValidator.isAccountStudent,
+  controller.removeStudent
+);
+
+router.delete(
+  "/:courseId/removeStaff/:staffId",
+  validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
   controller.removeStaff
