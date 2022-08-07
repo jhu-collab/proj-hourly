@@ -40,7 +40,7 @@ function CourseList() {
       return courses.map((course, index) => {
         return (
           <Grid item xs={12} key={index}>
-            <CourseCard course={course} courseType={courseType}/>
+            <CourseCard course={course} />
           </Grid>
         );
       });
