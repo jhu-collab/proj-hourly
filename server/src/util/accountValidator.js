@@ -78,7 +78,7 @@ export const isAccountStudent = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.students.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not a student in the course" });
@@ -101,13 +101,15 @@ export const isUrlStaff = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.courseStaff.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "staffId is not staff for the course" });
   }
   next();
 };
+
+
 export const areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;
   let checkAllAccounts = [];

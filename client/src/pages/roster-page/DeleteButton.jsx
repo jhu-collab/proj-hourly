@@ -4,6 +4,7 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { useMutation, useQueryClient } from "react-query";
 import { removeStaff } from "../../utils/requests";
+import { useAccountStore } from "../../services/store";
 
 function DeleteButton(props) {
   const { rows, params, isStaff } = props;
