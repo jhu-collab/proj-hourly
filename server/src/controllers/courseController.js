@@ -171,20 +171,21 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
-  // await prisma.officeHour.upadate({
-  //   where: {
-  //     id: courseId,
-  //   },
-  //   data: {
-  //     hosts: {
-  //       disconnect: {
-  //         id,
-  //       },
-  //     },
-  //   },
-  // });
-  await prisma.officeHour.deleteMany({
+  await prisma.officeHour.update({
     where: {
+      courseId,
+    },
+    data: {
+      hosts: {
+        disconnect: {
+          id,
+        },
+      },
+    },
+  });
+  await prisma.officeHour.delete({
+    where: {
+      courseId,
       hosts: {
         none: {},
       },
