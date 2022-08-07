@@ -132,8 +132,8 @@ function UpsertEventForm({ type }) {
             />
           </Stack>
           <FormInputText name="location" control={control} label="Location" />
-          <TextField
-            id="maxParticipants"
+          <FormInputText
+            name="maxParticipants"
             label="Max Participants"
             control={control}
             InputProps={{
