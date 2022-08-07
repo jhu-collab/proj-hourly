@@ -111,3 +111,25 @@ export const register = async (body) => {
   });
   return res.data;
 };
+
+export const removeStaff = async (course, removeId, isStaff) => {
+  if (isStaff) {
+    const res = await axios.delete(
+      `${BASE_URL}/api/course/${getCourseId()}/removeStaff/${removeId}`,
+      course,
+      {
+        headers: { id: getUserId() },
+      }
+    );
+    return res.data;
+  } else {
+    const res = await axios.delete(
+      `${BASE_URL}/api/course/${getCourseId()}/removeStudent/${removeId}`,
+      course,
+      {
+        headers: { id: getUserId() },
+      }
+    );
+    return res.data;
+  }
+};

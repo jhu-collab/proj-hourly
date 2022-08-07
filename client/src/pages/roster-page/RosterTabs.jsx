@@ -8,8 +8,9 @@ import DeleteButton from "./DeleteButton";
 
 function RosterTabs(props) {
   const isInstructor = true;
-  const { rows, value, setValue, deleteUser } = props;
+  const { check, setCheck, rows, value, setValue, deleteUser, mutate } = props;
   function TabPanel(props) {
+    //console.log(rows);
     const { children, value, index, ...other } = props;
     return (
       <div
@@ -47,7 +48,16 @@ function RosterTabs(props) {
             // token={token}
             params={params}
             rows={rows}
+            isStaff={false}
           />,
+        ],
+      },
+      {
+        field: "actions",
+        type: "actions",
+        flex: 1,
+        getActions: (params) => [
+          <DeleteButton params={params} rows={rows} isStaff={true} />,
         ],
       },
     ];
@@ -61,6 +71,7 @@ function RosterTabs(props) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setCheck(newValue);
   };
 
   function a11yProps(index) {
@@ -86,9 +97,8 @@ function RosterTabs(props) {
       <TabPanel value={value} index={0}>
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
-            //rows={rows.filter((row) => row.role == "Student")}
             rows={rows.students}
-            columns={columns}
+            columns={columns.slice(0, 3)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />
@@ -97,9 +107,8 @@ function RosterTabs(props) {
       <TabPanel value={value} index={1}>
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
-            //rows={rows.filter((row) => row.role == "Staff")}
             rows={rows.staff}
-            columns={columns}
+            columns={columns.filter((_, index) => index !== 2)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />
@@ -108,7 +117,6 @@ function RosterTabs(props) {
       <TabPanel value={value} index={2}>
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
-            //rows={rows.filter((row) => row.role == "Instructor")}
             rows={rows.instructors}
             columns={columns.slice(0, 2)}
             autoPageSize
