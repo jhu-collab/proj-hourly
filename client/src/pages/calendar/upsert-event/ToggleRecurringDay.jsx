@@ -10,7 +10,7 @@ function ToggleRecurringDay() {
   };
 
   return (
-    <ToggleButtonGroup value={days} onChange={handleChange}>
+    <ToggleButtonGroup color={"primary"} value={days} onChange={handleChange}>
       <ToggleButton value="Monday">Mon</ToggleButton>
       <ToggleButton value="Tuesday">Tue</ToggleButton>
       <ToggleButton value="Wednesday">Wed</ToggleButton>

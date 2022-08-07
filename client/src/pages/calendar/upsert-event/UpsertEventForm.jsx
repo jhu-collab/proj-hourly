@@ -104,7 +104,7 @@ function UpsertEventForm({ type }) {
         ? moment(data.endDate).format("MM-DD-YYYY")
         : moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
-      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]], 
+      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
       timeInterval: 10, // TODO: For now, the default is 10,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
@@ -114,34 +114,6 @@ function UpsertEventForm({ type }) {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" spacing={theme.spacing(3)}>
-          <FormInputText
-            name="startDate"
-            control={control}
-            label={recurring ? "Start Date" : "Date"}
-            type="date"
-            InputLabelProps={{ shrink: true }}
-          />
-          {recurring && (
-            <FormInputText
-              name="endDate"
-              control={control}
-              label="End Date"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-          )}
-          <Stack alignItems="center">
-            <FormCheckbox
-              name="recurringEvent"
-              control={control}
-              label="Recurring event"
-            />
-          </Stack>
-          {recurring && (
-            <Stack alignItems="center">
-              <ToggleRecurringDay />
-            </Stack>
-          )}
           <Stack direction="row" spacing={theme.spacing(3)}>
             <FormInputText
               name="startTime"
@@ -158,6 +130,34 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
+          <Stack alignItems="center">
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
+              label="Recurring event"
+            />
+          </Stack>
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurring ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
+          {recurring && (
+            <FormInputText
+              name="endDate"
+              control={control}
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          )}
+          {recurring && (
+            <Stack alignItems="center">
+              <ToggleRecurringDay />
+            </Stack>
+          )}
           <FormInputText name="location" control={control} label="Location" />
           <Button
             type="submit"
