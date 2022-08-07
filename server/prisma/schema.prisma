@@ -66,8 +66,8 @@ model Registration {
   endTime      DateTime   @db.Timetz()
   date         DateTime   @db.Date
   isCancelled  Boolean
-  officeHour   OfficeHour @relation(fields: [officeHourId], references: [id])
-  officeHourId Int
+  officeHour   OfficeHour? @relation(fields: [officeHourId], references: [id])
+  officeHourId Int?
   account      Account    @relation(fields: [accountId], references: [id])
   accountId    Int
   question     String?
