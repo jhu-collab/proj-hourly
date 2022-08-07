@@ -64,7 +64,7 @@ export const isAccountIdValid = async (req, res, next) => {
 };
 
 export const isAccountStudent = async (req, res, next) => {
-  const id = parseInt(req.params.studentId, 10);
+  const id = parseInt(req.get("id"), 10);
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -78,7 +78,7 @@ export const isAccountStudent = async (req, res, next) => {
       },
     },
   });
-  if (query.students.length === 0) {
+  if (query === null) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not a student in the course" });
@@ -101,7 +101,30 @@ export const isUrlStaff = async (req, res, next) => {
       },
     },
   });
-  if (query.courseStaff.length === 0) {
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "staffId is not staff for the course" });
+  }
+  next();
+};
+
+export const isUrlStudent = async (req, res, next) => {
+  const id = parseInt(req.params.studentId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "staffId is not staff for the course" });
