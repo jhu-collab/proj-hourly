@@ -8,6 +8,8 @@ import MainCard from "../../components/MainCard";
 import { useCourseStore } from "../../services/store";
 import { Button } from "@mui/material";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
 /**
  * Represents a Card component that displays information about a course.
  * @param {*} course: a course object
@@ -24,6 +26,10 @@ function CourseCard({ course, courseType }) {
     navigate("/calendar");
   };
 
+  const leaveCourse = () => {
+    //TODO implement the backend aspect
+  };
+
   return (
     <MainCard sx={{ mt: theme.spacing(2) }} content={false}>
       <Stack direction={"row"}>
@@ -38,10 +44,22 @@ function CourseCard({ course, courseType }) {
             </Stack>
           </Box>
         </CardActionArea>
-        { (courseType == "student") ? 
-        <Button sx={{ margin: 0, fontSize: 17 }}>
-          <DeleteOutlined />
-        </Button> : <></>}
+        {courseType == "student" ? (
+          <>
+            <Button
+              sx={{ margin: 0, fontSize: 17 }}
+              onClick={() => {
+                confirmDialog("Do you want to leave this course?", leaveCourse);
+              }}
+            >
+              {" "}
+              <DeleteOutlined />{" "}
+            </Button>{" "}
+            <ConfirmPopup />
+          </>
+        ) : (
+          <></>
+        )}
       </Stack>
     </MainCard>
   );
