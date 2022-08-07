@@ -108,7 +108,12 @@ export const createEventSchema = yup.object().shape({
       return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
     }),
   location: yup.string().required("Location is required"),
-  maxParticipants: yup.number().required("Participant limit is required"),
+  maxParticipants: yup
+    .number()
+    .typeError("Participant limit is required")
+    .positive("Please enter a valid participant limit")
+    .integer("Please enter a valid participant limit")
+    .required(),
 });
 
 export const registerSchema = yup.object().shape({
