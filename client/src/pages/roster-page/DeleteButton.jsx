@@ -3,22 +3,25 @@ import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { useMutation, useQueryClient } from "react-query";
-import { removeStaff } from "../../utils/requests";
+import { removeStaffOrStudent } from "../../utils/requests";
 import { useAccountStore } from "../../services/store";
 
 function DeleteButton(props) {
   const { rows, params, isStaff } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(() => removeStaff(null, params.id, isStaff), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["users"]);
-      toast.success(`Successfully removed the user`);
-    },
-    onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
-    },
-  });
+  const { mutate } = useMutation(
+    () => removeStaffOrStudent(null, params.id, isStaff),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["users"]);
+        toast.success(`Successfully removed the user`);
+      },
+      onError: (error) => {
+        toast.error("An error has occurred: " + error.message);
+      },
+    }
+  );
 
   const isButtonDisabled = () => {
     // Return true if member is the current user

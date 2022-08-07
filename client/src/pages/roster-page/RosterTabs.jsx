@@ -8,9 +8,8 @@ import DeleteButton from "./DeleteButton";
 
 function RosterTabs(props) {
   const isInstructor = true;
-  const { check, setCheck, rows, value, setValue, deleteUser, mutate } = props;
+  const { rows, value, setValue, deleteUser } = props;
   function TabPanel(props) {
-    //console.log(rows);
     const { children, value, index, ...other } = props;
     return (
       <div
@@ -71,7 +70,6 @@ function RosterTabs(props) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setCheck(newValue);
   };
 
   function a11yProps(index) {

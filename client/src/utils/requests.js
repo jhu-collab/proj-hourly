@@ -112,7 +112,7 @@ export const register = async (body) => {
   return res.data;
 };
 
-export const removeStaff = async (course, removeId, isStaff) => {
+export const removeStaffOrStudent = async (course, removeId, isStaff) => {
   if (isStaff) {
     const res = await axios.delete(
       `${BASE_URL}/api/course/${getCourseId()}/removeStaff/${removeId}`,
