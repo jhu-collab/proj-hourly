@@ -1,3 +1,4 @@
+import { EvStationTwoTone } from "@material-ui/icons";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -121,5 +122,6 @@ export const useEventStore = create((set) => ({
       end: event.end || null,
       location: event.location || "",
       description: event.description || {},
+      maxParticipants: event.maxParticipants || 0,
     }),
 }));

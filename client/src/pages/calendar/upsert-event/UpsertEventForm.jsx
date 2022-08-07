@@ -51,6 +51,7 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
+  const maxParticipants = useEventStore((state) => state.maxParticipants);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -58,6 +59,7 @@ function UpsertEventForm({ type }) {
       startTime: start ? moment(start).utc().format("HH:mm") : "",
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
+      maxParticipants: maxParticipants || 0,
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -95,6 +97,7 @@ function UpsertEventForm({ type }) {
       startDate: moment(data.date).format("MM-DD-YYYY"),
       endDate: moment(data.date).format("MM-DD-YYYY"),
       location: data.location,
+      maxParticipants: data.maxParticipants,
       daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
       timeInterval: 10, // TODO: For now, the default is 10,
       hosts: [id], // TOOD: For now, there will be no additional hosts
@@ -130,7 +133,9 @@ function UpsertEventForm({ type }) {
           </Stack>
           <FormInputText name="location" control={control} label="Location" />
           <TextField
+            id="maxParticipants"
             label="Max Participants"
+            control={control}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

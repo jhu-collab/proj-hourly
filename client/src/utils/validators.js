@@ -108,6 +108,7 @@ export const createEventSchema = yup.object().shape({
       return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
     }),
   location: yup.string().required("Location is required"),
+  maxParticipants: yup.number().required("Participant limit is required"),
 });
 
 export const registerSchema = yup.object().shape({
