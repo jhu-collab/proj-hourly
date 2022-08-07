@@ -18,8 +18,9 @@ import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
-import { useMediaQuery } from "@mui/material";
+import { InputAdornment, TextField, useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import { AccountCircle } from "@material-ui/icons";
 
 const DAYS = [
   "Sunday",
@@ -128,6 +129,17 @@ function UpsertEventForm({ type }) {
             />
           </Stack>
           <FormInputText name="location" control={control} label="Location" />
+          <TextField
+            label="Max Participants"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            }}
+            variant="standard"
+          />
           <Button
             type="submit"
             variant="contained"
