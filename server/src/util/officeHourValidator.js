@@ -1,5 +1,6 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
+import { STATUS_CODES } from "http";
 
 const weekday = [
   "Sunday",
@@ -260,6 +261,25 @@ export const isOfficeHourHost = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: must be host to cancel office hours" });
+  }
+  next();
+};
+
+export const isUserNotRegistered = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const date = new Date(req.body.date);
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      officeHourId,
+      date,
+      accountId: id,
+    },
+  });
+  if (registration !== null && registration !== undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is already registered" });
   }
   next();
 };

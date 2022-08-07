@@ -116,6 +116,14 @@ export const createEventSchema = yup.object().shape({
     .required(),
 });
 
+export const inviteUserSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
+});
+
 export const registerSchema = yup.object().shape({
   times: yup.string().required("Please select a time slot"),
 });

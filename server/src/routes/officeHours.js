@@ -61,6 +61,7 @@ router.post(
   validator.isWithinTimeOffering,
   validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
+  validator.isUserNotRegistered,
   courseValidator.areTopicsForCourse,
   controller.register
 );

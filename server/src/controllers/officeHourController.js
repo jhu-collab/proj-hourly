@@ -209,7 +209,6 @@ export const cancelAll = async (req, res) => {
 export const getTimeSlotsRemaining = async (req, res) => {
   const date = new Date(req.params.date);
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const timeSlots = [];
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -218,22 +217,27 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let start = officeHour.startTime;
   const end = officeHour.endTime;
 
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId,
+      date,
+    },
+  });
+  const registrationTimes = registrations.map((registration) =>
+    registration.startTime.getTime()
+  );
+  let timeSlots = [];
   while (start < end) {
-    const registration = await prisma.registration.findFirst({
-      where: {
-        officeHourId,
-        date,
-        startTime: start,
-      },
-    });
-    if (registration === null || registration === undefined) {
-      const startStr = createTimeString(start);
-      start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
-      const endStr = createTimeString(start);
-      timeSlots.push({ start: startStr, end: endStr });
-    } else {
-      start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
+    if (!registrationTimes.includes(start.getTime())) {
+      const startTime = new Date(start);
+      const endTime = new Date(start);
+      endTime.setMinutes(endTime.getMinutes() + officeHour.timePerStudent);
+      timeSlots.push({
+        startTime,
+        endTime,
+      });
     }
+    start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
   }
   return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
 };
