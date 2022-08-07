@@ -122,6 +122,6 @@ export const useEventStore = create((set) => ({
       end: event.end || null,
       location: event.location || "",
       description: event.description || {},
-      maxParticipants: event.maxParticipants || 0,
+      timeInterval: event.timeInterval || 10,
     }),
 }));
