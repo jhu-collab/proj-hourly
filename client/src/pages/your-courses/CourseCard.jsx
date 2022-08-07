@@ -6,7 +6,8 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import { useCourseStore } from "../../services/store";
-
+import { Button } from "@mui/material";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 /**
  * Represents a Card component that displays information about a course.
  * @param {*} course: a course object
@@ -25,17 +26,25 @@ function CourseCard({ course }) {
 
   return (
     <MainCard sx={{ mt: theme.spacing(2) }} content={false}>
-      <CardActionArea onClick={onClick}>
-        <Box sx={{ p: theme.spacing(3) }}>
-          <Stack direction="column">
-            <Typography variant="h5">{course.title}</Typography>
-            <Typography variant="h6">{course.courseNumber}</Typography>
-            <Typography variant="h6">
-              {course.semester} {course.calendarYear}
-            </Typography>
-          </Stack>
-        </Box>
-      </CardActionArea>
+      <Stack direction={"row"}>
+        <CardActionArea onClick={onClick}>
+          <Box sx={{ p: theme.spacing(3) }}>
+            <Stack direction="column">
+              <Typography variant="h5">{course.title}</Typography>
+              <Typography variant="h6">{course.courseNumber}</Typography>
+              <Typography variant="h6">
+                {course.semester} {course.calendarYear}
+              </Typography>
+            </Stack>
+          </Box>
+        </CardActionArea>
+        <Button
+          sx={{ margin: 0, fontSize: 17 }}
+          
+        >
+          <DeleteOutlined />
+        </Button>
+      </Stack>
     </MainCard>
   );
 }
