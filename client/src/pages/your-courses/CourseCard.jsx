@@ -13,7 +13,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
  * @param {*} course: a course object
  * @returns A course card component.
  */
-function CourseCard({ course }) {
+function CourseCard({ course, courseType }) {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -38,12 +38,10 @@ function CourseCard({ course }) {
             </Stack>
           </Box>
         </CardActionArea>
-        <Button
-          sx={{ margin: 0, fontSize: 17 }}
-          
-        >
+        { (courseType == "student") ? 
+        <Button sx={{ margin: 0, fontSize: 17 }}>
           <DeleteOutlined />
-        </Button>
+        </Button> : <></>}
       </Stack>
     </MainCard>
   );
