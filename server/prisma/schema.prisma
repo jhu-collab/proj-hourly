@@ -23,18 +23,19 @@ model Account {
 }
 
 model Course {
-  id           Int          @id @default(autoincrement())
-  title        String
-  courseNumber String
-  semester     String
-  calendarYear Int
-  code         String       @unique @db.Char(6)
-  students     Account[]    @relation("isStudent")
-  courseStaff  Account[]    @relation("isStaff")
-  instructors  Account[]    @relation("isInstructor")
-  officeHours  OfficeHour[]
-  topics       Topic[]
-  iCalJson     Json?
+  id                     Int            @id @default(autoincrement())
+  title                  String
+  courseNumber           String
+  semester               String
+  calendarYear           Int
+  code                   String         @unique @db.Char(6)
+  students               Account[]      @relation("isStudent")
+  courseStaff            Account[]      @relation("isStaff")
+  instructors            Account[]      @relation("isInstructor")
+  officeHours            OfficeHour[]
+  cancelledRegistrations Registration[]
+  topics                 Topic[]
+  iCalJson               Json?
 }
 
 model OfficeHour {
@@ -61,19 +62,21 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id           Int        @id @default(autoincrement())
-  startTime    DateTime   @db.Timetz()
-  endTime      DateTime   @db.Timetz()
-  date         DateTime   @db.Date
+  id           Int         @id @default(autoincrement())
+  startTime    DateTime    @db.Timetz()
+  endTime      DateTime    @db.Timetz()
+  date         DateTime    @db.Date
   isCancelled  Boolean
   officeHour   OfficeHour? @relation(fields: [officeHourId], references: [id])
   officeHourId Int?
-  account      Account    @relation(fields: [accountId], references: [id])
+  account      Account     @relation(fields: [accountId], references: [id])
   accountId    Int
   question     String?
   feedback     String?
   rating       Int?
-  topics       Topic[]    @relation("withTopics")
+  topics       Topic[]     @relation("withTopics")
+  Course       Course?     @relation(fields: [courseId], references: [id])
+  courseId     Int?
 }
 
 model Topic {

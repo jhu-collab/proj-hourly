@@ -147,13 +147,34 @@ export const cancelOnDate = async (req, res) => {
       course: true,
     },
   });
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+    },
+  });
   await prisma.registration.updateMany({
     where: {
-      officeHourId: officehour.id,
+      officeHourId: officeHourId,
       date: dateObj,
     },
     data: {
       isCancelled: true,
+    },
+  });
+  const registrationIds = [];
+  registrations.forEach((registration) =>
+    registrationIds.push({
+      id: registration.id,
+    })
+  );
+  await prisma.course.update({
+    where: {
+      id: officeHour.course.id,
+    },
+    data: {
+      cancelledRegistrations: {
+        connect: registrationIds,
+      },
     },
   });
   const officeHourUpdate = await prisma.officeHour.update({
@@ -192,6 +213,11 @@ export const cancelAll = async (req, res) => {
   startObj.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
+    const registrations = await prisma.registration.findMany({
+      where: {
+        officeHourId: officeHourId,
+      },
+    });
     await prisma.registration.updateMany({
       where: {
         officeHourId: officeHourId,
@@ -200,21 +226,58 @@ export const cancelAll = async (req, res) => {
         isCancelled: true,
       },
     });
+    const registrationIds = [];
+    registrations.forEach((registration) =>
+      registrationIds.push({
+        id: registration.id,
+      })
+    );
+    await prisma.course.update({
+      where: {
+        id: officeHour.course.id,
+      },
+      data: {
+        cancelledRegistrations: {
+          connect: registrationIds,
+        },
+      },
+    });
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
         id: officeHourId,
       },
     });
   } else if (officeHour.endDate > date) {
+    const registrations = await prisma.registration.findMany({
+      where: {
+        officeHourId: officeHourId,
+        date: {
+          gte: dateObj,
+        },
+      },
+    });
     await prisma.registration.updateMany({
       where: {
-        id: officeHourId,
-        date: {
-          gte: endDate,
-        },
+        officeHourId: officeHourId,
       },
       data: {
         isCancelled: true,
+      },
+    });
+    const registrationIds = [];
+    registrations.forEach((registration) =>
+      registrationIds.push({
+        id: registration.id,
+      })
+    );
+    await prisma.course.update({
+      where: {
+        id: officeHour.course.id,
+      },
+      data: {
+        cancelledRegistrations: {
+          connect: registrationIds,
+        },
       },
     });
     officeHourUpdate = await prisma.officeHour.update({
