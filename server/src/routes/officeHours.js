@@ -56,6 +56,7 @@ router.post(
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
@@ -71,6 +72,7 @@ router.post(
   body("officeHourId", "Office Hour is required").isInt(),
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   validator.isOfficeHourOnDay,
@@ -81,6 +83,7 @@ router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   controller.cancelAll
@@ -89,6 +92,7 @@ router.post(
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
@@ -97,6 +101,7 @@ router.get(
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus

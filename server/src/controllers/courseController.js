@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
+import { generateCalendar } from "../util/icalHelpers.js";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -171,19 +172,43 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
-  await prisma.officeHour.update({
+  const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
-    },
-    data: {
       hosts: {
-        disconnect: {
+        some: {
           id,
         },
       },
     },
   });
-  await prisma.officeHour.delete({
+  const officeHourIds = [];
+  officeHours.forEach((officeHour) =>
+    officeHourIds.push({ id: officeHour.id })
+  );
+  await prisma.account.update({
+    where: {
+      id,
+    },
+    data: {
+      isHosting: {
+        disconnect: officeHourIds,
+      },
+    },
+  });
+  // await prisma.officeHour.update({
+  //   where: {
+  //     courseId,
+  //   },
+  //   data: {
+  //     hosts: {
+  //       disconnect: {
+  //         id,
+  //       },
+  //     },
+  //   },
+  // });
+  await prisma.officeHour.deleteMany({
     where: {
       courseId,
       hosts: {
@@ -191,6 +216,7 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
+  await generateCalendar(course.id);
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
@@ -222,10 +248,11 @@ export const removeStudent = async (req, res) => {
   //     },
   //   },
   // });
-  await prisma.officeHour.deleteMany({
+  await prisma.registration.deleteMany({
     where: {
-      registrations: {
-        none: {},
+      accountId: id,
+      officeHour: {
+        courseId,
       },
     },
   });
