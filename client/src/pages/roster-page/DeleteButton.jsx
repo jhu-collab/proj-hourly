@@ -11,7 +11,7 @@ function DeleteButton(props) {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
-    () => removeStaffOrStudent(null, params.id, isStaff),
+    () => removeStaffOrStudent(params.id, isStaff),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["users"]);

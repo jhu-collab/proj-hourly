@@ -196,18 +196,6 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
-  // await prisma.officeHour.update({
-  //   where: {
-  //     courseId,
-  //   },
-  //   data: {
-  //     hosts: {
-  //       disconnect: {
-  //         id,
-  //       },
-  //     },
-  //   },
-  // });
   await prisma.officeHour.deleteMany({
     where: {
       courseId,
@@ -236,18 +224,6 @@ export const removeStudent = async (req, res) => {
       },
     },
   });
-  // await prisma.officeHour.upadate({
-  //   where: {
-  //     id: courseId,
-  //   },
-  //   data: {
-  //     registrations: {
-  //       disconnect: {
-  //         id,
-  //       },
-  //     },
-  //   },
-  // });
   await prisma.registration.deleteMany({
     where: {
       accountId: id,
