@@ -62,14 +62,6 @@ router.delete(
   controller.removeStudent
 );
 
-router.delete(
-  "/:courseId/removeStaff/:staffId",
-  validator.isCourseIdUrlValid,
-  accountValidator.isAccountInstructor,
-  accountValidator.isUrlStaff,
-  controller.removeStaff
-);
-
 router.get(
   "/:courseId/officeHours",
   accountValidator.isAccountValidHeader,
