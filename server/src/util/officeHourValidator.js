@@ -283,3 +283,18 @@ export const isUserNotRegistered = async (req, res, next) => {
   }
   next();
 };
+
+export const doesOfficeHourExist = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  if (officeHour === null || officeHour === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour does not exist" });
+  }
+  next();
+};

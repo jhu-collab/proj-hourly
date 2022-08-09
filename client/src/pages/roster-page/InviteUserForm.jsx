@@ -14,8 +14,6 @@ import { inviteUserSchema } from "../../utils/validators";
 function InviteUserForm(props) {
   const { isInstructor } = props;
   const [role, setRole] = useState("");
-  const [open, setOpen] = useState(false);
-  //const [checked, setChecked] = useState(preSelect);
 
   const handleClose = () => {
     NiceModal.hide("invite-user");
