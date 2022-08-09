@@ -121,5 +121,6 @@ export const useEventStore = create((set) => ({
       end: event.end || null,
       location: event.location || "",
       description: event.description || {},
+      timeInterval: event.timeInterval || 10,
     }),
 }));

@@ -1,19 +1,26 @@
-import { useCallback } from "react";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import { useAccountStore } from "../../services/store";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import { useMutation, useQueryClient } from "react-query";
+import { removeStaffOrStudent } from "../../utils/requests";
+import { useAccountStore } from "../../services/store";
 
 function DeleteButton(props) {
-  const { courseId, rows, token, params } = props;
+  const { rows, params, isStaff } = props;
+  const queryClient = useQueryClient();
 
-  const deleteUser = useCallback(
-    (id) => () => {
-      //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-      toast.success("Deleted user");
-    },
-    [courseId, token]
+  const { mutate } = useMutation(
+    () => removeStaffOrStudent(params.id, isStaff),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["users"]);
+        toast.success(`Successfully removed the user`);
+      },
+      onError: (error) => {
+        toast.error("An error has occurred: " + error.message);
+      },
+    }
   );
 
   const isButtonDisabled = () => {
@@ -30,10 +37,9 @@ function DeleteButton(props) {
       <GridActionsCellItem
         icon={<DeleteOutlined />}
         onClick={() => {
-          confirmDialog(
-            "Do you want to delete this user",
-            deleteUser(params.id)
-          );
+          confirmDialog("Do you want to delete this user", () => {
+            mutate();
+          });
         }}
         disabled={isButtonDisabled()}
         label="Delete"

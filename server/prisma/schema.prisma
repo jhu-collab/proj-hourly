@@ -23,18 +23,18 @@ model Account {
 }
 
 model Course {
-  id           Int          @id @default(autoincrement())
-  title        String
-  courseNumber String
-  semester     String
-  calendarYear Int
-  code         String       @unique @db.Char(6)
-  students     Account[]    @relation("isStudent")
-  courseStaff  Account[]    @relation("isStaff")
-  instructors  Account[]    @relation("isInstructor")
-  officeHours  OfficeHour[]
-  topics       Topic[]
-  iCalJson     Json?
+  id                     Int            @id @default(autoincrement())
+  title                  String
+  courseNumber           String
+  semester               String
+  calendarYear           Int
+  code                   String         @unique @db.Char(6)
+  students               Account[]      @relation("isStudent")
+  courseStaff            Account[]      @relation("isStaff")
+  instructors            Account[]      @relation("isInstructor")
+  officeHours            OfficeHour[]
+  topics                 Topic[]
+  iCalJson               Json?
 }
 
 model OfficeHour {
