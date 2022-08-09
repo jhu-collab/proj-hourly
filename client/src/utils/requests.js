@@ -34,6 +34,16 @@ export const getCourses = async () => {
   return res.data;
 };
 
+export const fetchUsers = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/api/course/${getCourseId()}/getRoster`,
+    {
+      headers: { id: getUserId() },
+    }
+  );
+  return res.data;
+};
+
 export const getOfficeHours = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
