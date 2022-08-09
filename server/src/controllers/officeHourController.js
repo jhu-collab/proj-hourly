@@ -85,6 +85,7 @@ export const create = async (req, res) => {
       },
       location,
       isRecurring: recurringEvent,
+      isDeleted: false,
     },
   });
   await connectOfficeHourToHosts(officeHour.id, hosts);
@@ -138,6 +139,7 @@ export const register = async (req, res) => {
       officeHourId,
       accountId: id,
       question,
+      isCancelledStaff: false,
     },
   });
   if (TopicIds !== null && TopicIds !== undefined) {
