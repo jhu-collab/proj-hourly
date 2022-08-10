@@ -37,6 +37,7 @@ export const generateCalendar = async (courseId) => {
   const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
+      isDeleted: false,
     },
     include: {
       hosts: {

@@ -52,7 +52,7 @@ model OfficeHour {
   isCancelledOn  DateTime[]          @db.Date
   isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
   registrations  Registration[]
-  isDeleted      Boolean
+  isDeleted      Boolean             @default(false)
 }
 
 model numberToDayOfWeek {
@@ -66,7 +66,7 @@ model Registration {
   startTime        DateTime   @db.Timetz()
   endTime          DateTime   @db.Timetz()
   date             DateTime   @db.Date
-  isCancelled      Boolean
+  isCancelled      Boolean    @default(false)
   officeHour       OfficeHour @relation(fields: [officeHourId], references: [id])
   officeHourId     Int
   account          Account    @relation(fields: [accountId], references: [id])
@@ -75,7 +75,7 @@ model Registration {
   feedback         String?
   rating           Int?
   topics           Topic[]    @relation("withTopics")
-  isCancelledStaff Boolean
+  isCancelledStaff Boolean    @default(false)
 }
 
 model Topic {

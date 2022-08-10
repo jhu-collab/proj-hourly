@@ -92,7 +92,7 @@ router.post(
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
   accountValidator.isAccountValidHeader,
-  validator.doesOfficeHourExist,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
@@ -105,6 +105,7 @@ router.post(
   body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   validator.isOfficeHourOnDayParam,
@@ -131,6 +132,7 @@ router.post(
     "Please specify when the new edited office hours should take effect"
   ).notEmpty(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   timeValidator.isTime,
@@ -140,7 +142,7 @@ router.post(
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
-  validator.doesOfficeHourExist,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus
