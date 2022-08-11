@@ -131,3 +131,10 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
     return res.data;
   }
 };
+
+export const leaveCourse = async (courseId) => {
+  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseId}`, {
+    headers: { id: getUserId() },
+  });
+  return res.data;
+};
