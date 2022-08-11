@@ -35,7 +35,7 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
-  console.log("Calendar Object: ", data.calendar);
+  console.log("Calendar Object: ", data?.calendar);
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
@@ -109,7 +109,7 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           unselectAuto={false}
-          events={data.calendar || []}
+          events={data?.calendar || []}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
