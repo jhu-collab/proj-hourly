@@ -92,16 +92,57 @@ router.post(
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
   accountValidator.isAccountValidHeader,
-  validator.doesOfficeHourExist,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
 );
 
+router.post(
+  "/:officeHourId/editForDate/:date",
+  body("startTime", "start time is required").notEmpty(),
+  body("endTime", "end time is required").notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "location must be a string").optional().isString(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
+  validator.isOfficeHourOnDayParam,
+  validator.isInFuture,
+  controller.rescheduleSingleOfficeHour
+);
+
+router.post(
+  "/:officeHourId/editAll",
+  body("startTime", "Please specify what time this event starts").notEmpty(),
+  body("endTime", "Please specify what time this event ends").notEmpty(),
+  body("startDate", "Please specify what date this event starts").notEmpty(),
+  body("endDate", "Please specify what date this event ends").notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "Please specify a location for your office hours")
+    .optional()
+    .notEmpty(),
+  body(
+    "daysOfWeek",
+    "Please include which days of the week for the office hours"
+  ),
+  body(
+    "endDateOldOfficeHour",
+    "Please specify when the new edited office hours should take effect"
+  ).notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
+  timeValidator.isTime,
+  controller.editAll
+);
+
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
-  validator.doesOfficeHourExist,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus

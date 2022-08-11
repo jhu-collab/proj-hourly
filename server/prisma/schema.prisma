@@ -33,7 +33,6 @@ model Course {
   courseStaff            Account[]      @relation("isStaff")
   instructors            Account[]      @relation("isInstructor")
   officeHours            OfficeHour[]
-  cancelledRegistrations Registration[]
   topics                 Topic[]
   iCalJson               Json?
 }
@@ -53,6 +52,7 @@ model OfficeHour {
   isCancelledOn  DateTime[]          @db.Date
   isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
   registrations  Registration[]
+  isDeleted      Boolean             @default(false)
 }
 
 model numberToDayOfWeek {
@@ -62,21 +62,20 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id           Int         @id @default(autoincrement())
-  startTime    DateTime    @db.Timetz()
-  endTime      DateTime    @db.Timetz()
-  date         DateTime    @db.Date
-  isCancelled  Boolean
-  officeHour   OfficeHour? @relation(fields: [officeHourId], references: [id])
-  officeHourId Int?
-  account      Account     @relation(fields: [accountId], references: [id])
-  accountId    Int
-  question     String?
-  feedback     String?
-  rating       Int?
-  topics       Topic[]     @relation("withTopics")
-  Course       Course?     @relation(fields: [courseId], references: [id])
-  courseId     Int?
+  id               Int        @id @default(autoincrement())
+  startTime        DateTime   @db.Timetz()
+  endTime          DateTime   @db.Timetz()
+  date             DateTime   @db.Date
+  isCancelled      Boolean    @default(false)
+  officeHour       OfficeHour @relation(fields: [officeHourId], references: [id])
+  officeHourId     Int
+  account          Account    @relation(fields: [accountId], references: [id])
+  accountId        Int
+  question         String?
+  feedback         String?
+  rating           Int?
+  topics           Topic[]    @relation("withTopics")
+  isCancelledStaff Boolean    @default(false)
 }
 
 model Topic {

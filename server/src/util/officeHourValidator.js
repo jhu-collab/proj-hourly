@@ -2,7 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
 
-const weekday = [
+export const weekday = [
   "Sunday",
   "Monday",
   "Tuesday",
@@ -265,6 +265,56 @@ export const isOfficeHourHost = async (req, res, next) => {
   next();
 };
 
+export const isOfficeHourHostParams = async (req, res, next) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      hosts: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (officeHour === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: must be host to cancel office hours" });
+  }
+  next();
+};
+
+export const isInFuture = async (req, res, next) => {
+  const { date } = req.params;
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const dateObj = new Date(date);
+  const current = new Date();
+  if (dateObj < current) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: office hour date is before current date" });
+  }
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const officehourstart = officeHour.startTime;
+  officehourstart.setMonth(dateObj.getMonth());
+  officehourstart.setDate(dateObj.getDate());
+  officehourstart.setFullYear(dateObj.getFullYear());
+  if (current >= officehourstart) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: office hour has already started" });
+  }
+  next();
+};
+
 export const isUserNotRegistered = async (req, res, next) => {
   const { officeHourId } = req.body;
   const date = new Date(req.body.date);
@@ -276,7 +326,12 @@ export const isUserNotRegistered = async (req, res, next) => {
       accountId: id,
     },
   });
-  if (registration !== null && registration !== undefined) {
+  if (
+    registration !== null &&
+    registration !== undefined &&
+    !registration.isCancelled &&
+    !registration.isCancelledStaff
+  ) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is already registered" });
@@ -286,9 +341,26 @@ export const isUserNotRegistered = async (req, res, next) => {
 
 export const doesOfficeHourExist = async (req, res, next) => {
   const { officeHourId } = req.body;
-  const officeHour = await prisma.officeHour.findUnique({
+  const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
+      isDeleted: false,
+    },
+  });
+  if (officeHour === null || officeHour === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour does not exist" });
+  }
+  next();
+};
+
+export const doesOfficeHourExistParams = async (req, res, next) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+      isDeleted: false,
     },
   });
   if (officeHour === null || officeHour === undefined) {
