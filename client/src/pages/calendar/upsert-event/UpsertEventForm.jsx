@@ -53,6 +53,7 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
+  const timeInterval = useEventStore((state) => state.timeInterval);
   const days = useEventStore((state) => state.days);
 
   const { control, handleSubmit, watch } = useForm({
@@ -63,6 +64,7 @@ function UpsertEventForm({ type }) {
       recurringEvent: false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
+      timeInterval: timeInterval || 10,
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -105,7 +107,7 @@ function UpsertEventForm({ type }) {
         : moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
       daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
-      timeInterval: 10, // TODO: For now, the default is 10,
+      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -159,6 +161,11 @@ function UpsertEventForm({ type }) {
             </Stack>
           )}
           <FormInputText name="location" control={control} label="Location" />
+          <FormInputText
+            name="timeInterval"
+            label="Time Limit Per Student in Minutes"
+            control={control}
+          />
           <Button
             type="submit"
             variant="contained"
