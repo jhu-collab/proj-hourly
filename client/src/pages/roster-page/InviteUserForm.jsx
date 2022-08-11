@@ -47,11 +47,7 @@ function InviteUserForm(props) {
             control={<Radio />}
             label="Student"
           />
-          <FormControlLabel
-            value="staff"
-            control={<Radio />}
-            label="Staff"
-          />
+          <FormControlLabel value="staff" control={<Radio />} label="Staff" />
           <FormControlLabel
             value="instructor"
             control={<Radio />}

@@ -46,7 +46,7 @@ function CourseCard({ course, courseType }) {
         {courseType == "student" ? (
           <>
             <IconButton
-              sx={{ margin: 0, fontSize: 17}}
+              sx={{ margin: 0, fontSize: 17 }}
               onClick={() => {
                 confirmDialog("Do you want to leave this course?", leaveCourse);
               }}
