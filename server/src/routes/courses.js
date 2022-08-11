@@ -5,9 +5,12 @@ import * as controller from "../controllers/courseController.js";
 import * as accountValidator from "../util/accountValidator.js";
 import * as officeHourController from "../controllers/officeHourController.js";
 import * as accountController from "../controllers/accountController.js";
+import { checkToken } from "../util/checkToken.js";
 
 const router = express.Router();
 const body = express_validator.body;
+
+router.use(checkToken);
 
 router.post(
   "/",
@@ -52,6 +55,14 @@ router.delete(
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
   controller.removeStaff
+);
+
+router.delete(
+  "/:courseId/removeStudent/:studentId",
+  validator.isCourseIdUrlValid,
+  accountValidator.isAccountInstructor,
+  accountValidator.isUrlStudent,
+  controller.removeStudent
 );
 
 router.get(

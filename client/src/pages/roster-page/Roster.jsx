@@ -41,21 +41,6 @@ const Roster = () => {
     );
   }
 
-  const deleteUser = () => {
-    // (id) => () => {
-    //   axios
-    //     .delete(`/api/courses/${courseId}/roster/${id}`, {
-    //       headers: { Authorization: `Bearer ${token}` },
-    //     })
-    //     .then(() => {
-    //       //setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-    //     })
-    //     .catch((err) => {});
-    // },
-    // [courseId, token]
-    //TODO add the delete user finctionality
-  };
-
   return (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -68,12 +53,7 @@ const Roster = () => {
           Invite User
         </Button>
       </Stack>
-      <RosterTabs
-        rows={data}
-        value={value}
-        setValue={setValue}
-        deleteUser={deleteUser}
-      />
+      <RosterTabs rows={data} value={value} setValue={setValue} />
     </>
   );
 };

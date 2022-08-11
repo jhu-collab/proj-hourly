@@ -108,6 +108,30 @@ export const isUrlStaff = async (req, res, next) => {
   }
   next();
 };
+
+export const isUrlStudent = async (req, res, next) => {
+  const id = parseInt(req.params.studentId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "staffId is not staff for the course" });
+  }
+  next();
+};
+
 export const areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;
   let checkAllAccounts = [];

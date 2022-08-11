@@ -99,32 +99,15 @@ export const deleteAccount = async (req, res) => {
     },
   });
   let deleteOH = [];
-  let updateOH = [];
   officeHours.forEach(async (officeHour) => {
     if (officeHour.hosts.length === 1) {
       deleteOH.push(officeHour.id);
-    } else {
-      updateOH.push(officeHour.id);
     }
   });
   await prisma.officeHour.deleteMany({
     where: {
       id: {
         in: deleteOH,
-      },
-    },
-  });
-  await prisma.officeHour.updateMany({
-    where: {
-      id: {
-        in: updateOH,
-      },
-    },
-    data: {
-      hosts: {
-        disconnect: {
-          id,
-        },
       },
     },
   });
@@ -138,32 +121,15 @@ export const deleteAccount = async (req, res) => {
     },
   });
   let deleteCourse = [];
-  let updateCourse = [];
   courses.forEach(async (course) => {
     if (course.instructors.length === 1) {
       deleteCourse.push(course.id);
-    } else {
-      updateCourse.push(course.id);
     }
   });
-  await prisma.course.delete({
+  await prisma.course.deleteMany({
     where: {
       id: {
         in: deleteCourse,
-      },
-    },
-  });
-  await prisma.course.update({
-    where: {
-      id: {
-        in: updateCourse,
-      },
-    },
-    data: {
-      instructors: {
-        disconnect: {
-          id,
-        },
       },
     },
   });

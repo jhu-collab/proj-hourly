@@ -5,9 +5,12 @@ import * as courseValidator from "../util/courseValidator.js";
 import * as validator from "../util/officeHourValidator.js";
 import * as timeValidator from "../util/timeValidator.js";
 import * as controller from "../controllers/officeHourController.js";
+import { checkToken } from "../util/checkToken.js";
 
 const router = express.Router();
 const body = express_validator.body;
+
+router.use(checkToken);
 
 router.post(
   "/create",
@@ -56,6 +59,7 @@ router.post(
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
@@ -71,6 +75,7 @@ router.post(
   body("officeHourId", "Office Hour is required").isInt(),
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   validator.isOfficeHourOnDay,
@@ -81,6 +86,7 @@ router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   controller.cancelAll
@@ -89,14 +95,57 @@ router.post(
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
 );
 
+router.post(
+  "/:officeHourId/editForDate/:date",
+  body("startTime", "start time is required").notEmpty(),
+  body("endTime", "end time is required").notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "location must be a string").optional().isString(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
+  validator.isOfficeHourOnDayParam,
+  validator.isInFuture,
+  controller.rescheduleSingleOfficeHour
+);
+
+router.post(
+  "/:officeHourId/editAll",
+  body("startTime", "Please specify what time this event starts").notEmpty(),
+  body("endTime", "Please specify what time this event ends").notEmpty(),
+  body("startDate", "Please specify what date this event starts").notEmpty(),
+  body("endDate", "Please specify what date this event ends").notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "Please specify a location for your office hours")
+    .optional()
+    .notEmpty(),
+  body(
+    "daysOfWeek",
+    "Please include which days of the week for the office hours"
+  ),
+  body(
+    "endDateOldOfficeHour",
+    "Please specify when the new edited office hours should take effect"
+  ).notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourHostParams,
+  timeValidator.isTime,
+  controller.editAll
+);
+
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus
