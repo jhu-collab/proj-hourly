@@ -1,5 +1,6 @@
 import "@fullcalendar/react/dist/vdom"; // necessary to work with vite configuration
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import rrulePlugin from "@fullcalendar/rrule";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -34,6 +35,7 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
+  console.log("Calendar Object: ", data.calendar);
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
@@ -41,6 +43,7 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
+    console.log("Event Object: ", info.event);
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -88,7 +91,7 @@ function Calendar() {
             dayGridPlugin,
             timeGridPlugin,
             interactionPlugin,
-            // iCalendarPlugin,
+            rrulePlugin,
           ]}
           headerToolbar={
             matchUpSm
@@ -106,7 +109,7 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           unselectAuto={false}
-          events={data.calendar}
+          events={data.calendar || []}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}
