@@ -6,8 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import { useCourseStore } from "../../services/store";
-import { Button } from "@mui/material";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import { IconButton } from "@mui/material";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 /**
@@ -46,15 +45,15 @@ function CourseCard({ course, courseType }) {
         </CardActionArea>
         {courseType == "student" ? (
           <>
-            <Button
-              sx={{ margin: 0, fontSize: 17 }}
+            <IconButton
+              sx={{ margin: 0, fontSize: 17}}
               onClick={() => {
                 confirmDialog("Do you want to leave this course?", leaveCourse);
               }}
             >
               {" "}
-              <DeleteOutlined />{" "}
-            </Button>{" "}
+              <CloseOutlined />{" "}
+            </IconButton>{" "}
             <ConfirmPopup />
           </>
         ) : (
