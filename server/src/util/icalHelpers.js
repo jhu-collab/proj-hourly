@@ -38,8 +38,9 @@ export const generateTitle = (officeHour) => {
 };
 
 export const getTimeString = (time) => {
+  console.log(time);
   return (
-    time.getHours() + 1 + ":" + time.getMinutes() + ":" + time.getSeconds()
+    time.getUTCHours() + ":" + time.getUTCMinutes() + ":" + time.getUTCSeconds()
   );
 };
 
@@ -52,9 +53,9 @@ export const getDateStringArray = (arr) => {
 export const combineTimeAndDate = (time, date) => {
   const newDate = new Date();
   newDate.setFullYear(date.getFullYear());
-  newDate.setDate(date.getDate());
+  newDate.setDate(date.getDate() + 1);
   newDate.setMonth(date.getMonth());
-  newDate.setHours(time.getHours());
+  newDate.setHours(time.getHours() + 1);
   newDate.setMinutes(time.getMinutes());
   newDate.setSeconds(time.getSeconds());
   return newDate;
