@@ -71,13 +71,14 @@ function Calendar() {
   //   editPopupState.open();
   // };
 
-  const memoizedEventsFn = useMemo(() => {
-    if (data) {
-      const calendar = ical(data.calendar);
-      return { url: calendar.toURL(), format: "ics" };
-    }
-    return { url: ical().toURL(), format: "ics" };
-  }, [data]);
+  // const memoizedEventsFn = useMemo(() => {
+  //   console.log(data);
+  //   if (data) {
+  //     const calendar = ical(data.calendar);
+  //     return { url: calendar.toURL(), format: "ics" };
+  //   }
+  //   return { url: ical().toURL(), format: "ics" };
+  // }, [data]);
 
   return (
     <>
@@ -87,7 +88,7 @@ function Calendar() {
             dayGridPlugin,
             timeGridPlugin,
             interactionPlugin,
-            iCalendarPlugin,
+            // iCalendarPlugin,
           ]}
           headerToolbar={
             matchUpSm
@@ -105,7 +106,7 @@ function Calendar() {
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
           unselectAuto={false}
-          events={memoizedEventsFn}
+          events={data.calendar}
           select={handleSelect}
           slotMinTime={"08:00:00"}
           slotMaxTime={"32:00:00"}

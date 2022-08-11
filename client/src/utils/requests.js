@@ -82,12 +82,18 @@ export const signUp = async (body) => {
 };
 
 export const createCourse = async (body) => {
-  const res = await axios.post(`${BASE_URL}/api/course/`, body);
+  const res = await axios.post(`${BASE_URL}/api/course/`, body, {
+    // TODO: Need to remove id key once backend implements user tokens
+    headers: { id: getUserId() },
+  });
   return res.data;
 };
 
 export const createOfficeHour = async (body) => {
-  const res = await axios.post(`${BASE_URL}/api/officeHour/create`, body);
+  const res = await axios.post(`${BASE_URL}/api/officeHour/create`, body, {
+    // TODO: Need to remove id key once backend implements user tokens
+    headers: { id: getUserId() },
+  });
   return res.data;
 };
 
