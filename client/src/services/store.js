@@ -59,16 +59,16 @@ export const useAccountStore = create(
   persist(
     (set) => ({
       // TODO: Once backend has set up tokens, this will be replaced.
-      id: -1,
+      id: null,
       setId: (value) =>
         set(() => ({
-          id: value || -1,
+          id: value || null,
         })),
 
-      name: "John Doe",
+      name: null,
       setName: (value) =>
         set(() => ({
-          name: value || "John Doe",
+          name: value || null,
         })),
     }),
     {

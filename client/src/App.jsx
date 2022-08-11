@@ -5,6 +5,8 @@ import ScrollTop from "./components/ScrollTop";
 import Loadable from "./components/Loadable";
 import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useAccountStore } from "./services/store";
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const YourCourses = Loadable(
   lazy(() => import("./pages/your-courses/YourCourses"))
@@ -17,6 +19,8 @@ const AuthRegister = Loadable(
 const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
 
 function App() {
+  const id = useAccountStore((state) => state.id);
+
   return (
     <ThemeCustomization>
       <ScrollTop>
@@ -26,7 +30,15 @@ function App() {
             <Route path="/" element={<AuthLogin />} />
             <Route path="register" element={<AuthRegister />} />
           </Route>
-          <Route path="/" element={<MainLayout />}>
+          <Route
+            path="/"
+            element={
+              // TODO: Replace with token
+              <ProtectedRoute isAllowed={!!id}>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/roster" element={<Roster />} />
