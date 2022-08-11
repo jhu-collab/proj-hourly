@@ -2,7 +2,7 @@ import express from "express";
 import * as express_validator from "express-validator";
 import * as validator from "../util/accountValidator.js";
 import * as controller from "../controllers/accountController.js";
-
+import { checkToken } from "../util/checkToken.js";
 const router = express.Router();
 const body = express_validator.body;
 
@@ -22,6 +22,8 @@ router.post(
   validator.emailExists,
   controller.login
 );
+
+router.use(checkToken);
 
 router.delete("/:id", controller.deleteAccount);
 
