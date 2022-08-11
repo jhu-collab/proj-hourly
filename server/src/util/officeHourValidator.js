@@ -2,7 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
 
-const weekday = [
+export const weekday = [
   "Sunday",
   "Monday",
   "Tuesday",
@@ -326,10 +326,47 @@ export const isUserNotRegistered = async (req, res, next) => {
       accountId: id,
     },
   });
-  if (registration !== null && registration !== undefined) {
+  if (
+    registration !== null &&
+    registration !== undefined &&
+    !registration.isCancelled &&
+    !registration.isCancelledStaff
+  ) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is already registered" });
+  }
+  next();
+};
+
+export const doesOfficeHourExist = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+      isDeleted: false,
+    },
+  });
+  if (officeHour === null || officeHour === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour does not exist" });
+  }
+  next();
+};
+
+export const doesOfficeHourExistParams = async (req, res, next) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+      isDeleted: false,
+    },
+  });
+  if (officeHour === null || officeHour === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour does not exist" });
   }
   next();
 };

@@ -108,6 +108,20 @@ export const createEventSchema = yup.object().shape({
       return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
     }),
   location: yup.string().required("Location is required"),
+  timeInterval: yup
+    .number()
+    .typeError("Time limit is required")
+    .positive("Please enter a valid time limit")
+    .integer("Please enter a valid time limit")
+    .required(),
+});
+
+export const inviteUserSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
 });
 
 export const registerSchema = yup.object().shape({

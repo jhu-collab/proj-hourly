@@ -34,6 +34,16 @@ export const getCourses = async () => {
   return res.data;
 };
 
+export const fetchUsers = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/api/course/${getCourseId()}/getRoster`,
+    {
+      headers: { id: getUserId() },
+    }
+  );
+  return res.data;
+};
+
 export const getOfficeHours = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
@@ -100,4 +110,24 @@ export const register = async (body) => {
     headers: { id: getUserId() },
   });
   return res.data;
+};
+
+export const removeStaffOrStudent = async (removeId, isStaff) => {
+  if (isStaff) {
+    const res = await axios.delete(
+      `${BASE_URL}/api/course/${getCourseId()}/removeStaff/${removeId}`,
+      {
+        headers: { id: getUserId() },
+      }
+    );
+    return res.data;
+  } else {
+    const res = await axios.delete(
+      `${BASE_URL}/api/course/${getCourseId()}/removeStudent/${removeId}`,
+      {
+        headers: { id: getUserId() },
+      }
+    );
+    return res.data;
+  }
 };

@@ -59,6 +59,7 @@ router.post(
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
@@ -74,6 +75,7 @@ router.post(
   body("officeHourId", "Office Hour is required").isInt(),
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   validator.isOfficeHourOnDay,
@@ -84,6 +86,7 @@ router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   controller.cancelAll
@@ -92,6 +95,7 @@ router.post(
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
@@ -104,6 +108,7 @@ router.post(
   body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   validator.isOfficeHourOnDayParam,
@@ -117,15 +122,20 @@ router.post(
   body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body(
-    "location",
-    "Please specify a location for your office hours"
-  ).notEmpty(),
+  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("location", "Please specify a location for your office hours")
+    .optional()
+    .notEmpty(),
   body(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
   ),
+  body(
+    "endDateOldOfficeHour",
+    "Please specify when the new edited office hours should take effect"
+  ).notEmpty(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   timeValidator.isTime,
@@ -135,6 +145,7 @@ router.post(
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus
