@@ -42,7 +42,6 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
-    console.log(info.event);
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -76,7 +75,6 @@ function Calendar() {
   const memoizedEventsFn = useMemo(() => {
     if (data) {
       const calendar = ical(data.calendar);
-      console.log(data.calendar);
       return { url: calendar.toURL(), format: "ics" };
     }
     return { url: ical().toURL(), format: "ics" };
