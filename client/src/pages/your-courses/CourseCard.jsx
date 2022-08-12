@@ -24,26 +24,19 @@ function CourseCard({ course, courseType }) {
   const setCourse = useCourseStore((state) => state.setCourse);
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(
-    () => leaveCourse(course.id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["courses"]);
-        toast.success(`Successfully left the course`);
-      },
-      onError: (error) => {
-        toast.error("An error has occurred: " + error.message);
-      },
-    }
-  );
+  const { mutate } = useMutation(() => leaveCourse(course.id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["courses"]);
+      toast.success(`Successfully left the course`);
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
 
   const onClick = () => {
     setCourse(course);
     navigate("/calendar");
-  };
-
-  const clickLeaveCourse = () => {
-    mutate();
   };
 
   return (
@@ -65,7 +58,9 @@ function CourseCard({ course, courseType }) {
             <IconButton
               sx={{ margin: 0, fontSize: 17 }}
               onClick={() => {
-                confirmDialog("Do you want to leave this course?", clickLeaveCourse);
+                confirmDialog("Do you want to leave this course?", () =>
+                  mutate()
+                );
               }}
             >
               {" "}
