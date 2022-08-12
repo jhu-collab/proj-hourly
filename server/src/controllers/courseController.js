@@ -251,6 +251,14 @@ export const leaveCourse = async (req, res) => {
       },
     },
   });
+  await prisma.registration.deleteMany({
+    where: {
+      accountId: accountId,
+      officeHour: {
+        courseId,
+      },
+    },
+  });
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
