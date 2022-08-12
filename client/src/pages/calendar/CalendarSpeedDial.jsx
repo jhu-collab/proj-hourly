@@ -29,7 +29,8 @@ function CalendarSpeedDial({ calendarRef }) {
   };
 
   const handleClick = () => {
-    modal.show("upsert-event", { type: "create" }).then(() => setEvent({}));
+    modal.show("upsert-event", { type: "create" });
+    setEvent({});
   };
 
   useEffect(() => {
