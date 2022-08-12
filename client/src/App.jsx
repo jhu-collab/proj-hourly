@@ -42,8 +42,8 @@ function App() {
           >
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/calendar" element={<Calendar />} />
             <Route path="/registrations" element={<Registrations />} />
+            <Route path="/roster" element={<Roster />} />
           </Route>
         </Routes>
       </ScrollTop>
