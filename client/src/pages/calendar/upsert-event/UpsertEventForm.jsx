@@ -20,6 +20,9 @@ import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import ToggleRecurringDay from "./ToggleRecurringDay";
+import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import { useEffect } from "react";
 
 const DAYS = [
   "Sunday",
@@ -50,18 +53,23 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
+  const days = useEventStore((state) => state.days);
   const timeInterval = useEventStore((state) => state.timeInterval);
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      date: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
+      recurringEvent: false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
     resolver: yupResolver(createEventSchema),
   });
+
+  const recurring = watch("recurringEvent");
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
@@ -92,11 +100,13 @@ function UpsertEventForm({ type }) {
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
-      recurringEvent: false, // TODO: For now, the default is false
-      startDate: moment(data.date).format("MM-DD-YYYY"),
-      endDate: moment(data.date).format("MM-DD-YYYY"),
+      recurringEvent: data.recurringEvent,
+      startDate: moment(data.startDate).format("MM-DD-YYYY"),
+      endDate: recurring
+        ? moment(data.endDate).format("MM-DD-YYYY")
+        : moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
-      daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
+      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
       timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
@@ -106,13 +116,6 @@ function UpsertEventForm({ type }) {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" spacing={theme.spacing(3)}>
-          <FormInputText
-            name="date"
-            control={control}
-            label="Date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-          />
           <Stack direction="row" spacing={theme.spacing(3)}>
             <FormInputText
               name="startTime"
@@ -129,6 +132,34 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
+          <Stack alignItems="center">
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
+              label="Recurring event"
+            />
+          </Stack>
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurring ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
+          {recurring && (
+            <FormInputText
+              name="endDate"
+              control={control}
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          )}
+          {recurring && (
+            <Stack alignItems="center">
+              <ToggleRecurringDay />
+            </Stack>
+          )}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"
