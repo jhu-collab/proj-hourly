@@ -41,7 +41,6 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
-    console.log("Event Object: ", info.event);
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -71,15 +70,6 @@ function Calendar() {
   //   });
   //   editPopupState.open();
   // };
-
-  // const memoizedEventsFn = useMemo(() => {
-  //   console.log(data);
-  //   if (data) {
-  //     const calendar = ical(data.calendar);
-  //     return { url: calendar.toURL(), format: "ics" };
-  //   }
-  //   return { url: ical().toURL(), format: "ics" };
-  // }, [data]);
 
   return (
     <>

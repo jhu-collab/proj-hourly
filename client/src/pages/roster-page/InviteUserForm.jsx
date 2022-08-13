@@ -46,23 +46,13 @@ function InviteUserForm(props) {
             value="student"
             control={<Radio />}
             label="Student"
-            //   checked={checked == 0}
-            //   onChange={() => setChecked(0)}
           />
-          <FormControlLabel
-            value="staff"
-            control={<Radio />}
-            label="Staff"
-            //   checked={checked == 1}
-            //   onChange={() => setChecked(1)}
-          />
+          <FormControlLabel value="staff" control={<Radio />} label="Staff" />
           <FormControlLabel
             value="instructor"
             control={<Radio />}
             label="Instructor"
             disabled={!isInstructor}
-            //   checked={isInstructor && checked == 2}
-            //   onChange={() => setChecked(2)}
           />
         </RadioGroup>
         <Button

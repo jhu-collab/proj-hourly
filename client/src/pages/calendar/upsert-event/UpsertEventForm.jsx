@@ -22,7 +22,6 @@ import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
-import { useEffect } from "react";
 
 const DAYS = [
   "Sunday",
@@ -115,8 +114,16 @@ function UpsertEventForm({ type }) {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="column" spacing={theme.spacing(3)}>
-          <Stack direction="row" spacing={theme.spacing(3)}>
+        <Stack
+          direction="column"
+          alignItems="center"
+          spacing={theme.spacing(3)}
+        >
+          <Stack
+            direction="row"
+            sx={{ width: "100%" }}
+            spacing={theme.spacing(3)}
+          >
             <FormInputText
               name="startTime"
               control={control}
@@ -132,13 +139,11 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <Stack alignItems="center">
-            <FormCheckbox
-              name="recurringEvent"
-              control={control}
-              label="Recurring event"
-            />
-          </Stack>
+          <FormCheckbox
+            name="recurringEvent"
+            control={control}
+            label="Recurring event"
+          />
           <FormInputText
             name="startDate"
             control={control}
@@ -155,11 +160,7 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurring && (
-            <Stack alignItems="center">
-              <ToggleRecurringDay />
-            </Stack>
-          )}
+          {recurring && <ToggleRecurringDay />}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"
