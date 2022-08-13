@@ -178,7 +178,6 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
       course: true,
     },
   });
-  console.log(officeHour);
   const studentQuery = await prisma.course.findUnique({
     where: {
       id: officeHour.course.id,
