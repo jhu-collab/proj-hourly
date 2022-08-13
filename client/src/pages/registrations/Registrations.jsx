@@ -11,6 +11,8 @@ const sampleRegistrations = [
 
 function Registrations() {
   return (
+    <>
+    
     <Grid container spacing={2}>
       {sampleRegistrations.map((registration, index) => {
         return (
@@ -20,6 +22,7 @@ function Registrations() {
         );
       })}
     </Grid>
+    </>
   );
 }
 
