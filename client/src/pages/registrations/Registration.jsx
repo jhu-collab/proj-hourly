@@ -7,14 +7,13 @@ import DownOutlined from "@ant-design/icons/DownOutlined";
 import moment from "moment";
 
 function Registration({ registration }) {
-    console.log(registration);
   return (
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
         <Stack
           sx={{ flexGrow: 0.8 }}
-          direction="row"
-          alignItems="flex-start"
+          direction={{xs: "column", sm: "row"}}
+          alignItems="center"
           justifyContent="space-between"
           spacing={2}
         >
@@ -31,10 +30,8 @@ function Registration({ registration }) {
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography>
-          <strong>Location: </strong>
-          {registration.location}
-        </Typography>
+        {/* TODO: Depending on what type of booking this event has been made for,
+         details about the event will be provided here */}
       </AccordionDetails>
     </Accordion>
   );
