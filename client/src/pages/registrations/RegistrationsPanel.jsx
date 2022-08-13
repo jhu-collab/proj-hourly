@@ -8,20 +8,20 @@ function RegistrationsPanel({ value, index, registrations }) {
       case 0:
         return (
           <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Upcoming Events</AlertTitle>
+            <AlertTitle>No Upcoming Registrations</AlertTitle>
           </Alert>
         );
 
       case 1:
         return (
           <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Ongoing Events</AlertTitle>
+            <AlertTitle>No Ongoing Registrations</AlertTitle>
           </Alert>
         );
       case 2:
         return (
           <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Past Events</AlertTitle>
+            <AlertTitle>No Past Registrations</AlertTitle>
           </Alert>
         );
     }
@@ -34,10 +34,10 @@ function RegistrationsPanel({ value, index, registrations }) {
           noRegistrations()
         ) : (
           <Grid container spacing={2} marginTop={2}>
-            {registrations.map((registration, index) => {
+            {registrations.map((registration, index2) => {
               return (
                 <Grid item xs={12}>
-                  <Registration registration={registration} />
+                  <Registration registration={registration} type={index} />
                 </Grid>
               );
             })}
