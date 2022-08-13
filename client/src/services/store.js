@@ -128,4 +128,10 @@ export const useEventStore = create((set) => ({
       description: event.description || {},
       timeInterval: event.timeInterval || 10,
     }),
+
+  days: "",
+  setDays: (days) =>
+    set(() => ({
+      days: days || "",
+    })),
 }));

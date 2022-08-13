@@ -9,6 +9,9 @@ import { useCourseStore } from "../../services/store";
 import { IconButton } from "@mui/material";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import { useMutation, useQueryClient } from "react-query";
+import { leaveCourse } from "../../utils/requests";
+import { toast } from "react-toastify";
 /**
  * Represents a Card component that displays information about a course.
  * @param {*} course: a course object
@@ -19,14 +22,21 @@ function CourseCard({ course, courseType }) {
   const navigate = useNavigate();
 
   const setCourse = useCourseStore((state) => state.setCourse);
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(() => leaveCourse(course.id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["courses"]);
+      toast.success(`Successfully left the course`);
+    },
+    onError: (error) => {
+      toast.error("An error has occurred: " + error.message);
+    },
+  });
 
   const onClick = () => {
     setCourse(course);
     navigate("/calendar");
-  };
-
-  const leaveCourse = () => {
-    //TODO implement the backend aspect
   };
 
   return (
@@ -48,7 +58,9 @@ function CourseCard({ course, courseType }) {
             <IconButton
               sx={{ margin: 0, fontSize: 17 }}
               onClick={() => {
-                confirmDialog("Do you want to leave this course?", leaveCourse);
+                confirmDialog("Do you want to leave this course?", () =>
+                  mutate()
+                );
               }}
             >
               {" "}
