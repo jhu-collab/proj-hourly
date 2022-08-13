@@ -33,7 +33,6 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
-  console.log("Calendar Object: ", data?.calendar);
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
