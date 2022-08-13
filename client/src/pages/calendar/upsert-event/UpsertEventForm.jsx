@@ -52,8 +52,8 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
-  const timeInterval = useEventStore((state) => state.timeInterval);
   const days = useEventStore((state) => state.days);
+  const timeInterval = useEventStore((state) => state.timeInterval);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
