@@ -4,7 +4,7 @@ import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
 const icons = {
   CalendarOutlined,
   UsergroupAddOutlined,
-  ScheduleOutlined
+  ScheduleOutlined,
 };
 
 export const course = (currentCourse) => {

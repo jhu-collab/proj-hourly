@@ -4,19 +4,30 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import DownOutlined from "@ant-design/icons/DownOutlined";
+import moment from "moment";
 
 function Registration({ registration }) {
   const onClick = () => {
     console.log("Click!");
   };
   return (
-    <Accordion sx={{p: 1}}>
+    <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
         <Stack direction="column" spacing={1}>
-          <Typography>Date: <strong>{registration.date}</strong></Typography>
-          <Typography>Time: <strong>{registration.startTime} - {registration.endTime}</strong>
+          <Typography>
+            Date:{" "}
+            <strong>{moment(registration.date).utc().format("LL")}</strong>
           </Typography>
-          <Typography>Type: <strong>Office Hours</strong></Typography>
+          <Typography>
+            Time:{" "}
+            <strong>
+              {moment(registration.startTime).utc().format("hh:mmA")} -{" "}
+              {moment(registration.endTime).utc().format("hh:mmA")}
+            </strong>
+          </Typography>
+          <Typography>
+            Type: <strong>Office Hours</strong>
+          </Typography>
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
