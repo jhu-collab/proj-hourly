@@ -57,17 +57,20 @@ export const combineTimeAndDate = (time, date) => {
 
 export const generateRecurringEventJson = (officeHour) => {
   const indexes = [];
+  generateRRule(officeHour);
   officeHour.isOnDayOfWeek.forEach((dow) => {
     indexes.push(weekday.indexOf(dow.dayOfWeek));
   });
   return {
-    id: officeHour.id,
-    startTime: createTimeString(officeHour.startTime),
-    endTime: createTimeString(officeHour.endTime),
+    //id: officeHour.id,
+    // startTime: createTimeString(officeHour.startTime),
+    // endTime: createTimeString(officeHour.endTime),
     title: generateTitle(officeHour),
-    daysOfWeek: indexes,
-    startRecur: getIsoDate(officeHour.startDate),
-    endRecur: getIsoDate(officeHour.endDate),
+    // daysOfWeek: indexes,
+    // startRecur: getIsoDate(officeHour.startDate),
+    // endRecur: getIsoDate(officeHour.endDate),
+    rrule: generateRRule(officeHour).toString(),
+    exdate: [...officeHour.isCancelledOn],
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,
@@ -217,44 +220,45 @@ export const generateCalendar = async (courseId) => {
 //   return jsonCal;
 // };
 
-// const generateRRule = (officeHour) => {
-//   const dow = officeHour.isOnDayOfWeek.map((dow) => {
-//     if (dow.dayOfWeek === "Monday") {
-//       return RRule.MO;
-//     } else if (dow.dayOfWeek === "Tuesday") {
-//       return RRule.TU;
-//     } else if (dow.dayOfWeek === "Wednesday") {
-//       return RRule.WE;
-//     } else if (dow.dayOfWeek === "Thursday") {
-//       return RRule.TH;
-//     } else if (dow.dayOfWeek === "Friday") {
-//       return RRule.FR;
-//     } else if (dow.dayOfWeek === "Saturday") {
-//       return RRule.SA;
-//     } else {
-//       return RRule.SU;
-//     }
-//   });
-//   const start = new Date(officeHour.startDate);
-//   start.setHours(officeHour.startTime.getHours() + 1);
-//   start.setMinutes(officeHour.startTime.getMinutes());
-//   start.setSeconds(officeHour.startTime.getSeconds());
-//   const end = new Date(officeHour.endDate);
-//   end.setHours(officeHour.endTime.getHours() + 1);
-//   end.setMinutes(officeHour.endTime.getMinutes());
-//   end.setSeconds(officeHour.endTime.getSeconds());
-//   const rruleSet = new RRuleSet();
-//   rruleSet.rrule(
-//     new RRule({
-//       freq: RRule.WEEKLY,
-//       interval: 1,
-//       byweekday: dow,
-//       dtstart: start,
-//       until: end,
-//     })
-//   );
-//   officeHour.isCancelledOn.forEach((date) => {
-//     rruleSet.exdate(date);
-//   });
-//   return rruleSet;
-// };
+const generateRRule = (officeHour) => {
+  const dow = officeHour.isOnDayOfWeek.map((dow) => {
+    if (dow.dayOfWeek === "Monday") {
+      return RRule.MO;
+    } else if (dow.dayOfWeek === "Tuesday") {
+      return RRule.TU;
+    } else if (dow.dayOfWeek === "Wednesday") {
+      return RRule.WE;
+    } else if (dow.dayOfWeek === "Thursday") {
+      return RRule.TH;
+    } else if (dow.dayOfWeek === "Friday") {
+      return RRule.FR;
+    } else if (dow.dayOfWeek === "Saturday") {
+      return RRule.SA;
+    } else {
+      return RRule.SU;
+    }
+  });
+  const start = new Date(officeHour.startDate);
+  start.setUTCHours(officeHour.startTime.getUTCHours());
+  start.setUTCMinutes(officeHour.startTime.getUTCMinutes());
+  start.setUTCSeconds(officeHour.startTime.getUTCSeconds());
+  const end = new Date(officeHour.endDate);
+  end.setUTCHours(officeHour.endTime.getUTCHours());
+  end.setUTCMinutes(officeHour.endTime.getUTCMinutes());
+  end.setUTCSeconds(officeHour.endTime.getUTCSeconds());
+  const rruleSet = new RRuleSet();
+  rruleSet.rrule(
+    new RRule({
+      freq: RRule.WEEKLY,
+      interval: 1,
+      byweekday: dow,
+      dtstart: start,
+      until: end,
+    })
+  );
+  // officeHour.isCancelledOn.forEach((date) => {
+  //   rruleSet.exdate(date);
+  // });
+  // console.log(rruleSet.toString());
+  return rruleSet;
+};
