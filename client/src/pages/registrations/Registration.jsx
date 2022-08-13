@@ -12,7 +12,7 @@ function Registration({ registration }) {
       <AccordionSummary expandIcon={<DownOutlined />}>
         <Stack
           sx={{ flexGrow: 0.8 }}
-          direction={{xs: "column", sm: "row"}}
+          direction={{ xs: "column", sm: "row" }}
           alignItems="center"
           justifyContent="space-between"
           spacing={2}

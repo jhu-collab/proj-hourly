@@ -1,12 +1,12 @@
-import { Alert, AlertTitle } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useLayoutStore } from "../../services/store";
 import { getAllRegistrations } from "../../utils/requests";
-import Registration from "./Registration";
 import RegistrationsBar from "./RegistrationsBar";
+import RegistrationsPanel from "./RegistrationsPanel";
 
 const filterByTime = (array, timeTab) => {
   const today = new Date();
@@ -53,35 +53,39 @@ function Registrations() {
     setRegistrations(result);
   }, [data, timeTab]);
 
-  if (isLoading) {
-    return (
-      <Alert severity="warning" sx={{ mt: 2 }}>
-        <AlertTitle>Loading courses ...</AlertTitle>
-      </Alert>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ mt: 2 }}>
-        <AlertTitle>Error</AlertTitle>
-        {"An error has occurred: " + error.message}
-      </Alert>
-    );
-  }
-
   return (
     <>
       <RegistrationsBar />
-      <Grid container spacing={2} marginTop={2}>
-        {registrations.map((registration, index) => {
-          return (
-            <Grid item xs={12}>
-              <Registration registration={registration} />
-            </Grid>
-          );
-        })}
-      </Grid>
+      {isLoading && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          <AlertTitle>Loading courses ...</AlertTitle>
+        </Alert>
+      )}
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          <AlertTitle>Error</AlertTitle>
+          {"An error has occurred: " + error.message}
+        </Alert>
+      )}
+      {!isLoading && !error && (
+        <>
+          <RegistrationsPanel
+            value={timeTab}
+            index={0}
+            registrations={registrations}
+          />
+          <RegistrationsPanel
+            value={timeTab}
+            index={1}
+            registrations={registrations}
+          />
+          <RegistrationsPanel
+            value={timeTab}
+            index={2}
+            registrations={registrations}
+          />
+        </>
+      )}
     </>
   );
 }
