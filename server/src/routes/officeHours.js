@@ -5,6 +5,7 @@ import * as courseValidator from "../util/courseValidator.js";
 import * as validator from "../util/officeHourValidator.js";
 import * as timeValidator from "../util/timeValidator.js";
 import * as controller from "../controllers/officeHourController.js";
+import * as dateValidator from "../util/dateValidator.js";
 import { checkToken } from "../util/checkToken.js";
 
 const router = express.Router();
@@ -44,6 +45,7 @@ router.post(
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
   timeValidator.isTime,
+  dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
 );
@@ -139,6 +141,7 @@ router.post(
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   timeValidator.isTime,
+  dateValidator.endIsAfterStart,
   controller.editAll
 );
 
