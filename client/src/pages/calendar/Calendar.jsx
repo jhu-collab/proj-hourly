@@ -2,16 +2,14 @@ import "@fullcalendar/react/dist/vdom"; // necessary to work with vite configura
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import rrulePlugin from "@fullcalendar/rrule";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
-import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import timeGridPlugin from "@fullcalendar/timegrid";
-import iCalendarPlugin from "@fullcalendar/icalendar";
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import { useEventStore, useLayoutStore } from "../../services/store";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
-import ical from "ical-generator";
 import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
@@ -88,10 +86,10 @@ function Calendar() {
       <Box height="76vh">
         <FullCalendar
           plugins={[
+            rrulePlugin,
             dayGridPlugin,
             timeGridPlugin,
             interactionPlugin,
-            rrulePlugin,
           ]}
           headerToolbar={
             matchUpSm

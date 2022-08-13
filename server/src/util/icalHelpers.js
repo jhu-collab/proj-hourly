@@ -69,6 +69,7 @@ export const generateRecurringEventJson = (officeHour) => {
     // daysOfWeek: indexes,
     // startRecur: getIsoDate(officeHour.startDate),
     // endRecur: getIsoDate(officeHour.endDate),
+    duration: "01:00",
     rrule: generateRRule(officeHour).toString(),
     exdate: [...officeHour.isCancelledOn],
     extendedProps: {
