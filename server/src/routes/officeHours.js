@@ -154,8 +154,7 @@ router.get(
 router.get(
   "/:officeHourId/:date/registrationsOnDate",
   accountValidator.isAccountValidHeader,
-  accountValidator.isAccountInstructor,
-  accountValidator.isAccountStaff,
+  accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
