@@ -1,4 +1,5 @@
-import { Tab, Tabs } from "@mui/material";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import { useLayoutStore } from "../../services/store";
 
 function TimeTabs() {
