@@ -40,7 +40,8 @@ export const generateTitle = (officeHour) => {
 
 export const getDateStringArray = (arr) => {
   const dates = [];
-  arr.forEach((date) => dates.push(getIsoDate(date)));
+  arr.forEach((date) => dates.push(date.toISOString()));
+  console.log(dates);
   return dates;
 };
 
@@ -53,6 +54,45 @@ export const combineTimeAndDate = (time, date) => {
   newDate.setMinutes(time.getMinutes());
   newDate.setSeconds(time.getSeconds());
   return newDate;
+};
+
+export const calcDurationString = (startTime, endTime) => {
+  const diffMilliSeconds = endTime - startTime;
+  const diffHours = Math.floor(diffMilliSeconds / 3600000);
+  const diffMins = Math.floor((diffMilliSeconds % 3600000) / 60000);
+  let timeStr = "";
+  if (diffHours < 10) {
+    timeStr = timeStr + "0";
+  }
+  timeStr = timeStr + diffHours + ":";
+  if (diffMins < 10) {
+    timeStr = timeStr + "0";
+  }
+  timeStr = timeStr + diffMins;
+  return timeStr;
+};
+
+export const calcTimeString = (time) => {
+  const diffHours = Math.floor(time.getTime() / 3600000);
+  const diffMins = Math.floor((time.getTime() % 3600000) / 60000);
+  let timeStr = "";
+  if (diffHours < 10) {
+    timeStr = timeStr + "0";
+  }
+  timeStr = timeStr + diffHours + ":";
+  if (diffMins < 10) {
+    timeStr = timeStr + "0";
+  }
+  timeStr = timeStr + diffMins;
+  return timeStr;
+};
+
+export const convertToDateWithStartTime = (arr, startTime) => {
+  let formatted = [];
+  arr.forEach((date) => {
+    formatted.push(getIsoDate(date) + "T" + calcTimeString(startTime));
+  });
+  return formatted;
 };
 
 export const generateRecurringEventJson = (officeHour) => {
@@ -69,15 +109,19 @@ export const generateRecurringEventJson = (officeHour) => {
     // daysOfWeek: indexes,
     // startRecur: getIsoDate(officeHour.startDate),
     // endRecur: getIsoDate(officeHour.endDate),
-    duration: "01:00",
+    duration: calcDurationString(officeHour.startTime, officeHour.endTime),
     rrule: generateRRule(officeHour).toString(),
-    exdate: [...officeHour.isCancelledOn],
+
+    // exdate: [...officeHour.isCancelledOn],
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,
       location: officeHour.location,
     },
-    exdate: getDateStringArray(officeHour.isCancelledOn),
+    exdate: convertToDateWithStartTime(
+      officeHour.isCancelledOn,
+      officeHour.startTime
+    ),
   };
 };
 
