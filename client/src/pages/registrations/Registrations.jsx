@@ -1,42 +1,12 @@
+import { Alert, AlertTitle } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { useLayoutStore } from "../../services/store";
+import { getAllRegistrations } from "../../utils/requests";
 import Registration from "./Registration";
 import RegistrationsBar from "./RegistrationsBar";
-
-const sampleRegistrations = [
-  {
-    date: "2022-08-11T00:00:00.000Z",
-    startTime: "1970-01-01T11:00:00.000Z",
-    endTime: "1970-01-01T12:00:00.000Z",
-  },
-  {
-    date: "2022-08-12T00:00:00.000Z",
-    startTime: "1970-01-01T11:00:00.000Z",
-    endTime: "1970-01-01T12:00:00.000Z",
-  },
-  {
-    date: "2022-08-13T00:00:00.000Z",
-    startTime: "1970-01-01T12:00:00.000Z",
-    endTime: "1970-01-01T12:20:00.000Z",
-  },
-  {
-    date: "2022-08-13T00:00:00.000Z",
-    startTime: "1970-01-01T11:00:00.000Z",
-    endTime: "1970-01-01T13:00:00.000Z",
-  },
-  {
-    date: "2022-08-14T00:00:00.000Z",
-    startTime: "1970-01-01T12:00:00.000Z",
-    endTime: "1970-01-01T12:20:00.000Z",
-  },
-  {
-    date: "2022-08-15T00:00:00.000Z",
-    startTime: "1970-01-01T11:00:00.000Z",
-    endTime: "1970-01-01T12:00:00.000Z",
-  },
-];
 
 const filterByTime = (array, timeTab) => {
   const today = new Date();
@@ -70,13 +40,35 @@ const filterByTime = (array, timeTab) => {
 
 function Registrations() {
   const timeTab = useLayoutStore((state) => state.timeTab);
-  const [registrations, setRegistrations] = useState(sampleRegistrations);
+  const [registrations, setRegistrations] = useState([]);
+
+  const { isLoading, error, data } = useQuery(
+    ["allRegistrations"],
+    getAllRegistrations
+  );
 
   useEffect(() => {
-    let result = sampleRegistrations;
+    let result = data?.registrations || [];
     result = filterByTime(result, timeTab);
     setRegistrations(result);
-  }, [timeTab]);
+  }, [data, timeTab]);
+
+  if (isLoading) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        <AlertTitle>Loading courses ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   return (
     <>

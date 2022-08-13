@@ -62,6 +62,14 @@ export const getTimeSlots = async () => {
   return res.data;
 };
 
+export const getAllRegistrations = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/api/course/${getCourseId()}/getAllRegistrations`,
+    getConfig()
+  );
+  return res.data;
+};
+
 // POST REQUESTS
 
 export const login = async (body) => {

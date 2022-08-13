@@ -7,23 +7,23 @@ import DownOutlined from "@ant-design/icons/DownOutlined";
 import moment from "moment";
 
 function Registration({ registration }) {
-  const onClick = () => {
-    console.log("Click!");
-  };
+    console.log(registration);
   return (
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
-        <Stack direction="column" spacing={1}>
-          <Typography>
-            Date:{" "}
-            <strong>{moment(registration.date).utc().format("LL")}</strong>
+        <Stack
+          sx={{ flexGrow: 0.8 }}
+          direction="row"
+          alignItems="flex-start"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography fontWeight={600}>
+            {moment(registration.date).utc().format("LL")}
           </Typography>
-          <Typography>
-            Time:{" "}
-            <strong>
-              {moment(registration.startTime).utc().format("hh:mmA")} -{" "}
-              {moment(registration.endTime).utc().format("hh:mmA")}
-            </strong>
+          <Typography fontWeight={600}>
+            {moment(registration.startTime).utc().format("hh:mmA")} -{" "}
+            {moment(registration.endTime).utc().format("hh:mmA")}
           </Typography>
           <Typography>
             Type: <strong>Office Hours</strong>
@@ -31,6 +31,10 @@ function Registration({ registration }) {
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Typography>
+          <strong>Location: </strong>
+          {registration.location}
+        </Typography>
       </AccordionDetails>
     </Accordion>
   );
