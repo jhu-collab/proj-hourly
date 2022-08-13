@@ -2,6 +2,7 @@ import ical from "ical-generator";
 import prisma from "../../prisma/client.js";
 import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
+import { createTimeString } from "./helpers.js";
 import { weekday } from "./officeHourValidator.js";
 
 /**
@@ -37,13 +38,6 @@ export const generateTitle = (officeHour) => {
   return summary;
 };
 
-export const getTimeString = (time) => {
-  console.log(time);
-  return (
-    time.getUTCHours() + ":" + time.getUTCMinutes() + ":" + time.getUTCSeconds()
-  );
-};
-
 export const getDateStringArray = (arr) => {
   const dates = [];
   arr.forEach((date) => dates.push(getIsoDate(date)));
@@ -68,15 +62,16 @@ export const generateRecurringEventJson = (officeHour) => {
   });
   return {
     id: officeHour.id,
-    startTime: getTimeString(officeHour.startTime),
-    endTime: getTimeString(officeHour.endTime),
+    startTime: createTimeString(officeHour.startTime),
+    endTime: createTimeString(officeHour.endTime),
     title: generateTitle(officeHour),
     daysOfWeek: indexes,
-    startRec: getIsoDate(officeHour.startDate),
-    endRec: getIsoDate(officeHour.endDate),
+    startRecur: getIsoDate(officeHour.startDate),
+    endRecur: getIsoDate(officeHour.endDate),
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,
+      location: officeHour.location,
     },
     exdate: getDateStringArray(officeHour.isCancelledOn),
   };
@@ -97,6 +92,7 @@ export const generateSingleEventJson = (officeHour) => {
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,
+      location: officeHour.location,
     },
   };
 };
