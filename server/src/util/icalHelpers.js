@@ -118,6 +118,7 @@ export const generateRecurringEventJson = (officeHour) => {
       courseId: officeHour.course.id,
       location: officeHour.location,
       id: officeHour.id,
+      isRecurring: true,
     },
     exdate: convertToDateWithStartTime(
       officeHour.isCancelledOn,
@@ -143,6 +144,7 @@ export const generateSingleEventJson = (officeHour) => {
       courseId: officeHour.course.id,
       location: officeHour.location,
       id: officeHour.id,
+      isRecurring: false,
     },
   };
 };
