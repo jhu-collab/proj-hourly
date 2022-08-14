@@ -94,7 +94,7 @@ function Profile() {
                   },
                 }}
               >
-                <ClickAwayListener onClickAway={handleClose}>
+                <ClickAwayListener mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={handleClose}>
                   <MainCard elevation={0} border={false} content={false}>
                     <CardContent sx={{ px: 2.5, pt: 3 }}>
                       <Grid
