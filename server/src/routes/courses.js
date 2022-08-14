@@ -9,6 +9,7 @@ import { checkToken } from "../util/checkToken.js";
 
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -72,6 +73,15 @@ router.get(
   validator.isInCourseFromHeader,
   officeHourController.getForCourse
 );
+
+router.get("/:courseId/officeHours/:filter",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  param("filter", "Must provide a filter").notEmpty().isIn(["all", "mine"]),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isCourseStaffOrInstructor,
+  officeHourController.getForCourseWithFilter,
+)
 
 router.get(
   "/:courseId",

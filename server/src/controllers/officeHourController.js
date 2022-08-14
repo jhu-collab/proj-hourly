@@ -521,3 +521,42 @@ export const getRegistrationStatus = async (req, res) => {
     registration: status,
   });
 };
+
+export const getForCourseWithFilter = async (req, res) => {
+  const filter = req.params.filter;
+  const courseId = parseInt(req.params.courseId, 10);
+  let officeHours = [];
+  if (filter === "all") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+      },
+      include: {
+        isOnDayOfWeek: true,
+        isCancelledOn: true,
+        hosts: true,
+      },
+    });
+  } else if (filter === "mine") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+      include: {
+        isOnDayOfWeek: true,
+        isCancelledOn: true,
+        hosts: true,
+      },
+    });
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Invalid filter" });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ officeHours });
+};
