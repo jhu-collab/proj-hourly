@@ -118,14 +118,15 @@ export const useEventStore = create((set) => ({
   start: null,
   end: null,
   location: "",
-  description: {},
+  id: null,
+  timeInterval: 10,
   setEvent: (event) =>
     set({
       title: event.title || "",
       start: event.start || null,
       end: event.end || null,
       location: event.location || "",
-      description: event.description || {},
+      id: event.id || null,
       timeInterval: event.timeInterval || 10,
     }),
 

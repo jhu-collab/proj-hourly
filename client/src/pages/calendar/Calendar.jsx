@@ -39,13 +39,14 @@ function Calendar() {
   }, [courseType]);
 
   const handleEventClick = (info) => {
+    console.log(info.event);
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
     setEvent({
       title: info.event.title,
       start: info.event.start,
       end: info.event.end,
       location: info.event.extendedProps.location,
-      description: JSON.parse(info.event.extendedProps.description),
+      id: info.event.extendedProps.id,
     });
   };
 

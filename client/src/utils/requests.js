@@ -16,7 +16,7 @@ function getCourseId() {
 }
 
 function getOfficeHourId() {
-  return useEventStore.getState().description.id;
+  return useEventStore.getState().id;
 }
 
 function getEventDate() {
