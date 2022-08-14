@@ -560,3 +560,22 @@ export const getForCourseWithFilter = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ officeHours });
 };
+
+export const getAllRegistrationsOnDate = async (req, res) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const date = new Date(req.params.date);
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId,
+      date: date,
+    },
+    include: {
+      account: true,
+      topics: true,
+    },
+    orderBy: {
+      startTime: "asc",
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};

@@ -17,6 +17,9 @@ const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
 );
 const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
+const Registrations = Loadable(
+  lazy(() => import("./pages/registrations/Registrations"))
+);
 
 function App() {
   const id = useAccountStore((state) => state.id);
@@ -41,6 +44,7 @@ function App() {
           >
             <Route path="/courses" element={<YourCourses />} />
             <Route path="/calendar" element={<Calendar />} />
+            <Route path="/registrations" element={<Registrations />} />
             <Route path="/roster" element={<Roster />} />
           </Route>
         </Routes>

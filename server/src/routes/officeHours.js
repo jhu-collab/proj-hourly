@@ -154,4 +154,14 @@ router.get(
   controller.getRegistrationStatus
 );
 
+router.get(
+  "/:officeHourId/:date/registrationsOnDate",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountStaffOrInstructor,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  validator.isOfficeHourOnDayParam,
+  controller.getAllRegistrationsOnDate
+);
+
 export default router;
