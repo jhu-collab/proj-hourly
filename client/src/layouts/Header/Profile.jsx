@@ -118,7 +118,7 @@ function Profile() {
                         </Grid>
                       </Grid>
                     </CardContent>
-                    {open && <ProfileMenu handleClose={() => setOpen(false)} />}
+                    {open && <ProfileMenu />}
                   </MainCard>
                 </ClickAwayListener>
               </Paper>
