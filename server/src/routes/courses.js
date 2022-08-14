@@ -123,4 +123,12 @@ router.get(
   controller.getRoster
 );
 
+router.get(
+  "/:courseId/getAllRegistrations",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getAllRegistrations
+);
+
 export default router;

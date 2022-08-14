@@ -350,3 +350,66 @@ export const getRoster = async (req, res) => {
     students: curCourse.students,
   });
 };
+
+export const getAllRegistrations = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  let registrations = [];
+  if (role === "Student") {
+    registrations = await prisma.registration.findMany({
+      where: {
+        accountId: id,
+        officeHour: {
+          courseId,
+        },
+        isCancelled: false,
+        isCancelledStaff: false,
+      },
+    });
+  } else {
+    registrations = await prisma.registration.findMany({
+      where: {
+        officeHour: {
+          courseId,
+          hosts: {
+            some: {
+              id,
+            },
+          },
+        },
+        isCancelled: false,
+        isCancelledStaff: false,
+      },
+    });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};
