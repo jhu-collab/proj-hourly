@@ -21,7 +21,7 @@ function Registration({ registration, type }) {
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
         <Stack
-          sx={{ flexGrow: 0.8 }}
+          sx={{ flexGrow: 1, pr: 2 }}
           direction={{ xs: "column", sm: "row" }}
           alignItems="center"
           justifyContent="space-between"
@@ -39,13 +39,15 @@ function Registration({ registration, type }) {
           </Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails sx={{pr: 5}}>
         {/* TODO: Depending on what type of booking this event has been made for,
          details about the event will be provided here */}
         {type === 0 && (
           <>
             <Button
               variant="contained"
+              size="large"
+              fullWidth
               onClick={() => {
                 confirmDialog(
                   "Do you want to cancel this registration?",
