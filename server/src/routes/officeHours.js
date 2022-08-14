@@ -154,4 +154,11 @@ router.get(
   controller.getRegistrationStatus
 );
 
+router.get("/:officeHourId",
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  controller.getOfficeHourById
+)
+
 export default router;

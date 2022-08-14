@@ -521,3 +521,21 @@ export const getRegistrationStatus = async (req, res) => {
     registration: status,
   });
 };
+
+export const getOfficeHourById = async (req, res) => {
+  const officeHourId = parseInt(req.params.officeHourId, 10);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      hosts: true,
+      isOnDayOfWeek: true,
+      isCancelledOn: true,
+      course: {
+        id: true,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ officeHour });
+};
