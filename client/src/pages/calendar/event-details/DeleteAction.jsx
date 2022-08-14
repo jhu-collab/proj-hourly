@@ -23,8 +23,7 @@ function DeleteAction() {
 
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
-  const description = useEventStore((state) => state.description);
-  const id = description.id;
+  const id = useEventStore((state) => state.id);
 
   const queryClient = useQueryClient();
 

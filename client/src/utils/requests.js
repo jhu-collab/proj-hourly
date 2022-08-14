@@ -16,7 +16,7 @@ function getCourseId() {
 }
 
 function getOfficeHourId() {
-  return useEventStore.getState().description.id;
+  return useEventStore.getState().id;
 }
 
 function getEventDate() {
@@ -57,6 +57,14 @@ export const getOfficeHours = async () => {
 export const getTimeSlots = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`,
+    getConfig()
+  );
+  return res.data;
+};
+
+export const getAllRegistrations = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/api/course/${getCourseId()}/getAllRegistrations`,
     getConfig()
   );
   return res.data;

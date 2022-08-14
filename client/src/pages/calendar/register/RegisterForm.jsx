@@ -72,7 +72,7 @@ function RegisterForm() {
   const title = useEventStore((state) => state.title);
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
-  const description = useEventStore((state) => state.description);
+  const id = useEventStore((state) => state.id);
 
   const date = start.toDateString();
   const startTime = moment(start).utc().format("LT");
@@ -88,7 +88,7 @@ function RegisterForm() {
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
     mutate({
-      officeHourId: description.id,
+      officeHourId: id,
       startTime: startTime,
       endTime: endTime,
       date: moment(start).format("MM-DD-YYYY"),

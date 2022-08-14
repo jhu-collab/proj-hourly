@@ -2,16 +2,17 @@ import Box from "@mui/material/Box";
 import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import { useCourseStore } from "../../services/store";
-import { IconButton } from "@mui/material";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { useMutation, useQueryClient } from "react-query";
 import { leaveCourse } from "../../utils/requests";
 import { toast } from "react-toastify";
+
 /**
  * Represents a Card component that displays information about a course.
  * @param {*} course: a course object
@@ -55,7 +56,7 @@ function CourseCard({ course, courseType }) {
         </CardActionArea>
         {courseType == "student" ? (
           <>
-            <IconButton
+            <Button
               sx={{ margin: 0, fontSize: 17 }}
               onClick={() => {
                 confirmDialog("Do you want to leave this course?", () =>
@@ -63,9 +64,8 @@ function CourseCard({ course, courseType }) {
                 );
               }}
             >
-              {" "}
-              <CloseOutlined />{" "}
-            </IconButton>{" "}
+              <DeleteOutlined />
+            </Button>
             <ConfirmPopup />
           </>
         ) : (
