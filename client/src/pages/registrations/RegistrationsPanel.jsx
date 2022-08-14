@@ -1,8 +1,20 @@
-import { Alert, AlertTitle, Grid } from "@mui/material";
-import React from "react";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Grid from "@mui/material/Grid";
+import { useLayoutStore } from "../../services/store";
 import Registration from "./Registration";
 
-function RegistrationsPanel({ value, index, registrations }) {
+/**
+ * Represents a panel of registrations.
+ * @param {int} index the index of the panel. Helps decide
+ *                    whether the panel handles upcoming,
+ *                    ongoing, or past registrations
+ * @param {*} registrations list of user's registrations
+ * @returns a registrations tab panel.
+ */
+function RegistrationsPanel({ index, registrations }) {
+  const timeTab = useLayoutStore((state) => state.timeTab);
+
   const noRegistrations = () => {
     switch (index) {
       case 0:
@@ -29,7 +41,7 @@ function RegistrationsPanel({ value, index, registrations }) {
 
   return (
     <>
-      {value === index &&
+      {timeTab === index &&
         (registrations.length === 0 ? (
           noRegistrations()
         ) : (

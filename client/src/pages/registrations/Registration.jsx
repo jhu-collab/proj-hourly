@@ -1,5 +1,6 @@
-import { Button, Stack, Typography } from "@mui/material";
-import React from "react";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -7,6 +8,14 @@ import DownOutlined from "@ant-design/icons/DownOutlined";
 import moment from "moment";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
+/**
+ * Represents a single Registration card.
+ * @param {*} registrations a list of registrations
+ * @param {Number} type a number that represents the type of
+ *                      registrations. 0 for upcoming. 1 for
+ *                      ongoing. 2 for past.
+ * @returns a single Registration component.
+ */
 function Registration({ registration, type }) {
   return (
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>

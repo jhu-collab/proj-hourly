@@ -8,6 +8,10 @@ import FilterFilled from "@ant-design/icons/FilterFilled";
 import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
 
+/**
+ * Represents the app bar that handles the management of registrations.
+ * @returns the registrations bar.
+ */
 function RegistrationsBar() {
   const theme = useTheme();
   const [filter, setFilter] = useState(false);

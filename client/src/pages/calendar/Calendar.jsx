@@ -1,8 +1,8 @@
 import "@fullcalendar/react/dist/vdom"; // necessary to work with vite configuration
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import rrulePlugin from "@fullcalendar/rrule";
-import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import timeGridPlugin from "@fullcalendar/timegrid";
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -84,7 +84,7 @@ function Calendar() {
           headerToolbar={
             matchUpSm
               ? {
-                  start: "dayGridMonth,timeGridWeek,timeGridDay",
+                  start: "timeGridWeek,dayGridMonth,timeGridDay",
                   center: "title",
                 }
               : { start: "title", end: "prev,next" }

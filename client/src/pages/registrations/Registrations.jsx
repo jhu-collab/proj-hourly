@@ -38,6 +38,10 @@ const filterByTime = (array, timeTab) => {
   });
 };
 
+/**
+ * Represents the Registrations page.
+ * @returns Registrations page
+ */
 function Registrations() {
   const timeTab = useLayoutStore((state) => state.timeTab);
   const [registrations, setRegistrations] = useState([]);
@@ -58,7 +62,7 @@ function Registrations() {
       <RegistrationsBar />
       {isLoading && (
         <Alert severity="warning" sx={{ mt: 2 }}>
-          <AlertTitle>Loading courses ...</AlertTitle>
+          <AlertTitle>Loading registrations ...</AlertTitle>
         </Alert>
       )}
       {error && (
