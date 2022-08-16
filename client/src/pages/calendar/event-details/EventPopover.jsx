@@ -1,25 +1,29 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
-import EditOutlined from "@ant-design/icons/EditOutlined";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
+import EditAction from "./EditAction";
+import { useLayoutStore } from "../../../services/store";
+import StudentDetails from "./StudentDetails";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
- * @param {*} anchorEl - the element that popover is attached to
- * @param {*} handleClose - function that closes the popover
  * @returns a popover display event information.
  */
-function EventPopover({ anchorEl, handleClose }) {
+function EventPopover() {
+  const courseType = useLayoutStore((state) => state.courseType);
+  const anchorEl = useLayoutStore((state) => state.eventAnchorEl);
+  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+
   return (
     <Popover
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
-      onClose={handleClose}
+      onClose={() => setAnchorEl(null)}
       anchorOrigin={{
         vertical: "top",
         horizontal: "left",
@@ -40,19 +44,23 @@ function EventPopover({ anchorEl, handleClose }) {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            <IconButton sx={{ fontSize: "20px" }}>
-              <InfoCircleOutlined />
-            </IconButton>
-            <IconButton sx={{ fontSize: "20px" }}>
-              <EditOutlined />
-            </IconButton>
-            <DeleteAction handlePopoverClose={handleClose} />
-            <IconButton sx={{ fontSize: "20px" }} onClick={handleClose}>
+            {courseType === "staff" && (
+              <IconButton sx={{ fontSize: "20px" }}>
+                <InfoCircleOutlined />
+              </IconButton>
+            )}
+            {courseType === "staff" && <EditAction />}
+            {courseType === "staff" && <DeleteAction />}
+            <IconButton
+              sx={{ fontSize: "20px" }}
+              onClick={() => setAnchorEl(null)}
+            >
               <CloseOutlined />
             </IconButton>
           </Stack>
         </Grid>
       </Grid>
+      {courseType === "student" && <StudentDetails />}
     </Popover>
   );
 }

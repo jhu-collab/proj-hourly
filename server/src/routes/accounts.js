@@ -2,7 +2,7 @@ import express from "express";
 import * as express_validator from "express-validator";
 import * as validator from "../util/accountValidator.js";
 import * as controller from "../controllers/accountController.js";
-
+import { checkToken } from "../util/checkToken.js";
 const router = express.Router();
 const body = express_validator.body;
 
@@ -23,9 +23,8 @@ router.post(
   controller.login
 );
 
-// requires the id in the header for now, will be replaced with token later
-router.get("/me/courses", controller.getCourses);
+router.use(checkToken);
 
-router.delete("/me", controller.deleteAccount);
+router.delete("/:id", controller.deleteAccount);
 
 export default router;

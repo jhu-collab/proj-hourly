@@ -8,12 +8,13 @@ import Drawer from "./Drawer";
 import Header from "./Header";
 import { menuItems } from "../menu-items";
 import Breadcrumbs from "../components/Breadcrumbs";
-import useStore from "../services/store";
+import { useLayoutStore } from "../services/store";
 
 function MainLayout() {
   const theme = useTheme();
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
-  const { openSidebar, toggleOpenSidebar } = useStore();
+  const openSidebar = useLayoutStore((state) => state.openSidebar);
+  const toggleOpenSidebar = useLayoutStore((state) => state.toggleOpenSidebar);
 
   // drawer toggler
   const [open, setOpen] = useState(openSidebar);

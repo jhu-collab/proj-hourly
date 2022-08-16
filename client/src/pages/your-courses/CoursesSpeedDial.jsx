@@ -4,10 +4,9 @@ import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
-import useStore from "../../services/store";
-import CreateCourse from "./create-course/CreateCourse";
+import NiceModal from "@ebay/nice-modal-react";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -17,25 +16,24 @@ import CreateCourse from "./create-course/CreateCourse";
 function CoursesSpeedDial() {
   const theme = useTheme();
 
-  const { createCoursePopup, toggleCreateCoursePopup } = useStore();
-
   // speed dial toggler
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (event) => {
+  const handleOpen = () => {
     setOpen(!open);
   };
 
-  // popup toggler
-  const [openPopup, setOpenPopup] = useState(createCoursePopup);
-  const handlePopupToggle = () => {
-    setOpenPopup(!openPopup);
-    toggleCreateCoursePopup(!openPopup);
-  };
-
   const actions = [
-    { icon: <PlusOutlined />, name: "Create", onClick: handlePopupToggle },
-    { icon: <ArrowRightOutlined />, name: "Join" },
+    {
+      icon: <PlusOutlined />,
+      name: "Create",
+      onClick: () => NiceModal.show("create-course"),
+    },
+    {
+      icon: <ArrowRightOutlined />,
+      name: "Join",
+      onClick: () => NiceModal.show("join-course"),
+    },
   ];
 
   return (
@@ -67,7 +65,6 @@ function CoursesSpeedDial() {
           ))}
         </SpeedDial>
       </Box>
-      <CreateCourse open={openPopup} handlePopupToggle={handlePopupToggle} />
     </>
   );
 }

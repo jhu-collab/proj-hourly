@@ -8,9 +8,22 @@ import ListItemText from "@mui/material/ListItemText";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
 import UserOutlined from "@ant-design/icons/UserOutlined";
+import { useNavigate } from "react-router-dom";
+import { useAccountStore } from "../../services/store";
 
-function ProfileMenu({ handleLogout }) {
+function ProfileMenu() {
   const theme = useTheme();
+
+  const setId = useAccountStore((state) => state.setId);
+  const setName = useAccountStore((state) => state.setName);
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    setId();
+    setName();
+    navigate("/");
+  };
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const handleListItemClick = (event, index) => {

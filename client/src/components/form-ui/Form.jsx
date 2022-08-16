@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Represents a reusable form component that inspired by the html "form" element.
  * @param {*} children: the children

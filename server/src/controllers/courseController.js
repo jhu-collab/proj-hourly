@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
+import { generateCalendar } from "../util/icalHelpers.js";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -76,7 +77,7 @@ export const register = async (req, res) => {
       },
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ updateAccount });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
 export const getTopicCounts = async (req, res) => {
@@ -171,23 +172,63 @@ export const removeStaff = async (req, res) => {
       },
     },
   });
-  await prisma.officeHour.update({
+  const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
+      hosts: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  const officeHourIds = [];
+  officeHours.forEach((officeHour) =>
+    officeHourIds.push({ id: officeHour.id })
+  );
+  await prisma.account.update({
+    where: {
+      id,
     },
     data: {
+      isHosting: {
+        disconnect: officeHourIds,
+      },
+    },
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      courseId,
       hosts: {
+        none: {},
+      },
+    },
+  });
+  await generateCalendar(course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const removeStudent = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.params.studentId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      students: {
         disconnect: {
           id,
         },
       },
     },
   });
-  await prisma.officeHour.delete({
+  await prisma.registration.deleteMany({
     where: {
-      courseId,
-      hosts: {
-        none: {},
+      accountId: id,
+      officeHour: {
+        courseId,
       },
     },
   });
@@ -210,5 +251,165 @@ export const leaveCourse = async (req, res) => {
       },
     },
   });
+  await prisma.registration.deleteMany({
+    where: {
+      accountId: accountId,
+      officeHour: {
+        courseId,
+      },
+    },
+  });
   return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const getCourse = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id: accountId,
+        },
+      },
+      courseStaff: {
+        where: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  if (course.instructors.length === 0 && course.courseStaff.length === 0) {
+    delete course["code"];
+  }
+  delete course["instructors"];
+  delete course["courseStaff"];
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const getRoleInCourse = async (req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  if (role === "Student") {
+    delete course["code"];
+  }
+  return res.status(StatusCodes.ACCEPTED).json({
+    role,
+    course,
+  });
+};
+
+export const getRoster = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const curCourse = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: true,
+      students: true,
+      courseStaff: true,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({
+    instructors: curCourse.instructors,
+    staff: curCourse.courseStaff,
+    students: curCourse.students,
+  });
+};
+
+export const getAllRegistrations = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  let registrations = [];
+  if (role === "Student") {
+    registrations = await prisma.registration.findMany({
+      where: {
+        accountId: id,
+        officeHour: {
+          courseId,
+        },
+        isCancelled: false,
+        isCancelledStaff: false,
+      },
+    });
+  } else {
+    registrations = await prisma.registration.findMany({
+      where: {
+        officeHour: {
+          courseId,
+          hosts: {
+            some: {
+              id,
+            },
+          },
+        },
+        isCancelled: false,
+        isCancelledStaff: false,
+      },
+    });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };

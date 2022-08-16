@@ -1,21 +1,23 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { getLocaleTime } from "../../../utils/helpers";
 import { useEventStore } from "../../../services/store";
+import moment from "moment";
 
 /**
  * Child component that displays event details.
  * @returns event-specific information
  */
 function EventDetails() {
-  const { title, start, end, location } = useEventStore();
+  const title = useEventStore((state) => state.title);
+  const start = useEventStore((state) => state.start);
+  const end = useEventStore((state) => state.end);
+  const location = useEventStore((state) => state.location);
+  const timeInterval = useEventStore((state) => state.timeInterval);
+
   const date = start.toDateString();
-
-  const startTimeStr = start.toUTCString().substring(17, 22);
-  const startTime = getLocaleTime(startTimeStr);
-
-  const endTimeStr = end.toUTCString().substring(17, 22);
-  const endTime = getLocaleTime(endTimeStr);
+  const startTime = moment(start).utc().format("LT");
+  const endTime = moment(end).utc().format("LT");
+  const minutes = " minutes";
 
   return (
     <Stack direction="column" spacing={1}>
@@ -31,6 +33,11 @@ function EventDetails() {
       <Typography>
         <strong>Location: </strong>
         {location}
+      </Typography>
+      <Typography>
+        <strong>Time Limit Per Student: </strong>
+        {timeInterval}
+        {minutes}
       </Typography>
     </Stack>
   );

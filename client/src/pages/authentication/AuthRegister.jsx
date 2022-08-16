@@ -8,13 +8,13 @@ import AnimateButton from "../../components/AnimateButton";
 import SingleSignOn from "./SingleSignOn";
 import Form from "../../components/form-ui/Form";
 import { useMutation } from "react-query";
-import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signUpSchema } from "../../utils/validators";
 import { useForm } from "react-hook-form";
 import { signUp } from "../../utils/requests";
 import FormInputText from "../../components/form-ui/FormInputText";
-import useStore from "../../services/store";
+import { useAccountStore } from "../../services/store";
+import { errorToast } from "../../utils/toasts";
 
 function AuthRegister() {
   const { control, handleSubmit } = useForm({
@@ -27,18 +27,19 @@ function AuthRegister() {
   });
 
   const navigate = useNavigate();
-  const { setUserId, setUserName } = useStore();
+  const setId = useAccountStore((state) => state.setId);
+  const setName = useAccountStore((state) => state.setName);
 
   const { mutate, isLoading } = useMutation(signUp, {
     onSuccess: (data) => {
       // TODO: Later, this will be replaced with token once that is set
       // up in the backend
-      setUserId(data.account.id);
-      setUserName(data.account.userName);
+      setId(data.account.id);
+      setName(data.account.userName);
       navigate("/courses");
     },
     onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
+      errorToast(error);
     },
   });
 

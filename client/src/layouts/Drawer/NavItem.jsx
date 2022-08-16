@@ -8,11 +8,15 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
-import useStore from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 
 function NavItem({ item, level }) {
   const theme = useTheme();
-  const { openSidebar, selectedSidebarItem, selectSidebarItem } = useStore();
+  const openSidebar = useLayoutStore((state) => state.openSidebar);
+  const selectedSidebarItem = useLayoutStore(
+    (state) => state.selectedSidebarItem
+  );
+  const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
 
   let itemTarget = "_self";
   if (item.target) {
