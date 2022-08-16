@@ -1,10 +1,12 @@
 import CalendarOutlined from "@ant-design/icons/CalendarOutlined";
 import UsergroupAddOutlined from "@ant-design/icons/UsergroupAddOutlined";
 import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 const icons = {
   CalendarOutlined,
   UsergroupAddOutlined,
   ScheduleOutlined,
+  InfoCircleOutlined,
 };
 
 export const course = (currentCourse) => {
