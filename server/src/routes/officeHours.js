@@ -145,6 +145,14 @@ router.post(
   controller.editAll
 );
 
+router.post(
+  "/cancelRegistration/:registrationId",
+  accountValidator.isAccountValidHeader,
+  validator.doesRegistrationExist,
+  validator.isStudentRegistered,
+  controller.cancelRegistration
+);
+
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,

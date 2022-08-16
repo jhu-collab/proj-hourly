@@ -560,3 +560,15 @@ export const getAllRegistrationsOnDate = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ registrations  
   });
 };
+
+export const cancelRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.update({
+    where:{
+      id: registrationId
+    }, data:{
+      isCancelled: true
+    }
+  })
+  return res.status(StatusCodes.ACCEPTED).json({registration});
+};
