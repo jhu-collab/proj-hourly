@@ -1,19 +1,14 @@
 import MainCard from '../../components/MainCard';
 import Typography  from '@mui/material/Typography';
 import Grid  from '@mui/material/Grid';
-import Button  from '@mui/material/Button';
 import {useState}  from 'react';
 import RemoveCourseAction from './RemoveCourseAction';
-import useStore from '../../services/store';
+import { useCourseStore } from '../../services/store';
 function CourseInfoPage () {
-  const courseName = 'Data Structures';
-  const courseNumber = '601.226';
-  const semester = 'Fall';
-  const year = '2022';
+  const course = useCourseStore((state) => state.course);
+  console.log(course);
   const [open, setOpen] = useState(false);
-  const {
-    currentCourse,
-  } = useStore();
+
   const handleLeaveCourse = () => {
     setOpen(true);
   };
@@ -38,7 +33,7 @@ function CourseInfoPage () {
           variant="h4"
           style={{ fontWeight: 'bold' }}
         >
-          {courseName}
+          {course.title}
         </Typography>
       </Grid>
       <Grid item>
@@ -54,7 +49,7 @@ function CourseInfoPage () {
           variant="h4"
           style={{ fontWeight: 'bold' }}
         >
-          {courseNumber}
+          {course.courseNumber}
         </Typography>
       </Grid>
       <Grid item>
@@ -70,7 +65,7 @@ function CourseInfoPage () {
           variant="h4"
           style={{ fontWeight: 'bold' }}
         >
-          {semester}
+          {course.semester}
         </Typography>
       </Grid>
       <Grid item>
@@ -86,12 +81,12 @@ function CourseInfoPage () {
           variant="h4"
           style={{ fontWeight: 'bold' }}
         >
-          {year}
+          {course.calendarYear}
         </Typography>
       </Grid>
       <Grid item>
       </Grid>
-      <RemoveCourseAction courseid={currentCourse.id}/>
+      <RemoveCourseAction courseid={course.id}/>
     </MainCard>
   );
 };

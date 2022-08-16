@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Loader from "../../components/Loader";
 import { useEventStore } from "../../services/store";
-import { getIsoDate, getLocaleTime } from "../../utils/helpers";
 import { leaveCourse } from "../../utils/requests";
 
 /**
