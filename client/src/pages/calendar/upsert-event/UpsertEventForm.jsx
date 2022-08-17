@@ -54,13 +54,14 @@ function UpsertEventForm({ type }) {
   const location = useEventStore((state) => state.location);
   const days = useEventStore((state) => state.days);
   const timeInterval = useEventStore((state) => state.timeInterval);
+  const isRecurring = useEventStore((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       startDate: start ? moment(start).format("YYYY-MM-DD") : "",
       endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
-      recurringEvent: false,
+      recurringEvent: isRecurring || false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
       timeInterval: timeInterval || 10,
@@ -68,7 +69,7 @@ function UpsertEventForm({ type }) {
     resolver: yupResolver(createEventSchema),
   });
 
-  const recurring = watch("recurringEvent");
+  const recurringEvent = watch("recurringEvent");
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
@@ -147,11 +148,11 @@ function UpsertEventForm({ type }) {
           <FormInputText
             name="startDate"
             control={control}
-            label={recurring ? "Start Date" : "Date"}
+            label={recurringEvent ? "Start Date" : "Date"}
             type="date"
             InputLabelProps={{ shrink: true }}
           />
-          {recurring && (
+          {recurringEvent && (
             <FormInputText
               name="endDate"
               control={control}
@@ -160,7 +161,7 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurring && <ToggleRecurringDay />}
+          {recurringEvent && <ToggleRecurringDay />}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"

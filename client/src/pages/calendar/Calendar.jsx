@@ -47,6 +47,7 @@ function Calendar() {
       end: info.event.end,
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
+      recurring: info.event.extendedProps.isRecurring,
     });
   };
 
