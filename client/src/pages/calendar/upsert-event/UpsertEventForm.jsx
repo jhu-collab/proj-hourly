@@ -14,7 +14,7 @@ import {
   useLayoutStore,
 } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
-import { createOfficeHour } from "../../../utils/requests";
+import { createOfficeHour, editForDate } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
@@ -95,21 +95,53 @@ function UpsertEventForm({ type }) {
     },
   });
 
+  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation(
+    editForDate,
+    {
+      onSuccess: (data) => {
+        // const officeHour = data.officeHour;
+        // const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
+        // const startTime = moment(officeHour.startTime).utc().format("LT");
+        // const endTime = moment(officeHour.endTime).utc().format("LT");
+
+        // queryClient.invalidateQueries(["officeHours"]);
+        // NiceModal.hide("upsert-event");
+        // matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+
+        // // TODO: Will need to be refactored once we deal with recurring events.
+        // toast.success(
+        //   `Successfully created office hour on ${date} from
+        //    ${startTime} to ${endTime}`
+        // );
+        console.log("It worked!");
+      },
+      onError: (error) => {
+        errorToast(error);
+      },
+    }
+  );
+
   const onSubmit = (data) => {
-    mutate({
-      courseId: course.id,
-      startTime: `${data.startTime}:00`,
-      endTime: `${data.endTime}:00`,
-      recurringEvent: data.recurringEvent,
-      startDate: moment(data.startDate).format("MM-DD-YYYY"),
-      endDate: recurring
-        ? moment(data.endDate).format("MM-DD-YYYY")
-        : moment(data.startDate).format("MM-DD-YYYY"),
-      location: data.location,
-      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
-      timeInterval: data.timeInterval,
-      hosts: [id], // TOOD: For now, there will be no additional hosts
-    });
+    type === "edit"
+      ? mutateEdit({
+          startTime: `${data.startTime}:00`,
+          endTime: `${data.endTime}:00`,
+          timePerStudent: data.timeInterval,
+          location: data.location,
+        })
+      : mutate({
+          courseId: course.id,
+          startTime: `${data.startTime}:00`,
+          endTime: `${data.endTime}:00`,
+          recurringEvent: data.recurringEvent,
+          startDate: moment(data.startDate).format("MM-DD-YYYY"),
+          endDate: recurring
+            ? moment(data.endDate).format("MM-DD-YYYY")
+            : moment(data.startDate).format("MM-DD-YYYY"),
+          location: data.location,
+          daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
+          hosts: [id], // TOOD: For now, there will be no additional hosts
+        });
   };
 
   return (
@@ -144,6 +176,7 @@ function UpsertEventForm({ type }) {
             name="recurringEvent"
             control={control}
             label="Recurring event"
+            {...(type === "edit" && !isRecurring && { disabled: true })}
           />
           <FormInputText
             name="startDate"
