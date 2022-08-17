@@ -376,24 +376,24 @@ export const isStudentRegistered = async (req, res, next) => {
   const id = parseInt(req.get("id"), 10);
   const registration = await prisma.registration.findFirst({
     where: {
-      id: registrationId
-    }
-  })
+      id: registrationId,
+    },
+  });
   if (registration.accountId !== id) {
     return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: You are not registered" });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
   }
   next();
 };
 
-export const doesRegistrationExist = async (req, res, next) => {
+export const doesRegistrationExistParams = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const registration = await prisma.registration.findFirst({
     where: {
-      id: registrationId
-    }
-  })
+      id: registrationId,
+    },
+  });
   if (registration === null) {
     return res
       .status(StatusCodes.BAD_REQUEST)
