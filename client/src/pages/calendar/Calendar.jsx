@@ -15,6 +15,8 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
+import CalendarMenu from "./CalendarMenu";
+import { Paper, Stack } from "@mui/material";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -74,46 +76,53 @@ function Calendar() {
 
   return (
     <>
-      <Box height="76vh">
-        <FullCalendar
-          plugins={[
-            rrulePlugin,
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin,
-          ]}
-          customButtons={{
-            calendarMenu: {
-              icon: menuOpen ? "chevrons-right" : "chevrons-left",
-              click: function () {
-                setMenuOpen(!menuOpen);
+      <Stack direction="row" spacing={1}>
+        {menuOpen && <CalendarMenu />}
+        <Paper
+          variant="outlined"
+          square
+          sx={{ flexGrow: 1, height: "76vh", p: 2 }}
+        >
+          <FullCalendar
+            plugins={[
+              rrulePlugin,
+              dayGridPlugin,
+              timeGridPlugin,
+              interactionPlugin,
+            ]}
+            customButtons={{
+              calendarMenu: {
+                icon: menuOpen ? "chevrons-right" : "chevrons-left",
+                click: function () {
+                  setMenuOpen(!menuOpen);
+                },
               },
-            },
-          }}
-          headerToolbar={
-            matchUpSm
-              ? {
-                  start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
-                  center: "title",
-                }
-              : { start: "title", end: "prev,next" }
-          }
-          initialView="timeGridWeek"
-          height="100%"
-          eventClick={handleEventClick}
-          eventStartEditable={false} // Disabled for now
-          editable={isStaff ? true : false}
-          selectable={isStaff ? true : false}
-          selectMirror={isStaff ? true : false}
-          unselectAuto={false}
-          events={data?.calendar || []}
-          select={handleSelect}
-          slotMinTime={"08:00:00"}
-          slotMaxTime={"32:00:00"}
-          timeZone="UTC"
-          ref={calendarRef}
-        />
-      </Box>
+            }}
+            headerToolbar={
+              matchUpSm
+                ? {
+                    start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
+                    center: "title",
+                  }
+                : { start: "title", end: "prev,next" }
+            }
+            initialView="timeGridWeek"
+            height="100%"
+            eventClick={handleEventClick}
+            eventStartEditable={false} // Disabled for now
+            editable={isStaff ? true : false}
+            selectable={isStaff ? true : false}
+            selectMirror={isStaff ? true : false}
+            unselectAuto={false}
+            events={data?.calendar || []}
+            select={handleSelect}
+            slotMinTime={"08:00:00"}
+            slotMaxTime={"32:00:00"}
+            timeZone="UTC"
+            ref={calendarRef}
+          />
+        </Paper>
+      </Stack>
       {matchUpSm && <EventPopover />}
       {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
       {isLoading && <Loader />}
