@@ -31,6 +31,7 @@ function Calendar() {
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
   const [isStaff, setIsStaff] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
@@ -81,10 +82,18 @@ function Calendar() {
             timeGridPlugin,
             interactionPlugin,
           ]}
+          customButtons={{
+            calendarMenu: {
+              icon: menuOpen ? "chevrons-right" : "chevrons-left",
+              click: function () {
+                setMenuOpen(!menuOpen);
+              },
+            },
+          }}
           headerToolbar={
             matchUpSm
               ? {
-                  start: "timeGridWeek,dayGridMonth,timeGridDay",
+                  start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
                   center: "title",
                 }
               : { start: "title", end: "prev,next" }
