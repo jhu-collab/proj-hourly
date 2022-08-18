@@ -574,20 +574,19 @@ export const cancelRegistration = async (req, res) => {
 
 export const editRegistration = async (req, res) => {
   const registrationId = parseInt(req.params.registrationId, 10);
-  const { startTime, endTime, date, question, TopicIds } =
-  req.body;
+  const { startTime, endTime, date, question, TopicIds } = req.body;
   const dateObj = new Date(date);
-  const registrationTopics =  await prisma.registration.findFirst({
+  const registrationTopics = await prisma.registration.findFirst({
     where: {
-      id: registrationId
+      id: registrationId,
     },
     include: {
       topics: {
         select: {
-          id: true
-        }
-      }
-    }
+          id: true,
+        },
+      },
+    },
   });
   let topicArr = registrationTopics.topics;
   /*
