@@ -175,6 +175,7 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
 
 export const isWithinTimeOffering = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
+  console.log(startTime);
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
   const officeHour = await prisma.officeHour.findFirst({

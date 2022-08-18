@@ -577,19 +577,24 @@ export const editRegistration = async (req, res) => {
   const { startTime, endTime, date, question, TopicIds } =
   req.body;
   const dateObj = new Date(date);
-  const registrationTopics =  await prisma.registration.findUnique({
+  const registrationTopics =  await prisma.registration.findFirst({
     where: {
       id: registrationId
-    }, include: {
-      TopicIds
+    },
+    include: {
+      topics: {
+        select: {
+          id: true
+        }
+      }
     }
   });
+  let topicArr = registrationTopics.topics;
   /*
   might do:
   let topicArr = [];
-  and not include the top part if the request body has the list of all topics
+  and not include the top part (lines: 580 - 592) if the request body has the list of all topics
   */
-  let topicArr = registrationTopics.topics;
   TopicIds.forEach(async (topicId) => {
     topicArr.push({ id: topicId });
   });
