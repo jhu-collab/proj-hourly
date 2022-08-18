@@ -584,6 +584,11 @@ export const editRegistration = async (req, res) => {
       TopicIds
     }
   });
+  /*
+  might do:
+  let topicArr = [];
+  and not include the top part if the request body has the list of all topics
+  */
   let topicArr = registrationTopics.topics;
   TopicIds.forEach(async (topicId) => {
     topicArr.push({ id: topicId });
