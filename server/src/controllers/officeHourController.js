@@ -571,3 +571,36 @@ export const cancelRegistration = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
+
+export const editRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const { startTime, endTime, date, question, TopicIds } =
+  req.body;
+  const dateObj = new Date(date);
+  const registrationTopics =  await prisma.registration.findUnique({
+    where: {
+      id: registrationId
+    }, include: {
+      TopicIds
+    }
+  });
+  let topicArr = registrationTopics.topics;
+  TopicIds.forEach(async (topicId) => {
+    topicArr.push({ id: topicId });
+  });
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      startTime: stringToTimeObj(startTime),
+      endTime: stringToTimeObj(endTime),
+      date: dateObj,
+      question,
+      topics: {
+        connect: topicArr,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
+};
