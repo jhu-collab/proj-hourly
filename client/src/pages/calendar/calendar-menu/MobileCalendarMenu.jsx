@@ -1,9 +1,9 @@
-import { Box, SwipeableDrawer } from "@mui/material";
-import { useState } from "react";
+import Box from "@mui/material/Box";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CalendarMenu from "./CalendarMenu";
-import { styled } from "@mui/material/styles";
-import { grey } from "@mui/material/colors";
-import { useLayoutStore } from "../../services/store";
+import styled from "@mui/material/styles/styled";
+import grey from "@mui/material/colors/grey";
+import { useLayoutStore } from "../../../services/store";
 
 const drawerBleeding = 0;
 
@@ -17,6 +17,11 @@ const Puller = styled(Box)(({ theme }) => ({
   left: "calc(50% - 15px)",
 }));
 
+/**
+ * Utilizes the MUI Swipeable Drawer component to create a calendar menu
+ * for mobile devices.
+ * @returns a mobile calendar menu
+ */
 function MobileCalendarMenu() {
   const open = useLayoutStore((state) => state.mobileCalMenu);
   const setOpen = useLayoutStore((state) => state.setMobileCalMenu);
