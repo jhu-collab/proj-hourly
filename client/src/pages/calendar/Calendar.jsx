@@ -4,7 +4,6 @@ import rrulePlugin from "@fullcalendar/rrule";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
-import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import { useEventStore, useLayoutStore } from "../../services/store";
@@ -17,6 +16,8 @@ import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./CalendarMenu";
 import { Paper, Stack } from "@mui/material";
+import * as React from "react";
+import MobileCalendarMenu from "./MobileCalendarMenu";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -31,6 +32,8 @@ function Calendar() {
   const setEvent = useEventStore((state) => state.setEvent);
   const courseType = useLayoutStore((state) => state.courseType);
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const mobileCalMenu = useLayoutStore((state) => state.mobileCalMenu);
+  const setMobileCalMenu = useLayoutStore((state) => state.setMobileCalMenu);
 
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,7 +80,7 @@ function Calendar() {
   return (
     <>
       <Stack direction="row" spacing={1}>
-        {menuOpen && <CalendarMenu />}
+        {menuOpen && matchUpSm && <CalendarMenu />}
         <Paper
           variant="outlined"
           square
@@ -95,6 +98,12 @@ function Calendar() {
                 icon: menuOpen ? "chevrons-right" : "chevrons-left",
                 click: function () {
                   setMenuOpen(!menuOpen);
+                },
+              },
+              mobileCalMenu: {
+                text: "menu",
+                click: function () {
+                  setMobileCalMenu(!mobileCalMenu);
                 },
               },
             }}
@@ -120,10 +129,12 @@ function Calendar() {
             slotMaxTime={"32:00:00"}
             timeZone="UTC"
             ref={calendarRef}
+            {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
         </Paper>
       </Stack>
       {matchUpSm && <EventPopover />}
+      {!matchUpSm && <MobileCalendarMenu />}
       {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
       {isLoading && <Loader />}
     </>

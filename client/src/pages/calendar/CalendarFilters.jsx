@@ -23,20 +23,28 @@ function CalendarFilters() {
   };
 
   return (
-    <Accordion elevation={0} expanded={expanded} onChange={handleExpandedChange}>
+    <Accordion
+      elevation={0}
+      expanded={expanded}
+      onChange={handleExpandedChange}
+    >
       <AccordionSummary expandIcon={<DownOutlined />}>
         <Typography variant="h5" fontWeight={600}>
           Filters
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <RadioGroup
-          value={filter}
-          onChange={handleFilterChange}
-        >
-          <FormControlLabel value="myEvents" control={<Radio />} label="My Events" />
-          <FormControlLabel value="allEvents" control={<Radio />} label="All Events" />
-          <FormControlLabel value="registrations" control={<Radio />} label="Registrations" />
+        <RadioGroup value={filter} onChange={handleFilterChange}>
+          <FormControlLabel
+            value="myEvents"
+            control={<Radio />}
+            label="My Events"
+          />
+          <FormControlLabel
+            value="allEvents"
+            control={<Radio color="success" />}
+            label="All Events"
+          />
         </RadioGroup>
       </AccordionDetails>
     </Accordion>
