@@ -1,5 +1,24 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
+import * as hash from "../util/hash.js";
+
+export const emailAndPasswordMatch = async (req, res, next) => {
+  const { email, password } = req.body;
+  const account = await prisma.account.findUnique({
+    where: {
+      email: email.toLowerCase(),
+    },
+  });
+  const isMatch = await hash.compare(password, account.password);
+  if (!isMatch) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      msg: "Invalid Credentials",
+    });
+  } else {
+    next();
+  }
+  return res;
+};
 
 export const isUniqueEmail = async (req, res, next) => {
   const { email } = req.body;

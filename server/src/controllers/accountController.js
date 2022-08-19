@@ -1,23 +1,28 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
+import * as hash from "../util/hash.js";
+import * as tokenJS from "../util/token.js";
 
 export const create = async (req, res) => {
   validate(req);
-  const { email, name, phoneNumber } = req.body;
+  const { email, name, phoneNumber, password } = req.body;
+  const hashPassword = await hash.hash(password);
   if (phoneNumber === null || phoneNumber === undefined) {
     await prisma.Account.create({
       data: {
-        email,
+        email: email.toLowerCase(),
         userName: name,
+        password: hashPassword,
       },
     });
   } else {
     await prisma.Account.create({
       data: {
-        email,
+        email: email.toLowerCase(),
         userName: name,
         phoneNumber,
+        password: hashPassword,
       },
     });
   }
@@ -35,10 +40,13 @@ export const login = async (req, res) => {
   const { email } = req.body;
   const account = await prisma.Account.findUnique({
     where: {
-      email,
+      email: email.toLowerCase(),
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ account });
+  tokenJS.createToken(account, "5 days", (err, token) => {
+    if (err) throw err;
+    return res.status(StatusCodes.ACCEPTED).json({ account, token });
+  });
 };
 
 export const getCourses = async (req, res) => {

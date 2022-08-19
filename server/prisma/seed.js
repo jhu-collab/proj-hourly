@@ -12,6 +12,7 @@ const generateFakeUsers = async (numFakeUsers) => {
         email: email.toLowerCase(),
         userName: `${firstName} ${lastName}`,
         phoneNumber,
+        password: faker.internet.password(),
       },
     });
   }

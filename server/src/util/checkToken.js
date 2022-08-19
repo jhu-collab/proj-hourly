@@ -20,12 +20,12 @@ export const checkToken = (req, res, next) => {
   // Verify token
   try {
     verifyToken(id, (error, decoded) => {
-      //   if (error) {
-      //     return res
-      //       .status(StatusCodes.FORBIDDEN)
-      //       .json({ msg: "Token is not valid" });
-      //   }
-      //   req.id = decoded.user;
+      if (error) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ msg: "Token is not valid" });
+      }
+      req.headers["id"] = decoded.user.id;
       next();
     });
   } catch (err) {

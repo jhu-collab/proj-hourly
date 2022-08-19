@@ -11,6 +11,7 @@ router.post(
   body("email", "Email is required").isEmail(),
   body("name", "Name is required").notEmpty(),
   body("phoneNumber").optional().isMobilePhone(),
+  body("password", "Password is required").notEmpty(),
   validator.isUniqueEmail,
   validator.isUniquePhone,
   controller.create
@@ -19,7 +20,9 @@ router.post(
 router.post(
   "/login",
   body("email", "Email is required").isEmail(),
+  body("password", "Password is required").notEmpty(),
   validator.emailExists,
+  validator.emailAndPasswordMatch,
   controller.login
 );
 
