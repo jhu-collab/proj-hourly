@@ -1,15 +1,17 @@
 import DownOutlined from "@ant-design/icons/DownOutlined";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Typography,
-} from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+/**
+ * Represents calendar filter menu.
+ * @returns calendar filter menu
+ */
 function CalendarFilters() {
   const [filter, setFilter] = useState("myEvents");
   const [expanded, setExpanded] = useState(true);

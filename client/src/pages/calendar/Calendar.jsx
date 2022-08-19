@@ -6,6 +6,8 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import { useEventStore, useLayoutStore } from "../../services/store";
 import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
@@ -14,10 +16,8 @@ import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
-import CalendarMenu from "./CalendarMenu";
-import { Paper, Stack } from "@mui/material";
-import * as React from "react";
-import MobileCalendarMenu from "./MobileCalendarMenu";
+import CalendarMenu from "./calendar-menu/CalendarMenu";
+import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -36,7 +36,7 @@ function Calendar() {
   const setMobileCalMenu = useLayoutStore((state) => state.setMobileCalMenu);
 
   const [isStaff, setIsStaff] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
@@ -45,7 +45,6 @@ function Calendar() {
   }, [courseType]);
 
   const handleEventClick = (info) => {
-    console.log(info.event);
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
     setEvent({
       title: info.event.title,
@@ -80,7 +79,11 @@ function Calendar() {
   return (
     <>
       <Stack direction="row" spacing={1}>
-        {menuOpen && matchUpSm && <CalendarMenu />}
+        {menuOpen && matchUpSm && (
+          <Paper variant="outlined" sx={{ height: "76vh" }}>
+            <CalendarMenu />
+          </Paper>
+        )}
         <Paper
           variant="outlined"
           square
