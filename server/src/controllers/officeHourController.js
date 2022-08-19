@@ -341,14 +341,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-  const officeHourUpdate = await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
-    },
-  });
+
+  let officeHourUpdate = {};
+  if (officehour.isRecurring) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      },
+    });
+  } else {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -540,12 +553,11 @@ export const getOfficeHourById = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
-
 export const getAllRegistrationsOnDate = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const registrations = await prisma.registration.findMany({
-    where:{
+    where: {
       officeHourId,
       date: date,
     },
@@ -554,9 +566,8 @@ export const getAllRegistrationsOnDate = async (req, res) => {
       topics: true,
     },
     orderBy: {
-      startTime: 'asc'
-    }
+      startTime: "asc",
+    },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ registrations  
-  });
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
