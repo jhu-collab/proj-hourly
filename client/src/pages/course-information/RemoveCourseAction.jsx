@@ -1,13 +1,11 @@
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { Grid } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Loader from "../../components/Loader";
 import { useEventStore } from "../../services/store";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { useQueryClient } from "react-query";
 import { errorToast } from "../../utils/toasts";
 import { leaveCourse } from "../../utils/requests";
 
@@ -31,8 +29,11 @@ function RemoveCourseAction({ courseid }) {
   });
   return (
     <>
-    <IconButton
-        sx={{ fontSize: "50px", bottom: 60, left: '93%', }}
+      <Button
+        color="error"
+        variant="contained"
+        fullWidth
+        sx={{ borderRadius: 0 }}
         onClick={() => {
           confirmDialog("Do you really want to remove this course?", () => {
             mutate(courseid);
@@ -40,10 +41,9 @@ function RemoveCourseAction({ courseid }) {
          
         }}
       >
-        <DeleteOutlined />
-      </IconButton>     
+        Leave Course
+      </Button>
       <ConfirmPopup />
-      
     </>
   );
 }

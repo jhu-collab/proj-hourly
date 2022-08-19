@@ -39,7 +39,7 @@ function Registration({ registration, type }) {
           </Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails sx={{pr: 5}}>
+      <AccordionDetails sx={{ pr: 5 }}>
         {/* TODO: Depending on what type of booking this event has been made for,
          details about the event will be provided here */}
         {type === 0 && (
