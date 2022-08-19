@@ -1,4 +1,5 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import { Grid } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -14,20 +15,12 @@ import { leaveCourse } from "../../utils/requests";
  * @param {*} handlePopoverClose - closes EventDetails popover
  * @returns Delete action button and confirmation popup.
  */
-function RemoveCourseAction({ handlePopoverClose,courseid }) {
-  const [open, setOpen] = useState(false);
-
-
-
-  const handlePopupToggle = () => {
-    setOpen(!open);
-  };
-
+function RemoveCourseAction({ courseid }) {
 
   return (
     <>
-      <IconButton
-        sx={{ fontSize: "20px" }}
+    <IconButton
+        sx={{ fontSize: "50px", bottom: 60, left: '93%', }}
         onClick={() => {
           confirmDialog("Do you really want to remove this course?", () => {
               leaveCourse(courseid);
@@ -36,7 +29,7 @@ function RemoveCourseAction({ handlePopoverClose,courseid }) {
         }}
       >
         <DeleteOutlined />
-      </IconButton>
+      </IconButton>     
       <ConfirmPopup />
       
     </>

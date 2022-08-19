@@ -6,18 +6,6 @@ import RemoveCourseAction from './RemoveCourseAction';
 import { useCourseStore } from '../../services/store';
 function CourseInfoPage () {
   const course = useCourseStore((state) => state.course);
-  console.log(course);
-  const [open, setOpen] = useState(false);
-
-  const handleLeaveCourse = () => {
-    setOpen(true);
-  };
-
-  const handleConfirm = () => {
-    //route to leave
-    setOpen(false);
-  };
-
   return (
     <MainCard title="Course Information">
       <Grid item>
