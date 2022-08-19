@@ -40,7 +40,6 @@ function MobileCalendarMenu() {
       disableSwipeToOpen={false}
       ModalProps={{
         keepMounted: true,
-        backgroundColor: "white",
       }}
     >
       <Box
