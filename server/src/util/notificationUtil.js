@@ -19,7 +19,7 @@ export const sendEmail = async (req) => {
   // setup e-mail data, even with unicode symbols
   var mailOptions = {
     from: '"Hourly " ' + process.env.EMAIL, // sender address (who sends)
-    to: "chriswilhelm2019@gmail.com", // req.email, // list of receivers (who receives)
+    to: req.email, // req.email, // list of receivers (who receives)
     subject: req.subject, // Subject line
     text: req.text, // plaintext body
     html: req.html, // html body
