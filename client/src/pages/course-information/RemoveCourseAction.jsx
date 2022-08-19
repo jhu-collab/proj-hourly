@@ -15,7 +15,6 @@ function RemoveCourseAction({ courseid }) {
       <Button
         color="error"
         variant="contained"
-        size="large"
         fullWidth
         sx={{ borderRadius: 0 }}
         onClick={() => {
