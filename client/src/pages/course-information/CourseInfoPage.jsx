@@ -1,82 +1,30 @@
-import MainCard from '../../components/MainCard';
-import Typography  from '@mui/material/Typography';
-import Grid  from '@mui/material/Grid';
-import {useState}  from 'react';
-import RemoveCourseAction from './RemoveCourseAction';
-import { useCourseStore } from '../../services/store';
-function CourseInfoPage () {
+import MainCard from "../../components/MainCard";
+import Typography from "@mui/material/Typography";
+import RemoveCourseAction from "./RemoveCourseAction";
+import { useCourseStore } from "../../services/store";
+import Stack from "@mui/material/Stack";
+
+function CourseInfoPage() {
   const course = useCourseStore((state) => state.course);
   return (
-    <MainCard title="Course Information">
-      <Grid item>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'lighter' }}
-        >
-          {'Course Name: '}
+    <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
+      <Stack padding="16px" spacing={1}>
+        <Typography variant="h5" fontWeight={400}>
+          Course Name: <strong>{course.title}</strong>
         </Typography>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'bold' }}
-        >
-          {course.title}
+        <Typography variant="h5" fontWeight={400}>
+          Course Number: <strong>{course.courseNumber}</strong>
         </Typography>
-      </Grid>
-      <Grid item>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'lighter' }}
-        >
-          {'Course Number: '}
+        <Typography variant="h5" fontWeight={400}>
+          Semester: <strong>{course.semester}</strong>
         </Typography>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'bold' }}
-        >
-          {course.courseNumber}
+        <Typography variant="h5" fontWeight={400}>
+          Year: <strong>{course.calendarYear}</strong>
         </Typography>
-      </Grid>
-      <Grid item>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'lighter' }}
-        >
-          {'Semester : '}
-        </Typography>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'bold' }}
-        >
-          {course.semester}
-        </Typography>
-      </Grid>
-      <Grid item>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'lighter' }}
-        >
-          {'Year: '}
-        </Typography>
-        <Typography
-          display="inline"
-          variant="h4"
-          style={{ fontWeight: 'bold' }}
-        >
-          {course.calendarYear}
-        </Typography>
-      </Grid>
-      <Grid item>
-      </Grid>
-      <RemoveCourseAction courseid={course.id}/>
+      </Stack>
+      <RemoveCourseAction courseid={course.id} />
     </MainCard>
   );
-};
+}
 
 export default CourseInfoPage;
