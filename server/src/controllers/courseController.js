@@ -62,7 +62,7 @@ export const create = async (req, res) => {
   });
   const text =
     account.userName +
-    " your couse " +
+    " your course " +
     title +
     " was created. Give this code, " +
     code +
