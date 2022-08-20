@@ -40,6 +40,16 @@ router.post(
   controller.register
 );
 
+router.post(
+  "/addInstructor/:courseId/:id",
+  body("courseId", "Course id is required").isInt(),
+  body("accountId", "Account id is required").isInt(),
+  accountValidator.isAccountValidHeader,
+  accountValidator.accountIsNotInstructor,
+  validator.isCourseIdUrlValid,
+  controller.register
+);
+
 router.get("/", accountController.getCourses);
 
 // account id will be stored in header until we get a token
@@ -74,14 +84,15 @@ router.get(
   officeHourController.getForCourse
 );
 
-router.get("/:courseId/officeHours/:filter",
+router.get(
+  "/:courseId/officeHours/:filter",
   param("courseId", "Must provide a courseId").notEmpty(),
   param("filter", "Must provide a filter").notEmpty().isIn(["all", "mine"]),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isCourseStaffOrInstructor,
-  officeHourController.getForCourseWithFilter,
-)
+  officeHourController.getForCourseWithFilter
+);
 
 router.get(
   "/:courseId",

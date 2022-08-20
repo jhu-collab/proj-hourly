@@ -191,6 +191,29 @@ export const isAccountInstructor = async (req, res, next) => {
   next();
 };
 
+export const accountIsNotInstructor = async (req, res, next) => {
+  const id = parseInt(req.get("id"), 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query !== null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account is already an instructor in the course" });
+  }
+  next();
+};
+
 export const isAccountStaff = async (req, res, next) => {
   const id = parseInt(req.get("id"), 10);
   const courseId = parseInt(req.params.courseId, 10);
