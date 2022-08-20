@@ -17,7 +17,7 @@ import { leaveCourse } from "../../utils/requests";
  */
 function RemoveCourseAction({ courseid }) {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const { mutate } = useMutation(() => leaveCourse(courseid), {
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
@@ -37,6 +37,7 @@ function RemoveCourseAction({ courseid }) {
         onClick={() => {
           confirmDialog("Do you really want to remove this course?", () => {
             mutate(courseid);
+            navigate('/courses');
           });
          
         }}
