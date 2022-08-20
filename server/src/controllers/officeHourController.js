@@ -507,6 +507,8 @@ export const getRegistrationStatus = async (req, res) => {
       officeHourId,
       accountId: id,
       date: date,
+      isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   if (status === null || status === undefined) {
