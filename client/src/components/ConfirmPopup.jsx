@@ -26,7 +26,7 @@ export const confirmDialog = (message, onSubmit) => {
 
 /**
  * Reusable component that can be used for confirmation dialog.
- * @param {String} header (optional) title of of the confirmation 
+ * @param {String} header (optional) title of of the confirmation
  *                        dialog. Default is "Confirm the action"
  * @param {*} children (optional) children components
  * @returns Confirmation popup.

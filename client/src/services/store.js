@@ -129,7 +129,7 @@ export const useEventStore = create((set) => ({
       location: event.location || "",
       id: event.id || null,
       timeInterval: event.timeInterval || 10,
-      recurring: event.recurring || false
+      recurring: event.recurring || false,
     }),
 
   days: "",
