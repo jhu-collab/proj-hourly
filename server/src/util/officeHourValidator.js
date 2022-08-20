@@ -376,7 +376,7 @@ export const areValidDOW = (req, res, next) => {
   if (daysOfWeek === undefined || daysOfWeek.length === 0) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: not days of the week included" });
+      .json({ msg: "ERROR: days of the week not included" });
   }
   daysOfWeek.forEach((dow) => {
     if (!weekday.includes(dow)) {
