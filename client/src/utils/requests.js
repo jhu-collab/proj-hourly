@@ -142,6 +142,15 @@ export const register = async (body) => {
   return res.data;
 };
 
+export const cancelRegistration = async (id) => {
+  const res = await axios.post(
+    `${BASE_URL}/api/officeHour/cancelRegistration/${id}`,
+    {},
+    getConfig()
+  );
+  return res.data;
+};
+
 export const removeStaffOrStudent = async (removeId, isStaff) => {
   if (isStaff) {
     const res = await axios.delete(
