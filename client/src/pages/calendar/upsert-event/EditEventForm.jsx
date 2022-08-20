@@ -7,12 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
-import {
-  useEventStore,
-  useAccountStore,
-  useCourseStore,
-  useLayoutStore,
-} from "../../../services/store";
+import { useEventStore, useLayoutStore } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
 import { editEventAll, editEventOnDate } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
@@ -23,23 +18,14 @@ import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 
-const DAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
+/**
+ * Component that represents the form that is used to edit an event.
+ * @returns A component representing the Edit Event form.
+ */
 function EditEventForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-
-  const id = useAccountStore((state) => state.id);
-  const course = useCourseStore((state) => state.course);
 
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
@@ -65,8 +51,6 @@ function EditEventForm() {
 
   const recurringEvent = watch("recurringEvent");
 
-  // TODO: THis will need to be refactored once the route to
-  // edit an existing office hour is created
   const { mutate, isLoading } = useMutation(
     recurring ? editEventAll : editEventOnDate,
     {
@@ -75,7 +59,6 @@ function EditEventForm() {
         NiceModal.hide("upsert-event");
         matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-        // TODO: Will need to be refactored once we deal with recurring events.
         toast.success(`Successfully edited event`);
       },
       onError: (error) => {

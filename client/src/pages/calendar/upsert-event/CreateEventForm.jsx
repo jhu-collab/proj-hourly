@@ -68,8 +68,6 @@ function CreateEventForm() {
 
   const recurring = watch("recurringEvent");
 
-  // TODO: THis will need to be refactored once the route to
-  // edit an existing office hour is created
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
