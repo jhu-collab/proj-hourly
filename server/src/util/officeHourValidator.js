@@ -373,6 +373,11 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
 
 export const areValidDOW = (req, res, next) => {
   const { daysOfWeek } = req.body;
+  if (daysOfWeek === undefined || daysOfWeek.length === 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: not days of the week included" });
+  }
   daysOfWeek.forEach((dow) => {
     if (!weekday.includes(dow)) {
       return res
