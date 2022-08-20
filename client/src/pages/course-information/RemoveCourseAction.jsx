@@ -2,8 +2,7 @@ import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
-import { useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../../utils/toasts";
 import { leaveCourse } from "../../utils/requests";
 
