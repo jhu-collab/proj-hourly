@@ -1,8 +1,6 @@
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import Loader from "../../components/Loader";
-import { useEventStore } from "../../services/store";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { useQueryClient } from "react-query";
@@ -10,9 +8,9 @@ import { errorToast } from "../../utils/toasts";
 import { leaveCourse } from "../../utils/requests";
 
 /**
- * Represents the Trash IconButton on the EventDetails component
+ * Represents the Trash IconButton on the CourseDetails component
  * and the associated ConfirmPopup component.
- * @param {*} handlePopoverClose - closes EventDetails popover
+ * @param {*} courseid - for which course the user wants to leave
  * @returns Delete action button and confirmation popup.
  */
 function RemoveCourseAction({ courseid }) {
