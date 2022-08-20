@@ -145,6 +145,14 @@ router.post(
   controller.editAll
 );
 
+router.post(
+  "/cancelRegistration/:registrationId",
+  accountValidator.isAccountValidHeader,
+  validator.doesRegistrationExistParams,
+  validator.isStudentRegistered,
+  controller.cancelRegistration
+);
+
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
   accountValidator.isAccountValidHeader,
@@ -170,6 +178,27 @@ router.get(
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getAllRegistrationsOnDate
+);
+
+router.post(
+  "/editRegistration/:registrationId",
+  body("officeHourId", "Office Hour is required").isInt(),
+  body("startTime", "Please include a startTime").notEmpty(),
+  body("endTime", "Please include an endtime").notEmpty(),
+  body("date", "Please include a date").notEmpty(),
+  body("question", "Please include questions as a string")
+    .optional()
+    .isString(),
+  body("TopicIds", "Please include topics as an array").optional().isArray(),
+  accountValidator.isAccountValidHeader,
+  validator.isOfficeHourOnDay,
+  validator.doesRegistrationExistParams,
+  validator.isStudentRegistered,
+  validator.isWithinTimeOffering,
+  //validator.isTimeCorrectInterval,
+  validator.isTimeAvailable,
+  courseValidator.areTopicsForCourse,
+  controller.editRegistration
 );
 
 export default router;

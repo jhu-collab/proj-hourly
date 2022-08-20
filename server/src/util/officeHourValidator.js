@@ -175,6 +175,7 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
 
 export const isWithinTimeOffering = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
+  console.log(startTime);
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
   const officeHour = await prisma.officeHour.findFirst({
@@ -367,6 +368,37 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: office hour does not exist" });
+  }
+  next();
+};
+
+export const isStudentRegistered = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+export const doesRegistrationExistParams = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Registration does not exist" });
   }
   next();
 };

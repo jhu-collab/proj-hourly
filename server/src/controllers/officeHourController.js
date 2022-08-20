@@ -540,12 +540,11 @@ export const getOfficeHourById = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
-
 export const getAllRegistrationsOnDate = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const registrations = await prisma.registration.findMany({
-    where:{
+    where: {
       officeHourId,
       date: date,
     },
@@ -554,9 +553,63 @@ export const getAllRegistrationsOnDate = async (req, res) => {
       topics: true,
     },
     orderBy: {
-      startTime: 'asc'
-    }
+      startTime: "asc",
+    },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ registrations  
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};
+
+export const cancelRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      isCancelled: true,
+    },
   });
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
+};
+
+export const editRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const { startTime, endTime, date, question, TopicIds } = req.body;
+  const dateObj = new Date(date);
+  const registrationTopics = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      topics: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+  let topicArr = registrationTopics.topics;
+  /*
+  might do:
+  let topicArr = [];
+  and not include the top part (lines: 580 - 592) if the request body has the list of all topics
+  */
+  TopicIds.forEach(async (topicId) => {
+    topicArr.push({ id: topicId });
+  });
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      startTime: stringToTimeObj(startTime),
+      endTime: stringToTimeObj(endTime),
+      date: dateObj,
+      question,
+      topics: {
+        connect: topicArr,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
