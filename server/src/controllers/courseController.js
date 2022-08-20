@@ -432,3 +432,32 @@ export const getAllRegistrations = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
+
+export const addInstructor = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const prevCourse = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+    },
+    select: {
+      instructors: true,
+    },
+  });
+  const instructorIds = prevCourse.instructors.map((instructor) => ({
+    id: instructor.id,
+  }));
+  const allInstructors = [...instructorIds, { id: id }];
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      instructors: {
+        set: allInstructors,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};

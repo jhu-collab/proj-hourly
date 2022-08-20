@@ -206,7 +206,7 @@ export const accountIsNotInstructor = async (req, res, next) => {
       },
     },
   });
-  if (query !== null) {
+  if (query.instructors.length !== 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is already an instructor in the course" });

@@ -42,12 +42,10 @@ router.post(
 
 router.post(
   "/addInstructor/:courseId/:id",
-  body("courseId", "Course id is required").isInt(),
-  body("accountId", "Account id is required").isInt(),
   accountValidator.isAccountValidHeader,
   accountValidator.accountIsNotInstructor,
   validator.isCourseIdUrlValid,
-  controller.register
+  controller.addInstructor
 );
 
 router.get("/", accountController.getCourses);
