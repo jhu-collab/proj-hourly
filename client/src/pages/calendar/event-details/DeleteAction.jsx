@@ -1,5 +1,8 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import IconButton from "@mui/material/IconButton";
+import FormControlLabel from "@mui/material";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import moment from "moment";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
@@ -11,7 +14,6 @@ import { errorToast } from "../../../utils/toasts";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import NiceModal from "@ebay/nice-modal-react";
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { useState } from "react";
 /**
  * Represents the Trash IconButton on the EventPopover component
