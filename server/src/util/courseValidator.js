@@ -174,10 +174,13 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
     where: {
       id: officeHourId,
     },
+    include: {
+      course: true,
+    },
   });
   const studentQuery = await prisma.course.findUnique({
     where: {
-      id: officeHour.courseId,
+      id: officeHour.course.id,
     },
     include: {
       students: {

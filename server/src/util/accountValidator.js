@@ -108,6 +108,30 @@ export const isUrlStaff = async (req, res, next) => {
   }
   next();
 };
+
+export const isUrlStudent = async (req, res, next) => {
+  const id = parseInt(req.params.studentId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "staffId is not staff for the course" });
+  }
+  next();
+};
+
 export const areAccountsIdsValid = async (req, res, next) => {
   const { hosts } = req.body;
   let checkAllAccounts = [];
@@ -163,6 +187,64 @@ export const isAccountInstructor = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not an instructor in the course" });
+  }
+  next();
+};
+
+export const isAccountStaff = async (req, res, next) => {
+  const id = parseInt(req.get("id"), 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const query = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account is not a staff in the course" });
+  }
+  next();
+};
+
+export const isAccountStaffOrInstructor = async (req, res, next) => {
+  const id = parseInt(req.get("id"), 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const staff = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const instructor = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (staff === null && instructor === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account is not a staff or instructor in the course" });
   }
   next();
 };
