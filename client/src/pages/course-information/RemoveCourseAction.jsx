@@ -19,7 +19,7 @@ function RemoveCourseAction({ courseid }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
       toast.success(`Successfully removed course!`);
-      navigate('/courses');
+      navigate("/courses");
     },
     onError: (error) => {
       errorToast(error);
@@ -36,7 +36,6 @@ function RemoveCourseAction({ courseid }) {
           confirmDialog("Do you really want to remove this course?", () => {
             mutate(courseid);
           });
-         
         }}
       >
         Leave Course
