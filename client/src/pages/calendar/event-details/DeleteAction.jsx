@@ -1,6 +1,6 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import IconButton from "@mui/material/IconButton";
-import FormControlLabel from "@mui/material";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import moment from "moment";
