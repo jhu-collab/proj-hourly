@@ -1,10 +1,12 @@
 import CalendarOutlined from "@ant-design/icons/CalendarOutlined";
 import UsergroupAddOutlined from "@ant-design/icons/UsergroupAddOutlined";
 import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 const icons = {
   CalendarOutlined,
   UsergroupAddOutlined,
   ScheduleOutlined,
+  InfoCircleOutlined,
 };
 
 export const course = (currentCourse) => {
@@ -35,6 +37,14 @@ export const course = (currentCourse) => {
         type: "item",
         url: "/roster",
         icon: icons.UsergroupAddOutlined,
+        breadcrumbs: false,
+      },
+      {
+        id: "courseinformation",
+        title: "Course Details",
+        type: "item",
+        url: "/courseinformation",
+        icon: icons.InfoCircleOutlined,
         breadcrumbs: false,
       },
     ],

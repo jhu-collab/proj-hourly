@@ -155,6 +155,14 @@ router.get(
 );
 
 router.get(
+  "/:officeHourId",
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExistParams,
+  courseValidator.isInCourseForOfficeHourParam,
+  controller.getOfficeHourById
+);
+
+router.get(
   "/:officeHourId/:date/registrationsOnDate",
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountStaffOrInstructor,
