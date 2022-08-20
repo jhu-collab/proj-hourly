@@ -18,7 +18,7 @@ import { leaveCourse } from "../../utils/requests";
 function RemoveCourseAction({ courseid }) {
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(leaveCourse(courseid), {
+  const { mutate } = useMutation(() => leaveCourse(courseid), {
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
       toast.success(`Successfully removed course!`);
