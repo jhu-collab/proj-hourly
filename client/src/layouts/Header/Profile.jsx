@@ -39,7 +39,6 @@ function Profile() {
 
     prevOpen.current = open;
   }, [open]);
-  
 
   const iconBackColorOpen = "grey.300";
 
@@ -94,7 +93,11 @@ function Profile() {
                   },
                 }}
               >
-                <ClickAwayListener mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={handleClose}>
+                <ClickAwayListener
+                  mouseEvent="onMouseDown"
+                  touchEvent="onTouchStart"
+                  onClickAway={handleClose}
+                >
                   <MainCard elevation={0} border={false} content={false}>
                     <CardContent sx={{ px: 2.5, pt: 3 }}>
                       <Grid

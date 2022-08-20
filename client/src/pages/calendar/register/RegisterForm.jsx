@@ -26,7 +26,11 @@ const getOptions = (timeSlots) => {
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
+      value: `${moment(timeSlots[i].startTime)
+        .utc()
+        .format("HH:mm:ss")} - ${moment(timeSlots[i].endTime)
+        .utc()
+        .format("HH:mm:ss")}`,
     });
   }
 
