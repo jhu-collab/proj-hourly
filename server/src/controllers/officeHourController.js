@@ -341,14 +341,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-  const officeHourUpdate = await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
-    },
-  });
+
+  let officeHourUpdate = {};
+  if (officehour.isRecurring) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      },
+    });
+  } else {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
   await prisma.registration.updateMany({
     where: {
       officeHourId,
