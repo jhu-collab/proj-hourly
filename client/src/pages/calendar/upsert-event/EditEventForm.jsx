@@ -14,7 +14,7 @@ import {
   useLayoutStore,
 } from "../../../services/store";
 import { useMutation, useQueryClient } from "react-query";
-import { createOfficeHour, editEventOnDate } from "../../../utils/requests";
+import { editEventAll, editEventOnDate } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
@@ -48,6 +48,7 @@ function EditEventForm() {
   const location = useEventStore((state) => state.location);
   const days = useEventStore((state) => state.days);
   const timeInterval = useEventStore((state) => state.timeInterval);
+  const recurring = useEventStore((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -62,39 +63,45 @@ function EditEventForm() {
     resolver: yupResolver(createEventSchema),
   });
 
-  const recurring = watch("recurringEvent");
+  const recurringEvent = watch("recurringEvent");
 
   // TODO: THis will need to be refactored once the route to
   // edit an existing office hour is created
-  const { mutate, isLoading } = useMutation(editEventOnDate, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(["officeHours"]);
-      NiceModal.hide("upsert-event");
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+  const { mutate, isLoading } = useMutation(
+    recurring ? editEventAll : editEventOnDate,
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["officeHours"]);
+        NiceModal.hide("upsert-event");
+        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      // TODO: Will need to be refactored once we deal with recurring events.
-      toast.success(`Successfully edited event`);
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
+        // TODO: Will need to be refactored once we deal with recurring events.
+        toast.success(`Successfully edited event`);
+      },
+      onError: (error) => {
+        errorToast(error);
+      },
+    }
+  );
 
   const onSubmit = (data) => {
-    mutate({
-      // courseId: course.id,
-      startTime: `${data.startTime}:00`,
-      endTime: `${data.endTime}:00`,
-      // recurringEvent: data.recurringEvent,
-      // startDate: moment(data.startDate).format("MM-DD-YYYY"),
-      // endDate: recurring
-      //   ? moment(data.endDate).format("MM-DD-YYYY")
-      //   : moment(data.startDate).format("MM-DD-YYYY"),
-      location: data.location,
-      // daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
-      timePerStudent: data.timeInterval,
-      // hosts: [id], // TOOD: For now, there will be no additional hosts
-    });
+    recurring
+      ? mutate({
+          startTime: `${data.startTime}:00`,
+          endTime: `${data.endTime}:00`,
+          startDate: moment(data.startDate).format("MM-DD-YYYY"),
+          endDate: moment(data.endDate).format("MM-DD-YYYY"),
+          location: data.location,
+          daysOfWeek: days,
+          timePerStudent: data.timeInterval,
+          endDateOldOfficeHour: moment(data.startDate).format("MM-DD-YYYY"),
+        })
+      : mutate({
+          startTime: `${data.startTime}:00`,
+          endTime: `${data.endTime}:00`,
+          location: data.location,
+          timePerStudent: data.timeInterval,
+        });
   };
 
   return (
@@ -125,21 +132,23 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <FormCheckbox
-            name="recurringEvent"
-            control={control}
-            label="Recurring event"
-            disabled
-          />
-          <FormInputText
-            name="startDate"
-            control={control}
-            label={recurring ? "Start Date" : "Date"}
-            type="date"
-            disabled
-            InputLabelProps={{ shrink: true }}
-          />
           {recurring && (
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
+              label="Recurring event"
+            />
+          )}
+          {recurringEvent && (
+            <FormInputText
+              name="startDate"
+              control={control}
+              label={recurringEvent ? "Start Date" : "Date"}
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          )}
+          {recurringEvent && (
             <FormInputText
               name="endDate"
               control={control}
@@ -148,7 +157,7 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurring && <ToggleRecurringDay />}
+          {recurringEvent && <ToggleRecurringDay />}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"

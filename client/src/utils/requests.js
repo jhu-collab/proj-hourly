@@ -113,6 +113,15 @@ export const editEventOnDate = async (body) => {
   return res.data;
 };
 
+export const editEventAll = async (body) => {
+  const res = await axios.post(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editAll`,
+    body,
+    getConfig()
+  );
+  return res.data;
+};
+
 export const cancelOnDate = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/cancelOnDate`,
