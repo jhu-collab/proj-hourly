@@ -26,21 +26,26 @@ export const confirmDialog = (message, onSubmit) => {
 
 /**
  * Reusable component that can be used for confirmation dialog.
+ * @param {String} header (optional) title of of the confirmation 
+ *                        dialog. Default is "Confirm the action"
+ * @param {*} children (optional) children components
  * @returns Confirmation popup.
  */
-function ConfirmPopup() {
+function ConfirmPopup({ header, children }) {
   const { message, onSubmit, close } = useConfirmDialogStore();
 
   return (
     <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth>
-      <DialogTitle variant="h4">Confirm the action</DialogTitle>
+      <DialogTitle variant="h4">
+        {header ? header : "Confirm the action"}
+      </DialogTitle>
       <Box position="absolute" top={8} right={0}>
         <IconButton sx={{ fontSize: "20px" }} onClick={close}>
           <CloseOutlined />
         </IconButton>
       </Box>
       <DialogContent>
-        <Typography>{message}</Typography>
+        {!children ? <Typography>{message}</Typography> : children}
       </DialogContent>
       <DialogActions>
         <Button color="primary" variant="contained" onClick={close}>
