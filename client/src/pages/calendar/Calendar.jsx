@@ -39,7 +39,6 @@ function Calendar() {
   }, [courseType]);
 
   const handleEventClick = (info) => {
-    console.log(info.event);
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
     setEvent({
       title: info.event.title,
@@ -85,7 +84,7 @@ function Calendar() {
           headerToolbar={
             matchUpSm
               ? {
-                  start: "timeGridWeek,dayGridMonth,timeGridDay",
+                  start: "dayGridMonth,timeGridWeek,timeGridDay",
                   center: "title",
                 }
               : { start: "title", end: "prev,next" }

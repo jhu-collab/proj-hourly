@@ -52,7 +52,7 @@ function EditEventForm() {
   const recurringEvent = watch("recurringEvent");
 
   const { mutate, isLoading } = useMutation(
-    recurring ? editEventAll : editEventOnDate,
+    recurringEvent ? editEventAll : editEventOnDate,
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["officeHours"]);
@@ -68,7 +68,7 @@ function EditEventForm() {
   );
 
   const onSubmit = (data) => {
-    recurring
+    recurringEvent
       ? mutate({
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
