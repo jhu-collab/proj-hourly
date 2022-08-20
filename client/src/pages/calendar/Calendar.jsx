@@ -58,18 +58,19 @@ function Calendar() {
     NiceModal.show("upsert-event", { type: "create" });
   };
 
-  // TODO: Resolve confusion between edit and create
-  // popup
-  // const handleEventDrop = (info) => {
-  //   setEvent({
-  //     title: info.event.title,
-  //     start: info.event.start,
-  //     end: info.event.end,
-  //     location: info.event.extendedProps.location,
-  //     description: JSON.parse(info.event.extendedProps.description),
-  //   });
-  //   editPopupState.open();
-  // };
+  // TODO: Resolve bug where event is not reset after it is dropped
+  const handleEventDrop = (info) => {
+    setEvent({
+      title: info.event.title,
+      start: info.event.start,
+      end: info.event.end,
+      location: info.event.extendedProps.location,
+      id: info.event.extendedProps.id,
+      recurring: info.event.extendedProps.isRecurring,
+    });
+    NiceModal.show("upsert-event", { type: "edit" });
+    info.revert();
+  };
 
   return (
     <>
@@ -92,7 +93,7 @@ function Calendar() {
           initialView="timeGridWeek"
           height="100%"
           eventClick={handleEventClick}
-          eventStartEditable={false} // Disabled for now
+          eventDrop={handleEventDrop}
           editable={isStaff ? true : false}
           selectable={isStaff ? true : false}
           selectMirror={isStaff ? true : false}
