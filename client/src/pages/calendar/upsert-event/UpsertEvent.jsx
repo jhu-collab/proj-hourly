@@ -3,6 +3,7 @@ import UpsertEventForm from "./UpsertEventForm";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { useEffect } from "react";
 import { useEventStore } from "../../../services/store";
+import CreateEventForm from "./CreateEventForm";
 
 /**
  * Parent component for the UpsertForm component.
@@ -26,7 +27,8 @@ const UpsertEvent = NiceModal.create(({ type }) => {
       modal={modal}
       title={type === "edit" ? "Edit Event" : "Create Event"}
     >
-      <UpsertEventForm type={type} />
+      {/* <UpsertEventForm type={type} /> */}
+      {type === "create" && <CreateEventForm />}
     </Popup>
   );
 });
