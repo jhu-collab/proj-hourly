@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
+import sendEmail from "../util/notificationUtil.js";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -53,6 +54,24 @@ export const create = async (req, res) => {
     where: {
       code,
     },
+  });
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  const text =
+    account.userName +
+    " your course " +
+    title +
+    " was created. Give this code, " +
+    code +
+    ", to your students to join the course with.";
+  await sendEmail({
+    email: account.email,
+    subject: title + " Created!",
+    text,
+    html: "<p> " + text + " <p/>",
   });
   return res.status(StatusCodes.CREATED).json({ course });
 };
