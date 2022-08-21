@@ -104,6 +104,33 @@ export const createOfficeHour = async (body) => {
   return res.data;
 };
 
+export const editEventOnDate = async (body) => {
+  const res = await axios.post(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editForDate/${getEventDate()}`,
+    body,
+    getConfig()
+  );
+  return res.data;
+};
+
+export const editEventAll = async (body) => {
+  const res = await axios.post(
+    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editAll`,
+    body,
+    getConfig()
+  );
+  return res.data;
+};
+
+export const cancelOnDate = async (body) => {
+  const res = await axios.post(
+    `${BASE_URL}/api/officeHour/cancelOnDate`,
+    body,
+    getConfig()
+  );
+  return res.data;
+};
+
 export const cancelAll = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/cancelAll`,
@@ -147,8 +174,8 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
   }
 };
 
-export const leaveCourse = async (courseId) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseId}`, {
+export const leaveCourse = async (courseid) => {
+  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, {
     headers: { id: getUserId() },
   });
   return res.data;

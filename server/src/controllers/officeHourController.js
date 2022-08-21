@@ -341,14 +341,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-  const officeHourUpdate = await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
-    },
-  });
+
+  let officeHourUpdate = {};
+  if (officehour.isRecurring) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      },
+    });
+  } else {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -522,6 +535,45 @@ export const getRegistrationStatus = async (req, res) => {
   });
 };
 
+export const getForCourseWithFilter = async (req, res) => {
+  const filter = req.params.filter;
+  const courseId = parseInt(req.params.courseId, 10);
+  let officeHours = [];
+  if (filter === "all") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+      },
+      include: {
+        isOnDayOfWeek: true,
+        isCancelledOn: true,
+        hosts: true,
+      },
+    });
+  } else if (filter === "mine") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+      include: {
+        isOnDayOfWeek: true,
+        isCancelledOn: true,
+        hosts: true,
+      },
+    });
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Invalid filter" });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ officeHours });
+};
+
 export const getOfficeHourById = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
@@ -540,12 +592,11 @@ export const getOfficeHourById = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
-
 export const getAllRegistrationsOnDate = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const registrations = await prisma.registration.findMany({
-    where:{
+    where: {
       officeHourId,
       date: date,
     },
@@ -554,9 +605,8 @@ export const getAllRegistrationsOnDate = async (req, res) => {
       topics: true,
     },
     orderBy: {
-      startTime: 'asc'
-    }
+      startTime: "asc",
+    },
   });
-  return res.status(StatusCodes.ACCEPTED).json({ registrations  
-  });
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };

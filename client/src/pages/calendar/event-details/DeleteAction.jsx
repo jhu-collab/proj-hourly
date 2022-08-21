@@ -1,17 +1,20 @@
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import IconButton from "@mui/material/IconButton";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import moment from "moment";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
 import { useEventStore, useLayoutStore } from "../../../services/store";
-import { cancelAll } from "../../../utils/requests";
+import { cancelAll, cancelOnDate } from "../../../utils/requests";
 import { errorToast } from "../../../utils/toasts";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import NiceModal from "@ebay/nice-modal-react";
-
+import { useState } from "react";
 /**
  * Represents the Trash IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
@@ -24,31 +27,42 @@ function DeleteAction() {
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
   const id = useEventStore((state) => state.id);
+  const recurring = useEventStore((state) => state.recurring);
+  const start = useEventStore((state) => state.start);
+
+  const [deleteType, setDeleteType] = useState("this");
 
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading } = useMutation(cancelAll, {
-    onSuccess: (data) => {
-      const officeHour = data.officeHourUpdate;
+  const { mutate, isLoading } = useMutation(
+    recurring && deleteType === "this" ? cancelOnDate : cancelAll,
+    {
+      onSuccess: (data) => {
+        const officeHour = data.officeHourUpdate;
 
-      const date = moment(officeHour.startDate).utc().format("L");
-      const startTime = moment(officeHour.startTime).utc().format("LT");
-      const endTime = moment(officeHour.endTime).utc().format("LT");
+        const date = moment(officeHour.startDate).utc().format("L");
+        const startTime = moment(officeHour.startTime).utc().format("LT");
+        const endTime = moment(officeHour.endTime).utc().format("LT");
 
-      queryClient.invalidateQueries(["officeHours"]);
+        queryClient.invalidateQueries(["officeHours"]);
 
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      // TODO: Will need to be refactored once we deal with recurring events.
-      toast.success(
-        `Successfully deleted office hour on ${date} from 
+        recurring && deleteType === "all"
+          ? toast.success(
+              `Successfully deleted all events from 
          ${startTime} to ${endTime}`
-      );
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
+            )
+          : toast.success(
+              `Successfully deleted event on ${date} from 
+         ${startTime} to ${endTime}`
+            );
+      },
+      onError: (error) => {
+        errorToast(error);
+      },
+    }
+  );
 
   return (
     <>
@@ -56,13 +70,38 @@ function DeleteAction() {
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog("Do you really want to delete this event?", () =>
-            mutate({ officeHourId: id })
+            recurring && deleteType === "this"
+              ? mutate({
+                  officeHourId: id,
+                  date: moment(start).utc().format("MM-DD-YYYY"),
+                })
+              : mutate({ officeHourId: id })
           );
         }}
       >
         <DeleteOutlined />
       </IconButton>
-      <ConfirmPopup />
+      <ConfirmPopup {...(recurring && { header: "Delete recurring event" })}>
+        {recurring && (
+          <RadioGroup
+            value={deleteType}
+            onChange={(event) => setDeleteType(event.target.value)}
+          >
+            <FormControlLabel
+              value="this"
+              control={<Radio />}
+              label="This event"
+            />
+            {/* TODO: Backend needs to create a route to delete this and following
+          events */}
+            <FormControlLabel
+              value="all"
+              control={<Radio />}
+              label="All events"
+            />
+          </RadioGroup>
+        )}
+      </ConfirmPopup>
       {isLoading && <Loader />}
     </>
   );
