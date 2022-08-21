@@ -34,12 +34,10 @@ const DAYS = [
 ];
 
 /**
- * Component that represents the form that is used to upsert an event.
- * @param {String} type String that decides when this is creating or editing an
- *                      event
- * @returns A component representing the Upsert Event form.
+ * Component that represents the form that is used to create an event.
+ * @returns A component representing the Create Event form.
  */
-function UpsertEventForm({ type }) {
+function CreateEventForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -70,8 +68,6 @@ function UpsertEventForm({ type }) {
 
   const recurring = watch("recurringEvent");
 
-  // TODO: THis will need to be refactored once the route to
-  // edit an existing office hour is created
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
@@ -86,7 +82,7 @@ function UpsertEventForm({ type }) {
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
-         ${startTime} to ${endTime}`
+           ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
@@ -173,7 +169,7 @@ function UpsertEventForm({ type }) {
             disabled={isLoading}
             fullWidth
           >
-            {type === "edit" ? "Update" : "Create"}
+            Create
           </Button>
         </Stack>
       </Form>
@@ -182,4 +178,4 @@ function UpsertEventForm({ type }) {
   );
 }
 
-export default UpsertEventForm;
+export default CreateEventForm;

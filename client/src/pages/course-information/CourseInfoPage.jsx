@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 
 function CourseInfoPage() {
   const course = useCourseStore((state) => state.course);
-  const courseType = useLayoutStore((state) => state.courseType)
+  const courseType = useLayoutStore((state) => state.courseType);
   return (
     <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
       <Stack padding="16px" spacing={1}>
@@ -22,13 +22,13 @@ function CourseInfoPage() {
         <Typography variant="h5" fontWeight={400}>
           Year: <strong>{course.calendarYear}</strong>
         </Typography>
-        {courseType === 'staff' && 
-        <Typography variant="h5" fontWeight={400}>
-        Code: <strong>{course.code}</strong>
-      </Typography>}
+        {courseType === "staff" && (
+          <Typography variant="h5" fontWeight={400}>
+            Code: <strong>{course.code}</strong>
+          </Typography>
+        )}
       </Stack>
-      {courseType === 'student' && 
-      <RemoveCourseAction courseid={course.id} />}
+      {courseType === "student" && <RemoveCourseAction courseid={course.id} />}
     </MainCard>
   );
 }
