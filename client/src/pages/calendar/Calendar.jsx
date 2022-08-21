@@ -64,7 +64,6 @@ function Calendar() {
     NiceModal.show("upsert-event", { type: "create" });
   };
 
-  // TODO: Resolve bug where event is not reset after it is dropped
   const handleEventDrop = (info) => {
     setEvent({
       title: info.event.title,
@@ -124,7 +123,6 @@ function Calendar() {
             height="100%"
             eventClick={handleEventClick}
             eventDrop={handleEventDrop}
-            eventStartEditable={false} // Disabled for now
             editable={isStaff ? true : false}
             selectable={isStaff ? true : false}
             selectMirror={isStaff ? true : false}
