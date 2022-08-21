@@ -12,6 +12,9 @@ const YourCourses = Loadable(
   lazy(() => import("./pages/your-courses/YourCourses"))
 );
 const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
+const CourseInfoPage = Loadable(
+  lazy(() => import("./pages/course-information/CourseInfoPage"))
+);
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const AuthRegister = Loadable(
   lazy(() => import("./pages/authentication/Register"))
@@ -46,6 +49,7 @@ function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/registrations" element={<Registrations />} />
             <Route path="/roster" element={<Roster />} />
+            <Route path="/courseinformation" element={<CourseInfoPage />} />
           </Route>
         </Routes>
       </ScrollTop>
