@@ -31,6 +31,11 @@ export const useLayoutStore = create(
         set(() => ({
           timeTab: value || 0,
         })),
+      mobileCalMenu: false,
+      setMobileCalMenu: (value) =>
+        set((state) => ({
+          mobileCalMenu: value || !state.mobileCalMenu,
+        })),
     }),
     {
       name: "layout",
