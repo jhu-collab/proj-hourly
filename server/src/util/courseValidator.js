@@ -79,6 +79,41 @@ export const isCourseIdParams = async (req, res, next) => {
   next();
 };
 
+export const isCourseStaffOrInstructor = async (req, res, next) => {
+  const { courseId } = req.body;
+  const id = parseInt(req.get("id"), 10);
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id,
+          },
+        },
+      },
+    ],
+  };
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff" });
+  }
+  next();
+};
+
 export const areCourseStaffOrInstructor = async (req, res, next) => {
   const { courseId, hosts } = req.body;
   let roleQuery = [];
