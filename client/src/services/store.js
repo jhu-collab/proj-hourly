@@ -26,6 +26,16 @@ export const useLayoutStore = create(
         set((state) => ({
           eventAnchorEl: value || null,
         })),
+      timeTab: 0,
+      setTimeTab: (value) =>
+        set(() => ({
+          timeTab: value || 0,
+        })),
+      mobileCalMenu: false,
+      setMobileCalMenu: (value) =>
+        set((state) => ({
+          mobileCalMenu: value || !state.mobileCalMenu,
+        })),
     }),
     {
       name: "layout",
@@ -59,16 +69,16 @@ export const useAccountStore = create(
   persist(
     (set) => ({
       // TODO: Once backend has set up tokens, this will be replaced.
-      id: -1,
+      id: null,
       setId: (value) =>
         set(() => ({
-          id: value || -1,
+          id: value || null,
         })),
 
-      name: "John Doe",
+      name: null,
       setName: (value) =>
         set(() => ({
-          name: value || "John Doe",
+          name: value || null,
         })),
     }),
     {
@@ -113,13 +123,23 @@ export const useEventStore = create((set) => ({
   start: null,
   end: null,
   location: "",
-  description: {},
+  id: null,
+  timeInterval: 10,
+  recurring: false,
   setEvent: (event) =>
     set({
       title: event.title || "",
       start: event.start || null,
       end: event.end || null,
       location: event.location || "",
-      description: event.description || {},
+      id: event.id || null,
+      timeInterval: event.timeInterval || 10,
+      recurring: event.recurring || false,
     }),
+
+  days: "",
+  setDays: (days) =>
+    set(() => ({
+      days: days || "",
+    })),
 }));

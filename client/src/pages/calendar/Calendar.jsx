@@ -1,21 +1,23 @@
 import "@fullcalendar/react/dist/vdom"; // necessary to work with vite configuration
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import rrulePlugin from "@fullcalendar/rrule";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
-import timeGridPlugin from "@fullcalendar/timegrid";
-import iCalendarPlugin from "@fullcalendar/icalendar";
-import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import { useEventStore, useLayoutStore } from "../../services/store";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
-import ical from "ical-generator";
 import EventPopover from "./event-details/EventPopover";
 import { useQuery } from "react-query";
 import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
+import CalendarMenu from "./calendar-menu/CalendarMenu";
+import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -30,8 +32,11 @@ function Calendar() {
   const setEvent = useEventStore((state) => state.setEvent);
   const courseType = useLayoutStore((state) => state.courseType);
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const mobileCalMenu = useLayoutStore((state) => state.mobileCalMenu);
+  const setMobileCalMenu = useLayoutStore((state) => state.setMobileCalMenu);
 
   const [isStaff, setIsStaff] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
 
@@ -46,7 +51,8 @@ function Calendar() {
       start: info.event.start,
       end: info.event.end,
       location: info.event.extendedProps.location,
-      description: JSON.parse(info.event.extendedProps.description),
+      id: info.event.extendedProps.id,
+      recurring: info.event.extendedProps.isRecurring,
     });
   };
 
@@ -58,62 +64,81 @@ function Calendar() {
     NiceModal.show("upsert-event", { type: "create" });
   };
 
-  // TODO: Resolve confusion between edit and create
-  // popup
-  // const handleEventDrop = (info) => {
-  //   setEvent({
-  //     title: info.event.title,
-  //     start: info.event.start,
-  //     end: info.event.end,
-  //     location: info.event.extendedProps.location,
-  //     description: JSON.parse(info.event.extendedProps.description),
-  //   });
-  //   editPopupState.open();
-  // };
-
-  const memoizedEventsFn = useMemo(() => {
-    if (data) {
-      const calendar = ical(data.calendar);
-      return { url: calendar.toURL(), format: "ics" };
-    }
-    return { url: ical().toURL(), format: "ics" };
-  }, [data]);
+  const handleEventDrop = (info) => {
+    setEvent({
+      title: info.event.title,
+      start: info.event.start,
+      end: info.event.end,
+      location: info.event.extendedProps.location,
+      id: info.event.extendedProps.id,
+      recurring: info.event.extendedProps.isRecurring,
+    });
+    NiceModal.show("upsert-event", { type: "edit" });
+    info.revert();
+  };
 
   return (
     <>
-      <Box height="76vh">
-        <FullCalendar
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin,
-            iCalendarPlugin,
-          ]}
-          headerToolbar={
-            matchUpSm
-              ? {
-                  start: "dayGridMonth,timeGridWeek,timeGridDay",
-                  center: "title",
-                }
-              : { start: "title", end: "prev,next" }
-          }
-          initialView="timeGridWeek"
-          height="100%"
-          eventClick={handleEventClick}
-          eventStartEditable={false} // Disabled for now
-          editable={isStaff ? true : false}
-          selectable={isStaff ? true : false}
-          selectMirror={isStaff ? true : false}
-          unselectAuto={false}
-          events={memoizedEventsFn}
-          select={handleSelect}
-          slotMinTime={"08:00:00"}
-          slotMaxTime={"32:00:00"}
-          timeZone="UTC"
-          ref={calendarRef}
-        />
-      </Box>
+      <Stack direction="row" spacing={1}>
+        {menuOpen && matchUpSm && (
+          <Paper variant="outlined" sx={{ height: "76vh" }}>
+            <CalendarMenu />
+          </Paper>
+        )}
+        <Paper
+          variant="outlined"
+          square
+          sx={{ flexGrow: 1, height: "76vh", p: 2 }}
+        >
+          <FullCalendar
+            plugins={[
+              rrulePlugin,
+              dayGridPlugin,
+              timeGridPlugin,
+              interactionPlugin,
+            ]}
+            customButtons={{
+              calendarMenu: {
+                icon: menuOpen ? "chevrons-right" : "chevrons-left",
+                click: function () {
+                  setMenuOpen(!menuOpen);
+                },
+              },
+              mobileCalMenu: {
+                text: "menu",
+                click: function () {
+                  setMobileCalMenu(!mobileCalMenu);
+                },
+              },
+            }}
+            headerToolbar={
+              matchUpSm
+                ? {
+                    start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
+                    center: "title",
+                  }
+                : { start: "title", end: "prev,next" }
+            }
+            initialView="timeGridWeek"
+            height="100%"
+            eventClick={handleEventClick}
+            eventDrop={handleEventDrop}
+            editable={isStaff ? true : false}
+            selectable={isStaff ? true : false}
+            selectMirror={isStaff ? true : false}
+            unselectAuto={false}
+            events={data?.calendar || []}
+            select={handleSelect}
+            slotMinTime={"08:00:00"}
+            slotMaxTime={"32:00:00"}
+            timeZone="UTC"
+            ref={calendarRef}
+            {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
+          />
+        </Paper>
+      </Stack>
       {matchUpSm && <EventPopover />}
+      {!matchUpSm && <MobileCalendarMenu />}
       {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
       {isLoading && <Loader />}
     </>

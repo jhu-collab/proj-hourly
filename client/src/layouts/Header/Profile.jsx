@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -30,6 +30,15 @@ function Profile() {
     }
     setOpen(false);
   };
+
+  const prevOpen = useRef(open);
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
 
   const iconBackColorOpen = "grey.300";
 
@@ -84,7 +93,11 @@ function Profile() {
                   },
                 }}
               >
-                <ClickAwayListener onClickAway={handleClose}>
+                <ClickAwayListener
+                  mouseEvent="onMouseDown"
+                  touchEvent="onTouchStart"
+                  onClickAway={handleClose}
+                >
                   <MainCard elevation={0} border={false} content={false}>
                     <CardContent sx={{ px: 2.5, pt: 3 }}>
                       <Grid

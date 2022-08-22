@@ -14,6 +14,8 @@ import { useCourseStore } from "../../services/store";
  */
 function YourCourses() {
   const theme = useTheme();
+  // TODO Testing to see if this comment will fix a weird
+  // bug in dev
   const course = useCourseStore((state) => state.course);
   const setCourse = useCourseStore((state) => state.setCourse);
 

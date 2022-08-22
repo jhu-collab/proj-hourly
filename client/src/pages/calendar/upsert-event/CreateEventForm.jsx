@@ -20,6 +20,8 @@ import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import ToggleRecurringDay from "./ToggleRecurringDay";
+import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 
 const DAYS = [
   "Sunday",
@@ -32,12 +34,10 @@ const DAYS = [
 ];
 
 /**
- * Component that represents the form that is used to upsert an event.
- * @param {String} type String that decides when this is creating or editing an
- *                      event
- * @returns A component representing the Upsert Event form.
+ * Component that represents the form that is used to create an event.
+ * @returns A component representing the Create Event form.
  */
-function UpsertEventForm({ type }) {
+function CreateEventForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -50,19 +50,24 @@ function UpsertEventForm({ type }) {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
+  const days = useEventStore((state) => state.days);
+  const timeInterval = useEventStore((state) => state.timeInterval);
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      date: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
+      recurringEvent: false,
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
+      timeInterval: timeInterval || 10,
     },
     resolver: yupResolver(createEventSchema),
   });
 
-  // TODO: THis will need to be refactored once the route to
-  // edit an existing office hour is created
+  const recurring = watch("recurringEvent");
+
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
@@ -77,7 +82,7 @@ function UpsertEventForm({ type }) {
       // TODO: Will need to be refactored once we deal with recurring events.
       toast.success(
         `Successfully created office hour on ${date} from 
-         ${startTime} to ${endTime}`
+           ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
@@ -90,12 +95,14 @@ function UpsertEventForm({ type }) {
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
-      recurringEvent: false, // TODO: For now, the default is false
-      startDate: moment(data.date).format("MM-DD-YYYY"),
-      endDate: moment(data.date).format("MM-DD-YYYY"),
+      recurringEvent: data.recurringEvent,
+      startDate: moment(data.startDate).format("MM-DD-YYYY"),
+      endDate: recurring
+        ? moment(data.endDate).format("MM-DD-YYYY")
+        : moment(data.startDate).format("MM-DD-YYYY"),
       location: data.location,
-      daysOfWeek: [DAYS[data.date.getDay()]], // TODO: Will need to be altered later
-      timeInterval: 10, // TODO: For now, the default is 10,
+      daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
+      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -103,15 +110,16 @@ function UpsertEventForm({ type }) {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="column" spacing={theme.spacing(3)}>
-          <FormInputText
-            name="date"
-            control={control}
-            label="Date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-          />
-          <Stack direction="row" spacing={theme.spacing(3)}>
+        <Stack
+          direction="column"
+          alignItems="center"
+          spacing={theme.spacing(3)}
+        >
+          <Stack
+            direction="row"
+            sx={{ width: "100%" }}
+            spacing={theme.spacing(3)}
+          >
             <FormInputText
               name="startTime"
               control={control}
@@ -127,14 +135,41 @@ function UpsertEventForm({ type }) {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
+          <FormCheckbox
+            name="recurringEvent"
+            control={control}
+            label="Recurring event"
+          />
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurring ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
+          {recurring && (
+            <FormInputText
+              name="endDate"
+              control={control}
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          )}
+          {recurring && <ToggleRecurringDay />}
           <FormInputText name="location" control={control} label="Location" />
+          <FormInputText
+            name="timeInterval"
+            label="Time Limit Per Student in Minutes"
+            control={control}
+          />
           <Button
             type="submit"
             variant="contained"
             disabled={isLoading}
             fullWidth
           >
-            {type === "edit" ? "Update" : "Create"}
+            Create
           </Button>
         </Stack>
       </Form>
@@ -143,4 +178,4 @@ function UpsertEventForm({ type }) {
   );
 }
 
-export default UpsertEventForm;
+export default CreateEventForm;
