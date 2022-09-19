@@ -16,7 +16,7 @@ import { Navigate } from "react-router-dom";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
-  const { isAuthenticated, ssoSignIn, signIn, signInAsUser, signInAsAdmin } =
+  const { isAuthenticated, signIn, signInAsUser, signInAsAdmin } =
     useAuth();
   const { control, handleSubmit } = useForm({
     defaultValues: {

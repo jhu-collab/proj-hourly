@@ -22,6 +22,7 @@ const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))
 );
 const Users = Loadable(lazy(() => import("./pages/admin/Users")));
+const Profile = Loadable(lazy(() => import("./pages/account/Profile")));
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/registrations" element={<Registrations />} />
               <Route path="/roster" element={<Roster />} />
               <Route path="/courseinformation" element={<CourseInfoPage />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
               </Route>
