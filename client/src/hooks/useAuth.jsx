@@ -1,9 +1,9 @@
 import axios from "axios";
-import { BASE_URL } from "./helper";
 import { useStoreToken } from "../services/store";
 import { decodeToken, isExpired } from "react-jwt";
 import { errorToast } from "../utils/toasts";
 import Debug from "debug";
+import { BASE_URL } from "../services/common";
 
 const debug = new Debug(`hourly:hooks:useAuth.js`);
 

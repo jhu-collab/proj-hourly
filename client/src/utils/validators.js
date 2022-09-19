@@ -2,12 +2,9 @@ import moment from "moment";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Must be a valid email")
-    .max(255)
-    .required("Email is required"),
-});
+  username: yup.string().min(1),
+  password: yup.string().min(1)
+})
 
 const PHONE_NO_REGEX = /^\(?([0-9]{3})\)?[-]{1}([0-9]{3})[-]{1}([0-9]{4})$/;
 
