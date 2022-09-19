@@ -25,6 +25,10 @@ function Profile() {
 
   const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
 
+  // TODO: We need backend routes that can retrieve information about
+  // a user and one that allows a user to modify their account details
+  // const { isLoading, error, data } = useQueryUser();
+  // const { userMutation } = useMutationUser();
   useEffect(() => {
     selectSidebarItem("");
   });

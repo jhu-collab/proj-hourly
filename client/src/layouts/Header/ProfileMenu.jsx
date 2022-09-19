@@ -19,7 +19,7 @@ function ProfileMenu() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    setId(4);
+    setId();
     setName();
     navigate("/login");
   };

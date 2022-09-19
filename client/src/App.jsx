@@ -30,7 +30,7 @@ function App() {
       <ScrollTop>
         <Routes>
           <Route path="*" element={<NotFound />} />
-          {/* <Route path="/" element={<ProtectedRoute />}> */}
+          <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<MainLayout />}>
               <Route path="" element={<YourCourses />} />
               <Route path="/calendar" element={<Calendar />} />
@@ -42,7 +42,7 @@ function App() {
                 <Route path="users" element={<Users />} />
               </Route>
             </Route>
-          {/* </Route> */}
+          </Route>
           <Route path="/" element={<MinimalLayout />}>
             <Route path="/login" element={<AuthLogin />} />
             <Route path="login/callback" element={<Callback />} />
