@@ -5,9 +5,8 @@ import ScrollTop from "./components/ScrollTop";
 import Loadable from "./components/Loadable";
 import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
-import { useAccountStore } from "./services/store";
+import ProtectedRoute from "./layouts/ProtectedRoute";
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const YourCourses = Loadable(
   lazy(() => import("./pages/your-courses/YourCourses"))
@@ -24,18 +23,12 @@ const Registrations = Loadable(
 );
 
 function App() {
-  const id = useAccountStore((state) => state.id);
-
   return (
     <ThemeCustomization>
       <ScrollTop>
         <Routes>
-          <Route path="/" element={<MinimalLayout />}>
-            <Route path="/login" element={<AuthLogin />} />
-            <Route path="login/callback" element={<Callback />} />
-          </Route>
           <Route path="*" element={<NotFound />} />
-          <Route path="/" element={<ProtectedRoute />}>
+          {/* <Route path="/" element={<ProtectedRoute />}> */}
             <Route path="/" element={<MainLayout />}>
               <Route path="" element={<YourCourses />} />
               <Route path="/calendar" element={<Calendar />} />
@@ -46,6 +39,10 @@ function App() {
                 {/* <Route path="users" element={<Users />} /> */}
               </Route>
             </Route>
+          {/* </Route> */}
+          <Route path="/" element={<MinimalLayout />}>
+            <Route path="/login" element={<AuthLogin />} />
+            <Route path="login/callback" element={<Callback />} />
           </Route>
         </Routes>
       </ScrollTop>
