@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Popup from "./Popup";
 
-export const SignOutPopup = NiceModal.create(({onClose}) => {
+export const SignOutPopup = NiceModal.create(({ onClose }) => {
   const modal = useModal();
 
   return (
@@ -36,7 +36,7 @@ function WindowFocusHandler() {
 
   const onFocus = () => {
     if (isTokenExpired()) {
-        NiceModal.show("sign-out", { onClose: onCloseHandler})
+      NiceModal.show("sign-out", { onClose: onCloseHandler });
     }
   };
 

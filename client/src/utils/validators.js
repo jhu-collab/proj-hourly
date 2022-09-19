@@ -3,8 +3,8 @@ import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
-  password: yup.string().min(1, "Password must be 1 or more characters")
-})
+  password: yup.string().min(1, "Password must be 1 or more characters"),
+});
 
 const PHONE_NO_REGEX = /^\(?([0-9]{3})\)?[-]{1}([0-9]{3})[-]{1}([0-9]{4})$/;
 

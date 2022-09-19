@@ -16,7 +16,9 @@ const CourseInfoPage = Loadable(
   lazy(() => import("./pages/course-information/CourseInfoPage"))
 );
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
-const Callback = Loadable(lazy(() => import("./pages/authentication/Callback")));
+const Callback = Loadable(
+  lazy(() => import("./pages/authentication/Callback"))
+);
 const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
 const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))

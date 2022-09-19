@@ -53,7 +53,7 @@ function useAuth() {
       updateToken(token);
     } catch (err) {
       debug({ err });
-      errorToast(err) 
+      errorToast(err);
     }
   };
 

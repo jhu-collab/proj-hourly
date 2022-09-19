@@ -13,11 +13,9 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import useAuth from "../../hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
-
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
-  const { isAuthenticated, signIn, signInAsUser, signInAsAdmin } =
-    useAuth();
+  const { isAuthenticated, signIn, signInAsUser, signInAsAdmin } = useAuth();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       username: "",
@@ -63,9 +61,7 @@ function AuthLogin() {
         <SingleSignOn />
       )}
 
-      <Divider label="Or continue with">
-        Or continue with
-      </Divider>
+      <Divider label="Or continue with">Or continue with</Divider>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
           <FormInputText

@@ -25,7 +25,7 @@ function ProfileMenu() {
   };
 
   const handleProfile = () => {
-    navigate("/profile")
+    navigate("/profile");
   };
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
