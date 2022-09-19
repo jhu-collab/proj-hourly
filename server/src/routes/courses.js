@@ -74,14 +74,15 @@ router.get(
   officeHourController.getForCourse
 );
 
-router.get("/:courseId/officeHours/:filter",
+router.get(
+  "/:courseId/officeHours/:filter",
   param("courseId", "Must provide a courseId").notEmpty(),
   param("filter", "Must provide a filter").notEmpty().isIn(["all", "mine"]),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isCourseStaffOrInstructor,
-  officeHourController.getForCourseWithFilter,
-)
+  officeHourController.getForCourseWithFilter
+);
 
 router.get(
   "/:courseId",
