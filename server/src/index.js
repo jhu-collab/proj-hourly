@@ -2,6 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
+import auth from "./routes/auth.js";
+import sso from "./routes/sso.js";
 import users from "./routes/users.js";
 import courses from "./routes/courses.js";
 import officeHours from "./routes/officeHours.js";
@@ -20,6 +22,8 @@ app.get("/", (req, res) => {
 });
 
 // Routing (API endpoints)
+app.use("/", auth);
+app.use("/", sso);
 app.use("/api", users);
 app.use("/api/course", courses);
 app.use("/api/account", account);
