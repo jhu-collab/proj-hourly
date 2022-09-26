@@ -40,7 +40,7 @@ function useAuth() {
 
   const ssoSignIn = async () => {
     debug("Redirect to the Hourly API for JHU SSO...");
-    window.location.href = import.meta.env.VITE_HOURLY_SSO_JHU_URL;
+    window.location.href = import.meta.env.VITE_ROSTER_SSO_JHU_URL;
   };
 
   const signIn = async ({ username, password }) => {
@@ -67,7 +67,7 @@ function useAuth() {
     debug("Sign in as a sample admin user!");
     signIn({
       username: import.meta.env.VITE_ADMIN_USERNAME,
-      password: import.meta.env.VITE_ADMIN_PASSPORT,
+      password: import.meta.env.VITE_ADMIN_PASSWORD,
     });
   };
 
@@ -76,7 +76,7 @@ function useAuth() {
     debug("Sign in as a sample (regular) user!");
     signIn({
       username: import.meta.env.VITE_USER_USERNAME,
-      password: import.meta.env.VITE_USER_PASSPORT,
+      password: import.meta.env.VITE_USER_PASSWORD,
     });
   };
 
