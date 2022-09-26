@@ -19,6 +19,7 @@
     "@mui/x-data-grid": "^5.13.1",
     "apexcharts": "^3.27.3",
     "axios": "^0.27.2",
+    "debug": "^4.3.4",
     "framer-motion": "^6.3.16",
     "ical-generator": "^3.4.3",
     "lodash": "^4.17.21",
