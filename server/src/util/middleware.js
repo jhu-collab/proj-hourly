@@ -94,11 +94,17 @@ export const refreshToken = async (req, res, next) => {
       });
 
       if (user) {
-        debug(`Check if the incoming token matches the stored token...`);
-        if (token !== user.token) {
-          debug(`Tokens did not match!`);
-          throw new ApiError(401, "Authorization token error!");
-        }
+        /* 
+          BUG: If we check against the stored one, a user cannot work with the app from two different devices as 
+          they will have to sign out and in from one device every time they work from another. 
+          We can still use the refresh token strategy to update the token so effectively that a user session does 
+          not expire as long as they are working with the app.
+        */
+        // debug(`Check if the incoming token matches the stored token...`);
+        // if (token !== user.token) {
+        //   debug(`Tokens did not match!`);
+        //   throw new ApiError(401, "Authorization token error!");
+        // }
 
         debug(`Create a new token...`);
         const {
@@ -122,8 +128,10 @@ export const refreshToken = async (req, res, next) => {
       } else {
         debug(`No user found with this token!`);
         // This can happen under two conditions:
-        // 1. A verifued and authenticated user deleted itself!
+        // 1. A verified and authenticated user deleted itself! 
+        //    TODO: for this case, perhaps we should expire the token!
         // 2. The token was created manually without correct user info (e.g. by a developer)
+        //    TODO: for this case, perhaps we should not allow a developer to do this!
         debug(`Returning the original token without refreshing it!`);
         refreshedToken = token;
       }
