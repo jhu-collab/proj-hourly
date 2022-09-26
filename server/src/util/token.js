@@ -1,22 +1,15 @@
-import jwt from "jsonwebtoken";
+import jsonWebToken from "jsonwebtoken";
 
-export const createToken = async (user, expiration, callback) => {
-  const payload = {
-    user: {
-      id: user.id.toString(),
-    },
-  };
-  return jwt.sign(
-    payload,
-    process.env.JWT_SECRET,
-    {
-      expiresIn: expiration || "20d",
-    },
-    (err, token) => callback(err, token)
-  );
+export const createToken = ({ user, expiresIn }) => {
+  return jsonWebToken.sign(user, process.env.JWT_SECRET, {
+    algorithm: "HS256",
+    expiresIn: expiresIn || "2d",
+  });
 };
 
-export const verifyToken = async (token, callback) =>
-  jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
-    callback(error, decoded);
+export const decodeToken = (token) => {
+  return jsonWebToken.verify(token, process.env.JWT_SECRET, {
+    algorithm: "HS256",
+    ignoreNotBefore: true,
   });
+};

@@ -6,12 +6,11 @@ const generateFakeUsers = async (numFakeUsers) => {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
     const email = faker.internet.email(firstName, lastName, "fakerjs.dev");
-    const phoneNumber = faker.phone.number();
     await prisma.account.create({
       data: {
         email: email.toLowerCase(),
         userName: `${firstName} ${lastName}`,
-        phoneNumber,
+        role: "Admin",
       },
     });
   }
