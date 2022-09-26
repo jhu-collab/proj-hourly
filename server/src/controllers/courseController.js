@@ -33,7 +33,8 @@ export const create = async (req, res) => {
       codeIsUnique = true;
     }
   }
-  const { title, number, semester, year, id } = req.body;
+  const { title, number, semester, year } = req.body;
+  const id = req.id;
   const cal = ical({ name: title });
   await prisma.Course.create({
     data: {

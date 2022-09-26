@@ -5,7 +5,7 @@ import * as controller from "../controllers/courseController.js";
 import * as accountValidator from "../util/accountValidator.js";
 import * as officeHourController from "../controllers/officeHourController.js";
 import * as accountController from "../controllers/accountController.js";
-import { checkToken } from "../util/checkToken.js";
+import { checkToken } from "../util/middleware.js";
 
 const router = express.Router();
 const body = express_validator.body;

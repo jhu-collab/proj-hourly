@@ -55,6 +55,7 @@ export const checkToken = async (req, res, next) => {
       `Attaching user and token (and its decoded expirtation date) to the req object`
     );
     req.user = userInfo;
+    req.id = userInfo.id;
     req.token = {
       value: token,
       expiresIn: exp,
@@ -128,7 +129,7 @@ export const refreshToken = async (req, res, next) => {
       } else {
         debug(`No user found with this token!`);
         // This can happen under two conditions:
-        // 1. A verified and authenticated user deleted itself! 
+        // 1. A verified and authenticated user deleted itself!
         //    TODO: for this case, perhaps we should expire the token!
         // 2. The token was created manually without correct user info (e.g. by a developer)
         //    TODO: for this case, perhaps we should not allow a developer to do this!
