@@ -1,5 +1,8 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:services:store.js`);
 
 // Manages states that involve layout control
 export const useLayoutStore = create(
