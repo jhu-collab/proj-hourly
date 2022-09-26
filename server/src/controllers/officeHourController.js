@@ -152,7 +152,7 @@ export const register = async (req, res) => {
   validate(req);
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const dateObj = new Date(date);
   const registration = await prisma.registration.create({
     data: {
@@ -514,7 +514,7 @@ export const editAll = async (req, res) => {
 export const getRegistrationStatus = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
       officeHourId,
