@@ -9,7 +9,7 @@ import FormInputText from "../../../components/form-ui/FormInputText";
 import { toast } from "react-toastify";
 import {
   useEventStore,
-  useAccountStore,
+  useStoreToken,
   useCourseStore,
   useLayoutStore,
 } from "../../../services/store";
@@ -22,6 +22,7 @@ import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import { decodeToken } from "react-jwt";
 
 const DAYS = [
   "Sunday",
@@ -42,7 +43,9 @@ function CreateEventForm() {
   const queryClient = useQueryClient();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const id = useAccountStore((state) => state.id);
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+
   const course = useCourseStore((state) => state.course);
 
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);

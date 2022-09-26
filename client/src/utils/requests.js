@@ -1,14 +1,17 @@
 import axios from "axios";
 import moment from "moment";
+import { decodeToken } from "react-jwt";
 import { BASE_URL } from "../services/common";
 import {
   useEventStore,
-  useAccountStore,
+  useStoreToken,
   useCourseStore,
 } from "../services/store";
 
 function getUserId() {
-  return useAccountStore.getState().id;
+  const token = useStoreToken.getState().token;
+  const { id } = decodeToken(token);
+  return id;
 }
 
 function getCourseId() {

@@ -67,31 +67,6 @@ export const useThemeStore = create(
   )
 );
 
-// Manages states that involves user information
-export const useAccountStore = create(
-  persist(
-    (set) => ({
-      // TODO: Once backend has set up tokens, this will be replaced.
-      id: null,
-      setId: (value) =>
-        set(() => ({
-          id: value || null,
-        })),
-
-      name: null,
-      setName: (value) =>
-        set(() => ({
-          name: value || null,
-        })),
-    }),
-    {
-      name: "account",
-      getStorage: () => localStorage,
-      partialize: (state) => ({ id: state.id, name: state.name }),
-    }
-  )
-);
-
 // Manages states that involves the currently
 // selected course
 export const useCourseStore = create(

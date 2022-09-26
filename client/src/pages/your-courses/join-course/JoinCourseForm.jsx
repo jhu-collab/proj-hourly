@@ -9,8 +9,9 @@ import { joinCourseSchema } from "../../../utils/validators";
 import { useMutation, useQueryClient } from "react-query";
 import { joinCourse } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
-import { useAccountStore } from "../../../services/store";
+import { useStoreToken } from "../../../services/store";
 import { errorToast } from "../../../utils/toasts";
+import { decodeToken } from "react-jwt";
 
 /**
  * Component that represents the form that is used to join a course.
@@ -18,7 +19,8 @@ import { errorToast } from "../../../utils/toasts";
  * @returns A component representing the Join Course form.
  */
 function JoinCourseForm({ onClose }) {
-  const id = useAccountStore((state) => state.id);
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
   const queryClient = useQueryClient();
   const { control, handleSubmit } = useForm({
     defaultValues: {

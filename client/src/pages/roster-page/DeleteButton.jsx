@@ -4,7 +4,8 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { useMutation, useQueryClient } from "react-query";
 import { removeStaffOrStudent } from "../../utils/requests";
-import { useAccountStore } from "../../services/store";
+import { useStoreToken } from "../../services/store";
+import { decodeToken } from "react-jwt";
 
 function DeleteButton(props) {
   const { rows, params, isStaff } = props;
@@ -26,9 +27,10 @@ function DeleteButton(props) {
   const isButtonDisabled = () => {
     // Return true if member is the current user
     // Or if member is an instructor and user is not an instructor
-    const userId = useAccountStore((state) => state.id);
+    const token = useStoreToken((state) => state.token);
+    const { id } = decodeToken(token);
     const instructorIds = rows.instructors?.map((user) => user.id);
-    const isMemberInstructor = instructorIds?.indexOf(userId) !== -1;
+    const isMemberInstructor = instructorIds?.indexOf(id) !== -1;
     return !isMemberInstructor;
   };
 
