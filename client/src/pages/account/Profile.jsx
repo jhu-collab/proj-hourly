@@ -6,7 +6,8 @@ import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import { Button, Stack } from "@mui/material";
 import AnimateButton from "../../components/AnimateButton";
-import { useLayoutStore } from "../../services/store";
+import { useLayoutStore, useStoreToken } from "../../services/store";
+import { decodeToken } from "react-jwt";
 
 const schema = yup.object({
   id: yup.number().transform((val) => Number(val)),
@@ -22,6 +23,9 @@ yup;
 
 function Profile() {
   const [edit, setEdit] = useState(false);
+  const token = useStoreToken((state) => state.token);
+  //TODO: This will later be added as query using the react-query package
+  const { id, userName, firstName, preferredName, lastName, email, role } = decodeToken(token);
 
   const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
 
@@ -35,20 +39,19 @@ function Profile() {
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      id: "0",
-      username: "",
-      firstName: "",
-      preferredName: "",
-      lastName: "",
-      email: "",
-      role: "",
+      id: id,
+      username: userName,
+      firstName: firstName,
+      preferredName: preferredName,
+      lastName: lastName,
+      email: email,
+      role: role,
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = (data) => {
     setEdit(false);
-    console.log(data);
   };
 
   const handleOnClickCancelBtn = (e) => {
