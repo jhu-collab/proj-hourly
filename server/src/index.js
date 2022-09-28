@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
 });
 
 // Routing (API endpoints)
-app.use("/", auth);
 app.use("/", sso);
+app.use("/", auth);
 app.use("/api", users);
 app.use("/api/course", courses);
 app.use("/api/account", account);
