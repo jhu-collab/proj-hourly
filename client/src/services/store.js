@@ -1,5 +1,8 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:services:store.js`);
 
 // Manages states that involve layout control
 export const useLayoutStore = create(
@@ -64,31 +67,6 @@ export const useThemeStore = create(
   )
 );
 
-// Manages states that involves user information
-export const useAccountStore = create(
-  persist(
-    (set) => ({
-      // TODO: Once backend has set up tokens, this will be replaced.
-      id: null,
-      setId: (value) =>
-        set(() => ({
-          id: value || null,
-        })),
-
-      name: null,
-      setName: (value) =>
-        set(() => ({
-          name: value || null,
-        })),
-    }),
-    {
-      name: "account",
-      getStorage: () => localStorage,
-      partialize: (state) => ({ id: state.id, name: state.name }),
-    }
-  )
-);
-
 // Manages states that involves the currently
 // selected course
 export const useCourseStore = create(
@@ -143,3 +121,22 @@ export const useEventStore = create((set) => ({
       days: days || "",
     })),
 }));
+
+export const useStoreToken = create(
+  persist(
+    (set) => ({
+      token: "",
+      updateToken: (value) => {
+        debug("Updating the token...");
+        set({ token: value });
+      },
+    }),
+    {
+      name: "auth",
+      getStorage: () => localStorage,
+      partialize: (state) => ({
+        token: state.token,
+      }),
+    }
+  )
+);

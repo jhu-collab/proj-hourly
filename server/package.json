@@ -20,7 +20,10 @@
   "dependencies": {
     "@prisma/client": "^4.0.0",
     "accesscontrol": "^2.2.1",
+    "axios": "^0.27.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "debug": "^4.3.4",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
     "helmet": "^5.1.0",

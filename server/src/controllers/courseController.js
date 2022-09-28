@@ -33,7 +33,8 @@ export const create = async (req, res) => {
       codeIsUnique = true;
     }
   }
-  const { title, number, semester, year, id } = req.body;
+  const { title, number, semester, year } = req.body;
+  const id = req.id;
   const cal = ical({ name: title });
   await prisma.Course.create({
     data: {
@@ -257,7 +258,7 @@ export const removeStudent = async (req, res) => {
 export const leaveCourse = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
-  const accountId = parseInt(req.get("id"), 10);
+  const accountId = req.id;
   const course = await prisma.course.update({
     where: {
       id: courseId,
@@ -284,7 +285,7 @@ export const leaveCourse = async (req, res) => {
 export const getCourse = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
-  const accountId = parseInt(req.get("id"), 10);
+  const accountId = req.id;
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -312,7 +313,7 @@ export const getCourse = async (req, res) => {
 
 export const getRoleInCourse = async (req, res) => {
   const courseId = parseInt(req.params.courseId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -373,7 +374,7 @@ export const getRoster = async (req, res) => {
 export const getAllRegistrations = async (req, res) => {
   validate(req);
   const courseId = parseInt(req.params.courseId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,

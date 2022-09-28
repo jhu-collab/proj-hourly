@@ -51,7 +51,7 @@ export const login = async (req, res) => {
 
 export const getCourses = async (req, res) => {
   validate(req);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const studentCourses = await prisma.course.findMany({
     where: {
       students: {
@@ -91,7 +91,7 @@ export const getCourses = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   validate(req);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   await prisma.registration.deleteMany({
     where: {
       accountId: id,

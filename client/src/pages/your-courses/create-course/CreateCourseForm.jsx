@@ -11,9 +11,10 @@ import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
 import Loader from "../../../components/Loader";
 import { createCourse } from "../../../utils/requests";
-import { useAccountStore } from "../../../services/store";
+import { useStoreToken } from "../../../services/store";
 import { errorToast } from "../../../utils/toasts";
 import NiceModal from "@ebay/nice-modal-react";
+import { decodeToken } from "react-jwt";
 
 const options = [
   {
@@ -45,7 +46,8 @@ const options = [
 function CreateCourseForm() {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const id = useAccountStore((state) => state.id);
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {

@@ -3,13 +3,9 @@ import moment from "moment";
 import { BASE_URL } from "../services/common";
 import {
   useEventStore,
-  useAccountStore,
+  useStoreToken,
   useCourseStore,
 } from "../services/store";
-
-function getUserId() {
-  return useAccountStore.getState().id;
-}
 
 function getCourseId() {
   return useCourseStore.getState().course.id;
@@ -24,15 +20,14 @@ function getEventDate() {
 }
 
 function getConfig() {
+  const token = useStoreToken.getState().token;
   return {
-    // TODO: Need to remove id key once backend implements user tokens
-    headers: { id: getUserId() },
+    headers: { Authorization: `Bearer ${token}` },
   };
 }
 
 // GET REQUESTS
 
-// TODO: Once token authorization is set up, id will be replaced.
 export const getCourses = async () => {
   const res = await axios.get(`${BASE_URL}/api/course/`, getConfig());
   return res.data;
@@ -175,8 +170,6 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
 };
 
 export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, {
-    headers: { id: getUserId() },
-  });
+  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, getConfig());
   return res.data;
 };
