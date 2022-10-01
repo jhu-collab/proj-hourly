@@ -4,7 +4,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
-import { Button, Stack } from "@mui/material";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
 import { useLayoutStore, useStoreToken } from "../../services/store";
 import { decodeToken } from "react-jwt";
@@ -25,7 +26,8 @@ function Profile() {
   const [edit, setEdit] = useState(false);
   const token = useStoreToken((state) => state.token);
   //TODO: This will later be added as query using the react-query package
-  const { id, userName, firstName, preferredName, lastName, email, role } = decodeToken(token);
+  const { id, userName, firstName, preferredName, lastName, email, role } =
+    decodeToken(token);
 
   const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
 
