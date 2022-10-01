@@ -4,15 +4,15 @@ import { BASE_URL } from "../services/common";
 import { useCourseStore, useStoreToken } from "../services/store";
 import { getConfig } from "./helper";
 
-function useQueryUsers() {
-  const queryKey = ["users"];
+function useQueryOfficeHours() {
+  const queryKey = ["officeHours"];
   const token = useStoreToken((state) => state.token);
   const course = useCourseStore((state) => state.course);
 
-  const getUsers = async () => {
+  const getOfficeHours = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/course/${course.id}/getRoster`,
+        `${BASE_URL}/api/course/${course.id}/officeHours`,
         getConfig(token)
       );
       return res.data;
@@ -22,8 +22,8 @@ function useQueryUsers() {
   };
 
   return {
-    ...useQuery(queryKey, getUsers),
+    ...useQuery(queryKey, getOfficeHours),
   };
 }
 
-export default useQueryUsers;
+export default useQueryOfficeHours;

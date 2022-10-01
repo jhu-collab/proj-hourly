@@ -1,10 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 import { BASE_URL } from "../services/common";
-import {
-  useEventStore,
-  useCourseStore,
-} from "../services/store";
+import { useEventStore, useCourseStore } from "../services/store";
 
 function getCourseId() {
   return useCourseStore.getState().course.id;
@@ -19,22 +16,6 @@ function getEventDate() {
 }
 
 // GET REQUESTS
-
-export const fetchUsers = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/api/course/${getCourseId()}/getRoster`,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const getOfficeHours = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/api/course/${getCourseId()}/officeHours`,
-    getConfig()
-  );
-  return res.data;
-};
 
 export const getTimeSlots = async () => {
   const res = await axios.get(

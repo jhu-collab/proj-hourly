@@ -35,9 +35,8 @@ function useMutationCreateCourse() {
   });
 
   return {
-    createCourseMutation: mutation,
+    ...mutation,
   };
 }
 
 export default useMutationCreateCourse;
-

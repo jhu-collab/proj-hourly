@@ -12,12 +12,11 @@ import { useEventStore, useLayoutStore } from "../../services/store";
 import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import EventPopover from "./event-details/EventPopover";
-import { useQuery } from "react-query";
-import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
+import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -38,7 +37,7 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
-  const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
+  const { isLoading, error, data } = useQueryOfficeHours();
 
   useEffect(() => {
     setIsStaff(courseType === "staff");

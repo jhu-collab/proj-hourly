@@ -54,10 +54,10 @@ function CreateCourseForm() {
     resolver: yupResolver(createCourseSchema),
   });
 
-  const { createCourseMutation } = useMutationCreateCourse();
- 
+  const { mutate, isLoading } = useMutationCreateCourse();
+
   const onSubmit = (data) => {
-    createCourseMutation.mutate({ ...data, id: id });
+    mutate({ ...data, id: id });
   };
 
   return (
@@ -82,7 +82,7 @@ function CreateCourseForm() {
           </Button>
         </Stack>
       </Form>
-      {createCourseMutation.isLoading && <Loader />}
+      {isLoading && <Loader />}
     </>
   );
 }
