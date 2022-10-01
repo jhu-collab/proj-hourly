@@ -3,7 +3,6 @@ import moment from "moment";
 import { BASE_URL } from "../services/common";
 import {
   useEventStore,
-  useStoreToken,
   useCourseStore,
 } from "../services/store";
 
@@ -17,13 +16,6 @@ function getOfficeHourId() {
 
 function getEventDate() {
   return moment(useEventStore.getState().start).format("MM-DD-YYYY");
-}
-
-function getConfig() {
-  const token = useStoreToken.getState().token;
-  return {
-    headers: { Authorization: `Bearer ${token}` },
-  };
 }
 
 // GET REQUESTS

@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
+import { getConfig } from "./helper";
 
 function useQueryCourses() {
   const queryKey = ["courses"];
-
-  useQuery(["courses"], getCourses);
 
   const getCourses = async () => {
     try {
