@@ -57,6 +57,9 @@ export const combineTimeAndDate = (time, date) => {
 };
 
 export const calcDurationString = (startTime, endTime) => {
+  if (startTime > endTime) {
+    endTime.setDate(endTime.getDate() + 1);
+  }
   const diffMilliSeconds = endTime - startTime;
   const diffHours = Math.floor(diffMilliSeconds / 3600000);
   const diffMins = Math.floor((diffMilliSeconds % 3600000) / 60000);

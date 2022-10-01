@@ -298,8 +298,10 @@ export const getTimeSlotsRemaining = async (req, res) => {
     },
   });
   let start = officeHour.startTime;
-  const end = officeHour.endTime;
-
+  let end = officeHour.endTime;
+  if (start > end) {
+    end.setDate(end.getDate() + 1);
+  }
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
