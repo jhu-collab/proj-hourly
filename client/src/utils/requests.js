@@ -170,6 +170,9 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
 };
 
 export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, getConfig());
+  const res = await axios.delete(
+    `${BASE_URL}/api/course/leave/${courseid}`,
+    getConfig()
+  );
   return res.data;
 };
