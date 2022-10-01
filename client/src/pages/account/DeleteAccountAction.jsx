@@ -15,7 +15,6 @@ import useAuth from "../../hooks/useAuth";
  */
 function DeleteAccountAction({ userid }) {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { signOut } = useAuth();
 
   const { mutate } = useMutation(() => deleteAccount(userid), {
