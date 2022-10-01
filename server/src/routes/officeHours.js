@@ -63,6 +63,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
+  validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
   validator.isTimeCorrectInterval,

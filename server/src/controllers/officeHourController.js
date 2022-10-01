@@ -1,7 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
-import validate from "../util/checkValidation.js";
+import checkValidation from "../util/checkValidation.js";
 import { generateCalendar } from "../util/icalHelpers.js";
 import { createTimeString } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
@@ -86,7 +86,7 @@ const createJustDateObject = (date) => {
 };
 
 export const create = async (req, res) => {
-  validate(req);
+  checkValidation(res);
   const {
     startTime,
     endTime,
@@ -138,7 +138,7 @@ export const create = async (req, res) => {
 };
 
 export const getForCourse = async (req, res) => {
-  validate(req);
+  checkValidation(res);
   const courseId = parseInt(req.params.courseId, 10);
   const course = await prisma.course.findUnique({
     where: {
@@ -149,7 +149,7 @@ export const getForCourse = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  validate(req);
+  checkValidation(res);
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
   const id = req.id;

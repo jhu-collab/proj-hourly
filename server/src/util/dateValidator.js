@@ -12,8 +12,9 @@ export const officeHourDateCheck = (req, res, next) => {
     return res.status(StatusCodes.BAD_REQUEST).json({
       msg: "ERROR: Start Date and End Date must match for single events",
     });
+  } else {
+    next();
   }
-  next();
 };
 
 export const endIsAfterStart = (req, res, next) => {
@@ -24,6 +25,7 @@ export const endIsAfterStart = (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Start date is after end date" });
+  } else {
+    next();
   }
-  next();
 };

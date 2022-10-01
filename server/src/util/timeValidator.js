@@ -24,5 +24,7 @@ export const isTime = async (req, res, next) => {
       msg: "ERROR: seconds are out of bound",
     });
   }
-  next();
+  if (!res.headersSent) {
+    next();
+  }
 };
