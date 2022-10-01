@@ -1,7 +1,6 @@
 import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../../utils/toasts";
 import { deleteAccount } from "../../utils/requests";
