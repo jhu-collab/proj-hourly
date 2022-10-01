@@ -7,9 +7,9 @@ import { errorToast } from "../../utils/toasts";
 import { deleteAccount } from "../../utils/requests";
 
 /**
- * Represents the Trash IconButton on the CourseDetails component
+ * Represents the Delete Account Button on the Profiles component
  * and the associated ConfirmPopup component.
- * @param {*} courseid - for which course the user wants to leave
+ * @param {*} id - for the associated user
  * @returns Delete action button and confirmation popup.
  */
 function DeleteAccountAction({ userid }) {
