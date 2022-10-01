@@ -17,7 +17,6 @@ function useMutationCreateCourse() {
       const res = await axios.post(endpoint, course, getConfig(token));
       return res.data;
     } catch (err) {
-      errorToast(err);
       throw err;
     }
   };
@@ -31,6 +30,9 @@ function useMutationCreateCourse() {
       toast.success(
         `Successfully created the ${course.title} course for ${course.semester} ${course.calendarYear}`
       );
+    },
+    onError: (err) => {
+      errorToast(err);
     },
   });
 
