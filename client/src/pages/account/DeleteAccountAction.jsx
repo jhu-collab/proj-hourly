@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../../utils/toasts";
 import { deleteAccount } from "../../utils/requests";
+import useAuth from "../../hooks/useAuth";
 
 /**
  * Represents the Delete Account Button on the Profiles component
@@ -15,11 +16,13 @@ import { deleteAccount } from "../../utils/requests";
 function DeleteAccountAction({ userid }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { signOut } = useAuth();
+
   const { mutate } = useMutation(() => deleteAccount(userid), {
     onSuccess: () => {
       queryClient.invalidateQueries(["accounts"]);
       toast.success(`Successfully deleted account!`);
-      navigate("/login");
+      signOut();
     },
     onError: (error) => {
       errorToast(error);
