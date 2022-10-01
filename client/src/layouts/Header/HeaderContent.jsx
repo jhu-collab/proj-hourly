@@ -4,7 +4,7 @@ import Search from "./Search";
 import Profile from "./Profile";
 import Notification from "./Notification";
 import MobileSection from "./MobileSection";
-
+import DarkModeSwitch from "./DarkModeSwitch";
 function HeaderContent() {
   const matchesXs = useMediaQuery((theme) => theme.breakpoints.down("md"));
   return (
@@ -12,6 +12,7 @@ function HeaderContent() {
       {!matchesXs && <Search />}
       {matchesXs && <Box sx={{ width: "100%", ml: 1 }} />}
       <Notification />
+      <DarkModeSwitch/>
       {!matchesXs && <Profile />}
       {matchesXs && <MobileSection />}
     </>
