@@ -5,7 +5,7 @@ export const getMessage = (error) => {
     error &&
     error.response &&
     error.response.data &&
-    error.response.data.message;
+    error.response.data.msg;
   const message = apiErrorMessage || axiosErrorMessage || genericMessage;
   return message;
 };
