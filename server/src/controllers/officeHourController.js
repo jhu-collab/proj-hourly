@@ -153,7 +153,18 @@ export const register = async (req, res) => {
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
   const id = req.id;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const dateObj = new Date(date);
+  if (
+    officeHour.startTime > officeHour.endTime &&
+    startTime < officeHour.startTime
+  ) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   const registration = await prisma.registration.create({
     data: {
       startTime: stringToTimeObj(startTime),

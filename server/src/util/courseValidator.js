@@ -297,6 +297,8 @@ export const areTopicsForCourse = async (req, res, next) => {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ msg: "ERROR: topic is not for course" });
+    } else {
+      next();
     }
   } else {
     next();
