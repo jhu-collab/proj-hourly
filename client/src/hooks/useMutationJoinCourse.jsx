@@ -23,13 +23,13 @@ function useMutationJoinCourse() {
 
   const mutation = useMutation(joinCourse, {
     onSuccess: (data) => {
-        const course = data.course;
-        queryClient.invalidateQueries(["courses"]);
-        NiceModal.hide("join-course");
-        toast.success(
-          `Successfully joined ${course.title} course for ${course.semester} ${course.calendarYear}`
-        );
-      },
+      const course = data.course;
+      queryClient.invalidateQueries(["courses"]);
+      NiceModal.hide("join-course");
+      toast.success(
+        `Successfully joined ${course.title} course for ${course.semester} ${course.calendarYear}`
+      );
+    },
     onError: (err) => {
       errorToast(err);
     },

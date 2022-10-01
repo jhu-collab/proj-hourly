@@ -2,27 +2,21 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { joinCourseSchema } from "../../../utils/validators";
-import { useMutation, useQueryClient } from "react-query";
-import { joinCourse } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { useStoreToken } from "../../../services/store";
-import { errorToast } from "../../../utils/toasts";
 import { decodeToken } from "react-jwt";
 import useMutationJoinCourse from "../../../hooks/useMutationJoinCourse";
 
 /**
  * Component that represents the form that is used to join a course.
- * @param {*} onClose: function that closes the popup component
  * @returns A component representing the Join Course form.
  */
-function JoinCourseForm({ onClose }) {
+function JoinCourseForm() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
-  const queryClient = useQueryClient();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       code: "",

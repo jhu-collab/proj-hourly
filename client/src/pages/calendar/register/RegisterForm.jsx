@@ -4,29 +4,33 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import moment from "moment";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
 import { useEventStore, useLayoutStore } from "../../../services/store";
-import { getTimeSlots, register } from "../../../utils/requests";
+import { register } from "../../../utils/requests";
 import { errorToast } from "../../../utils/toasts";
 import { registerSchema } from "../../../utils/validators";
 import useTheme from "@mui/material/styles/useTheme";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 
 const getOptions = (timeSlots) => {
   const options = [];
+  console.log(timeSlots);
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].start, "hh:mm").format("LT");
-    const localeEndTime = moment(timeSlots[i].end, "hh:mm").format("LT");
+    const localeStartTime = moment(timeSlots[i].startTime, "hh:mm").format(
+      "LT"
+    );
+    const localeEndTime = moment(timeSlots[i].endTime, "hh:mm").format("LT");
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].start} - ${timeSlots[i].end}`,
+      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
     });
   }
 
@@ -43,11 +47,7 @@ function RegisterForm() {
 
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
-  const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
+  const { isLoading, data } = useQueryTimeSlots();
 
   const { mutate, isLoading: isLoadingMutate } = useMutation(register, {
     onSuccess: (data) => {

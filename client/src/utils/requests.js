@@ -17,14 +17,6 @@ function getEventDate() {
 
 // GET REQUESTS
 
-export const getTimeSlots = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/getRemainingTimeSlots/${getEventDate()}`,
-    getConfig()
-  );
-  return res.data;
-};
-
 export const getAllRegistrations = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/getAllRegistrations`,
@@ -66,15 +58,6 @@ export const cancelAll = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/cancelAll`,
     body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const joinCourse = async (course) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/course/signup/`,
-    course,
     getConfig()
   );
   return res.data;
