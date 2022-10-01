@@ -57,6 +57,18 @@ function Registrations() {
     setRegistrations(result);
   }, [data, timeTab]);
 
+  function latestEventsFirst(a, b) {
+    return b.startObj < a.startObj ?  1 
+         : b.startObj > a.startObj ? -1 
+         : 0;               
+  };
+
+  function earliestEventsFirst(a, b) {
+    return b.startObj > a.startObj ?  1 
+         : b.startObj < a.startObj ? -1 
+         : 0;               
+  };
+
   return (
     <>
       <RegistrationsBar />
@@ -76,17 +88,17 @@ function Registrations() {
           <RegistrationsPanel
             value={timeTab}
             index={0}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={1}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={2}
-            registrations={registrations}
+            registrations={registrations.sort(latestEventsFirst)}
           />
         </>
       )}
