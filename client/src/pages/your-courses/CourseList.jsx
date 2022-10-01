@@ -3,9 +3,8 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
 import CourseCard from "./CourseCard";
-import { useQuery } from "react-query";
-import { getCourses } from "../../utils/requests";
 import { useLayoutStore } from "../../services/store";
+import useQueryCourses from "../../hooks/useQueryCourses";
 
 /**
  * Represents a list of courses that a user is associated with.
@@ -16,7 +15,7 @@ function CourseList() {
 
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQuery(["courses"], getCourses);
+  const { isLoading, error, data } = useQueryCourses();
 
   if (isLoading) {
     return (

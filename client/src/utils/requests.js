@@ -28,11 +28,6 @@ function getConfig() {
 
 // GET REQUESTS
 
-export const getCourses = async () => {
-  const res = await axios.get(`${BASE_URL}/api/course/`, getConfig());
-  return res.data;
-};
-
 export const fetchUsers = async () => {
   const res = await axios.get(
     `${BASE_URL}/api/course/${getCourseId()}/getRoster`,
