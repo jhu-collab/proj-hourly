@@ -72,11 +72,6 @@ export const signUp = async (body) => {
   return res.data;
 };
 
-export const createCourse = async (body) => {
-  const res = await axios.post(`${BASE_URL}/api/course/`, body, getConfig());
-  return res.data;
-};
-
 export const createOfficeHour = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/create`,
