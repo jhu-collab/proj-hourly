@@ -12,6 +12,7 @@ import Loader from "../../../components/Loader";
 import { useStoreToken } from "../../../services/store";
 import { errorToast } from "../../../utils/toasts";
 import { decodeToken } from "react-jwt";
+import useMutationJoinCourse from "../../../hooks/useMutationJoinCourse";
 
 /**
  * Component that represents the form that is used to join a course.
@@ -29,18 +30,7 @@ function JoinCourseForm({ onClose }) {
     resolver: yupResolver(joinCourseSchema),
   });
 
-  const { mutate, isLoading } = useMutation(joinCourse, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(["courses"]);
-      onClose();
-      toast.success(
-        `Successfully joined ${data.course.title} course for ${data.course.semester} ${data.course.calendarYear}`
-      );
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
+  const { mutate, isLoading } = useMutationJoinCourse();
 
   const onSubmit = (data) => {
     mutate({ ...data, id: id });
