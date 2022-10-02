@@ -64,16 +64,8 @@ function EditEventForm() {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack
-          direction="column"
-          alignItems="center"
-          spacing={3}
-        >
-          <Stack
-            direction="row"
-            sx={{ width: "100%" }}
-            spacing={3}
-          >
+        <Stack direction="column" alignItems="center" spacing={3}>
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
             <FormInputText
               name="startTime"
               control={control}

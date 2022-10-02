@@ -4,7 +4,11 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
-import { useEventStore, useStoreToken, useLayoutStore } from "../services/store";
+import {
+  useEventStore,
+  useStoreToken,
+  useLayoutStore,
+} from "../services/store";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -40,7 +44,7 @@ function useMutationCancelEvent(deleteType) {
       throw err;
     }
   };
-  
+
   const mutation = useMutation(
     recurring && deleteType === "this" ? cancelOnDate : cancelAll,
     {

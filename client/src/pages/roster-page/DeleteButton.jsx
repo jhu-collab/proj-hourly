@@ -1,28 +1,14 @@
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { useMutation, useQueryClient } from "react-query";
-import { removeStaffOrStudent } from "../../utils/requests";
 import { useStoreToken } from "../../services/store";
 import { decodeToken } from "react-jwt";
+import useMutationRemoveUser from "../../hooks/useMutationRemoveUser";
 
 function DeleteButton(props) {
   const { rows, params, isStaff } = props;
-  const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(
-    () => removeStaffOrStudent(params.id, isStaff),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["users"]);
-        toast.success(`Successfully removed the user`);
-      },
-      onError: (error) => {
-        toast.error("An error has occurred: " + error.message);
-      },
-    }
-  );
+  const { mutate } = useMutationRemoveUser(params.id, isStaff);
 
   const isButtonDisabled = () => {
     // Return true if member is the current user

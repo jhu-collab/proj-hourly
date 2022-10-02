@@ -4,7 +4,11 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
-import { useEventStore, useLayoutStore, useStoreToken } from "../services/store";
+import {
+  useEventStore,
+  useLayoutStore,
+  useStoreToken,
+} from "../services/store";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -24,7 +28,7 @@ function useMutationEditEvent(recurringEvent) {
 
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
 
-  const editEventAll= async (officeHour) => {
+  const editEventAll = async (officeHour) => {
     try {
       const endpoint = `${BASE_URL}/api/officeHour/${id}/editAll`;
       const res = await axios.post(endpoint, officeHour, getConfig(token));
@@ -34,7 +38,7 @@ function useMutationEditEvent(recurringEvent) {
     }
   };
 
-  const editEventOnDate= async (officeHour) => {
+  const editEventOnDate = async (officeHour) => {
     try {
       const endpoint = `${BASE_URL}/api/officeHour/${id}/editForDate/${date}`;
       const res = await axios.post(endpoint, officeHour, getConfig(token));

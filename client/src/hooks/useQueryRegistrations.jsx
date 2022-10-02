@@ -26,5 +26,4 @@ function useQueryRegistrations() {
   };
 }
 
-
 export default useQueryRegistrations;

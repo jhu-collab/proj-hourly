@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 function useMutationLeaveCourse(courseId) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
-  
+
   const navigate = useNavigate();
 
   const leaveCourse = async () => {
