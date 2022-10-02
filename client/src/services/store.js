@@ -85,11 +85,3 @@ export const useCourseStore = create(
     }
   )
 );
-
-// Manages states that involves the ConfirmPopup
-// component
-export const useConfirmDialogStore = create((set) => ({
-  message: "",
-  onSubmit: undefined,
-  close: () => set({ onSubmit: undefined }),
-}));
