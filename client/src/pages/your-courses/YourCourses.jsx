@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import CourseList from "./CourseList";
 import CoursesToggleGroup from "./CoursesToggleGroup";
 import CoursesSpeedDial from "./CoursesSpeedDial";
-import { useCourseStore } from "../../services/store";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
  * Component that represents the "Your Courses" page.
@@ -14,10 +14,9 @@ import { useCourseStore } from "../../services/store";
  */
 function YourCourses() {
   const theme = useTheme();
-  // TODO Testing to see if this comment will fix a weird
-  // bug in dev
-  const course = useCourseStore((state) => state.course);
-  const setCourse = useCourseStore((state) => state.setCourse);
+
+  const course = useStoreCourse((state) => state.course);
+  const setCourse = useStoreCourse((state) => state.setCourse);
 
   useEffect(() => {
     course && setCourse();

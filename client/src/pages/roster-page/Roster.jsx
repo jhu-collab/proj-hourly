@@ -5,7 +5,6 @@ import RosterTabs from "./RosterTabs";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
-import { useCourseStore } from "../../services/store";
 import NiceModal from "@ebay/nice-modal-react";
 import Button from "@mui/material/Button";
 import useQueryUsers from "../../hooks/useQueryUsers";
@@ -18,8 +17,6 @@ const Roster = () => {
   //delete it and use currenCourse.id instead
   const [value, setValue] = useState(0);
   const theme = useTheme();
-
-  const course = useCourseStore((state) => state.course);
 
   const { isLoading, error, data } = useQueryUsers();
 

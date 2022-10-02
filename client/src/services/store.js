@@ -66,22 +66,3 @@ export const useThemeStore = create(
     }
   )
 );
-
-// Manages states that involves the currently
-// selected course
-export const useCourseStore = create(
-  persist(
-    (set) => ({
-      course: null,
-      setCourse: (value) =>
-        set(() => ({
-          course: value || null,
-        })),
-    }),
-    {
-      name: "course",
-      getStorage: () => localStorage,
-      partialize: (state) => ({ course: state.course }),
-    }
-  )
-);

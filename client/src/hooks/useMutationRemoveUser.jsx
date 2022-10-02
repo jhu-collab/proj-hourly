@@ -3,15 +3,15 @@ import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import { toast } from "react-toastify";
-import { useCourseStore } from "../services/store";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
+import useStoreCourse from "./useStoreCourse";
 
 function useMutationRemoveUser(removeId, isStaff) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  const course = useCourseStore((state) => state.course);
+  const course = useStoreCourse((state) => state.course);
 
   const removeStaff = async () => {
     try {

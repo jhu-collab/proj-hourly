@@ -1,11 +1,12 @@
 import MainCard from "../../components/MainCard";
 import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
-import { useCourseStore, useLayoutStore } from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 import Stack from "@mui/material/Stack";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 function CourseInfoPage() {
-  const course = useCourseStore((state) => state.course);
+  const course = useStoreCourse((state) => state.course);
   const courseType = useLayoutStore((state) => state.courseType);
   return (
     <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>

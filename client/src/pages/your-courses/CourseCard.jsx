@@ -6,10 +6,10 @@ import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
-import { useCourseStore } from "../../services/store";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import useMutationLeaveCourse from "../../hooks/useMutationLeaveCourse";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -20,7 +20,7 @@ function CourseCard({ course, courseType }) {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const setCourse = useCourseStore((state) => state.setCourse);
+  const setCourse = useStoreCourse((state) => state.setCourse);
 
   const { mutate } = useMutationLeaveCourse(course.id);
 

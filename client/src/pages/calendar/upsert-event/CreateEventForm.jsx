@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
-import { useCourseStore } from "../../../services/store";
 import Loader from "../../../components/Loader";
 import moment from "moment";
 import ToggleRecurringDay from "./ToggleRecurringDay";
@@ -14,6 +13,7 @@ import { decodeToken } from "react-jwt";
 import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeHour";
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import useStoreCourse from "../../../hooks/useStoreCourse";
 
 const DAYS = [
   "Sunday",
@@ -33,7 +33,7 @@ function CreateEventForm() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
-  const course = useCourseStore((state) => state.course);
+  const course = useStoreCourse((state) => state.course);
 
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
