@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import { toast } from "react-toastify";
-import { useStoreToken } from "../services/store";
 import { BASE_URL } from "../services/common";
 import { useNavigate } from "react-router-dom";
+import useStoreToken from "./useStoreToken";
 
 function useMutationLeaveCourse(courseId) {
   const { token } = useStoreToken();

@@ -7,7 +7,6 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import {
   useEventStore,
-  useStoreToken,
   useCourseStore,
 } from "../../../services/store";
 import Loader from "../../../components/Loader";
@@ -16,6 +15,7 @@ import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import { decodeToken } from "react-jwt";
 import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeHour";
+import useStoreToken from "../../../hooks/useStoreToken";
 
 const DAYS = [
   "Sunday",

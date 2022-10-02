@@ -6,13 +6,13 @@ import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
 import {
   useEventStore,
-  useStoreToken,
   useLayoutStore,
 } from "../services/store";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import moment from "moment";
+import useStoreToken from "./useStoreToken";
 
 function useMutationCancelEvent(deleteType) {
   const { token } = useStoreToken();

@@ -2,9 +2,10 @@ import axios from "axios";
 import moment from "moment";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
-import { useEventStore, useStoreToken } from "../services/store";
+import { useEventStore } from "../services/store";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
+import useStoreToken from "./useStoreToken";
 
 function useQueryTimeSlots() {
   const queryKey = ["timeSlots"];

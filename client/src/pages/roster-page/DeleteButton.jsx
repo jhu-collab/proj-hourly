@@ -1,7 +1,7 @@
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { useStoreToken } from "../../services/store";
+import useStoreToken from "./useStoreToken";
 import { decodeToken } from "react-jwt";
 import useMutationRemoveUser from "../../hooks/useMutationRemoveUser";
 

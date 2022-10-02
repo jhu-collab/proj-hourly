@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
-import { useCourseStore, useStoreToken } from "../services/store";
+import { useCourseStore } from "../services/store";
 import { getConfig } from "./helper";
+import useStoreToken from "./useStoreToken";
 
 function useQueryOfficeHours() {
   const queryKey = ["officeHours"];

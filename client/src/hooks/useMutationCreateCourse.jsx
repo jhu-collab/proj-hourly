@@ -4,8 +4,8 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
-import { useStoreToken } from "../services/store";
 import { BASE_URL } from "../services/common";
+import useStoreToken from "./useStoreToken";
 
 function useMutationCreateCourse() {
   const { token } = useStoreToken();

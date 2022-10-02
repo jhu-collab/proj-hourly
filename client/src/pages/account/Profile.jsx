@@ -7,8 +7,9 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
-import { useLayoutStore, useStoreToken } from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 import { decodeToken } from "react-jwt";
+import useStoreToken from "../../hooks/useStoreToken";
 
 const schema = yup.object({
   id: yup.number().transform((val) => Number(val)),

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
-import { useStoreToken } from "../services/store";
 import { getConfig } from "./helper";
+import useStoreToken from "./useStoreToken";
 
 function useQueryCourses() {
   const queryKey = ["courses"];

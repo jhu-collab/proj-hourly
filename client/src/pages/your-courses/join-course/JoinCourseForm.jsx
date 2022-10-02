@@ -6,9 +6,9 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import { joinCourseSchema } from "../../../utils/validators";
 import Loader from "../../../components/Loader";
-import { useStoreToken } from "../../../services/store";
 import { decodeToken } from "react-jwt";
 import useMutationJoinCourse from "../../../hooks/useMutationJoinCourse";
+import useStoreToken from "../../../hooks/useStoreToken";
 
 /**
  * Component that represents the form that is used to join a course.

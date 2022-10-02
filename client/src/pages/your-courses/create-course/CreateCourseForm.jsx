@@ -8,9 +8,9 @@ import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import Loader from "../../../components/Loader";
-import { useStoreToken } from "../../../services/store";
 import { decodeToken } from "react-jwt";
 import useMutationCreateCourse from "../../../hooks/useMutationCreateCourse";
+import useStoreToken from "../../../hooks/useStoreToken";
 
 const options = [
   {

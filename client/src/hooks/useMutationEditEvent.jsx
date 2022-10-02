@@ -7,12 +7,12 @@ import { toast } from "react-toastify";
 import {
   useEventStore,
   useLayoutStore,
-  useStoreToken,
 } from "../services/store";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import moment from "moment";
+import useStoreToken from "./useStoreToken";
 
 function useMutationEditEvent(recurringEvent) {
   const { token } = useStoreToken();
