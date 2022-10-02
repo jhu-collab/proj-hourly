@@ -4,21 +4,19 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
-import {
-  useEventStore,
-  useLayoutStore,
-} from "../services/store";
+import { useLayoutStore } from "../services/store";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import moment from "moment";
 import useStoreToken from "./useStoreToken";
+import useStoreEvent from "./useStoreEvent";
 
 function useMutationCancelEvent(deleteType) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  const recurring = useEventStore((state) => state.recurring);
+  const recurring = useStoreEvent((state) => state.recurring);
 
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));

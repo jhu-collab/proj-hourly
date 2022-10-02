@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
-import { useEventStore } from "../../../services/store";
 import { registerSchema } from "../../../utils/validators";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 const getOptions = (timeSlots) => {
   const options = [];
@@ -41,10 +41,10 @@ function RegisterForm() {
 
   const { mutate, isLoading: isLoadingMutate } = useMutationRegister();
 
-  const title = useEventStore((state) => state.title);
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const id = useEventStore((state) => state.id);
+  const title = useStoreEvent((state) => state.title);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const id = useStoreEvent((state) => state.id);
 
   const date = start.toDateString();
   const startTime = moment(start).utc().format("LT");

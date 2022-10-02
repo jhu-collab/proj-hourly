@@ -1,9 +1,9 @@
 import Popup from "../../../components/Popup";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { useEffect } from "react";
-import { useEventStore } from "../../../services/store";
 import CreateEventForm from "./CreateEventForm";
 import EditEventForm from "./EditEventForm";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Parent component for the UpsertForm component.
@@ -14,7 +14,7 @@ import EditEventForm from "./EditEventForm";
 const UpsertEvent = NiceModal.create(({ type }) => {
   const modal = useModal();
 
-  const setDays = useEventStore((state) => state.setDays);
+  const setDays = useStoreEvent((state) => state.setDays);
 
   useEffect(() => {
     return () => {

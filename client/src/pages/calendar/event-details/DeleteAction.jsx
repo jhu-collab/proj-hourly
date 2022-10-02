@@ -6,18 +6,18 @@ import RadioGroup from "@mui/material/RadioGroup";
 import moment from "moment";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
-import { useEventStore } from "../../../services/store";
 import { useState } from "react";
 import useMutationCancelEvent from "../../../hooks/useMutationCancelEvent";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 /**
  * Represents the Trash IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
  * @returns Delete action button and confirmation popup.
  */
 function DeleteAction() {
-  const id = useEventStore((state) => state.id);
-  const recurring = useEventStore((state) => state.recurring);
-  const start = useEventStore((state) => state.start);
+  const id = useStoreEvent((state) => state.id);
+  const recurring = useStoreEvent((state) => state.recurring);
+  const start = useStoreEvent((state) => state.start);
 
   const [deleteType, setDeleteType] = useState("this");
 

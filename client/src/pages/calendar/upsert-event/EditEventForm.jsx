@@ -5,24 +5,24 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
-import { useEventStore } from "../../../services/store";
 import Loader from "../../../components/Loader";
 import moment from "moment";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Component that represents the form that is used to edit an event.
  * @returns A component representing the Edit Event form.
  */
 function EditEventForm() {
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const location = useEventStore((state) => state.location);
-  const days = useEventStore((state) => state.days);
-  const timeInterval = useEventStore((state) => state.timeInterval);
-  const recurring = useEventStore((state) => state.recurring);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const location = useStoreEvent((state) => state.location);
+  const days = useStoreEvent((state) => state.days);
+  const timeInterval = useStoreEvent((state) => state.timeInterval);
+  const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {

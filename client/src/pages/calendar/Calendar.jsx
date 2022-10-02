@@ -8,7 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import { useEventStore, useLayoutStore } from "../../services/store";
+import { useLayoutStore } from "../../services/store";
 import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import EventPopover from "./event-details/EventPopover";
@@ -17,6 +17,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useStoreEvent from "../../hooks/useStoreEvent";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -28,7 +29,7 @@ function Calendar() {
 
   const calendarRef = useRef();
 
-  const setEvent = useEventStore((state) => state.setEvent);
+  const setEvent = useStoreEvent((state) => state.setEvent);
   const courseType = useLayoutStore((state) => state.courseType);
   const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
   const mobileCalMenu = useLayoutStore((state) => state.mobileCalMenu);
