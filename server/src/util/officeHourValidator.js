@@ -234,6 +234,7 @@ export const isTimeAvailable = async (req, res, next) => {
       startTime: startTimeObj,
       date: registrationDate,
       isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   if (registration !== null) {
