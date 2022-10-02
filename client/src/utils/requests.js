@@ -1,39 +1,12 @@
 import axios from "axios";
-import moment from "moment";
 import { BASE_URL } from "../services/common";
-import { useEventStore, useCourseStore } from "../services/store";
+import { useCourseStore } from "../services/store";
 
 function getCourseId() {
   return useCourseStore.getState().course.id;
 }
 
-function getOfficeHourId() {
-  return useEventStore.getState().id;
-}
-
-function getEventDate() {
-  return moment(useEventStore.getState().start).format("MM-DD-YYYY");
-}
-
 // POST REQUESTS
-
-export const editEventOnDate = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editForDate/${getEventDate()}`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const editEventAll = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editAll`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
 
 export const cancelOnDate = async (body) => {
   const res = await axios.post(

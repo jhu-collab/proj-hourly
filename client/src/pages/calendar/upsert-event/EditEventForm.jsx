@@ -17,6 +17,7 @@ import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 
 /**
  * Component that represents the form that is used to edit an event.
@@ -51,21 +52,7 @@ function EditEventForm() {
 
   const recurringEvent = watch("recurringEvent");
 
-  const { mutate, isLoading } = useMutation(
-    recurringEvent ? editEventAll : editEventOnDate,
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(["officeHours"]);
-        NiceModal.hide("upsert-event");
-        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-
-        toast.success(`Successfully edited event`);
-      },
-      onError: (error) => {
-        errorToast(error);
-      },
-    }
-  );
+  const { mutate, isLoading } = useMutationEditEvent(recurringEvent);
 
   const onSubmit = (data) => {
     recurringEvent
