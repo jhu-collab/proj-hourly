@@ -233,6 +233,7 @@ export const isTimeAvailable = async (req, res, next) => {
       officeHourId,
       startTime: startTimeObj,
       date: registrationDate,
+      isCancelled: false,
     },
   });
   if (registration !== null) {
