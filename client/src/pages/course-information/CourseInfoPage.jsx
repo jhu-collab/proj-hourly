@@ -28,7 +28,7 @@ function CourseInfoPage() {
           </Typography>
         )}
       </Stack>
-      {courseType === "student" && <RemoveCourseAction courseid={course.id} />}
+      {courseType === "student" && <RemoveCourseAction courseId={course.id} />}
     </MainCard>
   );
 }

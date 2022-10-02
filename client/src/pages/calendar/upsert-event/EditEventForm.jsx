@@ -1,20 +1,13 @@
 import { createEventSchema } from "../../../utils/validators";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import useTheme from "@mui/material/styles/useTheme";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
-import { toast } from "react-toastify";
-import { useEventStore, useLayoutStore } from "../../../services/store";
-import { useMutation, useQueryClient } from "react-query";
-import { editEventAll, editEventOnDate } from "../../../utils/requests";
+import { useEventStore } from "../../../services/store";
 import Loader from "../../../components/Loader";
-import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
-import { useMediaQuery } from "@mui/material";
-import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
@@ -24,12 +17,6 @@ import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
  * @returns A component representing the Edit Event form.
  */
 function EditEventForm() {
-  const theme = useTheme();
-  const queryClient = useQueryClient();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
-
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
@@ -80,12 +67,12 @@ function EditEventForm() {
         <Stack
           direction="column"
           alignItems="center"
-          spacing={theme.spacing(3)}
+          spacing={3}
         >
           <Stack
             direction="row"
             sx={{ width: "100%" }}
-            spacing={theme.spacing(3)}
+            spacing={3}
           >
             <FormInputText
               name="startTime"

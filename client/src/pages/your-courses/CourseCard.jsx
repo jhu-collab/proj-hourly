@@ -9,9 +9,7 @@ import MainCard from "../../components/MainCard";
 import { useCourseStore } from "../../services/store";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { useMutation, useQueryClient } from "react-query";
-import { leaveCourse } from "../../utils/requests";
-import { toast } from "react-toastify";
+import useMutationLeaveCourse from "../../hooks/useMutationLeaveCourse";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -23,17 +21,8 @@ function CourseCard({ course, courseType }) {
   const navigate = useNavigate();
 
   const setCourse = useCourseStore((state) => state.setCourse);
-  const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(() => leaveCourse(course.id), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["courses"]);
-      toast.success(`Successfully left the course`);
-    },
-    onError: (error) => {
-      toast.error("An error has occurred: " + error.message);
-    },
-  });
+  const { mutate } = useMutationLeaveCourse(course.id);
 
   const onClick = () => {
     setCourse(course);
