@@ -4,29 +4,24 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import moment from "moment";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
-import { useEventStore, useLayoutStore } from "../../../services/store";
-import { register } from "../../../utils/requests";
-import { errorToast } from "../../../utils/toasts";
+import { useEventStore } from "../../../services/store";
 import { registerSchema } from "../../../utils/validators";
-import useTheme from "@mui/material/styles/useTheme";
-import { useMediaQuery } from "@mui/material";
-import NiceModal from "@ebay/nice-modal-react";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
+import useMutationRegister from "../../../hooks/useMutationRegister";
 
 const getOptions = (timeSlots) => {
   const options = [];
-  console.log(timeSlots);
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].startTime, "hh:mm").format(
-      "LT"
-    );
-    const localeEndTime = moment(timeSlots[i].endTime, "hh:mm").format("LT");
+    const localeStartTime = moment(timeSlots[i].startTime, "hh:mm")
+      .utc()
+      .format("LT");
+    const localeEndTime = moment(timeSlots[i].endTime, "hh:mm")
+      .utc()
+      .format("LT");
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
@@ -42,32 +37,9 @@ const getOptions = (timeSlots) => {
  * @returns A component representing the Register form.
  */
 function RegisterForm() {
-  const theme = useTheme();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
-
   const { isLoading, data } = useQueryTimeSlots();
 
-  const { mutate, isLoading: isLoadingMutate } = useMutation(register, {
-    onSuccess: (data) => {
-      const registration = data.registration;
-
-      const date = moment(registration.date).utc().format("L");
-      const startTime = moment(registration.startTime).utc().format("LT");
-      const endTime = moment(registration.endTime).utc().format("LT");
-
-      NiceModal.hide("register-event");
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-      toast.success(
-        `Successfully registered for session on ${date} from 
-         ${startTime} to ${endTime}`
-      );
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
+  const { mutate, isLoading: isLoadingMutate } = useMutationRegister();
 
   const title = useEventStore((state) => state.title);
   const start = useEventStore((state) => state.start);
