@@ -8,24 +8,6 @@ function getCourseId() {
 
 // POST REQUESTS
 
-export const cancelOnDate = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/cancelOnDate`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const cancelAll = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/cancelAll`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
 export const removeStaffOrStudent = async (removeId, isStaff) => {
   if (isStaff) {
     const res = await axios.delete(
@@ -40,12 +22,4 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
     );
     return res.data;
   }
-};
-
-export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(
-    `${BASE_URL}/api/course/leave/${courseid}`,
-    getConfig()
-  );
-  return res.data;
 };
