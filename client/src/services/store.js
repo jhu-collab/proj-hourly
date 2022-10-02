@@ -47,22 +47,3 @@ export const useLayoutStore = create(
     }
   )
 );
-
-// Manages states that involve theme control
-export const useThemeStore = create(
-  persist(
-    (set) => ({
-      colorScheme: "light",
-      toggleColorScheme: (value) =>
-        set((state) => ({
-          colorScheme:
-            value || (state.colorScheme === "dark" ? "light" : "dark"),
-        })),
-    }),
-    {
-      name: "theme",
-      getStorage: () => localStorage,
-      partialize: (state) => ({ colorScheme: state.colorScheme }),
-    }
-  )
-);
