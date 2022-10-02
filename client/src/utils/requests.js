@@ -15,16 +15,6 @@ function getEventDate() {
   return moment(useEventStore.getState().start).format("MM-DD-YYYY");
 }
 
-// GET REQUESTS
-
-export const getAllRegistrations = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/api/course/${getCourseId()}/getAllRegistrations`,
-    getConfig()
-  );
-  return res.data;
-};
-
 // POST REQUESTS
 
 export const editEventOnDate = async (body) => {
@@ -57,15 +47,6 @@ export const cancelOnDate = async (body) => {
 export const cancelAll = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/cancelAll`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const register = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/register`,
     body,
     getConfig()
   );
