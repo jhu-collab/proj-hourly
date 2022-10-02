@@ -3,7 +3,6 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
 import CourseCard from "./CourseCard";
-import { useLayoutStore } from "../../services/store";
 import useQueryCourses from "../../hooks/useQueryCourses";
 
 /**
@@ -11,7 +10,7 @@ import useQueryCourses from "../../hooks/useQueryCourses";
  * @returns A component in which a user can see their courses.
  */
 function CourseList() {
-  const courseType = useLayoutStore((state) => state.courseType);
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const theme = useTheme();
 

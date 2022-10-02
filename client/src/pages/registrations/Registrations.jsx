@@ -3,7 +3,6 @@ import AlertTitle from "@mui/material/AlertTitle";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import useQueryRegistrations from "../../hooks/useQueryRegistrations";
-import { useLayoutStore } from "../../services/store";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 
@@ -42,7 +41,7 @@ const filterByTime = (array, timeTab) => {
  * @returns Registrations page
  */
 function Registrations() {
-  const timeTab = useLayoutStore((state) => state.timeTab);
+  const timeTab = useStoreLayout((state) => state.timeTab);
   const [registrations, setRegistrations] = useState([]);
 
   const { isLoading, error, data } = useQueryRegistrations();

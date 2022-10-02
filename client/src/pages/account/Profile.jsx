@@ -7,9 +7,9 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
-import { useLayoutStore } from "../../services/store";
 import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 const schema = yup.object({
   id: yup.number().transform((val) => Number(val)),
@@ -30,7 +30,7 @@ function Profile() {
   const { id, userName, firstName, preferredName, lastName, email, role } =
     decodeToken(token);
 
-  const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
+  const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
 
   // TODO: We need backend routes that can retrieve information about
   // a user and one that allows a user to modify their account details

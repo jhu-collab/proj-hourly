@@ -4,12 +4,12 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
-import { useLayoutStore } from "../services/store";
 import { BASE_URL } from "../services/common";
 import moment from "moment";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useStoreToken from "./useStoreToken";
+import useStoreLayout from "./useStoreLayout";
 
 function useMutationRegister() {
   const { token } = useStoreToken();
@@ -17,7 +17,7 @@ function useMutationRegister() {
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
 
   const register = async (officeHour) => {
     try {
