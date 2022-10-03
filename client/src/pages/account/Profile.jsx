@@ -17,7 +17,7 @@ function Profile() {
 
   const { isLoading, error, data } = useQueryUser();
 
-  // TODO: We need backend routes that can retrieve information 
+  // TODO: We need backend routes that can retrieve information
   // that allows a user to modify their account details
   // const { userMutation } = useMutationUser();
   useEffect(() => {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useQuery } from "react-query";;
+import { useQuery } from "react-query";
 import useStoreToken from "./useStoreToken";
 import { decodeToken } from "react-jwt";
 import { errorToast } from "../utils/toasts";

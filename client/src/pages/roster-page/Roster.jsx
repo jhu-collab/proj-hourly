@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import useQueryUsers from "../../hooks/useQueryUsers";
 
 /**
- * A component that represents the roster page that the user visits 
+ * A component that represents the roster page that the user visits
  * after clicking the people icon in the nav drawer.
  * @returns The Roster component.
  */

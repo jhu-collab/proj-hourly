@@ -4,7 +4,7 @@ import Popup from "../../components/Popup";
 
 /**
  * Parent component for the InviteUserForm component.
- * @param {*} isInstructor boolean that represents whether 
+ * @param {*} isInstructor boolean that represents whether
  *                         user is an instructor
  * @returns The Invite User popup.
  */
