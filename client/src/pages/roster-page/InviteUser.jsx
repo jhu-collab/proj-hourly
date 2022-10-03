@@ -3,9 +3,10 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import Popup from "../../components/Popup";
 
 /**
- * Represents a Material UI Card component that allows staff to add users.
- * @param {*} props - Properties include onClose, open, id, token.
- * @returns A card for adding user.
+ * Parent component for the InviteUserForm component.
+ * @param {*} isInstructor boolean that represents whether 
+ *                         user is an instructor
+ * @returns The Invite User popup.
  */
 const InviteUser = NiceModal.create(({ isInstructor }) => {
   const modal = useModal("invite-user");

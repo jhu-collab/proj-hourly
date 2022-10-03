@@ -1,5 +1,6 @@
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents a Material UI ToggleButtonGroup component that handles

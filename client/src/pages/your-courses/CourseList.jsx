@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import useTheme from "@mui/material/styles/useTheme";
 import CourseCard from "./CourseCard";
 import useQueryCourses from "../../hooks/useQueryCourses";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents a list of courses that a user is associated with.

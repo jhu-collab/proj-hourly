@@ -10,11 +10,12 @@ import Button from "@mui/material/Button";
 import useQueryUsers from "../../hooks/useQueryUsers";
 
 /**
- * A component that represents the roster page that the user visits after clicking the people icon in the nav drawer.
+ * A component that represents the roster page that the user visits 
+ * after clicking the people icon in the nav drawer.
  * @returns The Roster component.
  */
 const Roster = () => {
-  //delete it and use currenCourse.id instead
+  //TODO: delete it and use currenCourse.id instead
   const [value, setValue] = useState(0);
   const theme = useTheme();
 

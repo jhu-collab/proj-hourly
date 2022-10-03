@@ -27,7 +27,6 @@ const UpsertEvent = NiceModal.create(({ type }) => {
       modal={modal}
       title={type === "edit" ? "Edit Event" : "Create Event"}
     >
-      {/* <UpsertEventForm type={type} /> */}
       {type === "edit" ? <EditEventForm /> : <CreateEventForm />}
     </Popup>
   );
