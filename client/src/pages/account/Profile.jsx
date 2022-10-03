@@ -6,42 +6,40 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
+import { decodeToken } from "react-jwt";
+import useStoreToken from "../../hooks/useStoreToken";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import useQueryUser from "../../hooks/useQueryUser";
 import { profileSchema } from "../../utils/validators";
 
 function Profile() {
   const [edit, setEdit] = useState(false);
+  const token = useStoreToken((state) => state.token);
+
+  const { id, userName, firstName, preferredName, lastName, email, role } =
+    decodeToken(token);
 
   const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
 
-  const { isLoading, error, data } = useQueryUser();
-
-  // TODO: We need backend routes that can retrieve information
-  // that allows a user to modify their account details
+  // TODO: We need backend routes that can retrieve information about
+  // a user and one that allows a user to modify their account details
+  // const { isLoading, error, data } = useQueryUser();
   // const { userMutation } = useMutationUser();
   useEffect(() => {
     selectSidebarItem("");
   });
 
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
-      id: "0",
-      username: "",
-      firstName: "",
-      preferredName: "",
-      lastName: "",
-      email: "",
-      role: "",
+      id: id,
+      username: userName,
+      firstName: firstName,
+      preferredName: preferredName,
+      lastName: lastName,
+      email: email,
+      role: role,
     },
     resolver: yupResolver(profileSchema),
   });
-
-  useEffect(() => {
-    if (!isLoading && !error) {
-      setValue(data);
-    }
-  }, [isLoading, error, data]);
 
   const onSubmit = (data) => {
     setEdit(false);
