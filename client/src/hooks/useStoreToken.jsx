@@ -6,7 +6,6 @@ export const useStoreToken = create(
     (set) => ({
       token: "",
       updateToken: (value) => {
-        debug("Updating the token...");
         set({ token: value });
       },
     }),

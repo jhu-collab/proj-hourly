@@ -127,3 +127,13 @@ export const inviteUserSchema = yup.object().shape({
 export const registerSchema = yup.object().shape({
   times: yup.string().required("Please select a time slot"),
 });
+
+export const profileSchema = yup.object({
+  id: yup.number().transform((val) => Number(val)),
+  username: yup.string().min(1, "Username cannot be empty"),
+  firstName: yup.string().min(1, "First name cannot be empty"),
+  preferredName: yup.string(),
+  lastName: yup.string().min(1, "Last name cannot be empty"),
+  email: yup.string().email("Invalid email"),
+  role: yup.string(),
+});

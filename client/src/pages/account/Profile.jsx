@@ -1,57 +1,47 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
-import { decodeToken } from "react-jwt";
-import useStoreToken from "../../hooks/useStoreToken";
 import useStoreLayout from "../../hooks/useStoreLayout";
-
-const schema = yup.object({
-  id: yup.number().transform((val) => Number(val)),
-  username: yup.string().min(1, "Username cannot be empty"),
-  firstName: yup.string().min(1, "First name cannot be empty"),
-  preferredName: yup.string(),
-  lastName: yup.string().min(1, "Last name cannot be empty"),
-  email: yup.string().email("Invalid email"),
-  role: yup.string(),
-});
-
-yup;
+import useQueryUser from "../../hooks/useQueryUser";
+import { profileSchema } from "../../utils/validators";
 
 function Profile() {
   const [edit, setEdit] = useState(false);
-  const token = useStoreToken((state) => state.token);
-  //TODO: This will later be added as query using the react-query package
-  const { id, userName, firstName, preferredName, lastName, email, role } =
-    decodeToken(token);
 
   const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
 
-  // TODO: We need backend routes that can retrieve information about
-  // a user and one that allows a user to modify their account details
-  // const { isLoading, error, data } = useQueryUser();
+  const { isLoading, error, data } = useQueryUser();
+
+  // TODO: We need backend routes that can retrieve information 
+  // that allows a user to modify their account details
   // const { userMutation } = useMutationUser();
   useEffect(() => {
     selectSidebarItem("");
   });
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
-      id: id,
-      username: userName,
-      firstName: firstName,
-      preferredName: preferredName,
-      lastName: lastName,
-      email: email,
-      role: role,
+      id: "0",
+      username: "",
+      firstName: "",
+      preferredName: "",
+      lastName: "",
+      email: "",
+      role: "",
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(profileSchema),
   });
+
+  useEffect(() => {
+    if (!isLoading && !error) {
+      setValue(data);
+    }
+  }, [isLoading, error, data]);
 
   const onSubmit = (data) => {
     setEdit(false);
