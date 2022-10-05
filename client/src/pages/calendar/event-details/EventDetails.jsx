@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { useEventStore } from "../../../services/store";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 /**
  * Child component that displays event details.
@@ -15,8 +15,12 @@ function EventDetails() {
   const timeInterval = useEventStore((state) => state.timeInterval);
 
   const date = start.toDateString();
-  const startTime = moment(start).utc().format("LT");
-  const endTime = moment(end).utc().format("LT");
+  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
+  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
   const minutes = " minutes";
 
   return (
