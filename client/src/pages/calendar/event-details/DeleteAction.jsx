@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
@@ -40,9 +40,15 @@ function DeleteAction() {
       onSuccess: (data) => {
         const officeHour = data.officeHourUpdate;
 
-        const date = moment(officeHour.startDate).utc().format("L");
-        const startTime = moment(officeHour.startTime).utc().format("LT");
-        const endTime = moment(officeHour.endTime).utc().format("LT");
+        const date = DateTime.fromISO(officeHour.startDate, {
+          zone: "utc",
+        }).toLocaleString();
+        const startTime = DateTime.fromISO(officeHour.startTime, {
+          zone: "utc",
+        }).toLocaleString(DateTime.TIME_SIMPLE);
+        const endTime = DateTime.fromISO(officeHour.endTime, {
+          zone: "utc",
+        }).toLocaleString(DateTime.TIME_SIMPLE);
 
         queryClient.invalidateQueries(["officeHours"]);
 
@@ -73,7 +79,9 @@ function DeleteAction() {
             recurring && deleteType === "this"
               ? mutate({
                   officeHourId: id,
-                  date: moment(start).utc().format("MM-DD-YYYY"),
+                  date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+                    "MM-dd-yyyy"
+                  ),
                 })
               : mutate({ officeHourId: id })
           );
