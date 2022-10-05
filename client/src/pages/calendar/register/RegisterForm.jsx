@@ -2,7 +2,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import moment from "moment";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
@@ -16,17 +15,22 @@ import { registerSchema } from "../../../utils/validators";
 import useTheme from "@mui/material/styles/useTheme";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
+import { DateTime } from "luxon";
 
 const getOptions = (timeSlots) => {
   const options = [];
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].start, "hh:mm").format("LT");
-    const localeEndTime = moment(timeSlots[i].end, "hh:mm").format("LT");
+    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
+    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].start} - ${timeSlots[i].end}`,
+      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
     });
   }
 
@@ -53,9 +57,15 @@ function RegisterForm() {
     onSuccess: (data) => {
       const registration = data.registration;
 
-      const date = moment(registration.date).utc().format("L");
-      const startTime = moment(registration.startTime).utc().format("LT");
-      const endTime = moment(registration.endTime).utc().format("LT");
+      const date = DateTime.fromISO(registration.date, {
+        zone: "utc",
+      }).toLocaleString();
+      const startTime = DateTime.fromISO(registration.startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(registration.endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
 
       NiceModal.hide("register-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
@@ -75,8 +85,12 @@ function RegisterForm() {
   const id = useEventStore((state) => state.id);
 
   const date = start.toDateString();
-  const startTime = moment(start).utc().format("LT");
-  const endTime = moment(end).utc().format("LT");
+  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
+  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -91,7 +105,7 @@ function RegisterForm() {
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
-      date: moment(start).format("MM-DD-YYYY"),
+      date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
     });
   };
 
