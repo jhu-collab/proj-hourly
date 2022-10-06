@@ -142,4 +142,12 @@ router.get(
   controller.getAllRegistrations
 );
 
+router.delete(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.deleteCourse
+);
+
 export default router;
