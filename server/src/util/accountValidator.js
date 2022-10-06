@@ -271,3 +271,19 @@ export const isAccountInstructorBody = async (req, res, next) => {
   }
   next();
 };
+
+export const isAdmin = async (req, res, next) => {
+  const id = req.id;
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (account.role !== "Admin") {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account must be admin to retrieve all accounts" });
+  } else {
+    next();
+  }
+};

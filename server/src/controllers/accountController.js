@@ -162,3 +162,18 @@ export const deleteAccount = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
+
+export const getAll = async (req, res) => {
+  const accounts = await prisma.account.findMany({
+    select: {
+      id: true,
+      userName: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      preferredName: true,
+      role: true,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ accounts });
+};
