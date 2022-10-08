@@ -10,11 +10,11 @@ import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { profileSchema } from "../../utils/validators";
+import DeleteAccountAction from "./DeleteAccountAction";
 
 function Profile() {
   const [edit, setEdit] = useState(false);
   const token = useStoreToken((state) => state.token);
-
   const { id, userName, firstName, preferredName, lastName, email, role } =
     decodeToken(token);
 
@@ -56,66 +56,69 @@ function Profile() {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={4}>
-        <FormInputText
-          disabled
-          name="username"
-          control={control}
-          label="Username"
-        />
-        <FormInputText
-          disabled
-          name="firstName"
-          control={control}
-          label="First Name"
-        />
-        <FormInputText
-          disabled={!edit}
-          name="preferredName"
-          control={control}
-          label="Preferred Name"
-        />
-        <FormInputText
-          disabled
-          name="lastName"
-          control={control}
-          label="Last Name"
-        />
-        <FormInputText disabled name="role" control={control} label="Role" />
-        <Stack direction="row" justifyContent="flex-end">
-          {edit ? (
-            <Stack direction="row" spacing={1}>
+    <Stack spacing={4}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={4}>
+          <FormInputText
+            disabled
+            name="username"
+            control={control}
+            label="Username"
+          />
+          <FormInputText
+            disabled
+            name="firstName"
+            control={control}
+            label="First Name"
+          />
+          <FormInputText
+            disabled={!edit}
+            name="preferredName"
+            control={control}
+            label="Preferred Name"
+          />
+          <FormInputText
+            disabled
+            name="lastName"
+            control={control}
+            label="Last Name"
+          />
+          <FormInputText disabled name="role" control={control} label="Role" />
+          <Stack direction="row" justifyContent="flex-end">
+            {edit ? (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    color="error"
+                    onClick={handleOnClickCancelBtn}
+                  >
+                    Cancel
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button variant="contained" size="large" type="submit">
+                    Submit
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            ) : (
               <AnimateButton>
                 <Button
                   variant="contained"
                   size="large"
-                  color="error"
-                  onClick={handleOnClickCancelBtn}
+                  onClick={handleOnClickEditBtn}
                 >
-                  Cancel
+                  Edit
                 </Button>
               </AnimateButton>
-              <AnimateButton>
-                <Button variant="contained" size="large" type="submit">
-                  Submit
-                </Button>
-              </AnimateButton>
-            </Stack>
-          ) : (
-            <AnimateButton>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleOnClickEditBtn}
-              >
-                Edit
-              </Button>
-            </AnimateButton>
-          )}
+            )}
+          </Stack>
         </Stack>
-      </Stack>
-    </Form>
+      </Form>
+      <DeleteAccountAction userid={id} />
+    </Stack>
   );
 }
 
