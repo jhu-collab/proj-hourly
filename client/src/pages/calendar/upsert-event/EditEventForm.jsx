@@ -15,8 +15,46 @@ import { errorToast } from "../../../utils/toasts";
 import moment from "moment";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
-import ToggleRecurringDay from "./ToggleRecurringDay";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonGroup";
+
+const BUTTONS = [
+  {
+    id: "0",
+    label: "Mon",
+    value: "Monday",
+  },
+  {
+    id: "1",
+    label: "Tue",
+    value: "Tuesday",
+  },
+  {
+    id: "2",
+    label: "Wed",
+    value: "Wednesday",
+  },
+  {
+    id: "3",
+    label: "Thu",
+    value: "Thursday",
+  },
+  {
+    id: "4",
+    label: "Fri",
+    value: "Friday",
+  },
+  {
+    id: "5",
+    label: "Sat",
+    value: "Saturday",
+  },
+  {
+    id: "6",
+    label: "Sun",
+    value: "Sunday",
+  },
+];
 
 /**
  * Component that represents the form that is used to edit an event.
@@ -32,7 +70,6 @@ function EditEventForm() {
   const start = useEventStore((state) => state.start);
   const end = useEventStore((state) => state.end);
   const location = useEventStore((state) => state.location);
-  const days = useEventStore((state) => state.days);
   const timeInterval = useEventStore((state) => state.timeInterval);
   const recurring = useEventStore((state) => state.recurring);
 
@@ -42,6 +79,7 @@ function EditEventForm() {
       endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
       recurringEvent: false,
+      days: "",
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
       timeInterval: timeInterval || 10,
@@ -75,7 +113,7 @@ function EditEventForm() {
           startDate: moment(data.startDate).format("MM-DD-YYYY"),
           endDate: moment(data.endDate).format("MM-DD-YYYY"),
           location: data.location,
-          daysOfWeek: days,
+          daysOfWeek: data.days,
           timePerStudent: data.timeInterval,
           endDateOldOfficeHour: moment(data.startDate).format("MM-DD-YYYY"),
         })
@@ -140,7 +178,14 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurringEvent && <ToggleRecurringDay />}
+          {recurring && (
+            <FormToggleButtonGroup
+              name="days"
+              control={control}
+              buttons={BUTTONS}
+              color="primary"
+            />
+          )}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"

@@ -115,16 +115,16 @@ export const createEventSchema = yup.object().shape({
           }
         ),
     }),
-  days: yup
-    .array()
-    .nullable()
-    .when("recurringEvent", {
-      is: true,
-      then: yup
-        .array()
-        .typeError("Please select at least one recurring day")
-        .required("Please select at least one recurring day"),
-    }),
+  // days: yup
+  //   .array()
+  //   .nullable()
+  //   .when("recurringEvent", {
+  //     is: true,
+  //     then: yup
+  //       .array()
+  //       .typeError("Please select at least one recurring day")
+  //       .required("Please select at least one recurring day"),
+  //   }),
   startTime: yup.string().required("Start time is required"),
   endTime: yup
     .string()
