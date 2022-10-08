@@ -8,6 +8,7 @@ import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import StudentDetails from "./StudentDetails";
+import useStoreLayout from "../../../hooks/useStoreLayout";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
