@@ -25,7 +25,8 @@ function Profile() {
   const [edit, setEdit] = useState(false);
   const token = useStoreToken((state) => state.token);
   //TODO: This will later be added as query using the react-query package
-  const { id, userName, firstName, preferredName, lastName, email, role } = decodeToken(token);
+  const { id, userName, firstName, preferredName, lastName, email, role } =
+    decodeToken(token);
 
   const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
 

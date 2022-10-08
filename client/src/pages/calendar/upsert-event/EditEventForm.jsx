@@ -38,11 +38,21 @@ function EditEventForm() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start ? DateTime.fromJSDate(start, {zone: "utc"}).toFormat("yyyy-MM-dd") : "",
+      startDate: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        : "",
       endDate: null,
-      startTime: start ? DateTime.fromJSDate(start, {zone: "utc"}).toLocaleString(DateTime.TIME_24_SIMPLE) : "",
+      startTime: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       recurringEvent: false,
-      endTime: end ? DateTime.fromJSDate(end, {zone: "utc"}).toLocaleString(DateTime.TIME_24_SIMPLE) : "",
+      endTime: end
+        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
@@ -77,7 +87,9 @@ function EditEventForm() {
           location: data.location,
           daysOfWeek: days,
           timePerStudent: data.timeInterval,
-          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
+            "MM-dd-yyyy"
+          ),
         })
       : mutate({
           startTime: `${data.startTime}:00`,

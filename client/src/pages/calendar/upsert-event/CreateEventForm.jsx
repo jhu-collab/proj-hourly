@@ -17,7 +17,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { createOfficeHour } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
 import { errorToast } from "../../../utils/toasts";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useMediaQuery } from "@mui/material";
 import NiceModal from "@ebay/nice-modal-react";
 import ToggleRecurringDay from "./ToggleRecurringDay";
@@ -58,11 +58,21 @@ function CreateEventForm() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        : "",
       endDate: null,
-      startTime: start ? moment(start).utc().format("HH:mm") : "",
+      startTime: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       recurringEvent: false,
-      endTime: end ? moment(end).utc().format("HH:mm") : "",
+      endTime: end
+        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
@@ -73,10 +83,17 @@ function CreateEventForm() {
 
   const { mutate, isLoading } = useMutation(createOfficeHour, {
     onSuccess: (data) => {
+      console.log(data);
       const officeHour = data.officeHour;
-      const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
-      const startTime = moment(officeHour.startTime).utc().format("LT");
-      const endTime = moment(officeHour.endTime).utc().format("LT");
+      const date = DateTime.fromISO(officeHour.startDate, {
+        zone: "utc",
+      }).toFormat("D");
+      const startTime = DateTime.fromISO(officeHour.startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(officeHour.endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
 
       queryClient.invalidateQueries(["officeHours"]);
       NiceModal.hide("upsert-event");
@@ -99,10 +116,10 @@ function CreateEventForm() {
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate: moment(data.startDate).format("MM-DD-YYYY"),
+      startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
       endDate: recurring
-        ? moment(data.endDate).format("MM-DD-YYYY")
-        : moment(data.startDate).format("MM-DD-YYYY"),
+        ? DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy")
+        : DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
       location: data.location,
       daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
       timeInterval: data.timeInterval,
