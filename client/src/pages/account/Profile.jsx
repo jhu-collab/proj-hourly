@@ -8,6 +8,7 @@ import { Button, Stack } from "@mui/material";
 import AnimateButton from "../../components/AnimateButton";
 import { useLayoutStore, useStoreToken } from "../../services/store";
 import { decodeToken } from "react-jwt";
+import DeleteAccountAction from "./DeleteAccountAction";
 
 const schema = yup.object({
   id: yup.number().transform((val) => Number(val)),
@@ -29,7 +30,6 @@ function Profile() {
     decodeToken(token);
 
   const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
-
   // TODO: We need backend routes that can retrieve information about
   // a user and one that allows a user to modify their account details
   // const { isLoading, error, data } = useQueryUser();
@@ -66,6 +66,7 @@ function Profile() {
   };
 
   return (
+    <Stack spacing ={4}>
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={4}>
         <FormInputText
@@ -126,6 +127,8 @@ function Profile() {
         </Stack>
       </Stack>
     </Form>
+    <DeleteAccountAction userid={id}/>
+    </Stack>
   );
 }
 

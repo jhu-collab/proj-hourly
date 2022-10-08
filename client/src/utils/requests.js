@@ -178,3 +178,8 @@ export const leaveCourse = async (courseid) => {
   );
   return res.data;
 };
+
+export const deleteAccount = async (userid) => {
+  const res = await axios.delete(`${BASE_URL}/api/account/${userid}`, getConfig());
+  return res.data;
+};
