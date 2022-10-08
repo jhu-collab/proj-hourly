@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
@@ -111,7 +111,7 @@ export const createEventSchema = yup.object().shape({
           "End date must be after start date",
           function (value) {
             const { startDate } = this.parent;
-            return moment(value).isAfter(moment(startDate));
+            return DateTime.fromJSDate(value) > DateTime.fromJSDate(startDate);
           }
         ),
     }),
@@ -121,7 +121,7 @@ export const createEventSchema = yup.object().shape({
     .required("End time is required")
     .test("is-greater", "End time must be past start time", function (value) {
       const { startTime } = this.parent;
-      return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
+      return DateTime.fromFormat(value, "T") > DateTime.fromFormat(startTime, "T");
     }),
   location: yup.string().required("Location is required"),
   timeInterval: yup
