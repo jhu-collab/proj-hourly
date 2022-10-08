@@ -79,7 +79,7 @@ function EditEventForm() {
       endDate: null,
       startTime: start ? moment(start).utc().format("HH:mm") : "",
       recurringEvent: false,
-      days: "",
+      days: [],
       endTime: end ? moment(end).utc().format("HH:mm") : "",
       location: location || "",
       timeInterval: timeInterval || 10,
@@ -178,7 +178,7 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurring && (
+          {recurringEvent && (
             <FormToggleButtonGroup
               name="days"
               control={control}
