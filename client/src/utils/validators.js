@@ -121,7 +121,9 @@ export const createEventSchema = yup.object().shape({
     .required("End time is required")
     .test("is-greater", "End time must be past start time", function (value) {
       const { startTime } = this.parent;
-      return DateTime.fromFormat(value, "T") > DateTime.fromFormat(startTime, "T");
+      return (
+        DateTime.fromFormat(value, "T") > DateTime.fromFormat(startTime, "T")
+      );
     }),
   location: yup.string().required("Location is required"),
   timeInterval: yup
