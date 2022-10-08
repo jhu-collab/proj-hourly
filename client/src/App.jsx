@@ -7,6 +7,7 @@ import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
+
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const YourCourses = Loadable(
   lazy(() => import("./pages/your-courses/YourCourses"))
