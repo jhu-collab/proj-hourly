@@ -66,68 +66,68 @@ function Profile() {
   };
 
   return (
-    <Stack spacing ={4}>
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={4}>
-        <FormInputText
-          disabled
-          name="username"
-          control={control}
-          label="Username"
-        />
-        <FormInputText
-          disabled
-          name="firstName"
-          control={control}
-          label="First Name"
-        />
-        <FormInputText
-          disabled={!edit}
-          name="preferredName"
-          control={control}
-          label="Preferred Name"
-        />
-        <FormInputText
-          disabled
-          name="lastName"
-          control={control}
-          label="Last Name"
-        />
-        <FormInputText disabled name="role" control={control} label="Role" />
-        <Stack direction="row" justifyContent="flex-end">
-          {edit ? (
-            <Stack direction="row" spacing={1}>
+    <Stack spacing={4}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={4}>
+          <FormInputText
+            disabled
+            name="username"
+            control={control}
+            label="Username"
+          />
+          <FormInputText
+            disabled
+            name="firstName"
+            control={control}
+            label="First Name"
+          />
+          <FormInputText
+            disabled={!edit}
+            name="preferredName"
+            control={control}
+            label="Preferred Name"
+          />
+          <FormInputText
+            disabled
+            name="lastName"
+            control={control}
+            label="Last Name"
+          />
+          <FormInputText disabled name="role" control={control} label="Role" />
+          <Stack direction="row" justifyContent="flex-end">
+            {edit ? (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    color="error"
+                    onClick={handleOnClickCancelBtn}
+                  >
+                    Cancel
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button variant="contained" size="large" type="submit">
+                    Submit
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            ) : (
               <AnimateButton>
                 <Button
                   variant="contained"
                   size="large"
-                  color="error"
-                  onClick={handleOnClickCancelBtn}
+                  onClick={handleOnClickEditBtn}
                 >
-                  Cancel
+                  Edit
                 </Button>
               </AnimateButton>
-              <AnimateButton>
-                <Button variant="contained" size="large" type="submit">
-                  Submit
-                </Button>
-              </AnimateButton>
-            </Stack>
-          ) : (
-            <AnimateButton>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleOnClickEditBtn}
-              >
-                Edit
-              </Button>
-            </AnimateButton>
-          )}
+            )}
+          </Stack>
         </Stack>
-      </Stack>
-    </Form>
-    <DeleteAccountAction userid={id}/>
+      </Form>
+      <DeleteAccountAction userid={id} />
     </Stack>
   );
 }
