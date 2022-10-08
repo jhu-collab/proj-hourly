@@ -3,6 +3,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import useQueryRegistrations from "../../hooks/useQueryRegistrations";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 
