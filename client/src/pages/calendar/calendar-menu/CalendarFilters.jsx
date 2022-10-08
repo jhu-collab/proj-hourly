@@ -7,17 +7,24 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import { useQueryClient } from "react-query";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Represents calendar filter menu.
  * @returns calendar filter menu
  */
 function CalendarFilters() {
-  const [filter, setFilter] = useState("myEvents");
+  const filter = useStoreEvent((state) => state.filter);
+  const setFilter = useStoreEvent((state) => state.setFilter);
+
   const [expanded, setExpanded] = useState(true);
+
+  const queryClient = useQueryClient();
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
+    queryClient.invalidateQueries(["officeHours"]);
   };
 
   const handleExpandedChange = (event, isExpanded) => {
@@ -38,12 +45,12 @@ function CalendarFilters() {
       <AccordionDetails>
         <RadioGroup value={filter} onChange={handleFilterChange}>
           <FormControlLabel
-            value="myEvents"
+            value="mine"
             control={<Radio />}
             label="My Events"
           />
           <FormControlLabel
-            value="allEvents"
+            value="all"
             control={<Radio color="success" />}
             label="All Events"
           />

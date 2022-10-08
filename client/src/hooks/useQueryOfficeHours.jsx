@@ -5,7 +5,7 @@ import { getConfig } from "./helper";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
 
-function useQueryOfficeHours() {
+function useQueryOfficeHours(filter) {
   const queryKey = ["officeHours"];
   const token = useStoreToken((state) => state.token);
   const course = useStoreCourse((state) => state.course);
@@ -13,7 +13,7 @@ function useQueryOfficeHours() {
   const getOfficeHours = async () => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/course/${course.id}/officeHours`,
+        `${BASE_URL}/api/course/${course.id}/officeHours/${filter}`,
         getConfig(token)
       );
       return res.data;

@@ -26,6 +26,11 @@ export const useStoreEvent = create((set) => ({
     set(() => ({
       days: days || "",
     })),
+  filter: "all",
+  setFilter: (filter) =>
+    set(() => ({
+      filter: filter || "all",
+    })),
 }));
 
 export default useStoreEvent;

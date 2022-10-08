@@ -30,6 +30,7 @@ function Calendar() {
   const calendarRef = useRef();
 
   const setEvent = useStoreEvent((state) => state.setEvent);
+  const filter = useStoreEvent((state) => state.filter);
   const courseType = useStoreLayout((state) => state.courseType);
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
@@ -38,7 +39,7 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
-  const { isLoading, error, data } = useQueryOfficeHours();
+  const { isLoading, error, data } = useQueryOfficeHours(filter);
 
   useEffect(() => {
     setIsStaff(courseType === "staff");
