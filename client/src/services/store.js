@@ -114,12 +114,6 @@ export const useEventStore = create((set) => ({
       timeInterval: event.timeInterval || 10,
       recurring: event.recurring || false,
     }),
-
-  days: "",
-  setDays: (days) =>
-    set(() => ({
-      days: days || "",
-    })),
 }));
 
 export const useStoreToken = create(
