@@ -3,19 +3,14 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
-import { useEventStore, useLayoutStore } from "../../../services/store";
-import { getTimeSlots, register } from "../../../utils/requests";
-import { errorToast } from "../../../utils/toasts";
 import { registerSchema } from "../../../utils/validators";
-import useTheme from "@mui/material/styles/useTheme";
-import { useMediaQuery } from "@mui/material";
-import NiceModal from "@ebay/nice-modal-react";
 import { DateTime } from "luxon";
+import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
+import useMutationRegister from "../../../hooks/useMutationRegister";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 const getOptions = (timeSlots) => {
   const options = [];
@@ -42,47 +37,14 @@ const getOptions = (timeSlots) => {
  * @returns A component representing the Register form.
  */
 function RegisterForm() {
-  const theme = useTheme();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const { isLoading, data } = useQueryTimeSlots();
 
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const { mutate, isLoading: isLoadingMutate } = useMutationRegister();
 
-  const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
-
-  const { mutate, isLoading: isLoadingMutate } = useMutation(register, {
-    onSuccess: (data) => {
-      const registration = data.registration;
-
-      const date = DateTime.fromISO(registration.date, {
-        zone: "utc",
-      }).toLocaleString();
-      const startTime = DateTime.fromISO(registration.startTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-      const endTime = DateTime.fromISO(registration.endTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-
-      NiceModal.hide("register-event");
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-      toast.success(
-        `Successfully registered for session on ${date} from 
-         ${startTime} to ${endTime}`
-      );
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
-
-  const title = useEventStore((state) => state.title);
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const id = useEventStore((state) => state.id);
+  const title = useStoreEvent((state) => state.title);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const id = useStoreEvent((state) => state.id);
 
   const date = start.toDateString();
   const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(

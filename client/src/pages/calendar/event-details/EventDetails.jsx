@@ -1,18 +1,18 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { useEventStore } from "../../../services/store";
 import { DateTime } from "luxon";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Child component that displays event details.
  * @returns event-specific information
  */
 function EventDetails() {
-  const title = useEventStore((state) => state.title);
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const location = useEventStore((state) => state.location);
-  const timeInterval = useEventStore((state) => state.timeInterval);
+  const title = useStoreEvent((state) => state.title);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const location = useStoreEvent((state) => state.location);
+  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const date = start.toDateString();
   const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
