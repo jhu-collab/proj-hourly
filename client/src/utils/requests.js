@@ -1,11 +1,11 @@
 import axios from "axios";
-import moment from "moment";
 import { BASE_URL } from "../services/common";
 import {
   useEventStore,
   useStoreToken,
   useCourseStore,
 } from "../services/store";
+import { DateTime } from "luxon";
 
 function getCourseId() {
   return useCourseStore.getState().course.id;
@@ -16,7 +16,9 @@ function getOfficeHourId() {
 }
 
 function getEventDate() {
-  return moment(useEventStore.getState().start).format("MM-DD-YYYY");
+  return DateTime.fromJSDate(useEventStore.getState().start, {
+    zone: "utc",
+  }).toFormat("MM-dd-yyyy");
 }
 
 function getConfig() {
@@ -170,6 +172,9 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
 };
 
 export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, getConfig());
+  const res = await axios.delete(
+    `${BASE_URL}/api/course/leave/${courseid}`,
+    getConfig()
+  );
   return res.data;
 };
