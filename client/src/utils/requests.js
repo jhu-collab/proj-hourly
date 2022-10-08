@@ -170,11 +170,17 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
 };
 
 export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, getConfig());
+  const res = await axios.delete(
+    `${BASE_URL}/api/course/leave/${courseid}`,
+    getConfig()
+  );
   return res.data;
 };
 
 export const deleteAccount = async (userid) => {
-  const res = await axios.delete(`${BASE_URL}/api/account/${userid}`, getConfig());
+  const res = await axios.delete(
+    `${BASE_URL}/api/account/${userid}`,
+    getConfig()
+  );
   return res.data;
 };
