@@ -5,8 +5,8 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import useTheme from "@mui/material/styles/useTheme";
 import { useEffect, useState } from "react";
-import { useEventStore } from "../../services/store";
 import { useModal } from "@ebay/nice-modal-react";
+import useStoreEvent from "../../hooks/useStoreEvent";
 
 /**
  * Component that represents the MUI SpeedDial component for the
@@ -19,7 +19,7 @@ function CalendarSpeedDial({ calendarRef }) {
   const theme = useTheme();
   const modal = useModal("upsert-event");
 
-  const setEvent = useEventStore((state) => state.setEvent);
+  const setEvent = useStoreEvent((state) => state.setEvent);
 
   // speed dial toggler
   const [open, setOpen] = useState(false);

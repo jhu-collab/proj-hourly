@@ -3,7 +3,6 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CalendarMenu from "./CalendarMenu";
 import styled from "@mui/material/styles/styled";
 import grey from "@mui/material/colors/grey";
-import { useLayoutStore } from "../../../services/store";
 
 const drawerBleeding = 0;
 
@@ -23,8 +22,8 @@ const Puller = styled(Box)(({ theme }) => ({
  * @returns a mobile calendar menu
  */
 function MobileCalendarMenu() {
-  const open = useLayoutStore((state) => state.mobileCalMenu);
-  const setOpen = useLayoutStore((state) => state.setMobileCalMenu);
+  const open = useStoreLayout((state) => state.mobileCalMenu);
+  const setOpen = useStoreLayout((state) => state.setMobileCalMenu);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
