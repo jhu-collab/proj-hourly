@@ -546,7 +546,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });
@@ -562,7 +561,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });
