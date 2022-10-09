@@ -596,7 +596,7 @@ export const editRegistration = async (req, res) => {
   let topicArr = [];
   and not include the top part (lines: 580 - 592) if the request body has the list of all topics
   */
-  TopicIds.forEach(async (topicId) => {
+  TopicIds.forEach((topicId) => {
     topicArr.push({ id: topicId });
   });
   const registration = await prisma.registration.update({

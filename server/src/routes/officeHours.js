@@ -195,7 +195,7 @@ router.post(
   validator.doesRegistrationExistParams,
   validator.isStudentRegistered,
   validator.isWithinTimeOffering,
-  //validator.isTimeCorrectInterval,
+  validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   courseValidator.areTopicsForCourse,
   controller.editRegistration
