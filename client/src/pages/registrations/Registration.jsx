@@ -5,7 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import DownOutlined from "@ant-design/icons/DownOutlined";
-import moment from "moment";
+import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
 /**
@@ -28,11 +28,18 @@ function Registration({ registration, type }) {
           spacing={2}
         >
           <Typography fontWeight={600}>
-            {moment(registration.date).utc().format("LL")}
+            {DateTime.fromJSDate(registration.date, {
+              zone: "utc",
+            }).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
           </Typography>
           <Typography fontWeight={600}>
-            {moment(registration.startTime).utc().format("hh:mmA")} -{" "}
-            {moment(registration.endTime).utc().format("hh:mmA")}
+            {DateTime.fromJSDate(registration.startTime, {
+              zone: "utc",
+            }).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
+            -{" "}
+            {DateTime.fromJSDate(registration.endTime, {
+              zone: "utc",
+            }).toLocaleString(DateTime.TIME_SIMPLE)}
           </Typography>
           <Typography>
             Type: <strong>Office Hours</strong>

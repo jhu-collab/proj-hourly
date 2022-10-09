@@ -538,6 +538,7 @@ export const getRegistrationStatus = async (req, res) => {
 export const getForCourseWithFilter = async (req, res) => {
   const filter = req.params.filter;
   const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
   let officeHours = [];
   if (filter === "all") {
     officeHours = await prisma.officeHour.findMany({
@@ -546,7 +547,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });
@@ -562,7 +562,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });

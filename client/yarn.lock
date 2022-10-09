@@ -2619,6 +2619,11 @@ loose-envify@^1.1.0, loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+luxon@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.0.4.tgz#d179e4e9f05e092241e7044f64aaa54796b03929"
+  integrity sha512-aV48rGUwP/Vydn8HT+5cdr26YYQiUZ42NM6ToMoaGKwYfWbfLeRkEu1wXWMHBZT6+KyLfcbbtVcoQFCbbPjKlw==
+
 magic-string@^0.25.0, magic-string@^0.25.7:
   version "0.25.9"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.9.tgz#de7f9faf91ef8a1c91d02c2e5314c8277dbcdd1c"
@@ -2682,11 +2687,6 @@ minimatch@^5.0.1:
   integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
   dependencies:
     brace-expansion "^2.0.1"
-
-moment@^2.29.4:
-  version "2.29.4"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
-  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 ms@2.1.2:
   version "2.1.2"

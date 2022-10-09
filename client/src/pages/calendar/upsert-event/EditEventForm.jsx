@@ -6,8 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import Loader from "../../../components/Loader";
-import moment from "moment";
 import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonGroup";
+import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
@@ -58,18 +58,27 @@ function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const days = useStoreEvent((state) => state.days);
   const timeInterval = useStoreEvent((state) => state.timeInterval);
   const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        : "",
       endDate: null,
-      startTime: start ? moment(start).utc().format("HH:mm") : "",
+      startTime: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       recurringEvent: false,
       days: [],
-      endTime: end ? moment(end).utc().format("HH:mm") : "",
+      endTime: end
+        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
@@ -85,12 +94,14 @@ function EditEventForm() {
       ? mutate({
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
-          startDate: moment(data.startDate).format("MM-DD-YYYY"),
-          endDate: moment(data.endDate).format("MM-DD-YYYY"),
+          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
           location: data.location,
           daysOfWeek: data.days,
           timePerStudent: data.timeInterval,
-          endDateOldOfficeHour: moment(data.startDate).format("MM-DD-YYYY"),
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
+            "MM-dd-yyyy"
+          ),
         })
       : mutate({
           startTime: `${data.startTime}:00`,

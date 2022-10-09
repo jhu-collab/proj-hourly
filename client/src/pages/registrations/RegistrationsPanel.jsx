@@ -1,6 +1,7 @@
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import Registration from "./Registration";
 
 /**
