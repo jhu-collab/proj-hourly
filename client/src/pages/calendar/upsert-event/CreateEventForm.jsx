@@ -56,6 +56,7 @@ function CreateEventForm() {
 
   const recurring = watch("recurringEvent");
 
+
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
@@ -95,11 +96,18 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <FormCheckbox
-            name="recurringEvent"
-            control={control}
-            label="Recurring event"
-          />
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
+              label="Recurring event"
+            />
+            <FormCheckbox
+              name="feedback"
+              control={control}
+              label="Would you like feedback?"
+            />
+          </Stack>
           <FormInputText
             name="startDate"
             control={control}
