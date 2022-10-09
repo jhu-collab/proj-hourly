@@ -20,7 +20,7 @@ function FormInputText({ name, control, label, ...other }) {
           fullWidth
           label={label}
           variant="outlined"
-          helperText={error ? error.message : null}
+          helperText={!!error ? error.message : null}
           error={error}
           {...other}
         />

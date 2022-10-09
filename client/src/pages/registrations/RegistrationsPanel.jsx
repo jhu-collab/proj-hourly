@@ -1,7 +1,6 @@
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
-import { useLayoutStore } from "../../services/store";
 import Registration from "./Registration";
 
 /**
@@ -13,7 +12,7 @@ import Registration from "./Registration";
  * @returns a registrations tab panel.
  */
 function RegistrationsPanel({ index, registrations }) {
-  const timeTab = useLayoutStore((state) => state.timeTab);
+  const timeTab = useStoreLayout((state) => state.timeTab);
 
   const noRegistrations = () => {
     switch (index) {
