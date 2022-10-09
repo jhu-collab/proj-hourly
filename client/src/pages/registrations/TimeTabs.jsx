@@ -1,5 +1,6 @@
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents a MUI Tabs component that allows users to

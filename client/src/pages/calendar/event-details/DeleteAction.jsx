@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import moment from "moment";
+import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import Loader from "../../../components/Loader";
 import { useState } from "react";
@@ -32,7 +32,9 @@ function DeleteAction() {
             recurring && deleteType === "this"
               ? mutate({
                   officeHourId: id,
-                  date: moment(start).utc().format("MM-DD-YYYY"),
+                  date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+                    "MM-dd-yyyy"
+                  ),
                 })
               : mutate({ officeHourId: id })
           );
