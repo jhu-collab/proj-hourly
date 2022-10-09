@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import moment from "moment";
+import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
 
@@ -33,11 +33,20 @@ function useMutationCreateOfficeHour() {
   const mutation = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const startTime = moment(officeHour.startTime).utc().format("LT");
-      const endTime = moment(officeHour.endTime).utc().format("LT");
 
-      const startDate = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
-      const endDate = moment(officeHour.endDate).utc().format("MM/DD/YYYY");
+      const startTime = DateTime.fromISO(officeHour.startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(officeHour.endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+
+      const startDate = DateTime.fromISO(officeHour.startDate, {
+        zone: "utc",
+      }).toFormat("D");
+      const endDate = DateTime.fromISO(officeHour.endDate, {
+        zone: "utc",
+      }).toFormat("D");
 
       queryClient.invalidateQueries(["officeHours"]);
       NiceModal.hide("upsert-event");

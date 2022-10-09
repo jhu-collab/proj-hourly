@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import moment from "moment";
+import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreEvent from "./useStoreEvent";
 import useStoreLayout from "./useStoreLayout";
@@ -16,9 +16,11 @@ function useMutationEditEvent(recurringEvent) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  const date = moment(useStoreEvent((state) => state.start)).format(
-    "MM-DD-YYYY"
-  );
+  const date = DateTime.fromJSDate(
+    useStoreEvent((state) => state.start),
+    { zone: "utc" }
+  ).toFormat("MM-dd-yyyy");
+
   const id = useStoreEvent((state) => state.id);
 
   const theme = useTheme();
