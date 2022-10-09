@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import moment from "moment";
+import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreEvent from "./useStoreEvent";
 import useStoreLayout from "./useStoreLayout";
@@ -49,9 +49,15 @@ function useMutationCancelEvent(deleteType) {
       onSuccess: (data) => {
         const officeHour = data.officeHourUpdate;
 
-        const date = moment(officeHour.startDate).utc().format("L");
-        const startTime = moment(officeHour.startTime).utc().format("LT");
-        const endTime = moment(officeHour.endTime).utc().format("LT");
+        const date = DateTime.fromISO(officeHour.startDate, {
+          zone: "utc",
+        }).toLocaleString();
+        const startTime = DateTime.fromISO(officeHour.startTime, {
+          zone: "utc",
+        }).toLocaleString(DateTime.TIME_SIMPLE);
+        const endTime = DateTime.fromISO(officeHour.endTime, {
+          zone: "utc",
+        }).toLocaleString(DateTime.TIME_SIMPLE);
 
         queryClient.invalidateQueries(["officeHours"]);
 

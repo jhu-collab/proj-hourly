@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import moment from "moment";
+import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
 
@@ -33,19 +33,36 @@ function useMutationCreateOfficeHour() {
   const mutation = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
-      const startTime = moment(officeHour.startTime).utc().format("LT");
-      const endTime = moment(officeHour.endTime).utc().format("LT");
+
+      const startTime = DateTime.fromISO(officeHour.startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(officeHour.endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+
+      const startDate = DateTime.fromISO(officeHour.startDate, {
+        zone: "utc",
+      }).toFormat("D");
+      const endDate = DateTime.fromISO(officeHour.endDate, {
+        zone: "utc",
+      }).toFormat("D");
 
       queryClient.invalidateQueries(["officeHours"]);
       NiceModal.hide("upsert-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      // TODO: Will need to be refactored once we deal with recurring events.
-      toast.success(
-        `Successfully created office hour on ${date} from 
-           ${startTime} to ${endTime}`
-      );
+      if (startDate !== endDate) {
+        toast.success(
+          `Successfully created recurring office hours between ${startDate} and ${endDate} from 
+             ${startTime} to ${endTime}`
+        );
+      } else {
+        toast.success(
+          `Successfully created office hour on ${startDate} from 
+             ${startTime} to ${endTime}`
+        );
+      }
     },
     onError: (err) => {
       errorToast(err);
