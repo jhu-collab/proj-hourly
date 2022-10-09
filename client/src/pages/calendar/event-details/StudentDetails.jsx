@@ -3,18 +3,9 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NiceModal from "@ebay/nice-modal-react";
 import Alert from "@mui/material/Alert";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import useTheme from "@mui/material/styles/useTheme";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import {
-  cancelRegistration,
-  getRegistrationStatus,
-} from "../../../utils/requests";
-import { errorToast } from "../../../utils/toasts";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
-import { toast } from "react-toastify";
-import moment from "moment";
-import { useLayoutStore } from "../../../services/store";
+import useQueryRegistrationStatus from "../../../hooks/useQueryRegistrationStatus";
+import useMutationCancelRegistration from "../../../hooks/useMutationCancelRegistration";
 
 /**
  * Child component that displays information about an office hour
@@ -22,40 +13,11 @@ import { useLayoutStore } from "../../../services/store";
  * @returns a student registration information section
  */
 function StudentDetails() {
-  const theme = useTheme();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const { isLoading, error, data } = useQueryRegistrationStatus();
 
-  const { isLoading, error, data } = useQuery(
-    ["registrationStatus"],
-    getRegistrationStatus
+  const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
+    data?.registration?.id || -1
   );
-
-  const { mutate, isLoading: isLoadingMutate } = useMutation(
-    () => cancelRegistration(data.registration.id),
-    {
-      onSuccess: (data) => {
-        const registration = data.registration;
-        const startTime = moment(registration.startTime)
-          .utc()
-          .format("hh:mm A");
-        const endTime = moment(registration.endTime).utc().format("hh:mm A");
-
-        queryClient.invalidateQueries(["registrationStatus"]);
-
-        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-
-        toast.success(
-          `Successfully cancelled registration from ${startTime} to ${endTime}`
-        );
-      },
-      onError: (error) => {
-        errorToast(error);
-      },
-    }
-  );
-
-  const queryClient = useQueryClient();
 
   if (isLoading) {
     return <Alert severity="warning">Retrieving registration status ...</Alert>;
