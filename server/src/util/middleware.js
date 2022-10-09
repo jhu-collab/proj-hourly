@@ -1,40 +1,161 @@
 import { isPrismaError, prismaErrorToHttpError } from "./helpers.js";
 import { ZodError } from "zod";
-import jsonWebToken from "jsonwebtoken";
+import { createToken, decodeToken } from "./token.js";
 import ApiError from "../model/ApiError.js";
+import prisma from "../../prisma/client.js";
+import { factory } from "./debug.js";
 
-export const checkToken = (req, res, next) => {
-  const bearerHeader = req.headers["authorization"];
-  if (!bearerHeader) {
-    throw new ApiError(401, "No authorization token was provided!");
-  }
-  const bearer = bearerHeader.split(" ");
-  const token = bearer[1];
-  // decode the token and attach the user object to the request object!
+const debug = factory(import.meta.url);
+
+export const checkApiKey = async (req, res, next) => {
+  debug(`checkApiKey is called...`);
   try {
-    const { iat, exp, ...rest } = jsonWebToken.verify(
-      token,
-      process.env.JWT_SECRET,
-      {
-        algorithm: "HS256",
-        ignoreNotBefore: true,
-      }
-    );
-    req.user = { ...rest };
+    debug(`Read the stored API key from ENV variable...`);
+    const sourceKey = process.env.HOURLY_API_KEY;
+    debug(`Read the request header to extract the provided API key...`);
+    const givenKey = req.headers["api_key"];
+
+    if (!givenKey) {
+      debug(`No API key was provided!..`);
+      throw new ApiError(401, "No API key was provided!");
+    }
+
+    if (sourceKey !== givenKey) {
+      debug(`Invalid API key!..`);
+      throw new ApiError(403, "Invalid API key!");
+    }
+
+    debug("Api key is valid!");
+    debug(`checkApiKey is done!`);
+    next();
   } catch (err) {
+    debug("Error in checkApiKey...");
+    debug({ err });
+    next(err);
+  }
+};
+
+export const checkToken = async (req, res, next) => {
+  debug(`checkToken is called!`);
+  try {
+    const bearerHeader = req.headers["authorization"];
+    debug(`Read the authorization header...`);
+    if (!bearerHeader) {
+      throw new ApiError(401, "No authorization token was provided!");
+    }
+    debug(`Extract the token from auth header...`);
+    const bearer = bearerHeader.split(" ");
+    const token = bearer[1];
+
+    debug(`Decoding the token ...`);
+    const { iat, exp, ...userInfo } = decodeToken(token);
+    debug(`Token belongs to ${userInfo.username}`);
+
+    debug(
+      `Attaching user and token (and its decoded expirtation date) to the req object`
+    );
+    req.user = userInfo;
+    req.id = userInfo.id;
+    req.token = {
+      value: token,
+      expiresIn: exp,
+      issuedAt: iat,
+    };
+
+    debug(`checkToken is done!`);
+    next();
+  } catch (err) {
+    debug(`Error in checkToken: ${JSON.stringify(err, null, 2)}`);
     if (err && err.name === "TokenExpiredError") {
-      throw new ApiError(401, "Authorization token expired!");
+      next(new ApiError(401, "Authorization token expired!"));
     } else if (err && err.name === "JsonWebTokenError") {
-      throw new ApiError(401, `Authorization error ${err.message}`);
+      next(new ApiError(401, `Authorization error ${err.message}`));
     } else {
+      next(err);
     }
   }
-  next();
+};
+
+// Pre: req object contains the token and user info
+export const refreshToken = async (req, res, next) => {
+  debug(`refreshToken is called!`);
+
+  try {
+    const { value: token, expiresIn } = req.token;
+    const { payload } = res.locals;
+
+    let refreshedToken = "";
+    if (!expiresIn) {
+      debug("It's a non-expiring token - no need to refresh it!");
+      refreshedToken = token;
+    } else {
+      debug("Retrieve the owner of this token from the database...");
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (user) {
+        /* 
+          BUG: If we check against the stored one, a user cannot work with the app from two different devices as 
+          they will have to sign out and in from one device every time they work from another. 
+          We can still use the refresh token strategy to update the token so effectively that a user session does 
+          not expire as long as they are working with the app.
+        */
+        // debug(`Check if the incoming token matches the stored token...`);
+        // if (token !== user.token) {
+        //   debug(`Tokens did not match!`);
+        //   throw new ApiError(401, "Authorization token error!");
+        // }
+
+        debug(`Create a new token...`);
+        const {
+          hashedPassword,
+          createdAt,
+          updatedAt,
+          token: storedToken,
+          ...userInfo
+        } = user;
+        refreshedToken = createToken({
+          user: { ...userInfo },
+        });
+
+        debug(`Store the new token in the database...`);
+        await prisma.user.update({
+          where: { id: userInfo.id },
+          data: {
+            token: refreshedToken,
+          },
+        });
+      } else {
+        debug(`No user found with this token!`);
+        // This can happen under two conditions:
+        // 1. A verified and authenticated user deleted itself!
+        //    TODO: for this case, perhaps we should expire the token!
+        // 2. The token was created manually without correct user info (e.g. by a developer)
+        //    TODO: for this case, perhaps we should not allow a developer to do this!
+        debug(`Returning the original token without refreshing it!`);
+        refreshedToken = token;
+      }
+    }
+
+    debug(`Return payload with refresh token attached...`);
+    res.status(payload.status || 200).json({
+      ...payload,
+      token: refreshedToken,
+    });
+
+    debug(`refreshToken is done!`);
+    next();
+  } catch (err) {
+    debug(`Error in refreshToken: ${JSON.stringify(err, null, 2)}`);
+    next(err);
+  }
 };
 
 export const globalErrorHandler = (err, req, res, next) => {
+  debug(`globalErrorHandler is called!`);
   if (err) {
-    // console.log(err);
+    debug(err);
     if (err instanceof ZodError) {
       return res
         .status(400)

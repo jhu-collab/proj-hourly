@@ -5,7 +5,6 @@ import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import { useLayoutStore } from "../../../services/store";
 import DeleteAction from "./DeleteAction";
 import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
@@ -20,7 +19,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
  */
 const MobileEventPopup = NiceModal.create(() => {
   const modal = useModal();
-  const courseType = useLayoutStore((state) => state.courseType);
+  const courseType = useStoreLayout((state) => state.courseType);
 
   // TODO: Maybe we can modify the Popup component to promote reusability!
   return (

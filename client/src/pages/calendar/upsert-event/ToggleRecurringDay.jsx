@@ -1,6 +1,6 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useEventStore } from "../../../services/store";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Child component for the UpsertForm component. Represents an
@@ -9,8 +9,8 @@ import { useEventStore } from "../../../services/store";
  * @returns The recurring day selector.
  */
 function ToggleRecurringDay() {
-  const days = useEventStore((state) => state.days);
-  const setDays = useEventStore((state) => state.setDays);
+  const days = useStoreEvent((state) => state.days);
+  const setDays = useStoreEvent((state) => state.setDays);
 
   const handleChange = (event, newDays) => {
     setDays(newDays);

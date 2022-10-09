@@ -152,7 +152,7 @@ export const register = async (req, res) => {
   validate(req);
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const dateObj = new Date(date);
   const registration = await prisma.registration.create({
     data: {
@@ -341,14 +341,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-  const officeHourUpdate = await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
-    },
-  });
+
+  let officeHourUpdate = {};
+  if (officehour.isRecurring) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      },
+    });
+  } else {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -501,7 +514,7 @@ export const editAll = async (req, res) => {
 export const getRegistrationStatus = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
       officeHourId,
@@ -522,6 +535,44 @@ export const getRegistrationStatus = async (req, res) => {
     status: "Registered",
     registration: status,
   });
+};
+
+export const getForCourseWithFilter = async (req, res) => {
+  const filter = req.params.filter;
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
+  let officeHours = [];
+  if (filter === "all") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+      },
+      include: {
+        isOnDayOfWeek: true,
+        hosts: true,
+      },
+    });
+  } else if (filter === "mine") {
+    officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+      include: {
+        isOnDayOfWeek: true,
+        hosts: true,
+      },
+    });
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Invalid filter" });
+  }
+  return res.status(StatusCodes.ACCEPTED).json({ officeHours });
 };
 
 export const getOfficeHourById = async (req, res) => {

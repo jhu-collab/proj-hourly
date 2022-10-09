@@ -12,29 +12,39 @@ datasource db {
 
 model Account {
   id                Int            @id @default(autoincrement())
-  userName          String
+  userName          String         @unique
+  hashedPassword    String?
   email             String         @unique
-  phoneNumber       String?        @unique
   studentCourses    Course[]       @relation("isStudent")
   staffCourses      Course[]       @relation("isStaff")
   instructorCourses Course[]       @relation("isInstructor")
   isHosting         OfficeHour[]   @relation("isHost")
   isRegistered      Registration[]
+  firstName         String?
+  lastName          String?
+  preferredName     String?
+  role              Role           @default(User)
+  token             String?
+}
+
+enum Role {
+  Admin
+  User
 }
 
 model Course {
-  id                     Int            @id @default(autoincrement())
-  title                  String
-  courseNumber           String
-  semester               String
-  calendarYear           Int
-  code                   String         @unique @db.Char(6)
-  students               Account[]      @relation("isStudent")
-  courseStaff            Account[]      @relation("isStaff")
-  instructors            Account[]      @relation("isInstructor")
-  officeHours            OfficeHour[]
-  topics                 Topic[]
-  iCalJson               Json?
+  id           Int          @id @default(autoincrement())
+  title        String
+  courseNumber String
+  semester     String
+  calendarYear Int
+  code         String       @unique @db.Char(6)
+  students     Account[]    @relation("isStudent")
+  courseStaff  Account[]    @relation("isStaff")
+  instructors  Account[]    @relation("isInstructor")
+  officeHours  OfficeHour[]
+  topics       Topic[]
+  iCalJson     Json?
 }
 
 model OfficeHour {

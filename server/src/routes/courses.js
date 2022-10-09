@@ -5,10 +5,11 @@ import * as controller from "../controllers/courseController.js";
 import * as accountValidator from "../util/accountValidator.js";
 import * as officeHourController from "../controllers/officeHourController.js";
 import * as accountController from "../controllers/accountController.js";
-import { checkToken } from "../util/checkToken.js";
+import { checkToken } from "../util/middleware.js";
 
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -71,6 +72,16 @@ router.get(
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   officeHourController.getForCourse
+);
+
+router.get(
+  "/:courseId/officeHours/:filter",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  param("filter", "Must provide a filter").notEmpty().isIn(["all", "mine"]),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isCourseStaffOrInstructor,
+  officeHourController.getForCourseWithFilter
 );
 
 router.get(

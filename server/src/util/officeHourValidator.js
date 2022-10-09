@@ -246,7 +246,7 @@ export const isTimeAvailable = async (req, res, next) => {
 
 export const isOfficeHourHost = async (req, res, next) => {
   const { officeHourId } = req.body;
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -269,7 +269,7 @@ export const isOfficeHourHost = async (req, res, next) => {
 
 export const isOfficeHourHostParams = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -320,7 +320,7 @@ export const isInFuture = async (req, res, next) => {
 export const isUserNotRegistered = async (req, res, next) => {
   const { officeHourId } = req.body;
   const date = new Date(req.body.date);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const registration = await prisma.registration.findFirst({
     where: {
       officeHourId,

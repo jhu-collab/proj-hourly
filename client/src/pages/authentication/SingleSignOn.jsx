@@ -1,16 +1,19 @@
 import Button from "@mui/material/Button";
 import AnimateButton from "../../components/AnimateButton";
+import useAuth from "../../hooks/useAuth";
 
 function SingleSignOn() {
+  const { ssoSignIn } = useAuth();
+
   return (
     <AnimateButton>
       <Button
-        variant="outlined"
+        variant="contained"
         color="primary"
         fullWidth={true}
-        onClick={() => console.log("JHU SSO")}
+        onClick={() => ssoSignIn()}
       >
-        JHU SSO
+        Sign in with JHU SSO
       </Button>
     </AnimateButton>
   );

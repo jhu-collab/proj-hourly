@@ -79,6 +79,41 @@ export const isCourseIdParams = async (req, res, next) => {
   next();
 };
 
+export const isCourseStaffOrInstructor = async (req, res, next) => {
+  const { courseId } = req.body;
+  const id = req.id;
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id,
+          },
+        },
+      },
+    ],
+  };
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff" });
+  }
+  next();
+};
+
 export const areCourseStaffOrInstructor = async (req, res, next) => {
   const { courseId, hosts } = req.body;
   let roleQuery = [];
@@ -118,7 +153,7 @@ export const areCourseStaffOrInstructor = async (req, res, next) => {
 
 export const isInCourseFromHeader = async (req, res, next) => {
   const courseId = parseInt(req.params.courseId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const studentQuery = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -169,7 +204,7 @@ export const isInCourseFromHeader = async (req, res, next) => {
 
 export const isInCourseForOfficeHour = async (req, res, next) => {
   const { officeHourId } = req.body;
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -200,7 +235,7 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
 
 export const isInCourseForOfficeHourParam = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
