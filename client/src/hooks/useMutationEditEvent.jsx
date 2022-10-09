@@ -20,7 +20,7 @@ function useMutationEditEvent(recurringEvent) {
     useStoreEvent((state) => state.start),
     { zone: "utc" }
   ).toFormat("MM-dd-yyyy");
-  
+
   const id = useStoreEvent((state) => state.id);
 
   const theme = useTheme();
