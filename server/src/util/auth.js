@@ -1,11 +1,13 @@
 import AccessControl from "accesscontrol";
 import ApiError from "../model/ApiError.js";
+import { factory } from "./debug.js";
+
+const debug = factory(import.meta.url);
 
 /*
  --------------------------
  Access Control List (ACL)
  --------------------------
-
  /users
  GET       Admin can read any user account.
            User can only read their own account.
@@ -123,13 +125,15 @@ const actionMapper = (verb) => {
 const checkPermission = (req, { method, resource, role, user, owner }) => {
   const verb = httpVerb2actionVerb(method);
   const action = actionMapper(verb);
-  // console.log(
-  //   `RESOURCE: ${resource}, ACTION: ${verb}, ROLE: ${role}, USER: ${user}, OWNER: ${owner}`
-  // );
+  debug(
+    `RESOURCE: ${resource}, ACTION: ${verb}, ROLE: ${role}, USER: ${user}, OWNER: ${owner}`
+  );
   let permission = accessControl.can(role.toLowerCase());
 
   if (permission[action.any](resource).granted) {
-    // this user can perform this action on any instance of this resource
+    debug(
+      "this user can perform this action on any instance of this resource."
+    );
     req.permission = permission[action.any](resource);
     return;
   }
@@ -138,12 +142,15 @@ const checkPermission = (req, { method, resource, role, user, owner }) => {
   if (permission[action.own](resource).granted) {
     // let's make sure this instance of the resource belongs to this user
     if (user && owner && user === owner) {
+      debug(
+        "This resource belongs to this user and the user is permitted to perform this action."
+      );
       req.permission = permission[action.own](resource);
       return;
     }
   }
 
-  // User is not authorized
+  debug("User is not authorized to perform this action on this resource.");
   throw new ApiError(
     403,
     `As a ${role.toUpperCase()}, you are not authorized to perform ${verb.toUpperCase()} action on ${resource} resource.`

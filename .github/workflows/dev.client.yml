@@ -12,7 +12,8 @@ env:
   VITE_RUN_MODE: dev
   VITE_DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
   VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
-
+  VITE_ROSTER_SSO_JHU_URL: ${{ secrets.ROSTER_SSO_JHU_URL }}
+  
 defaults:
   run:
     working-directory: client

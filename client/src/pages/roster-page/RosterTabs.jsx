@@ -41,14 +41,7 @@ function RosterTabs(props) {
         type: "actions",
         flex: 1,
         getActions: (params) => [
-          <DeleteButton
-            //setRows={setRows}
-            // courseId={courseId}
-            // token={token}
-            params={params}
-            rows={rows}
-            isStaff={false}
-          />,
+          <DeleteButton params={params} rows={rows} isStaff={false} />,
         ],
       },
       {

@@ -2,7 +2,7 @@ import express from "express";
 import * as express_validator from "express-validator";
 import * as validator from "../util/accountValidator.js";
 import * as controller from "../controllers/accountController.js";
-import { checkToken } from "../util/checkToken.js";
+import { checkToken } from "../util/middleware.js";
 const router = express.Router();
 const body = express_validator.body;
 
