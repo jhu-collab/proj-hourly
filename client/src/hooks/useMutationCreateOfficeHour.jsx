@@ -33,19 +33,27 @@ function useMutationCreateOfficeHour() {
   const mutation = useMutation(createOfficeHour, {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
-      const date = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
       const startTime = moment(officeHour.startTime).utc().format("LT");
       const endTime = moment(officeHour.endTime).utc().format("LT");
+
+      const startDate = moment(officeHour.startDate).utc().format("MM/DD/YYYY");
+      const endDate = moment(officeHour.endDate).utc().format("MM/DD/YYYY");
 
       queryClient.invalidateQueries(["officeHours"]);
       NiceModal.hide("upsert-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      // TODO: Will need to be refactored once we deal with recurring events.
-      toast.success(
-        `Successfully created office hour on ${date} from 
-           ${startTime} to ${endTime}`
-      );
+      if (startDate !== endDate) {
+        toast.success(
+          `Successfully created recurring office hours between ${startDate} and ${endDate} from 
+             ${startTime} to ${endTime}`
+        );
+      } else {
+        toast.success(
+          `Successfully created office hour on ${startDate} from 
+             ${startTime} to ${endTime}`
+        );
+      }
     },
     onError: (err) => {
       errorToast(err);
