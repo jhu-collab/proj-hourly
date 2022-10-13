@@ -2,12 +2,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import moment from "moment";
 import { useForm } from "react-hook-form";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
 import { registerSchema } from "../../../utils/validators";
+import { DateTime } from "luxon";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
@@ -16,16 +16,12 @@ const getOptions = (timeSlots) => {
   const options = [];
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].startTime).utc().format("LT");
-    const localeEndTime = moment(timeSlots[i].endTime).utc().format("LT");
+    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, { zone: "utc"}).toLocaleString(DateTime.TIME_SIMPLE);
+    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, { zone: "utc"}).toLocaleString(DateTime.TIME_SIMPLE);
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${moment(timeSlots[i].startTime)
-        .utc()
-        .format("HH:mm:ss")} - ${moment(timeSlots[i].endTime)
-        .utc()
-        .format("HH:mm:ss")}`,
+      value: `${DateTime.fromISO(timeSlots[i].startTime, { zone: "utc"}).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, { zone: "utc"}).toFormat("TT")}`,
     });
   }
 
@@ -47,8 +43,12 @@ function RegisterForm() {
   const id = useStoreEvent((state) => state.id);
 
   const date = start.toDateString();
-  const startTime = moment(start).utc().format("LT");
-  const endTime = moment(end).utc().format("LT");
+  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
+  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -63,7 +63,7 @@ function RegisterForm() {
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
-      date: moment(start).format("MM-DD-YYYY"),
+      date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
     });
   };
 

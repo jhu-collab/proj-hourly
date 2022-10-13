@@ -1,5 +1,5 @@
 import axios from "axios";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
 import { errorToast } from "../utils/toasts";
@@ -12,9 +12,10 @@ function useQueryTimeSlots() {
   const token = useStoreToken((state) => state.token);
 
   const id = useStoreEvent((state) => state.id);
-  const date = moment(useStoreEvent((state) => state.start)).format(
-    "MM-DD-YYYY"
-  );
+  const date = DateTime.fromJSDate(
+    useStoreEvent((state) => state.start),
+    { zone: "utc" }
+  ).toFormat("MM-dd-yyyy");
 
   const getTimeSlots = async () => {
     try {
