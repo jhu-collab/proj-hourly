@@ -4,14 +4,14 @@ import { BASE_URL } from "../services/common";
 import { getConfig } from "./helper";
 import useStoreEvent from "./useStoreEvent";
 import useStoreToken from "./useStoreToken";
-import moment from "moment";
+import {DateTime} from "luxon";
 
 function useQueryRegistrationStatus() {
   const queryKey = ["registrationStatus"];
   const token = useStoreToken((state) => state.token);
   const id = useStoreEvent((state) => state.id);
-  const date = moment(useStoreEvent((state) => state.start)).format(
-    "MM-DD-YYYY"
+  const date = DateTime.fromJSDate(useStoreEvent((state) => state.start)).toFormat(
+    "MM-dd-yyyy"
   );
 
   const getRegistrationStatus = async () => {

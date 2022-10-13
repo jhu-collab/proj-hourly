@@ -7,9 +7,9 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import moment from "moment";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
+import { DateTime } from "luxon";
 
 function useMutationCancelRegistration(registrationId) {
   const { token } = useStoreToken();
@@ -33,15 +33,19 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-      const startTime = moment(registration.startTime).utc().format("hh:mm A");
-      const endTime = moment(registration.endTime).utc().format("hh:mm A");
+    //   const startTime = DateTime(registration.startTime).utc().format("hh:mm A");
+    //   const endTime = moment(registration.endTime).utc().format("hh:mm A");
 
-      queryClient.invalidateQueries(["registrationStatus"]);
+    //   queryClient.invalidateQueries(["registrationStatus"]);
 
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+    //   matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+
+    //   toast.success(
+    //     `Successfully cancelled registration from ${startTime} to ${endTime}`
+    //   );
 
       toast.success(
-        `Successfully cancelled registration from ${startTime} to ${endTime}`
+        `Success`
       );
     },
     onError: (error) => {
