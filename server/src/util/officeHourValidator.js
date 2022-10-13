@@ -1,6 +1,8 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
+import { decodeToken } from "./token.js";
+import { body } from "express-validator";
 
 export const weekday = [
   "Sunday",
@@ -375,7 +377,8 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
 
 export const isStudentRegistered = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
-  const id = parseInt(req.get("id"), 10);
+  //const id = parseInt(req.get("id"), 10);
+ // const {id} = decodeToken(body.)
   const registration = await prisma.registration.findFirst({
     where: {
       id: registrationId,
