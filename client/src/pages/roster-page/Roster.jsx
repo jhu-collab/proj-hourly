@@ -49,6 +49,13 @@ const Roster = () => {
         >
           Invite User
         </Button>
+        <Button
+          sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
+          onClick={() => NiceModal.show("promote-user", { isInstructor: true })}
+          variant="contained"
+        >
+          Promote Users
+        </Button>
       </Stack>
       <RosterTabs rows={data} value={value} setValue={setValue} />
     </>

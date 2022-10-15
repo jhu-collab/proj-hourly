@@ -5,8 +5,10 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useMemo } from "react";
 import DeleteButton from "./DeleteButton";
+import PromoteUser from "./PromoteUser";
 
 function RosterTabs(props) {
+
   const isInstructor = true;
   const { rows, value, setValue, deleteUser } = props;
   function TabPanel(props) {
