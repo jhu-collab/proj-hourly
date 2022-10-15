@@ -8,6 +8,18 @@ import { getAllRegistrations } from "../../utils/requests";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 
+function latestEventsFirst(a, b) {
+  return b.startObj < a.startObj ?  1 
+       : b.startObj > a.startObj ? -1 
+       : 0;               
+};
+
+function earliestEventsFirst(a, b) {
+  return b.startObj > a.startObj ?  1 
+       : b.startObj < a.startObj ? -1 
+       : 0;               
+};
+
 const filterByTime = (array, timeTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
@@ -38,6 +50,11 @@ const filterByTime = (array, timeTab) => {
   });
 };
 
+function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+
 /**
  * Represents the Registrations page.
  * @returns Registrations page
@@ -56,18 +73,6 @@ function Registrations() {
     result = filterByTime(result, timeTab);
     setRegistrations(result);
   }, [data, timeTab]);
-
-  function latestEventsFirst(a, b) {
-    return b.startObj < a.startObj ?  1 
-         : b.startObj > a.startObj ? -1 
-         : 0;               
-  };
-
-  function earliestEventsFirst(a, b) {
-    return b.startObj > a.startObj ?  1 
-         : b.startObj < a.startObj ? -1 
-         : 0;               
-  };
 
   return (
     <>
