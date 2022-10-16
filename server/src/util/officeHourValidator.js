@@ -420,6 +420,7 @@ export const doesRegistrationExistParams = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Registration does not exist" });
   }
+  next();
 };
 
 export const areValidDOW = (req, res, next) => {
