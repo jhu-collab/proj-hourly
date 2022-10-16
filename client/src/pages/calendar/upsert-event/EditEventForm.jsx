@@ -6,11 +6,49 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import Loader from "../../../components/Loader";
-import moment from "moment";
-import ToggleRecurringDay from "./ToggleRecurringDay";
+import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonGroup";
+import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+
+const BUTTONS = [
+  {
+    id: "0",
+    label: "Mon",
+    value: "Monday",
+  },
+  {
+    id: "1",
+    label: "Tue",
+    value: "Tuesday",
+  },
+  {
+    id: "2",
+    label: "Wed",
+    value: "Wednesday",
+  },
+  {
+    id: "3",
+    label: "Thu",
+    value: "Thursday",
+  },
+  {
+    id: "4",
+    label: "Fri",
+    value: "Friday",
+  },
+  {
+    id: "5",
+    label: "Sat",
+    value: "Saturday",
+  },
+  {
+    id: "6",
+    label: "Sun",
+    value: "Sunday",
+  },
+];
 
 /**
  * Component that represents the form that is used to edit an event.
@@ -20,17 +58,27 @@ function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const days = useStoreEvent((state) => state.days);
   const timeInterval = useStoreEvent((state) => state.timeInterval);
   const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        : "",
       endDate: null,
-      startTime: start ? moment(start).utc().format("HH:mm") : "",
+      startTime: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       recurringEvent: false,
-      endTime: end ? moment(end).utc().format("HH:mm") : "",
+      days: [],
+      endTime: end
+        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
@@ -46,12 +94,14 @@ function EditEventForm() {
       ? mutate({
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
-          startDate: moment(data.startDate).format("MM-DD-YYYY"),
-          endDate: moment(data.endDate).format("MM-DD-YYYY"),
+          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
           location: data.location,
-          daysOfWeek: days,
+          daysOfWeek: data.days,
           timePerStudent: data.timeInterval,
-          endDateOldOfficeHour: moment(data.startDate).format("MM-DD-YYYY"),
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
+            "MM-dd-yyyy"
+          ),
         })
       : mutate({
           startTime: `${data.startTime}:00`,
@@ -106,7 +156,14 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurringEvent && <ToggleRecurringDay />}
+          {recurringEvent && (
+            <FormToggleButtonGroup
+              name="days"
+              control={control}
+              buttons={BUTTONS}
+              color="primary"
+            />
+          )}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"

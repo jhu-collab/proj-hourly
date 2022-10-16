@@ -45,6 +45,7 @@ router.post(
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
   timeValidator.isTime,
+  validator.areValidDOW,
   dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create

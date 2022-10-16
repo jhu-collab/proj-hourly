@@ -86,7 +86,9 @@ const createJustDateObject = (date) => {
 };
 
 export const create = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const {
     startTime,
     endTime,
@@ -138,7 +140,9 @@ export const create = async (req, res) => {
 };
 
 export const getForCourse = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const course = await prisma.course.findUnique({
     where: {
@@ -149,7 +153,9 @@ export const getForCourse = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
   const id = req.id;
@@ -186,6 +192,9 @@ export const register = async (req, res) => {
 };
 
 export const cancelOnDate = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
   dateObj.setUTCHours(0);
@@ -219,6 +228,9 @@ export const cancelOnDate = async (req, res) => {
 };
 
 export const cancelAll = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId } = req.body;
   const date = new Date();
   date.setUTCHours(date.getHours());
@@ -290,6 +302,9 @@ export const cancelAll = async (req, res) => {
 };
 
 export const getTimeSlotsRemaining = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const date = new Date(req.params.date);
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
@@ -327,6 +342,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
 };
 
 export const rescheduleSingleOfficeHour = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const { startTime, endTime, timePerStudent, location } = req.body;
@@ -423,6 +441,9 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
 };
 
 export const editAll = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const {
     startDate,
@@ -512,6 +533,9 @@ export const editAll = async (req, res) => {
 };
 
 export const getRegistrationStatus = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const id = req.id;
@@ -574,6 +598,9 @@ export const getForCourseWithFilter = async (req, res) => {
 };
 
 export const getOfficeHourById = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -592,6 +619,9 @@ export const getOfficeHourById = async (req, res) => {
 };
 
 export const getAllRegistrationsOnDate = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const registrations = await prisma.registration.findMany({

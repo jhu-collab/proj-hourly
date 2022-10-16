@@ -370,3 +370,20 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
   }
   next();
 };
+
+export const areValidDOW = (req, res, next) => {
+  const { daysOfWeek } = req.body;
+  if (daysOfWeek === undefined || daysOfWeek.length === 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: days of the week not included" });
+  }
+  daysOfWeek.forEach((dow) => {
+    if (!weekday.includes(dow)) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: invalid days of week" });
+    }
+  });
+  next();
+};

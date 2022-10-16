@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
