@@ -391,7 +391,6 @@ export const isStudentRegistered = async (req, res, next) => {
   next();
 };
 
-
 export const isStudentRegisteredBody = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const id = req.id;
@@ -420,6 +419,7 @@ export const doesRegistrationExistParams = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Registration does not exist" });
   }
+  next();
 };
 
 export const areValidDOW = (req, res, next) => {
