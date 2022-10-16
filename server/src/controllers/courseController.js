@@ -433,3 +433,23 @@ export const getAllRegistrations = async (req, res) => {
   }
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
+
+export const deleteCourse = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  await prisma.topic.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  const course = await prisma.course.delete({
+    where: {
+      id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ deletedCourse: course });
+};
