@@ -1,6 +1,6 @@
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import { useLayoutStore } from "../../services/store";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents a MUI Tabs component that allows users to
@@ -8,8 +8,8 @@ import { useLayoutStore } from "../../services/store";
  * @returns Returns a tabs component to filter registrations.
  */
 function TimeTabs() {
-  const timeTab = useLayoutStore((state) => state.timeTab);
-  const setTimeTab = useLayoutStore((state) => state.setTimeTab);
+  const timeTab = useStoreLayout((state) => state.timeTab);
+  const setTimeTab = useStoreLayout((state) => state.setTimeTab);
 
   const handleChange = (event, newValue) => {
     setTimeTab(newValue);

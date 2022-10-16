@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { verifyToken } from "./token.js";
+import { decodeToken } from "./token.js";
 
 /**
  * checks if the token is a match for the user
@@ -19,13 +19,13 @@ export const checkToken = (req, res, next) => {
 
   // Verify token
   try {
-    verifyToken(id, (error, decoded) => {
-      //   if (error) {
-      //     return res
-      //       .status(StatusCodes.FORBIDDEN)
-      //       .json({ msg: "Token is not valid" });
-      //   }
-      //   req.id = decoded.user;
+    decodeToken(id, (error, decoded) => {
+      if (error) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ msg: "Token is not valid" });
+      }
+      req.id = decoded.user.id;
       next();
     });
   } catch (err) {

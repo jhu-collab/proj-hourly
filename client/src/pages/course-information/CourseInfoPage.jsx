@@ -1,11 +1,13 @@
 import MainCard from "../../components/MainCard";
 import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
-import { useCourseStore } from "../../services/store";
 import Stack from "@mui/material/Stack";
+import useStoreCourse from "../../hooks/useStoreCourse";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 function CourseInfoPage() {
-  const course = useCourseStore((state) => state.course);
+  const course = useStoreCourse((state) => state.course);
+  const courseType = useStoreLayout((state) => state.courseType);
   return (
     <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
       <Stack padding="16px" spacing={1}>
@@ -21,8 +23,13 @@ function CourseInfoPage() {
         <Typography variant="h5" fontWeight={400}>
           Year: <strong>{course.calendarYear}</strong>
         </Typography>
+        {courseType === "staff" && (
+          <Typography variant="h5" fontWeight={400}>
+            Code: <strong>{course.code}</strong>
+          </Typography>
+        )}
       </Stack>
-      <RemoveCourseAction courseid={course.id} />
+      {courseType === "student" && <RemoveCourseAction courseId={course.id} />}
     </MainCard>
   );
 }
