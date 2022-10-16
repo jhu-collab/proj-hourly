@@ -1,9 +1,8 @@
-import React from "react";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
-import Registration from "./Registration";
+import RegistrationType from "./RegistrationType";
 
 function RegistrationTypes({ index, types }) {
   const timeTab = useStoreLayout((state) => state.timeTab);
@@ -26,7 +25,7 @@ function RegistrationTypes({ index, types }) {
             {types.map((type, index2) => {
               return (
                 <Grid item xs={12}>
-                  <Registration registration={registration} type={index} />
+                  <RegistrationType type={type} />
                 </Grid>
               );
             })}

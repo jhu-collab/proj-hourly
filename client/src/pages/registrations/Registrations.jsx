@@ -8,14 +8,16 @@ import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
 
-const types = [{
-  name : "Regular",
-  duration: 10,
-
-},{
-  name: "Debugging",
-  duration: 30,
-}]
+const types = [
+  {
+    name: "Regular",
+    duration: 10,
+  },
+  {
+    name: "Debugging",
+    duration: 30,
+  },
+];
 
 const filterByTime = (array, timeTab) => {
   const today = new Date();
@@ -79,23 +81,10 @@ function Registrations() {
       )}
       {!isLoading && !error && (
         <>
-          <RegistrationsPanel
-            index={0}
-            registrations={registrations}
-          />
-          <RegistrationsPanel
-   
-            index={1}
-            registrations={registrations}
-          />
-          <RegistrationsPanel
-    
-            index={2}
-            registrations={registrations}
-          />
-          <RegistrationTypes 
-            index={4}
-            types={[]}/>
+          <RegistrationsPanel index={0} registrations={registrations} />
+          <RegistrationsPanel index={1} registrations={registrations} />
+          <RegistrationsPanel index={2} registrations={registrations} />
+          <RegistrationTypes index={4} types={types} />
         </>
       )}
     </>
