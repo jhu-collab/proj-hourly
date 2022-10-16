@@ -26,7 +26,7 @@ function useMutationLeaveCourse(courseId) {
   const mutation = useMutation(leaveCourse, {
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
-      toast.success(`Successfully removed course!`);
+      toast.success(`Successfully left course!`);
       navigate("/");
     },
     onError: (error) => {

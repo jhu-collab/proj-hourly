@@ -18,7 +18,7 @@ function RemoveCourseAction({ courseId }) {
         fullWidth
         sx={{ borderRadius: 0 }}
         onClick={() => {
-          confirmDialog("Do you really want to remove this course?", () => {
+          confirmDialog("Do you really want to leave this course?", () => {
             mutate();
           });
         }}
