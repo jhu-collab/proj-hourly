@@ -3,6 +3,8 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import RegistrationType from "./RegistrationType";
+import Fab from "@mui/material/Fab";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 
 function RegistrationTypes({ index, types }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
@@ -17,20 +19,33 @@ function RegistrationTypes({ index, types }) {
 
   return (
     <>
-      {registrationTab === index &&
-        (types.length === 0 ? (
-          noRegistrations()
-        ) : (
-          <Grid container spacing={2} marginTop={2}>
-            {types.map((type, index2) => {
-              return (
-                <Grid item xs={12}>
-                  <RegistrationType type={type} />
-                </Grid>
-              );
-            })}
-          </Grid>
-        ))}
+      {registrationTab === index && (
+        <>
+          {types.length === 0 ? (
+            noRegistrations()
+          ) : (
+            <Grid container spacing={2} marginTop={2}>
+              {types.map((type, index2) => {
+                return (
+                  <Grid item xs={12}>
+                    <RegistrationType type={type} />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
+          <Fab
+            color="primary"
+            sx={{
+              position: "fixed",
+              bottom: (theme) => theme.spacing(3),
+              right: (theme) => theme.spacing(3),
+            }}
+          >
+            <SpeedDialIcon />
+          </Fab>
+        </>
+      )}
     </>
   );
 }
