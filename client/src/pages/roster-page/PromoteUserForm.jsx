@@ -35,32 +35,12 @@ function PromoteUserForm(props) {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
-        <FormInputText name="email" control={control} label="Email Address" />
-        <RadioGroup
-          row
-          name="row-radio-buttons-group"
-          value={role}
-          onChange={handleRoleChange}
-        >
-          <FormControlLabel
-            value="student"
-            control={<Radio />}
-            label="Student"
-          />
-          <FormControlLabel value="staff" control={<Radio />} label="Staff" />
-          <FormControlLabel
-            value="instructor"
-            control={<Radio />}
-            label="Instructor"
-            disabled={!isInstructor}
-          />
-        </RadioGroup>
         <Button
           sx={{ margin: 2, fontSize: 17 }}
           variant="contained"
           type="submit"
         >
-          Add User
+          Promote
         </Button>
       </Stack>
     </Form>

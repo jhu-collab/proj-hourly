@@ -54,7 +54,7 @@ const Roster = () => {
           onClick={() => NiceModal.show("promote-user", { isInstructor: true })}
           variant="contained"
         >
-          Promote Users
+          Promote Student
         </Button>
       </Stack>
       <RosterTabs rows={data} value={value} setValue={setValue} />

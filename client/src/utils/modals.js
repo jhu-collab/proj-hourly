@@ -6,6 +6,7 @@ import UpsertEvent from "../pages/calendar/upsert-event/UpsertEvent";
 import InviteUser from "../pages/roster-page/InviteUser";
 import CreateCourse from "../pages/your-courses/create-course/CreateCourse";
 import JoinCourse from "../pages/your-courses/join-course/JoinCourse";
+import PromoteUser from "../pages/roster-page/PromoteUser";
 
 NiceModal.register("create-course", CreateCourse);
 NiceModal.register("join-course", JoinCourse);
@@ -14,3 +15,4 @@ NiceModal.register("upsert-event", UpsertEvent);
 NiceModal.register("register-event", Register);
 NiceModal.register("invite-user", InviteUser);
 NiceModal.register("sign-out", SignOutPopup);
+NiceModal.register("promote-user", PromoteUser);
