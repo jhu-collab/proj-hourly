@@ -8,6 +8,7 @@ import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
 
+// TODO: Need route to retrieve registration types
 const types = [
   {
     name: "Regular",
