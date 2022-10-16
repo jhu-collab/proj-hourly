@@ -16,12 +16,20 @@ const getOptions = (timeSlots) => {
   const options = [];
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, { zone: "utc"}).toLocaleString(DateTime.TIME_SIMPLE);
-    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, { zone: "utc"}).toLocaleString(DateTime.TIME_SIMPLE);
+    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
+    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${DateTime.fromISO(timeSlots[i].startTime, { zone: "utc"}).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, { zone: "utc"}).toFormat("TT")}`,
+      value: `${DateTime.fromISO(timeSlots[i].startTime, {
+        zone: "utc",
+      }).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, {
+        zone: "utc",
+      }).toFormat("TT")}`,
     });
   }
 
