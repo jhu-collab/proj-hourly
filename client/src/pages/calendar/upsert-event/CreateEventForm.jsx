@@ -115,7 +115,7 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       timeInterval: timeInterval || 10,
-      registrationType: [0], // TODO: create event route should be altered
+      registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -197,9 +197,9 @@ function CreateEventForm() {
             control={control}
           />
           <FormInputDropdown
-            name="registrationType"
+            name="registrationTypes"
             control={control}
-            label="Registration Type"
+            label="Registration Type(s)"
             options={registrationTypes}
             multiple
             renderValue={(selected) => (
