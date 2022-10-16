@@ -60,6 +60,7 @@ function RegistrationType({ type }) {
                   <FormInputText
                     name="duration"
                     control={control}
+                    type="number"
                     sx={{ width: 230 }}
                   />
                   <Typography variant="h5">minutes</Typography>
