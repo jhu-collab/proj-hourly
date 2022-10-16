@@ -192,7 +192,7 @@ export const isAccountInstructor = async (req, res, next) => {
 };
 
 export const accountIsNotInstructor = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = parseInt(req.params.id, 10);
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -291,6 +291,21 @@ export const isAccountInstructorBody = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not an instructor in the course" });
+  }
+  next();
+};
+
+export const isAccountValidParams = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: is not a valid account" });
   }
   next();
 };

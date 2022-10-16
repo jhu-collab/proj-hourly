@@ -43,6 +43,7 @@ router.post(
 router.post(
   "/addInstructor/:courseId/:id",
   accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
   accountValidator.accountIsNotInstructor,
   validator.isCourseIdUrlValid,
   controller.addInstructor
