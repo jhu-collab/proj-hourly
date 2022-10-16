@@ -6,7 +6,7 @@ import Registration from "./Registration";
 
 /**
  * Represents a panel of registrations.
- * @param {int} index the index of the panel. Helps decide
+ * @param {Number} index the index of the panel. Helps decide
  *                    whether the panel handles upcoming,
  *                    ongoing, or past registrations
  * @param {*} registrations list of user's registrations

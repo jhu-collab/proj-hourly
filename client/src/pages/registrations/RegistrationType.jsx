@@ -11,6 +11,11 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import { registrationTypeSchema } from "../../utils/validators";
 
+/**
+ * Represents a single Registration Type card.
+ * @param {Number} type type object
+ * @returns a single Registration Type component.
+ */
 function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
 

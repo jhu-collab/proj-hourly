@@ -10,7 +10,7 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
 /**
  * Represents a single Registration card.
- * @param {*} registrations a list of registrations
+ * @param {*} registration registration object
  * @param {Number} type a number that represents the type of
  *                      registrations. 0 for upcoming. 1 for
  *                      ongoing. 2 for past.

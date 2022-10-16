@@ -8,6 +8,11 @@ import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import { registrationTypeSchema } from "../../utils/validators";
 
+/**
+ * Component that represents the form that is used to create a
+ * registration type.
+ * @returns A component representing the Create Registration Type form.
+ */
 function CreateRegistrationTypeForm() {
   const { control, handleSubmit } = useForm({
     defaultValues: {

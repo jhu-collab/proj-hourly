@@ -7,6 +7,13 @@ import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import NiceModal from "@ebay/nice-modal-react";
 
+/**
+ * Represents the tab panel for Registration Type cards.
+ * @param {Number} index the index of the panel. Helps decide
+ *                    whether the panel should render
+ * @param {*} types list of user's registration types
+ * @returns RegistrationTypes page
+ */
 function RegistrationTypes({ index, types }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
 
