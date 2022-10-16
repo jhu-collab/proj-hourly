@@ -1,25 +1,9 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 import * as yup from "yup";
 
 export const loginSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
   password: yup.string().min(1, "Password must be 1 or more characters"),
-});
-
-const PHONE_NO_REGEX = /^\(?([0-9]{3})\)?[-]{1}([0-9]{3})[-]{1}([0-9]{4})$/;
-
-export const signUpSchema = yup.object().shape({
-  name: yup.string().max(255).required("Name is required"),
-  email: yup
-    .string()
-    .email("Must be a valid email")
-    .max(255)
-    .required("Email is required"),
-  phoneNumber: yup
-    .string()
-    .matches(PHONE_NO_REGEX, "Phone number is invalid")
-    .nullable()
-    .transform((value) => (!!value ? value : undefined)),
 });
 
 /**
@@ -111,9 +95,19 @@ export const createEventSchema = yup.object().shape({
           "End date must be after start date",
           function (value) {
             const { startDate } = this.parent;
-            return moment(value).isAfter(moment(startDate));
+            return DateTime.fromJSDate(value) > DateTime.fromJSDate(startDate);
           }
         ),
+    }),
+  days: yup
+    .array()
+    .nullable()
+    .when("recurringEvent", {
+      is: true,
+      then: yup
+        .array()
+        .typeError("Please select at least one recurring day")
+        .min(1, "Please select at least one recurring day"),
     }),
   startTime: yup.string().required("Start time is required"),
   endTime: yup
@@ -121,7 +115,9 @@ export const createEventSchema = yup.object().shape({
     .required("End time is required")
     .test("is-greater", "End time must be past start time", function (value) {
       const { startTime } = this.parent;
-      return moment(value, "HH:mm").isAfter(moment(startTime, "HH:mm"));
+      return (
+        DateTime.fromFormat(value, "T") > DateTime.fromFormat(startTime, "T")
+      );
     }),
   location: yup.string().required("Location is required"),
   timeInterval: yup
@@ -142,4 +138,14 @@ export const inviteUserSchema = yup.object().shape({
 
 export const registerSchema = yup.object().shape({
   times: yup.string().required("Please select a time slot"),
+});
+
+export const profileSchema = yup.object({
+  id: yup.number().transform((val) => Number(val)),
+  username: yup.string().min(1, "Username cannot be empty"),
+  firstName: yup.string().min(1, "First name cannot be empty"),
+  preferredName: yup.string(),
+  lastName: yup.string().min(1, "Last name cannot be empty"),
+  email: yup.string().email("Invalid email"),
+  role: yup.string(),
 });

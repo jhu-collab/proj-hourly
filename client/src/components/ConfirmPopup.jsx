@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useConfirmDialogStore } from "../services/store";
+import useStoreConfirmDialog from "../hooks/useStoreConfirmDialog";
 
 /**
  * State function that is responsible for displaying correct
@@ -18,7 +18,7 @@ import { useConfirmDialogStore } from "../services/store";
  *                       happen on submission
  */
 export const confirmDialog = (message, onSubmit) => {
-  useConfirmDialogStore.setState({
+  useStoreConfirmDialog.setState({
     message,
     onSubmit,
   });
@@ -32,7 +32,7 @@ export const confirmDialog = (message, onSubmit) => {
  * @returns Confirmation popup.
  */
 function ConfirmPopup({ header, children }) {
-  const { message, onSubmit, close } = useConfirmDialogStore();
+  const { message, onSubmit, close } = useStoreConfirmDialog();
 
   return (
     <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth>

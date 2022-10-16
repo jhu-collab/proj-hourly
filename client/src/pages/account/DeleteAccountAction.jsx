@@ -1,15 +1,15 @@
 import Button from "@mui/material/Button";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import useMutationLeaveCourse from "../../hooks/useMutationLeaveCourse";
+import useMutationDeleteAccount from "../../hooks/useMutationDeleteAccount";
 
 /**
- * Represents the Trash IconButton on the CourseDetails component
+ * Represents the Delete Account Button on the Profiles component
  * and the associated ConfirmPopup component.
- * @param {*} courseId - for which course the user wants to leave
+ * @param {*} userid - for the associated user
  * @returns Delete action button and confirmation popup.
  */
-function RemoveCourseAction({ courseId }) {
-  const { mutate } = useMutationLeaveCourse(courseId);
+function DeleteAccountAction({ userid }) {
+  const { mutate } = useMutationDeleteAccount(userid);
   return (
     <>
       <Button
@@ -18,16 +18,16 @@ function RemoveCourseAction({ courseId }) {
         fullWidth
         sx={{ borderRadius: 0 }}
         onClick={() => {
-          confirmDialog("Do you really want to remove this course?", () => {
-            mutate();
+          confirmDialog("Do you really want to delete your account?", () => {
+            mutate(userid);
           });
         }}
       >
-        Leave Course
+        Delete Account
       </Button>
       <ConfirmPopup />
     </>
   );
 }
 
-export default RemoveCourseAction;
+export default DeleteAccountAction;
