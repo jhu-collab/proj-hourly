@@ -11,6 +11,21 @@ import { DateTime } from "luxon";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import { useEffect } from "react";
+
+// TODO: Need route to retrieve registration types
+const types = [
+  {
+    id: 0,
+    label: "Regular",
+    value: 0,
+  },
+  {
+    id: 1,
+    label: "Debugging",
+    value: 1,
+  },
+];
 
 const getOptions = (timeSlots) => {
   const options = [];
@@ -54,12 +69,20 @@ function RegisterForm() {
     DateTime.TIME_SIMPLE
   );
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
+      type: "",
       times: "",
     },
     resolver: yupResolver(registerSchema),
   });
+
+  const type = watch("type");
+
+  // TODO: Time slots should be altered when registration type changes
+  // useEffect(() => {
+  //   console.log("Registration type changed!")
+  // }, [type])
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
@@ -88,19 +111,29 @@ function RegisterForm() {
             </u>
           </Typography>
           <FormInputDropdown
-            name="times"
+            name="type"
             control={control}
-            label="Available Time Slots"
-            options={getOptions(data.timeSlots)}
+            label="Registration Type"
+            options={types}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isLoadingMutate}
-          >
-            Submit
-          </Button>
+          {type !== "" && (
+            <>
+              <FormInputDropdown
+                name="times"
+                control={control}
+                label="Available Time Slots"
+                options={getOptions(data.timeSlots)}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={isLoadingMutate}
+              >
+                Submit
+              </Button>
+            </>
+          )}
         </Stack>
       </Form>
       {isLoadingMutate && <Loader />}
