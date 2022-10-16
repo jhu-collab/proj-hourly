@@ -86,7 +86,9 @@ const createJustDateObject = (date) => {
 };
 
 export const create = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const {
     startTime,
     endTime,
@@ -138,7 +140,9 @@ export const create = async (req, res) => {
 };
 
 export const getForCourse = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const course = await prisma.course.findUnique({
     where: {
@@ -149,10 +153,12 @@ export const getForCourse = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const dateObj = new Date(date);
   const registration = await prisma.registration.create({
     data: {
@@ -186,6 +192,9 @@ export const register = async (req, res) => {
 };
 
 export const cancelOnDate = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
   dateObj.setUTCHours(0);
@@ -219,6 +228,9 @@ export const cancelOnDate = async (req, res) => {
 };
 
 export const cancelAll = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { officeHourId } = req.body;
   const date = new Date();
   date.setUTCHours(date.getHours());
@@ -290,6 +302,9 @@ export const cancelAll = async (req, res) => {
 };
 
 export const getTimeSlotsRemaining = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const date = new Date(req.params.date);
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
@@ -327,6 +342,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
 };
 
 export const rescheduleSingleOfficeHour = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const { startTime, endTime, timePerStudent, location } = req.body;
@@ -341,14 +359,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-  const officeHourUpdate = await prisma.officeHour.update({
-    where: {
-      id: officeHourId,
-    },
-    data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
-    },
-  });
+
+  let officeHourUpdate = {};
+  if (officehour.isRecurring) {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      },
+    });
+  } else {
+    officeHourUpdate = await prisma.officeHour.update({
+      where: {
+        id: officeHourId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+  }
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -410,6 +441,9 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
 };
 
 export const editAll = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const {
     startDate,
@@ -499,14 +533,19 @@ export const editAll = async (req, res) => {
 };
 
 export const getRegistrationStatus = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
       officeHourId,
       accountId: id,
       date: date,
+      isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   if (status === null || status === undefined) {
@@ -525,6 +564,7 @@ export const getRegistrationStatus = async (req, res) => {
 export const getForCourseWithFilter = async (req, res) => {
   const filter = req.params.filter;
   const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
   let officeHours = [];
   if (filter === "all") {
     officeHours = await prisma.officeHour.findMany({
@@ -533,7 +573,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });
@@ -549,7 +588,6 @@ export const getForCourseWithFilter = async (req, res) => {
       },
       include: {
         isOnDayOfWeek: true,
-        isCancelledOn: true,
         hosts: true,
       },
     });
@@ -562,6 +600,9 @@ export const getForCourseWithFilter = async (req, res) => {
 };
 
 export const getOfficeHourById = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -580,6 +621,9 @@ export const getOfficeHourById = async (req, res) => {
 };
 
 export const getAllRegistrationsOnDate = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
   const registrations = await prisma.registration.findMany({
@@ -596,4 +640,59 @@ export const getAllRegistrationsOnDate = async (req, res) => {
     },
   });
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};
+
+export const cancelRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      isCancelled: true,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
+};
+
+export const editRegistration = async (req, res) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const { startTime, endTime, date, question, TopicIds } = req.body;
+  const dateObj = new Date(date);
+  const registrationTopics = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      topics: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+  let topicArr = registrationTopics.topics;
+  /*
+  might do:
+  let topicArr = [];
+  and not include the top part (lines: 580 - 592) if the request body has the list of all topics
+  */
+  TopicIds.forEach((topicId) => {
+    topicArr.push({ id: topicId });
+  });
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      startTime: stringToTimeObj(startTime),
+      endTime: stringToTimeObj(endTime),
+      date: dateObj,
+      question,
+      topics: {
+        connect: topicArr,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ registration });
 };

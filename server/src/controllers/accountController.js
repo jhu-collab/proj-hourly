@@ -4,7 +4,9 @@ import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
 
 export const create = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const { email, name, phoneNumber } = req.body;
   if (phoneNumber === null || phoneNumber === undefined) {
     await prisma.Account.create({
@@ -39,7 +41,9 @@ export const create = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const { email } = req.body;
   const account = await prisma.Account.findUnique({
     where: {
@@ -50,8 +54,10 @@ export const login = async (req, res) => {
 };
 
 export const getCourses = async (req, res) => {
-  validate(req);
-  const id = parseInt(req.get("id"), 10);
+  if (validate(req, res)) {
+    return res;
+  }
+  const id = req.id;
   const studentCourses = await prisma.course.findMany({
     where: {
       students: {
@@ -90,8 +96,10 @@ export const getCourses = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
-  validate(req);
-  const id = parseInt(req.get("id"), 10);
+  if (validate(req, res)) {
+    return res;
+  }
+  const id = req.id;
   await prisma.registration.deleteMany({
     where: {
       accountId: id,

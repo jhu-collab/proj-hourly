@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+export const usernameSchema = z
+  .string()
+  .regex(/[a-zA-Z0-9._-]+/, {
+    message:
+      "Username may contain letters, numbers, dash, dot, and underscore characters only!",
+  })
+  .min(1, { message: "Username cannot be empty!" })
+  .transform((str) => str.toLowerCase().trim());
+
 export const emailSchema = z
   .string()
   .email({ message: "Invalid email address!" })

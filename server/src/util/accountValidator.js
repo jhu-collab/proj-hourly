@@ -64,7 +64,7 @@ export const isAccountIdValid = async (req, res, next) => {
 };
 
 export const isAccountStudent = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -154,7 +154,7 @@ export const areAccountsIdsValid = async (req, res, next) => {
 };
 
 export const isAccountValidHeader = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const query = await prisma.Account.findUnique({
     where: {
       id,
@@ -169,7 +169,7 @@ export const isAccountValidHeader = async (req, res, next) => {
 };
 
 export const isAccountInstructor = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -215,7 +215,7 @@ export const accountIsNotInstructor = async (req, res, next) => {
 };
 
 export const isAccountStaff = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -238,7 +238,7 @@ export const isAccountStaff = async (req, res, next) => {
 };
 
 export const isAccountStaffOrInstructor = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
   const staff = await prisma.course.findUnique({
     where: {
@@ -273,7 +273,7 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
 };
 
 export const isAccountInstructorBody = async (req, res, next) => {
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   const { courseId } = req.body;
   const query = await prisma.course.findUnique({
     where: {

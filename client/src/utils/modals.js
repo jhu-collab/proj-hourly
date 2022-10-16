@@ -1,4 +1,5 @@
 import NiceModal from "@ebay/nice-modal-react";
+import { SignOutPopup } from "../components/WindowFocusHandler";
 import MobileEventPopup from "../pages/calendar/event-details/MobileEventPopup";
 import Register from "../pages/calendar/register/Register";
 import UpsertEvent from "../pages/calendar/upsert-event/UpsertEvent";
@@ -12,3 +13,4 @@ NiceModal.register("mobile-event-popup", MobileEventPopup);
 NiceModal.register("upsert-event", UpsertEvent);
 NiceModal.register("register-event", Register);
 NiceModal.register("invite-user", InviteUser);
+NiceModal.register("sign-out", SignOutPopup);

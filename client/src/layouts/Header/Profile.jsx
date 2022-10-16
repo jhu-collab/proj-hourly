@@ -12,11 +12,14 @@ import Typography from "@mui/material/Typography";
 import MainCard from "../../components/MainCard";
 import Transitions from "../../components/Transitions";
 import ProfileMenu from "./ProfileMenu";
-import { useAccountStore } from "../../services/store";
+import { decodeToken } from "react-jwt";
+import useStoreToken from "../../hooks/useStoreToken";
 
 function Profile() {
   const theme = useTheme();
-  const name = useAccountStore((state) => state.name);
+  const token = useStoreToken((state) => state.token);
+  const { firstName, lastName } = decodeToken(token);
+  const name = firstName + " " + lastName;
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
