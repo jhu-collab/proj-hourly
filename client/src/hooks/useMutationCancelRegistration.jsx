@@ -33,10 +33,10 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-      const startTime = DateTime(registration.startTime, {
+      const startTime = DateTime.fromISO(registration.startTime, {
         zone: "utc",
       }).toLocaleString(DateTime.TIME_SIMPLE);
-      const endTime = DateTime(registration.endTime, {
+      const endTime = DateTime.fromISO(registration.endTime, {
         zone: "utc",
       }).toLocaleString(DateTime.TIME_SIMPLE);
 
