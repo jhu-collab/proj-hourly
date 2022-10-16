@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import RegistrationType from "./RegistrationType";
 import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import NiceModal from "@ebay/nice-modal-react";
 
 function RegistrationTypes({ index, types }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
@@ -36,6 +37,7 @@ function RegistrationTypes({ index, types }) {
           )}
           <Fab
             color="primary"
+            onClick={() => NiceModal.show("create-registration-type")}
             sx={{
               position: "fixed",
               bottom: (theme) => theme.spacing(3),
