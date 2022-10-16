@@ -377,8 +377,24 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
 
 export const isStudentRegistered = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
-  //const id = parseInt(req.get("id"), 10);
- // const {id} = decodeToken(body.)
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+
+export const isStudentRegisteredBody = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = req.id;
   const registration = await prisma.registration.findFirst({
     where: {
       id: registrationId,
