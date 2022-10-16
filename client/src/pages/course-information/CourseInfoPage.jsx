@@ -1,6 +1,7 @@
 import MainCard from "../../components/MainCard";
 import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
+import DeleteCourseAction from "./DeleteCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
@@ -30,6 +31,7 @@ function CourseInfoPage() {
         )}
       </Stack>
       {courseType === "student" && <RemoveCourseAction courseId={course.id} />}
+      {courseType === "staff" && <DeleteCourseAction courseId={course.id} />}
     </MainCard>
   );
 }
