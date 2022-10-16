@@ -150,4 +150,20 @@ router.delete(
   controller.deleteCourse
 );
 
+router.post(
+  "/:courseId",
+  body("studentId", "Must provide id of a student to promote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to promote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Staff", "Instructor"]),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForPromotionTo,
+  controller.promote
+);
+
 export default router;

@@ -481,3 +481,68 @@ export const deleteCourse = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ deletedCourse: course });
 };
+
+export const promote = async (req, res) => {
+  const id = req.body.studentId;
+  const role = req.body.role;
+  const courseId = parseInt(req.params.courseId, 10);
+  let account;
+  if (role === "Instructor" && req.currentRole === "Student") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        instructorCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  } else if (role === "Insturctor" && req.currentRole === "Staff") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        staffCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        instructorCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  } else {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        staffCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  }
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ ...account, newRole: role, oldRole: req.currentRole });
+};
