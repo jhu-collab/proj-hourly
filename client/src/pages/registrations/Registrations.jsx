@@ -11,11 +11,15 @@ import RegistrationTypes from "./RegistrationTypes";
 const types = [
   {
     name: "Regular",
+    nameDisabled: true,
     duration: 10,
+    deletionDisabled: true,
   },
   {
     name: "Debugging",
+    nameDisabled: false,
     duration: 30,
+    deletionDisabled: false,
   },
 ];
 

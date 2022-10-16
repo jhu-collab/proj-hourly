@@ -53,6 +53,7 @@ function RegistrationType({ type }) {
                 <FormInputText
                   name="name"
                   control={control}
+                  disabled={type.nameDisabled}
                   sx={{ width: 230 }}
                 />
                 <Stack direction="row" alignItems="center" spacing={1}>
@@ -65,10 +66,10 @@ function RegistrationType({ type }) {
                 </Stack>
               </>
             ) : (
-              <>
+              <Stack>
                 <Typography variant="h5">{type.name}</Typography>
                 <Typography variant="h5">{type.duration} minutes</Typography>
-              </>
+              </Stack>
             )}
             <Stack direction="row" spacing={1}>
               {edit ? (
@@ -95,25 +96,27 @@ function RegistrationType({ type }) {
                       Edit
                     </Button>
                   </AnimateButton>
-                  <AnimateButton>
-                    {/* TODO: Need a route that allows for the deletion of registration types */}
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => {
-                        confirmDialog(
-                          `Do you really want to delete the ${type.name} registration type?`,
-                          () => {
-                            window.alert(
-                              `Deleted the ${type.name} registration type!`
-                            );
-                          }
-                        );
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </AnimateButton>
+                  {!type.deletionDisabled && (
+                    <AnimateButton>
+                      {/* TODO: Need a route that allows for the deletion of registration types */}
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                          confirmDialog(
+                            `Do you really want to delete the ${type.name} registration type?`,
+                            () => {
+                              window.alert(
+                                `Deleted the ${type.name} registration type!`
+                              );
+                            }
+                          );
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </AnimateButton>
+                  )}
                 </Stack>
               )}
             </Stack>
