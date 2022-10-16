@@ -13,7 +13,7 @@ import Registration from "./Registration";
  * @returns a registrations tab panel.
  */
 function RegistrationsPanel({ index, registrations }) {
-  const timeTab = useStoreLayout((state) => state.timeTab);
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
 
   const noRegistrations = () => {
     switch (index) {
@@ -41,7 +41,7 @@ function RegistrationsPanel({ index, registrations }) {
 
   return (
     <>
-      {timeTab === index &&
+      {registrationTab === index &&
         (registrations.length === 0 ? (
           noRegistrations()
         ) : (

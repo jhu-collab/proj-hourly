@@ -58,16 +58,17 @@ const filterByTime = (array, timeTab) => {
  * @returns Registrations page
  */
 function Registrations() {
-  const timeTab = useStoreLayout((state) => state.timeTab);
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
+  const courseType = useStoreLayout((state) => state.courseType);
   const [registrations, setRegistrations] = useState([]);
 
   const { isLoading, error, data } = useQueryRegistrations();
 
   useEffect(() => {
     let result = data?.registrations || [];
-    result = filterByTime(result, timeTab);
+    result = filterByTime(result, registrationTab);
     setRegistrations(result);
-  }, [data, timeTab]);
+  }, [data, registrationTab]);
 
   return (
     <>
@@ -88,7 +89,9 @@ function Registrations() {
           <RegistrationsPanel index={0} registrations={registrations} />
           <RegistrationsPanel index={1} registrations={registrations} />
           <RegistrationsPanel index={2} registrations={registrations} />
-          <RegistrationTypes index={4} types={types} />
+          {courseType === "staff" && (
+            <RegistrationTypes index={4} types={types} />
+          )}
         </>
       )}
     </>

@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import RegistrationType from "./RegistrationType";
 
 function RegistrationTypes({ index, types }) {
-  const timeTab = useStoreLayout((state) => state.timeTab);
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
 
   const noRegistrations = () => {
     return (
@@ -17,7 +17,7 @@ function RegistrationTypes({ index, types }) {
 
   return (
     <>
-      {timeTab === index &&
+      {registrationTab === index &&
         (types.length === 0 ? (
           noRegistrations()
         ) : (
