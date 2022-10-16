@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import AnimateButton from "../../components/AnimateButton";
+import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
@@ -38,65 +39,89 @@ function RegistrationType({ type }) {
   };
 
   return (
-    <MainCard sx={{ padding: 2 }} content={false}>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        {/*TODO: Change Stack into a box to better handle spacing between children */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          {edit ? (
-            <>
-              <FormInputText
-                name="name"
-                control={control}
-                sx={{ width: 230 }}
-              />
-              <Stack direction="row" alignItems="center" spacing={1}>
+    <>
+      <MainCard sx={{ padding: 2 }} content={false}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          {/*TODO: Change Stack into a box to better handle spacing between children */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            {edit ? (
+              <>
                 <FormInputText
-                  name="duration"
+                  name="name"
                   control={control}
                   sx={{ width: 230 }}
                 />
-                <Typography variant="h5">minutes</Typography>
-              </Stack>
-            </>
-          ) : (
-            <>
-              <Typography variant="h5">{type.name}</Typography>
-              <Typography variant="h5">{type.duration} minutes</Typography>
-            </>
-          )}
-          <Stack direction="row" spacing={1}>
-            {edit ? (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button variant="contained" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-              </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <FormInputText
+                    name="duration"
+                    control={control}
+                    sx={{ width: 230 }}
+                  />
+                  <Typography variant="h5">minutes</Typography>
+                </Stack>
+              </>
             ) : (
-              <AnimateButton>
-                <Button variant="contained" onClick={handleOnClickEditBtn}>
-                  Edit
-                </Button>
-              </AnimateButton>
+              <>
+                <Typography variant="h5">{type.name}</Typography>
+                <Typography variant="h5">{type.duration} minutes</Typography>
+              </>
             )}
+            <Stack direction="row" spacing={1}>
+              {edit ? (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              ) : (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" onClick={handleOnClickEditBtn}>
+                      Edit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    {/* TODO: Need a route that allows for the deletion of registration types */}
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to delete the ${type.name} registration type?`,
+                          () => {
+                            window.alert(
+                              `Deleted the ${type.name} registration type!`
+                            );
+                          }
+                        );
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
-      </Form>
-    </MainCard>
+        </Form>
+      </MainCard>
+      <ConfirmPopup />
+    </>
   );
 }
 
