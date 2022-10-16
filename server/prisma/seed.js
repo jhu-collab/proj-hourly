@@ -51,7 +51,7 @@ const defaultUsers = [
     lastName: "Rogers",
     preferredName: "Captain America",
     userName: "captain america",
-    hashedPassword: hashPassword("thor"),
+    hashedPassword: hashPassword("captain america"),
     email: "steve.rogers@gmail.com",
     role: Role.User,
     id: 8,
