@@ -33,19 +33,19 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-    //   const startTime = DateTime(registration.startTime).utc().format("hh:mm A");
-    //   const endTime = moment(registration.endTime).utc().format("hh:mm A");
+      const startTime = DateTime(registration.startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime(registration.endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
 
-    //   queryClient.invalidateQueries(["registrationStatus"]);
+      queryClient.invalidateQueries(["registrationStatus"]);
 
-    //   matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-
-    //   toast.success(
-    //     `Successfully cancelled registration from ${startTime} to ${endTime}`
-    //   );
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
       toast.success(
-        `Success`
+        `Successfully cancelled registration from ${startTime} to ${endTime}`
       );
     },
     onError: (error) => {
