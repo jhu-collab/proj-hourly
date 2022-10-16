@@ -44,9 +44,9 @@ function RegistrationType({ type }) {
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/*TODO: Change Stack into a box to better handle spacing between children */}
           <Stack
-            direction="row"
-            alignItems="center"
+            direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
+            spacing={2}
           >
             {edit ? (
               <>

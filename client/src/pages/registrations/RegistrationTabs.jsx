@@ -25,7 +25,13 @@ function RegistrationTabs() {
     setRegistrationTab(newValue);
   };
   return (
-    <Tabs value={registrationTab} onChange={handleChange}>
+    <Tabs
+      value={registrationTab}
+      onChange={handleChange}
+      variant="scrollable"
+      scrollButtons="auto"
+      allowScrollButtonsMobile
+    >
       <Tab label="Upcoming" />
       <Tab label="Ongoing" />
       <Tab label="Past" />
