@@ -104,7 +104,6 @@ function CreateEventForm() {
 
   const recurring = watch("recurringEvent");
 
-
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
@@ -153,7 +152,7 @@ function CreateEventForm() {
             <FormCheckbox
               name="feedback"
               control={control}
-              label="Would you like feedback?"
+              label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
             />
           </Stack>
           <FormInputText

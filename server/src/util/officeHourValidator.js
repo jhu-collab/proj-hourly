@@ -391,7 +391,6 @@ export const isStudentRegistered = async (req, res, next) => {
   next();
 };
 
-
 export const isStudentRegisteredBody = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const id = req.id;
