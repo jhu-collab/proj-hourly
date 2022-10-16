@@ -3,6 +3,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CalendarMenu from "./CalendarMenu";
 import styled from "@mui/material/styles/styled";
 import grey from "@mui/material/colors/grey";
+import useStoreLayout from "../../../hooks/useStoreLayout";
 
 const drawerBleeding = 0;
 
