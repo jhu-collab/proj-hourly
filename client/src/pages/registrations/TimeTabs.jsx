@@ -1,5 +1,6 @@
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Divider from "@mui/material/Divider";
 import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
@@ -19,6 +20,11 @@ function TimeTabs() {
       <Tab label="Upcoming" />
       <Tab label="Ongoing" />
       <Tab label="Past" />
+      <Divider
+        orientation="vertical"
+        sx={{ height: 30, alignSelf: "center", marginX: 3 }}
+      />
+      <Tab label="Registration Types" />
     </Tabs>
   );
 }
