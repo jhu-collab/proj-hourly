@@ -1,12 +1,23 @@
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { useLayoutStore } from "../../services/store";
-import { getAllRegistrations } from "../../utils/requests";
+import useQueryRegistrations from "../../hooks/useQueryRegistrations";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
+
+function latestEventsFirst(a, b) {
+  return b.startObj < a.startObj ?  1 
+       : b.startObj > a.startObj ? -1 
+       : 0;               
+};
+
+function earliestEventsFirst(a, b) {
+  return b.startObj > a.startObj ?  1 
+       : b.startObj < a.startObj ? -1 
+       : 0;               
+};
 
 const filterByTime = (array, timeTab) => {
   const today = new Date();
@@ -24,14 +35,14 @@ const filterByTime = (array, timeTab) => {
 
     switch (timeTab) {
       case 0:
-        return moment(startObj).isAfter(today);
+        return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
       case 1:
         return (
-          moment(startObj).isSameOrBefore(today) &&
-          moment(endObj).isSameOrAfter(today)
+          DateTime.fromJSDate(startObj) <= DateTime.fromJSDate(today) &&
+          DateTime.fromJSDate(endObj) >= DateTime.fromJSDate(today)
         );
       case 2:
-        return moment(endObj).isBefore(today);
+        return DateTime.fromJSDate(endObj) < DateTime.fromJSDate(today);
       default:
         return true;
     }
@@ -43,13 +54,10 @@ const filterByTime = (array, timeTab) => {
  * @returns Registrations page
  */
 function Registrations() {
-  const timeTab = useLayoutStore((state) => state.timeTab);
+  const timeTab = useStoreLayout((state) => state.timeTab);
   const [registrations, setRegistrations] = useState([]);
 
-  const { isLoading, error, data } = useQuery(
-    ["allRegistrations"],
-    getAllRegistrations
-  );
+  const { isLoading, error, data } = useQueryRegistrations();
 
   useEffect(() => {
     let result = data?.registrations || [];
@@ -76,17 +84,17 @@ function Registrations() {
           <RegistrationsPanel
             value={timeTab}
             index={0}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={1}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={2}
-            registrations={registrations}
+            registrations={registrations.sort(latestEventsFirst)}
           />
         </>
       )}

@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { Role } from "@prisma/client";
 import prisma from "./client.js";
 import { hashPassword } from "../src/util/password.js";
+import ical from "ical-generator";
 
 // Simulate rolling a loaded die
 // (it is more likly to roll a smaller number!)
@@ -23,6 +24,39 @@ export function loadedDie() {
     return 1;
   }
 }
+
+const defaultUsers = [
+  {
+    firstName: "Tony",
+    lastName: "Stark",
+    preferredName: "Iron Man",
+    userName: "iron man",
+    hashedPassword: hashPassword("iron man"),
+    email: "tony.stark@gmail.com",
+    role: Role.Admin,
+    id: 6,
+  },
+  {
+    firstName: "Thor",
+    lastName: "Odinson",
+    preferredName: "Thor",
+    userName: "thor",
+    hashedPassword: hashPassword("thor"),
+    email: "thor.odinson@gmail.com",
+    role: Role.User,
+    id: 7,
+  },
+  {
+    firstName: "Steve",
+    lastName: "Rogers",
+    preferredName: "Captain America",
+    userName: "captain america",
+    hashedPassword: hashPassword("captain america"),
+    email: "steve.rogers@gmail.com",
+    role: Role.User,
+    id: 8,
+  },
+];
 
 const generateFakeUser = async (role, username) => {
   const firstName = faker.name.firstName();
@@ -57,6 +91,59 @@ const generateFakeData = async () => {
   for (let index = 0; index < 5; index++) {
     await generateFakeUser(Role.User, `user-${index + 1}`);
   }
+  defaultUsers.forEach(async (user) => {
+    const account = await prisma.Account.create({
+      data: {
+        userName: user.userName.toLowerCase(),
+        hashedPassword: user.hashedPassword,
+        email: user.email.toLowerCase(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        preferredName: user.preferredName,
+        role: user.role,
+      },
+    });
+  });
+  const cal = ical({ name: "Avengers" });
+  const course = await prisma.Course.create({
+    data: {
+      title: "Avengers",
+      courseNumber: "123.456",
+      semester: "Fall",
+      calendarYear: 2022,
+      code: "AVENGE",
+      instructors: {
+        connect: {
+          id: defaultUsers[0].id,
+        },
+      },
+      iCalJson: cal.toJSON(),
+    },
+  });
+  await prisma.account.update({
+    where: {
+      id: defaultUsers[1].id,
+    },
+    data: {
+      studentCourses: {
+        connect: {
+          id: course.id,
+        },
+      },
+    },
+  });
+  await prisma.account.update({
+    where: {
+      id: defaultUsers[2].id,
+    },
+    data: {
+      staffCourses: {
+        connect: {
+          id: course.id,
+        },
+      },
+    },
+  });
   await generateFakeUser(Role.Admin, `admin-1`);
 };
 

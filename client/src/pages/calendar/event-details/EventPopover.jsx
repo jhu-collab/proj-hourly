@@ -7,17 +7,17 @@ import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
-import { useLayoutStore } from "../../../services/store";
 import StudentDetails from "./StudentDetails";
+import useStoreLayout from "../../../hooks/useStoreLayout";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
  * @returns a popover display event information.
  */
 function EventPopover() {
-  const courseType = useLayoutStore((state) => state.courseType);
-  const anchorEl = useLayoutStore((state) => state.eventAnchorEl);
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const courseType = useStoreLayout((state) => state.courseType);
+  const anchorEl = useStoreLayout((state) => state.eventAnchorEl);
+  const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
 
   return (
     <Popover

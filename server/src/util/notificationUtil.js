@@ -28,7 +28,8 @@ export const sendEmail = async (req) => {
   // send mail with defined transport object
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      return console.log(error);
+      console.log(error);
+      return "stop";
     }
 
     console.log("Message sent: " + info.response);

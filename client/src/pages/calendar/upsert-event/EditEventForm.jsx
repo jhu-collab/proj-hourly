@@ -1,48 +1,84 @@
 import { createEventSchema } from "../../../utils/validators";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import useTheme from "@mui/material/styles/useTheme";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
-import { toast } from "react-toastify";
-import { useEventStore, useLayoutStore } from "../../../services/store";
-import { useMutation, useQueryClient } from "react-query";
-import { editEventAll, editEventOnDate } from "../../../utils/requests";
 import Loader from "../../../components/Loader";
-import { errorToast } from "../../../utils/toasts";
-import moment from "moment";
-import { useMediaQuery } from "@mui/material";
-import NiceModal from "@ebay/nice-modal-react";
-import ToggleRecurringDay from "./ToggleRecurringDay";
+import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonGroup";
+import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
+import useStoreEvent from "../../../hooks/useStoreEvent";
+
+const BUTTONS = [
+  {
+    id: "0",
+    label: "Mon",
+    value: "Monday",
+  },
+  {
+    id: "1",
+    label: "Tue",
+    value: "Tuesday",
+  },
+  {
+    id: "2",
+    label: "Wed",
+    value: "Wednesday",
+  },
+  {
+    id: "3",
+    label: "Thu",
+    value: "Thursday",
+  },
+  {
+    id: "4",
+    label: "Fri",
+    value: "Friday",
+  },
+  {
+    id: "5",
+    label: "Sat",
+    value: "Saturday",
+  },
+  {
+    id: "6",
+    label: "Sun",
+    value: "Sunday",
+  },
+];
 
 /**
  * Component that represents the form that is used to edit an event.
  * @returns A component representing the Edit Event form.
  */
 function EditEventForm() {
-  const theme = useTheme();
-  const queryClient = useQueryClient();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
-
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const location = useEventStore((state) => state.location);
-  const days = useEventStore((state) => state.days);
-  const timeInterval = useEventStore((state) => state.timeInterval);
-  const recurring = useEventStore((state) => state.recurring);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const location = useStoreEvent((state) => state.location);
+  const timeInterval = useStoreEvent((state) => state.timeInterval);
+  const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start ? moment(start).format("YYYY-MM-DD") : "",
+      startDate: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        : "",
       endDate: null,
-      startTime: start ? moment(start).utc().format("HH:mm") : "",
+      startTime: start
+        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       recurringEvent: false,
-      endTime: end ? moment(end).utc().format("HH:mm") : "",
+      days: [],
+      endTime: end
+        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
+        : "",
       location: location || "",
       timeInterval: timeInterval || 10,
     },
@@ -51,33 +87,21 @@ function EditEventForm() {
 
   const recurringEvent = watch("recurringEvent");
 
-  const { mutate, isLoading } = useMutation(
-    recurringEvent ? editEventAll : editEventOnDate,
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(["officeHours"]);
-        NiceModal.hide("upsert-event");
-        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-
-        toast.success(`Successfully edited event`);
-      },
-      onError: (error) => {
-        errorToast(error);
-      },
-    }
-  );
+  const { mutate, isLoading } = useMutationEditEvent(recurringEvent);
 
   const onSubmit = (data) => {
     recurringEvent
       ? mutate({
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
-          startDate: moment(data.startDate).format("MM-DD-YYYY"),
-          endDate: moment(data.endDate).format("MM-DD-YYYY"),
+          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
           location: data.location,
-          daysOfWeek: days,
+          daysOfWeek: data.days,
           timePerStudent: data.timeInterval,
-          endDateOldOfficeHour: moment(data.startDate).format("MM-DD-YYYY"),
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
+            "MM-dd-yyyy"
+          ),
         })
       : mutate({
           startTime: `${data.startTime}:00`,
@@ -90,16 +114,8 @@ function EditEventForm() {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack
-          direction="column"
-          alignItems="center"
-          spacing={theme.spacing(3)}
-        >
-          <Stack
-            direction="row"
-            sx={{ width: "100%" }}
-            spacing={theme.spacing(3)}
-          >
+        <Stack direction="column" alignItems="center" spacing={3}>
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
             <FormInputText
               name="startTime"
               control={control}
@@ -140,7 +156,14 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           )}
-          {recurringEvent && <ToggleRecurringDay />}
+          {recurringEvent && (
+            <FormToggleButtonGroup
+              name="days"
+              control={control}
+              buttons={BUTTONS}
+              color="primary"
+            />
+          )}
           <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="timeInterval"
