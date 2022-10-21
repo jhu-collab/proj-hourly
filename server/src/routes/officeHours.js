@@ -34,10 +34,10 @@ router.post(
   )
     .isArray()
     .notEmpty(),
-  body(
+  /*body(
     "timeInterval",
     "Please include a positive integer for time interval"
-  ).isInt({ min: 1 }),
+  ).isInt({ min: 1 }),*/
   body("hosts", "Please include the staff ID(s) hosting the office hours")
     .isArray()
     .notEmpty(),

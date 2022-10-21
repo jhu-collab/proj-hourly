@@ -510,3 +510,54 @@ export const deleteCourse = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ deletedCourse: course });
 };
+export const createTimeLength = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  const { length, title } = req.body;
+  const time = await prisma.OfficeHourTimeOptions.create({
+    data: {
+      title,
+      duration: length,
+      course: {
+        connect: {
+          id,
+        },
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ time });
+};
+
+export const getTimeLengths = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  const times = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ times });
+};
+
+export const editTimeLength = async (req, res) => {
+  const { length, title } = req.body;
+  const id = parseInt(req.params.id, 10);
+  const time = await prisma.OfficeHourTimeOptions.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+      duration: length,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ time });
+};
+
+export const deleteTimeLength = async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const time = await prisma.OfficeHourTimeOptions.delete({
+    where: {
+      id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ deletedTime: time });
+};

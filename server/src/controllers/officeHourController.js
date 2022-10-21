@@ -97,7 +97,7 @@ export const create = async (req, res) => {
     endDate,
     location,
     courseId,
-    timeInterval,
+    //timeInterval,
     hosts,
     daysOfWeek,
   } = req.body;
@@ -108,7 +108,7 @@ export const create = async (req, res) => {
     endTimeObject,
     new Date(startDate),
     new Date(endDate),
-    timeInterval,
+    //timeInterval,
     courseId,
     location,
     recurringEvent,
@@ -330,13 +330,13 @@ export const getTimeSlotsRemaining = async (req, res) => {
     if (!registrationTimes.includes(start.getTime())) {
       const startTime = new Date(start);
       const endTime = new Date(start);
-      endTime.setMinutes(endTime.getMinutes() + officeHour.timePerStudent);
+      endTime.setMinutes(endTime.getMinutes() + 10); //TODO fix time lengths
       timeSlots.push({
         startTime,
         endTime,
       });
     }
-    start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
+    start.setMinutes(start.getMinutes() + 10); //TODO fix time lengths
   }
   return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
 };
@@ -390,10 +390,10 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       isCancelledStaff: true,
     },
   });
-  const timeInterval =
+  /*const timeInterval =
     timePerStudent === null || timePerStudent === undefined
       ? officehour.timePerStudent
-      : timePerStudent;
+      : timePerStudent;*/
   const newLocation =
     location === null || location === undefined
       ? officehour.location
@@ -406,7 +406,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       endTime: endTimeObject,
       startDate: new Date(date),
       endDate: new Date(date),
-      timePerStudent: timeInterval,
+      //timePerStudent: timeInterval,
       course: {
         connect: {
           id: officehour.course.id,

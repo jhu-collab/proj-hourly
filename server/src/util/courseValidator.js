@@ -331,3 +331,37 @@ export const isNotInCourse = async (req, res, next) => {
   }
   next();
 };
+
+export const doesTimeLengthExist = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const time = await prisma.OfficeHourTimeOptions.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (time === null || time === undefined) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: time option does not exist" });
+  } else {
+    next();
+  }
+};
+
+export const isTimeLengthForCourse = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const time = await prisma.OfficeHourTimeOptions.findFirst({
+    where: {
+      id,
+      courseId,
+    },
+  });
+  if (time === null || time === undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: user does not have access to time length" });
+  } else {
+    next();
+  }
+};

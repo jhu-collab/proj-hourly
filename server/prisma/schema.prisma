@@ -33,18 +33,27 @@ enum Role {
 }
 
 model Course {
-  id           Int          @id @default(autoincrement())
-  title        String
-  courseNumber String
-  semester     String
-  calendarYear Int
-  code         String       @unique @db.Char(6)
-  students     Account[]    @relation("isStudent")
-  courseStaff  Account[]    @relation("isStaff")
-  instructors  Account[]    @relation("isInstructor")
-  officeHours  OfficeHour[]
-  topics       Topic[]
-  iCalJson     Json?
+  id                Int                     @id @default(autoincrement())
+  title             String
+  courseNumber      String
+  semester          String
+  calendarYear      Int
+  code              String                  @unique @db.Char(6)
+  students          Account[]               @relation("isStudent")
+  courseStaff       Account[]               @relation("isStaff")
+  instructors       Account[]               @relation("isInstructor")
+  officeHours       OfficeHour[]
+  officeHourOptions OfficeHourTimeOptions[] @relation("isCourseTimeOption")
+  topics            Topic[]
+  iCalJson          Json?
+}
+
+model OfficeHourTimeOptions {
+  id       Int    @id @default(autoincrement())
+  title    String
+  duration Int    @default(10)
+  course   Course @relation("isCourseTimeOption", fields: [courseId], references: [id])
+  courseId Int
 }
 
 model OfficeHour {
@@ -53,7 +62,7 @@ model OfficeHour {
   endTime        DateTime            @db.Timetz()
   startDate      DateTime            @db.Date
   endDate        DateTime            @db.Date
-  timePerStudent Int
+  //timePerStudent Int
   course         Course              @relation(fields: [courseId], references: [id])
   courseId       Int
   location       String
