@@ -334,7 +334,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
-    registrationTimes.put(registration.startTime.getTime(), registration);
+    registrationTimes.set(registration.startTime.getTime(), registration);
   });
   let n =
     (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
@@ -347,25 +347,33 @@ export const getTimeSlotsRemaining = async (req, res) => {
       const regEndTime = registration.endTime;
       while (start < regEndTime) {
         timeSlots[count++] = false;
-        start.setMinutes(start.getMinutes() + 5); //TODO fix time lengths
+        start.setMinutes(start.getMinutes() + 5);
       }
     } else {
-      start.setMinutes(start.getMinutes() + 5); //TODO fix time lengths
+      start.setMinutes(start.getMinutes() + 5);
       count++;
     }
   }
   let timeSlotsPerType = [];
   let sessionStartTime = officeHour.startTime;
+  console.log(sessionStartTime);
+  console.log(officeHour.endTime);
   timeLengths.forEach((timeLength) => {
     let times = [];
     const length = timeLength.duration;
     for (let i = 0; i < n - length / 5; i++) {
       let available = true;
-      for (let j = i; j < n; j++) {
+      let num = 0;
+      for (let j = i; j < i && num < length / 5; j++) {
+        console.log(length);
+        if (length === 25) {
+          console.log(`${j} - ${timeSlots[j]}`);
+        }
         if (!timeSlots[j]) {
           available = false;
           break;
         }
+        num++;
       }
       if (available) {
         const startTime = new Date(sessionStartTime);

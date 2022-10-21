@@ -66,8 +66,8 @@ router.post(
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval,
-  validator.isTimeAvailable,
+  validator.isTimeCorrectInterval, //TODO: fix
+  validator.isTimeAvailable,//TODO: fix
   validator.isUserNotRegistered,
   courseValidator.areTopicsForCourse,
   controller.register
