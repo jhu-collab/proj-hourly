@@ -162,7 +162,7 @@ router.delete(
 router.post(
   "/:courseId/officeHourTimeInterval",
   param("courseId", "Must provide a courseId").notEmpty(),
-  body("length", "Body must include time length").isInt(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
   body("title", "Body must have a title").isString(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
@@ -182,7 +182,7 @@ router.get(
 router.post(
   "/:courseId/officeHourTimeInterval/:id/update",
   param("courseId", "Must provide a courseId").notEmpty(),
-  body("length", "Body must include time length").isInt(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
   body("title", "Body must have a title").isString(),
   param("id", "Param must have id").isInt(),
   accountValidator.isAccountValidHeader,

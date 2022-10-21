@@ -312,9 +312,19 @@ export const getTimeSlotsRemaining = async (req, res) => {
       id: officeHourId,
     },
   });
+  const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: officeHour.courseId,
+    },
+  });
   let start = officeHour.startTime;
   const end = officeHour.endTime;
-
+  let min = Infinity;
+  timeLengths.forEach((time) => {
+    if (time.duration < min) {
+      min = time.duration;
+    }
+  });
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -322,23 +332,59 @@ export const getTimeSlotsRemaining = async (req, res) => {
       isCancelled: false,
     },
   });
-  const registrationTimes = registrations.map((registration) =>
-    registration.startTime.getTime()
-  );
-  let timeSlots = [];
+  const registrationTimes = new Map();
+  registrations.forEach((registration) => {
+    registrationTimes.put(registration.startTime.getTime(), registration);
+  });
+  let n =
+    (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
+    (5 * 60000);
+  let timeSlots = Array(n).fill(true);
+  let count = 0;
   while (start < end) {
-    if (!registrationTimes.includes(start.getTime())) {
-      const startTime = new Date(start);
-      const endTime = new Date(start);
-      endTime.setMinutes(endTime.getMinutes() + 10); //TODO fix time lengths
-      timeSlots.push({
-        startTime,
-        endTime,
-      });
+    if (registrationTimes.has(start.getTime())) {
+      let registration = registrationTimes.get(start.getTime());
+      const regEndTime = registration.endTime;
+      while (start < regEndTime) {
+        timeSlots[count++] = false;
+        start.setMinutes(start.getMinutes() + 5); //TODO fix time lengths
+      }
+    } else {
+      start.setMinutes(start.getMinutes() + 5); //TODO fix time lengths
+      count++;
     }
-    start.setMinutes(start.getMinutes() + 10); //TODO fix time lengths
   }
-  return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
+  let timeSlotsPerType = [];
+  let sessionStartTime = officeHour.startTime;
+  timeLengths.forEach((timeLength) => {
+    let times = [];
+    const length = timeLength.duration;
+    for (let i = 0; i < n - length / 5; i++) {
+      let available = true;
+      for (let j = i; j < n; j++) {
+        if (!timeSlots[j]) {
+          available = false;
+          break;
+        }
+      }
+      if (available) {
+        const startTime = new Date(sessionStartTime);
+        const endTime = new Date(sessionStartTime);
+        endTime.setMinutes(endTime.getMinutes() + length);
+        times.push({
+          startTime,
+          endTime,
+        });
+      }
+      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + 5);
+    }
+    timeSlotsPerType.push({
+      type: timeLength.title,
+      duration: timeLength.duration,
+      times,
+    });
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ timeSlotsPerType });
 };
 
 export const rescheduleSingleOfficeHour = async (req, res) => {
