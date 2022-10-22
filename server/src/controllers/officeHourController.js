@@ -355,25 +355,18 @@ export const getTimeSlotsRemaining = async (req, res) => {
     }
   }
   let timeSlotsPerType = [];
-  let sessionStartTime = officeHour.startTime;
-  console.log(sessionStartTime);
-  console.log(officeHour.endTime);
+  let sessionStartTime;
   timeLengths.forEach((timeLength) => {
+    sessionStartTime = new Date(officeHour.startTime);
     let times = [];
     const length = timeLength.duration;
-    for (let i = 0; i < n - length / 5; i++) {
+    for (let i = 0; i <= n - length / 5; i++) {
       let available = true;
-      let num = 0;
-      for (let j = i; j < i && num < length / 5; j++) {
-        console.log(length);
-        if (length === 25) {
-          console.log(`${j} - ${timeSlots[j]}`);
-        }
-        if (!timeSlots[j]) {
+      for (let j = 0; j < length / 5; j++) {
+        if (!timeSlots[i + j]) {
           available = false;
           break;
         }
-        num++;
       }
       if (available) {
         const startTime = new Date(sessionStartTime);
