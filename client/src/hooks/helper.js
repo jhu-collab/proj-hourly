@@ -50,20 +50,20 @@ export function useResetStates() {
 
   const resetStoreToken = () => {
     updateToken("");
-  }
+  };
 
   const resetAll = () => {
     resetStoreCourse();
     resetStoreEvent();
     resetStoreLayout();
     resetStoreToken();
-  }
+  };
 
   return {
     resetStoreCourse,
     resetStoreEvent,
     resetStoreLayout,
     resetStoreToken,
-    resetAll
+    resetAll,
   };
 }
