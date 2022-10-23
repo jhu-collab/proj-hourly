@@ -8,16 +8,12 @@ import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 
 function latestEventsFirst(a, b) {
-  return b.startObj < a.startObj ?  1 
-       : b.startObj > a.startObj ? -1 
-       : 0;               
-};
+  return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
+}
 
 function earliestEventsFirst(a, b) {
-  return b.startObj > a.startObj ?  1 
-       : b.startObj < a.startObj ? -1 
-       : 0;               
-};
+  return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
+}
 
 const filterByTime = (array, timeTab) => {
   const today = new Date();
