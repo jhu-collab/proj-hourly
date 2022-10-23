@@ -25,11 +25,23 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
+  receivedFlags     Flag[]        @relation("isFlagged")
+  givenFlags        Flag[]        @relation("Flagged")
 }
 
 enum Role {
   Admin
   User
+}
+
+model Flag {
+  id        Int            @id @default(autoincrement())
+  student   Account        @relation("isFlagged")
+  staff     Account        @relation("Flagged")
+  resolved  Boolean        @default(false)
+  reason    String?
+  course    Course         @relation(fields: [courseId], references: [id])
+  courseId  Int
 }
 
 model Course {
