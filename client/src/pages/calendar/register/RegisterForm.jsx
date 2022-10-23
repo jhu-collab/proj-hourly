@@ -25,7 +25,11 @@ const getOptions = (timeSlots) => {
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
+      value: `${DateTime.fromISO(timeSlots[i].startTime, {
+        zone: "utc",
+      }).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, {
+        zone: "utc",
+      }).toFormat("TT")}`,
     });
   }
 

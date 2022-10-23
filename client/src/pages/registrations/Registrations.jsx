@@ -7,6 +7,18 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 
+function latestEventsFirst(a, b) {
+  return b.startObj < a.startObj ?  1 
+       : b.startObj > a.startObj ? -1 
+       : 0;               
+};
+
+function earliestEventsFirst(a, b) {
+  return b.startObj > a.startObj ?  1 
+       : b.startObj < a.startObj ? -1 
+       : 0;               
+};
+
 const filterByTime = (array, timeTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
@@ -72,17 +84,17 @@ function Registrations() {
           <RegistrationsPanel
             value={timeTab}
             index={0}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={1}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
             value={timeTab}
             index={2}
-            registrations={registrations}
+            registrations={registrations.sort(latestEventsFirst)}
           />
         </>
       )}
