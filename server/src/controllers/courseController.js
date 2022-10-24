@@ -546,3 +546,32 @@ export const promote = async (req, res) => {
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
 };
+
+export const demote = async (req, res) => {
+  const id = req.body.studentId;
+  const role = req.body.role;
+  const courseId = parseInt(req.params.courseId, 10);
+  let account;
+  if (role === "Student" && req.currentRole === "Staff") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+        staffCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  }
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ ...account, newRole: role, oldRole: req.currentRole });
+};
