@@ -369,3 +369,38 @@ export const isInCourseBelowRoleForPromotionTo = async (req, res, next) => {
       .json({ msg: "ERROR: account can not be promoted further" });
   }
 };
+
+export const isInCourseBelowRoleForDemotionTo = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const studentId = req.body.studentId;
+  const role = req.body.role;
+  const roster = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const inCourse =
+    roster.students.some((student) => student.id === studentId) ||
+    roster.courseStaff.some((staff) => staff.id === studentId) ||
+    roster.instructors.some((instructor) => instructor.id === studentId);
+  if (!inCourse) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: account to be demoted not in course" });
+  } else if (
+    roster.courseStaff.some((staff) => staff.id === studentId) &&
+    role === "Student"
+  ) {
+    req.currentRole = "Staff";
+    next();
+  } else {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: account can not be demoted further" });
+  }
+};

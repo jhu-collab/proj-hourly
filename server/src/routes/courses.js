@@ -152,6 +152,24 @@ router.delete(
 
 router.post(
   "/:courseId",
+  param("courseId", "Must include course id").notEmpty().isInt(),
+  body("studentId", "Must provide id of a student to promote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to promote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Student"]),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForPromotionTo,
+  controller.promote
+);
+
+router.post(
+  "/:courseId/demote",
+  param("courseId", "Must include course id").notEmpty().isInt(),
   body("studentId", "Must provide id of a student to promote")
     .notEmpty()
     .isInt(),
@@ -162,8 +180,8 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
-  validator.isInCourseBelowRoleForPromotionTo,
-  controller.promote
+  validator.isInCourseBelowRoleForDemotionTo,
+  controller.demote
 );
 
 export default router;
