@@ -29,7 +29,7 @@ router.post(`${endpoint}`, checkApiKey, async (req, res, next) => {
         `User role on SIS is ${role}; their role in our database will be ${Role.User}`
       );
       let accountRole = Role.User;
-      if (role === "Admin") {
+      if (role === "FACULTY") {
         accountRole = Role.Admin;
       }
       user = await prisma.account.create({

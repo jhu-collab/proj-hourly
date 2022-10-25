@@ -27,6 +27,6 @@ router.use(checkToken);
 
 router.delete("/:id", controller.deleteAccount);
 
-router.get("/all", validator.isAdmin, controller.getAll);
+router.get("/", validator.isAdmin, controller.getAll);
 
 export default router;
