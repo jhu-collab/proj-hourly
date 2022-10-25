@@ -3,9 +3,13 @@ import moment from "moment";
 import { BASE_URL } from "../services/common";
 import {
   useEventStore,
-  useStoreToken,
+  useAccountStore,
   useCourseStore,
 } from "../services/store";
+
+function getUserId() {
+  return useAccountStore.getState().id;
+}
 
 function getCourseId() {
   return useCourseStore.getState().course.id;
@@ -20,14 +24,15 @@ function getEventDate() {
 }
 
 function getConfig() {
-  const token = useStoreToken.getState().token;
   return {
-    headers: { Authorization: `Bearer ${token}` },
+    // TODO: Need to remove id key once backend implements user tokens
+    headers: { id: getUserId() },
   };
 }
 
 // GET REQUESTS
 
+// TODO: Once token authorization is set up, id will be replaced.
 export const getCourses = async () => {
   const res = await axios.get(`${BASE_URL}/api/course/`, getConfig());
   return res.data;
@@ -99,33 +104,6 @@ export const createOfficeHour = async (body) => {
   return res.data;
 };
 
-export const editEventOnDate = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editForDate/${getEventDate()}`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const editEventAll = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/${getOfficeHourId()}/editAll`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
-export const cancelOnDate = async (body) => {
-  const res = await axios.post(
-    `${BASE_URL}/api/officeHour/cancelOnDate`,
-    body,
-    getConfig()
-  );
-  return res.data;
-};
-
 export const cancelAll = async (body) => {
   const res = await axios.post(
     `${BASE_URL}/api/officeHour/cancelAll`,
@@ -169,7 +147,9 @@ export const removeStaffOrStudent = async (removeId, isStaff) => {
   }
 };
 
-export const leaveCourse = async (courseid) => {
-  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseid}`, getConfig());
+export const leaveCourse = async (courseId) => {
+  const res = await axios.delete(`${BASE_URL}/api/course/leave/${courseId}`, {
+    headers: { id: getUserId() },
+  });
   return res.data;
 };

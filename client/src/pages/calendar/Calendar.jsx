@@ -8,16 +8,16 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import { useEventStore, useLayoutStore } from "../../services/store";
 import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
 import EventPopover from "./event-details/EventPopover";
-import { useQuery } from "react-query";
-import { getOfficeHours } from "../../utils/requests";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
+import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useStoreEvent from "../../hooks/useStoreEvent";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -29,16 +29,16 @@ function Calendar() {
 
   const calendarRef = useRef();
 
-  const setEvent = useEventStore((state) => state.setEvent);
-  const courseType = useLayoutStore((state) => state.courseType);
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
-  const mobileCalMenu = useLayoutStore((state) => state.mobileCalMenu);
-  const setMobileCalMenu = useLayoutStore((state) => state.setMobileCalMenu);
+  const setEvent = useStoreEvent((state) => state.setEvent);
+  const courseType = useStoreLayout((state) => state.courseType);
+  const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
+  const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
+  const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
 
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
-  const { isLoading, error, data } = useQuery(["officeHours"], getOfficeHours);
+  const { isLoading, error, data } = useQueryOfficeHours();
 
   useEffect(() => {
     setIsStaff(courseType === "staff");

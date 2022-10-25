@@ -40,6 +40,15 @@ router.post(
   controller.register
 );
 
+router.post(
+  "/addInstructor/:courseId/:id",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  accountValidator.accountIsNotInstructor,
+  validator.isCourseIdUrlValid,
+  controller.addInstructor
+);
+
 router.get("/", accountController.getCourses);
 
 // account id will be stored in header until we get a token
@@ -140,6 +149,14 @@ router.get(
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   controller.getAllRegistrations
+);
+
+router.delete(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.deleteCourse
 );
 
 export default router;

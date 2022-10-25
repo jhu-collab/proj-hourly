@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
-import { useStoreToken } from "../../services/store";
+import useStoreToken from "../../hooks/useStoreToken";
 
 function Callback() {
   const [searchParams] = useSearchParams();

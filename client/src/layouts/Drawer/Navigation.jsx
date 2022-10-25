@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
+import useStoreCourse from "../../hooks/useStoreCourse";
 import { menuItems } from "../../menu-items";
-import { useCourseStore } from "../../services/store";
 import NavGroup from "./NavGroup";
 
 function Navigation() {
-  const course = useCourseStore((state) => state.course);
+  const course = useStoreCourse((state) => state.course);
   const [menu, setMenu] = useState({ items: [] });
 
   useEffect(() => {

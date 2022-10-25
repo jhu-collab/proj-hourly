@@ -1,14 +1,16 @@
 import axios from "axios";
-import { useStoreToken } from "../services/store";
 import { decodeToken, isExpired } from "react-jwt";
 import { errorToast } from "../utils/toasts";
 import Debug from "debug";
 import { BASE_URL } from "../services/common";
+import useStoreToken from "./useStoreToken";
+import { useResetStates } from "./helper";
 
 const debug = new Debug(`hourly:hooks:useAuth.js`);
 
 function useAuth() {
   const { token, updateToken } = useStoreToken();
+  const { resetAll } = useResetStates();
 
   const isAuthenticated = () => {
     if (!token || isExpired(token)) {
@@ -59,7 +61,7 @@ function useAuth() {
 
   const signOut = async () => {
     debug("Remove token...");
-    updateToken("");
+    resetAll();
   };
 
   // This should only be used in local development!
