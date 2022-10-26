@@ -1,6 +1,8 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
+import { decodeToken } from "./token.js";
+import { body } from "express-validator";
 
 export const weekday = [
   "Sunday",
@@ -232,6 +234,8 @@ export const isTimeAvailable = async (req, res, next) => {
       officeHourId,
       startTime: startTimeObj,
       date: registrationDate,
+      isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   if (registration !== null) {
@@ -367,6 +371,53 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: office hour does not exist" });
+  }
+  next();
+};
+
+export const isStudentRegistered = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+export const isStudentRegisteredBody = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = req.id;
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+export const doesRegistrationExistParams = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Registration does not exist" });
   }
   next();
 };
