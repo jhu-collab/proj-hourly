@@ -24,6 +24,18 @@ const types = [
   },
 ];
 
+function latestEventsFirst(a, b) {
+  return b.startObj < a.startObj ?  1 
+       : b.startObj > a.startObj ? -1 
+       : 0;               
+};
+
+function earliestEventsFirst(a, b) {
+  return b.startObj > a.startObj ?  1 
+       : b.startObj < a.startObj ? -1 
+       : 0;               
+};
+
 const filterByTime = (array, timeTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
@@ -87,9 +99,21 @@ function Registrations() {
       )}
       {!isLoading && !error && (
         <>
-          <RegistrationsPanel index={0} registrations={registrations} />
-          <RegistrationsPanel index={1} registrations={registrations} />
-          <RegistrationsPanel index={2} registrations={registrations} />
+          <RegistrationsPanel
+            value={timeTab}
+            index={0}
+            registrations={registrations.sort(earliestEventsFirst)}
+          />
+          <RegistrationsPanel
+            value={timeTab}
+            index={1}
+            registrations={registrations.sort(earliestEventsFirst)}
+          />
+          <RegistrationsPanel
+            value={timeTab}
+            index={2}
+            registrations={registrations.sort(latestEventsFirst)}
+          />
           {courseType === "staff" && (
             <RegistrationTypes index={4} types={types} />
           )}
