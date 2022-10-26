@@ -168,7 +168,7 @@ router.post(
   body("role", "Must provide a role to promote to")
     .notEmpty()
     .isString()
-    .isIn(["Student"]),
+    .isIn(["Staff", "Instructor"]),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -179,13 +179,13 @@ router.post(
 router.post(
   "/:courseId/demote",
   param("courseId", "Must include course id").notEmpty().isInt(),
-  body("studentId", "Must provide id of a student to promote")
+  body("studentId", "Must provide id of a student to demote")
     .notEmpty()
     .isInt(),
-  body("role", "Must provide a role to promote to")
+  body("role", "Must provide a role to demote to")
     .notEmpty()
     .isString()
-    .isIn(["Staff", "Instructor"]),
+    .isIn(["Student"]),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,

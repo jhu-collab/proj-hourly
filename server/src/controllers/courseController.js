@@ -534,7 +534,7 @@ export const promote = async (req, res) => {
         },
       },
     });
-  } else if (role === "Insturctor" && req.currentRole === "Staff") {
+  } else if (role === "Instructor" && req.currentRole === "Staff") {
     account = await prisma.account.update({
       where: {
         id,
