@@ -25,18 +25,14 @@ const types = [
 ];
 
 function latestEventsFirst(a, b) {
-  return b.startObj < a.startObj ?  1 
-       : b.startObj > a.startObj ? -1 
-       : 0;               
-};
+  return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
+}
 
 function earliestEventsFirst(a, b) {
-  return b.startObj > a.startObj ?  1 
-       : b.startObj < a.startObj ? -1 
-       : 0;               
-};
+  return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
+}
 
-const filterByTime = (array, timeTab) => {
+const filterByTime = (array, registrationTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
 
@@ -50,7 +46,7 @@ const filterByTime = (array, timeTab) => {
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
 
-    switch (timeTab) {
+    switch (registrationTab) {
       case 0:
         return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
       case 1:
@@ -100,17 +96,17 @@ function Registrations() {
       {!isLoading && !error && (
         <>
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={0}
             registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={1}
             registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={2}
             registrations={registrations.sort(latestEventsFirst)}
           />
