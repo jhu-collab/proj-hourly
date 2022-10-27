@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
+import { Role } from "@prisma/client";
 
 export const create = async (req, res) => {
   if (validate(req, res)) {
@@ -184,4 +185,17 @@ export const getAll = async (req, res) => {
     },
   });
   return res.status(StatusCodes.ACCEPTED).json({ accounts });
+};
+
+export const promoteToAdmin = async (req, res) => {
+  const id = req.parseInt(req.params.id, 10);
+  const account = await prisma.account.update({
+    where: {
+      id,
+    },
+    data: {
+      role: Role.Admin,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(account);
 };

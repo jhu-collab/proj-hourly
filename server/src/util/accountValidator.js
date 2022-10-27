@@ -325,3 +325,19 @@ export const isAccountValidParams = async (req, res, next) => {
   }
   next();
 };
+
+export const isAccountUserParams = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query.role === "Admin") {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERORR: account is already admin" });
+  } else {
+    next();
+  }
+};
