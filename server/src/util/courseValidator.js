@@ -365,3 +365,14 @@ export const isTimeLengthForCourse = async (req, res, next) => {
     next();
   }
 };
+
+export const isLengthMultipleOf5 = async (req, res, next) => {
+  const { length } = req.body;
+  if (length % 5 !== 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: length must be a multiple of 5" });
+  } else {
+    next();
+  }
+};

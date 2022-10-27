@@ -166,6 +166,7 @@ router.post(
   body("title", "Body must have a title").isString(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
+  validator.isLengthMultipleOf5,
   accountValidator.isAccountInstructor,
   controller.createTimeLength
 );
@@ -189,6 +190,7 @@ router.post(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.doesTimeLengthExist,
+  validator.isLengthMultipleOf5,
   validator.isTimeLengthForCourse,
   controller.editTimeLength
 );

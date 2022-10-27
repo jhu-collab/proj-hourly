@@ -305,6 +305,8 @@ export const cancelAll = async (req, res) => {
  * This function computes the remaining time slots for a specific
  * office hour and returns them. This will compute time slots for each
  * possible time option picked
+ * 5 minute intervals were a design decision to limit the number of options
+ * while allowing for every multiple of 5 mins to be a time slot length
  * @param {*} req request to the api
  * @param {*} res response from the api
  * @returns res
