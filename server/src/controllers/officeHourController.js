@@ -301,17 +301,27 @@ export const cancelAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
+/**
+ * This function computes the remaining time slots for a specific
+ * office hour and returns them. This will compute time slots for each
+ * possible time option picked
+ * @param {*} req request to the api
+ * @param {*} res response from the api
+ * @returns res
+ */
 export const getTimeSlotsRemaining = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
   const date = new Date(req.params.date);
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  //gets the office hour
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
     },
   });
+  //gets the office hour session lengths for the course
   const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
     where: {
       courseId: officeHour.courseId,
@@ -319,12 +329,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   let start = officeHour.startTime;
   const end = officeHour.endTime;
-  let min = Infinity;
-  timeLengths.forEach((time) => {
-    if (time.duration < min) {
-      min = time.duration;
-    }
-  });
+  //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -332,15 +337,19 @@ export const getTimeSlotsRemaining = async (req, res) => {
       isCancelled: false,
     },
   });
+  //maps a start time to its registration
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
     registrationTimes.set(registration.startTime.getTime(), registration);
   });
+  //number of 5 minute intervals in the office hour
   let n =
     (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
     (5 * 60000);
+  //an array of 5 minute intervals, marking if the interval is occupied
   let timeSlots = Array(n).fill(true);
   let count = 0;
+  // loops from start to end and checks if a given interval is taken
   while (start < end) {
     if (registrationTimes.has(start.getTime())) {
       let registration = registrationTimes.get(start.getTime());
@@ -356,18 +365,25 @@ export const getTimeSlotsRemaining = async (req, res) => {
   }
   let timeSlotsPerType = [];
   let sessionStartTime;
+  // loops over each time length
   timeLengths.forEach((timeLength) => {
     sessionStartTime = new Date(officeHour.startTime);
     let times = [];
     const length = timeLength.duration;
+    // loops over the number of 5 minute time intervals
+    // that could be used as the start of the session
     for (let i = 0; i <= n - length / 5; i++) {
       let available = true;
+      // loops over all 5 minute intervals from the
+      // start time till the length has been reached
+      // checking if all intervals are available
       for (let j = 0; j < length / 5; j++) {
         if (!timeSlots[i + j]) {
           available = false;
           break;
         }
       }
+      // if available, adds to times array
       if (available) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);
@@ -379,6 +395,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       }
       sessionStartTime.setMinutes(sessionStartTime.getMinutes() + 5);
     }
+    // adds times array and type to the timeSlotsPerType array
     timeSlotsPerType.push({
       type: timeLength.title,
       duration: timeLength.duration,
