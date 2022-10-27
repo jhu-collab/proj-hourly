@@ -404,3 +404,25 @@ export const isInCourseBelowRoleForDemotionTo = async (req, res, next) => {
       .json({ msg: "ERROR: account can not be demoted further" });
   }
 };
+
+export const checkPromoteRoles = (req, res, next) => {
+  const { role } = req.body;
+  if (role === "Staff" || role === "Instructor") {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: invalid promotion role" });
+  }
+};
+
+export const checkDemoteRoles = (req, res, next) => {
+  const { role } = req.body;
+  if (role === "Student") {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: invalid promotion role" });
+  }
+};

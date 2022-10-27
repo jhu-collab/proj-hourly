@@ -170,6 +170,7 @@ router.post(
     .isString()
     .isIn(["Staff", "Instructor"]),
   accountValidator.isAccountValidHeader,
+  validator.checkPromoteRoles,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForPromotionTo,
@@ -187,6 +188,7 @@ router.post(
     .isString()
     .isIn(["Student"]),
   accountValidator.isAccountValidHeader,
+  validator.checkDemoteRoles,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForDemotionTo,
