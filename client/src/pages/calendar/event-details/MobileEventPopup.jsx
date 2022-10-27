@@ -10,6 +10,7 @@ import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
 import StudentDetails from "./StudentDetails";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import useStoreLayout from "../../../hooks/useStoreLayout";
 
 /**
  * Mimics the EventPopover component, however, this component is a Popup (Mui Dialog).
