@@ -29,4 +29,11 @@ router.delete("/:id", controller.deleteAccount);
 
 router.get("/", validator.isAdmin, controller.getAll);
 
+router.post(
+  "/:id",
+  validator.isAdmin,
+  validator.isAccountValidParams,
+  controller.promoteToAdmin
+);
+
 export default router;
