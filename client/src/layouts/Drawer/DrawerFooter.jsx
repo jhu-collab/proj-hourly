@@ -7,7 +7,7 @@ function DrawerFooter() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
 
   return (
-    <List>
+    <List disablePadding>
       {value === "local" && (
         <ListItem>
           <Chip label="Dev (Local)" size="small" color="error" />

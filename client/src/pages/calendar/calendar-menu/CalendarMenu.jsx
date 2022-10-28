@@ -1,4 +1,6 @@
 import Stack from "@mui/material/Stack";
+import useStoreLayout from "../../../hooks/useStoreLayout";
+import CalendarAdd from "./CalendarAdd";
 import CalendarFilters from "./CalendarFilters";
 import CalendarViews from "./CalendarViews";
 
@@ -7,12 +9,13 @@ import CalendarViews from "./CalendarViews";
  * @returns calendar menu
  */
 function CalendarMenu({ calendarRef }) {
-  // TODO: We can add more children components if we decide
-  // that additional functionally can be added to the calendar
+  const courseType = useStoreLayout((state) => state.courseType);
+
   return (
     <Stack padding={2} spacing={3}>
       <CalendarViews calendarRef={calendarRef} />
       <CalendarFilters />
+      {courseType === "staff" && <CalendarAdd />}
     </Stack>
   );
 }

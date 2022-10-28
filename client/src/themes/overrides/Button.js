@@ -14,6 +14,8 @@ export default function Button(theme) {
         root: {
           fontWeight: 600,
           textTransform: "uppercase",
+          backgroundColor: theme.palette.secondary.main,
+          color: theme.palette.text.primary,
         },
         contained: {
           ...disabledStyle,
