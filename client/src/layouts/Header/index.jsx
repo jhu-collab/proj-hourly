@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import useTheme from "@mui/material/styles/useTheme";
 import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -32,6 +33,7 @@ function Header({ open, handleDrawerToggle }) {
       >
         {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </IconButton>
+      <Box sx={{ width: "100%", ml: 1 }} />
       <HeaderContent />
     </Toolbar>
   );
