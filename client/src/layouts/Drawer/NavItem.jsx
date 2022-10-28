@@ -57,7 +57,7 @@ function NavItem({ item, level }) {
   }, []);
 
   const textColor = "text.primary";
-  const iconSelectedColor = "primary.main";
+  const iconSelectedColor = "text.primary";
 
   return (
     <ListItemButton
@@ -71,15 +71,17 @@ function NavItem({ item, level }) {
         py: !openSidebar && level === 1 ? 1.25 : 1,
         ...(openSidebar && {
           "&:hover": {
-            bgcolor: "primary.lighter",
+            bgcolor: "primary.main",
+            borderRadius: 1,
           },
           "&.Mui-selected": {
-            bgcolor: "primary.lighter",
+            bgcolor: "primary.main",
+            borderRadius: 1,
             borderRight: `2px solid ${theme.palette.primary.main}`,
             color: iconSelectedColor,
             "&:hover": {
               color: iconSelectedColor,
-              bgcolor: "primary.lighter",
+              bgcolor: "primary.main",
             },
           },
         }),
@@ -108,14 +110,14 @@ function NavItem({ item, level }) {
               alignItems: "center",
               justifyContent: "center",
               "&:hover": {
-                bgcolor: "secondary.lighter",
+                bgcolor: "primary.main",
               },
             }),
             ...(!openSidebar &&
               isSelected && {
-                bgcolor: "primary.lighter",
+                bgcolor: "secondary.main",
                 "&:hover": {
-                  bgcolor: "primary.lighter",
+                  bgcolor: "secondary.main",
                 },
               }),
           }}

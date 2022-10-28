@@ -20,7 +20,9 @@ function LogoSection({ sx, to }) {
     >
       <Stack direction="row" spacing={2}>
         <img src={logo} alt="Mantis" width="30" />
-        <Typography>Hourly</Typography>
+        <Typography fontWeight={500} fontSize={30}>
+          Hourly
+        </Typography>
       </Stack>
     </ButtonBase>
   );
