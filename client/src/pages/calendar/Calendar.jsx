@@ -18,6 +18,7 @@ import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
+import { Box, Container } from "@mui/material";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -79,16 +80,9 @@ function Calendar() {
 
   return (
     <>
-      <Stack direction="row" spacing={1}>
-        {menuOpen && matchUpSm && (
-          <Paper variant="outlined" sx={{ height: "76vh" }}>
-            <CalendarMenu />
-          </Paper>
-        )}
-        <Paper
-          variant="outlined"
-          square
-          sx={{ flexGrow: 1, height: "76vh", p: 2 }}
+      <Stack direction="row" sx={{m: { xs: -2, sm: -3 }, pb: 1, height: "100%"}}>
+        <Box
+          sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2, }}
         >
           <FullCalendar
             plugins={[
@@ -98,12 +92,6 @@ function Calendar() {
               interactionPlugin,
             ]}
             customButtons={{
-              calendarMenu: {
-                icon: menuOpen ? "chevrons-right" : "chevrons-left",
-                click: function () {
-                  setMenuOpen(!menuOpen);
-                },
-              },
               mobileCalMenu: {
                 text: "menu",
                 click: function () {
@@ -114,8 +102,9 @@ function Calendar() {
             headerToolbar={
               matchUpSm
                 ? {
-                    start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
+                    start: "prev",
                     center: "title",
+                    end: "next"
                   }
                 : { start: "title", end: "prev,next" }
             }
@@ -135,11 +124,16 @@ function Calendar() {
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
-        </Paper>
+        </Box>
+        { matchUpSm && (
+          <Box variant="outlined" sx={{ height: "100%", boxShadow: theme.customShadows.z1, borderLeft: `2px solid ${theme.palette.divider}` }}>
+            <CalendarMenu />
+          </Box>
+        )}
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu />}
-      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
+      {/* {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />} */}
       {isLoading && <Loader />}
     </>
   );

@@ -37,12 +37,12 @@ function MainLayout() {
   }, [openSidebar]);
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ display: "flex", width: "100%", height: "98.5vh" }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box
         component="main"
-        sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 } }}
+        sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 }, }}
       >
         <Toolbar />
         <Breadcrumbs
