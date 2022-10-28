@@ -44,7 +44,7 @@ function Header({ open, handleDrawerToggle }) {
     color: "inherit",
     elevation: 0,
     sx: {
-      borderBottom: `1px solid ${theme.palette.divider}`,
+      borderBottom: `2px solid ${theme.palette.divider}`,
       // boxShadow: theme.customShadows.z1
     },
   };
