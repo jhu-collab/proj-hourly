@@ -35,7 +35,7 @@ function NavGroup({ item }) {
         item.title &&
         openSidebar && (
           <Box sx={{ pl: 3, mb: 1.5 }}>
-            <Typography variant="subtitle1" color="textPrimary">
+            <Typography variant="subtitle1" color="textPrimary" textTransform="uppercase">
               {item.title}
             </Typography>
             {/* only available in paid version */}
