@@ -30,6 +30,10 @@ export const Theme = (colors) => {
       main: "#AEF5E9",
       contrastText: greyColors[0],
     },
+    tertiary: {
+      main: "#1976D2",
+      contrastText
+    },
     error: {
       lighter: red[0],
       light: red[2],
