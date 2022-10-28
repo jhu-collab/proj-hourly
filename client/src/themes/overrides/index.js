@@ -13,6 +13,7 @@ import OutlinedInput from "./OutlinedInput";
 import Tab from "./Tab";
 import TableCell from "./TableCell";
 import Tabs from "./Tabs";
+import TextField from "./TextField";
 import Typography from "./Typography";
 
 export default function ComponentsOverrides(theme) {
@@ -31,6 +32,7 @@ export default function ComponentsOverrides(theme) {
     Tab(theme),
     TableCell(theme),
     Tabs(),
+    TextField(),
     Typography()
   );
 }

@@ -1,6 +1,9 @@
 export default function InputLabel(theme) {
   return {
     MuiInputLabel: {
+      defaultProps: {
+        color: "tertiary",
+      },
       styleOverrides: {
         root: {
           color: theme.palette.grey[600],
