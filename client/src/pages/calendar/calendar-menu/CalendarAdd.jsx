@@ -5,7 +5,7 @@ import { useModal } from "@ebay/nice-modal-react";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
- * Component that the button that is used to create a new calendar
+ * Button that is used to create a new calendar
  * event.
  * @param calendarRef reference to the FullCalendar component in
  *                    Calendar.jsx

@@ -1,12 +1,17 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import useTheme from "@mui/material/styles/useTheme";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+/**
+ * Toggle button group component that is used to switch the views
+ * of the calendar
+ * @param calendarRef reference to the FullCalendar component in
+ *                    Calendar.jsx
+ * @returns Calendar view toggle.
+ */
 function CalendarViews({ calendarRef }) {
-  const theme = useTheme();
   const [alignment, setAlignment] = useState("week");
 
   const handleChange = (event, newAlignment) => {
