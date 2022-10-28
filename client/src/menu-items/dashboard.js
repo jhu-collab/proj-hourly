@@ -12,14 +12,7 @@ export const dashboard = {
     {
       id: "your-courses",
       title: "my courses",
-      type: "collapse",
-      children: [
-        {
-          id: "analytics",
-          title: "Analytics",
-          type: "item",
-        },
-      ],
+      type: "item",
       url: "/",
       icon: icons.ReadOutlined,
       breadcrumbs: false,
