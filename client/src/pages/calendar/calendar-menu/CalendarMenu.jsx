@@ -12,10 +12,10 @@ function CalendarMenu({ calendarRef }) {
   const courseType = useStoreLayout((state) => state.courseType);
 
   return (
-    <Stack padding={2} spacing={3}>
+    <Stack padding={2} spacing={6}>
       <CalendarViews calendarRef={calendarRef} />
       <CalendarFilters />
-      {courseType === "staff" && <CalendarAdd />}
+      {courseType === "staff" && <CalendarAdd calendarRef={calendarRef} />}
     </Stack>
   );
 }
