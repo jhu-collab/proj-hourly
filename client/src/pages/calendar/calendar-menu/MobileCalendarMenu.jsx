@@ -22,7 +22,7 @@ const Puller = styled(Box)(({ theme }) => ({
  * for mobile devices.
  * @returns a mobile calendar menu
  */
-function MobileCalendarMenu({calendarRef}) {
+function MobileCalendarMenu({ calendarRef }) {
   const open = useStoreLayout((state) => state.mobileCalMenu);
   const setOpen = useStoreLayout((state) => state.setMobileCalMenu);
 
@@ -63,7 +63,7 @@ function MobileCalendarMenu({calendarRef}) {
           overflow: "auto",
         }}
       >
-        <CalendarMenu calendarRef={calendarRef}/>
+        <CalendarMenu calendarRef={calendarRef} />
       </Box>
     </SwipeableDrawer>
   );

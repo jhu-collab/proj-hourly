@@ -44,7 +44,7 @@ function Header({ open, handleDrawerToggle }) {
     color: "inherit",
     elevation: 1,
     sx: {
-      boxShadow: theme.customShadows.z1
+      boxShadow: theme.customShadows.z1,
     },
   };
 

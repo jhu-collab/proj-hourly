@@ -6,7 +6,6 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { useEffect, useRef, useState } from "react";
 import CalendarSpeedDial from "./CalendarSpeedDial";
@@ -18,7 +17,7 @@ import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import { Box, Container } from "@mui/material";
+import Box from "@mui/material/Box";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -80,10 +79,11 @@ function Calendar() {
 
   return (
     <>
-      <Stack direction="row" sx={{m: { xs: -2, sm: -3 }, pb: 1, height: "100%"}}>
-        <Box
-          sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2, }}
-        >
+      <Stack
+        direction="row"
+        sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
+      >
+        <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
           <FullCalendar
             plugins={[
               rrulePlugin,
@@ -104,7 +104,7 @@ function Calendar() {
                 ? {
                     start: "prev",
                     center: "title",
-                    end: "next"
+                    end: "next",
                   }
                 : { start: "title", end: "prev,next" }
             }
@@ -125,8 +125,15 @@ function Calendar() {
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
         </Box>
-        { matchUpSm && (
-          <Box variant="outlined" sx={{ height: "100%", boxShadow: theme.customShadows.z1, borderLeft: `2px solid ${theme.palette.divider}` }}>
+        {matchUpSm && (
+          <Box
+            variant="outlined"
+            sx={{
+              height: "100%",
+              boxShadow: theme.customShadows.z1,
+              borderLeft: `2px solid ${theme.palette.divider}`,
+            }}
+          >
             <CalendarMenu calendarRef={calendarRef} />
           </Box>
         )}

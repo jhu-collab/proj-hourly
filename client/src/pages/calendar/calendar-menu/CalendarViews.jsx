@@ -41,7 +41,7 @@ function CalendarViews({ calendarRef }) {
   };
 
   return (
-    <Stack direction="column" spacing={2}>
+    <Stack direction="column" spacing={1}>
       <Typography variant="subtile1" fontWeight={600} color="text.secondary">
         view by
       </Typography>

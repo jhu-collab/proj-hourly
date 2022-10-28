@@ -32,7 +32,7 @@ export const Theme = (colors) => {
     },
     tertiary: {
       main: "#1976D2",
-      contrastText
+      contrastText,
     },
     error: {
       lighter: red[0],
