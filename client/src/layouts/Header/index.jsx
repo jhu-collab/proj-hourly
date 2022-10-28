@@ -42,10 +42,9 @@ function Header({ open, handleDrawerToggle }) {
   const appBar = {
     position: "fixed",
     color: "inherit",
-    elevation: 0,
+    elevation: 1,
     sx: {
-      borderBottom: `2px solid ${theme.palette.divider}`,
-      // boxShadow: theme.customShadows.z1
+      boxShadow: theme.customShadows.z1
     },
   };
 
