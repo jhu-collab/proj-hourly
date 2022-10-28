@@ -12,7 +12,8 @@ export default function Button(theme) {
       },
       styleOverrides: {
         root: {
-          fontWeight: 400,
+          fontWeight: 600,
+          textTransform: "uppercase"
         },
         contained: {
           ...disabledStyle,
