@@ -5,13 +5,19 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-function CalendarViews() {
+function CalendarViews({ calendarRef }) {
   const theme = useTheme();
   const [alignment, setAlignment] = useState("week");
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment != null) {
       setAlignment(newAlignment);
+      let calendarApi = calendarRef.current.getApi();
+      newAlignment === "day"
+        ? calendarApi.changeView("timeGridDay")
+        : newAlignment === "week"
+        ? calendarApi.changeView("timeGridWeek")
+        : calendarApi.changeView("dayGridMonth");
     }
   };
 
@@ -21,7 +27,7 @@ function CalendarViews() {
     fontWeight: 600,
     "&:hover": {
       bgcolor: "secondary.main",
-      color: "text.primary"
+      color: "text.primary",
     },
     "&.Mui-selected": {
       bgcolor: "secondary.main",
@@ -36,23 +42,26 @@ function CalendarViews() {
 
   return (
     <Stack direction="column" spacing={2}>
-        <Typography variant="subtile1" fontWeight={600} color="text.secondary">view by</Typography>
-    <ToggleButtonGroup
-      sx={{ bgcolor: "tertiary.main", }}
-      value={alignment}
-      exclusive
-      onChange={handleChange}
-    >
-      <ToggleButton value="day" sx={sxToggleButton}>
-        DAY
-      </ToggleButton>
-      <ToggleButton value="week" sx={sxToggleButton}>
-        WEEK
-      </ToggleButton>
-      <ToggleButton value="month" sx={sxToggleButton}>
-        MONTH
-      </ToggleButton>
-    </ToggleButtonGroup>
+      <Typography variant="subtile1" fontWeight={600} color="text.secondary">
+        view by
+      </Typography>
+      <ToggleButtonGroup
+        sx={{ bgcolor: "tertiary.main" }}
+        value={alignment}
+        exclusive
+        fullWidth
+        onChange={handleChange}
+      >
+        <ToggleButton value="day" sx={sxToggleButton}>
+          DAY
+        </ToggleButton>
+        <ToggleButton value="week" sx={sxToggleButton}>
+          WEEK
+        </ToggleButton>
+        <ToggleButton value="month" sx={sxToggleButton}>
+          MONTH
+        </ToggleButton>
+      </ToggleButtonGroup>
     </Stack>
   );
 }

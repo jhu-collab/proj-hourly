@@ -127,12 +127,12 @@ function Calendar() {
         </Box>
         { matchUpSm && (
           <Box variant="outlined" sx={{ height: "100%", boxShadow: theme.customShadows.z1, borderLeft: `2px solid ${theme.palette.divider}` }}>
-            <CalendarMenu />
+            <CalendarMenu calendarRef={calendarRef} />
           </Box>
         )}
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu />}
+      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
       {/* {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />} */}
       {isLoading && <Loader />}
     </>
