@@ -10,17 +10,22 @@ function DrawerFooter() {
     <List>
       {value === "local" && (
         <ListItem>
-          <Chip label="Dev (Local)" size="small" color="secondary" />
+          <Chip label="Dev (Local)" size="small" color="error" />
         </ListItem>
       )}
       {value === "dev" && (
         <ListItem>
-          <Chip label="Dev (Staging)" size="small" />
+          <Chip label="Dev (Staging)" size="small" color="warning" />
         </ListItem>
       )}
       {value === "prod" && (
         <ListItem>
-          <Chip label="PRODUCTION" size="small" variant="outlined" />
+          <Chip
+            label="PRODUCTION"
+            size="small"
+            color="secondary"
+            sx={{ color: "#000" }}
+          />
         </ListItem>
       )}
     </List>
