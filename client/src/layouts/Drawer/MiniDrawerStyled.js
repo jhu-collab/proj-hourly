@@ -11,7 +11,7 @@ const openedMixin = (theme) => ({
   }),
   overflowX: "hidden",
   boxShadow: "none",
-  backgroundColor: theme.palette.secondary.main,
+  backgroundColor: theme.palette.primary.main,
 });
 
 const closedMixin = (theme) => ({
@@ -23,7 +23,7 @@ const closedMixin = (theme) => ({
   width: 0,
   borderRight: "none",
   boxShadow: theme.customShadows.z1,
-  backgroundColor: theme.palette.secondary.main,
+  backgroundColor: theme.palette.primary.main,
 });
 
 export const MiniDrawerStyled = styled(Drawer, {

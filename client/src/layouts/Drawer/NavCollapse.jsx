@@ -70,14 +70,14 @@ function NavCollapse({ item, level }) {
   });
 
   return (
-    <Accordion elevation={0} disableGutters sx={{ bgcolor: "secondary.main" }}>
+    <Accordion elevation={0} disableGutters sx={{ bgcolor: "primary.main" }}>
       <AccordionSummary
         sx={{
           zIndex: 1201,
           pl: openSidebar ? `${level * 28}px` : 1.5,
           ...(openSidebar && {
             "&:hover": {
-              bgcolor: "primary.main",
+              bgcolor: "secondary.main",
               borderRadius: 1,
             },
           }),
@@ -102,14 +102,14 @@ function NavCollapse({ item, level }) {
                 alignItems: "center",
                 justifyContent: "center",
                 "&:hover": {
-                  bgcolor: "primary.main",
+                  bgcolor: "secondary.main",
                 },
               }),
               ...(!openSidebar &&
                 isSelected && {
-                  bgcolor: "secondary.main",
+                  bgcolor: "primary.main",
                   "&:hover": {
-                    bgcolor: "secondary.main",
+                    bgcolor: "primary.main",
                   },
                 }),
             }}

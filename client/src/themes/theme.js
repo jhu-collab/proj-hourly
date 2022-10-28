@@ -23,11 +23,11 @@ export const Theme = (colors) => {
 
   return {
     primary: {
-      main: "#AEF5E9",
+      main: "#64CFD9",
       contrastText,
     },
     secondary: {
-      main: "#64CFD9",
+      main: "#AEF5E9",
       contrastText: greyColors[0],
     },
     error: {

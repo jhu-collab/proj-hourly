@@ -71,17 +71,16 @@ function NavItem({ item, level }) {
         py: !openSidebar && level === 1 ? 1.25 : 1,
         ...(openSidebar && {
           "&:hover": {
-            bgcolor: "primary.main",
+            bgcolor: "secondary.main",
             borderRadius: 1,
           },
           "&.Mui-selected": {
-            bgcolor: "primary.main",
+            bgcolor: "secondary.main",
             borderRadius: 1,
-            borderRight: `2px solid ${theme.palette.primary.main}`,
             color: iconSelectedColor,
             "&:hover": {
               color: iconSelectedColor,
-              bgcolor: "primary.main",
+              bgcolor: "secondary.main",
             },
           },
         }),
@@ -110,14 +109,14 @@ function NavItem({ item, level }) {
               alignItems: "center",
               justifyContent: "center",
               "&:hover": {
-                bgcolor: "primary.main",
+                bgcolor: "secondary.main",
               },
             }),
             ...(!openSidebar &&
               isSelected && {
-                bgcolor: "secondary.main",
+                bgcolor: "primary.main",
                 "&:hover": {
-                  bgcolor: "secondary.main",
+                  bgcolor: "primary.main",
                 },
               }),
           }}
