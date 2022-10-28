@@ -8,7 +8,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Stack from "@mui/material/Stack";
 import { useEffect, useRef, useState } from "react";
-import CalendarSpeedDial from "./CalendarSpeedDial";
 import EventPopover from "./event-details/EventPopover";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
@@ -140,7 +139,6 @@ function Calendar() {
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
-      {/* {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />} */}
       {isLoading && <Loader />}
     </>
   );

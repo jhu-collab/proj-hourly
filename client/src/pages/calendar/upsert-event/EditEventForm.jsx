@@ -201,7 +201,15 @@ function EditEventForm() {
                     ({ value: v }) => v === value
                   );
                   return (
-                    <Chip key={value} color="primary" label={item.label} />
+                    <Chip
+                      key={value}
+                      label={item.label}
+                      sx={{
+                        color: "text.primary",
+                        backgroundColor: "secondary.main",
+                        borderColor: "secondary.main",
+                      }}
+                    />
                   );
                 })}
               </Box>
