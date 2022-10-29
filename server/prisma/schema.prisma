@@ -36,8 +36,8 @@ enum Role {
 
 model Flag {
   id        Int            @id @default(autoincrement())
-  student   Account        @relation("isFlagged")
-  staff     Account        @relation("Flagged")
+  student   Account[]        @relation("isFlagged")
+  staff     Account[]        @relation("Flagged")
   resolved  Boolean        @default(false)
   reason    String?
   course    Course         @relation(fields: [courseId], references: [id])
@@ -57,6 +57,7 @@ model Course {
   officeHours  OfficeHour[]
   topics       Topic[]
   iCalJson     Json?
+  flags        Flag[]
 }
 
 model OfficeHour {
