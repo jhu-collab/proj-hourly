@@ -7,6 +7,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
+import useMutationCancelRegistration from "../../hooks/useMutationCancelRegistration";
 
 /**
  * Represents a single Registration card.
@@ -17,6 +18,16 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
  * @returns a single Registration component.
  */
 function Registration({ registration, type }) {
+  const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
+    registration.id || -1
+  );
+
+  const onClick = () => {
+    confirmDialog("Do you really want to cancel this registration?", () =>
+      mutate()
+    );
+  };
+
   return (
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
@@ -55,12 +66,7 @@ function Registration({ registration, type }) {
               variant="contained"
               size="large"
               fullWidth
-              onClick={() => {
-                confirmDialog(
-                  "Do you want to cancel this registration?",
-                  () => console.log("Registration canceled.") // TODO: Need route to cancel event
-                );
-              }}
+              onClick={onClick}
             >
               Cancel
             </Button>
