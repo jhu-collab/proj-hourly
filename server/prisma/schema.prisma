@@ -25,6 +25,8 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
+  givenFeedback     Feedback[]      @relation("givenFeedback")
+  receivedFeedback  Feedback[]            @relation("receivedFeedback")
 }
 
 enum Role {
@@ -45,6 +47,17 @@ model Course {
   officeHours  OfficeHour[]
   topics       Topic[]
   iCalJson     Json?
+}
+
+model Feedback {
+  id              Int               @id @default(autoincrement())
+  student         Account[]         @relation("givenFeedback")
+  staff           Account[]         @relation("receivedFeedback")
+  rating          Int       
+  //limit rating to 1-5 if possible          
+  feedback        String
+  registration    Registration      @relation(fields: [registrationId], references: [id])     
+  registrationId  Int
 }
 
 model OfficeHour {
@@ -86,6 +99,7 @@ model Registration {
   rating           Int?
   topics           Topic[]    @relation("withTopics")
   isCancelledStaff Boolean    @default(false)
+  feedbacks        Feedback[]
 }
 
 model Topic {
