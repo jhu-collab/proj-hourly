@@ -21,7 +21,7 @@ function FormInputText({ name, control, label, ...other }) {
           label={label}
           variant="outlined"
           helperText={!!error ? error.message : null}
-          error={error}
+          error={!!error}
           {...other}
         />
       )}
