@@ -27,9 +27,7 @@ function useMutationCreateTopic() {
 
       queryClient.invalidateQueries(["topicCounts"]);
       NiceModal.hide("create-topic");
-      toast.success(
-        `Successfully created the "${topic.value}" topic!`
-      );
+      toast.success(`Successfully created the "${topic.value}" topic!`);
     },
     onError: (err) => {
       errorToast(err);

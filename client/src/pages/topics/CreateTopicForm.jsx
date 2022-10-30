@@ -1,4 +1,3 @@
-import NiceModal from "@ebay/nice-modal-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -6,9 +5,14 @@ import { useForm } from "react-hook-form";
 import AnimateButton from "../../components/AnimateButton";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
+import useMutationCreateTopic from "../../hooks/useMutationCreateTopic";
 import { topicSchema } from "../../utils/validators";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 function CreateTopicForm() {
+  const { mutate } = useMutationCreateTopic();
+  const course = useStoreCourse((state) => state.course);
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
       name: "",
@@ -17,7 +21,7 @@ function CreateTopicForm() {
   });
 
   const onSubmit = (data) => {
-    NiceModal.hide("create-topic");
+    mutate({ courseId: course.id, value: data.name });
   };
 
   return (
