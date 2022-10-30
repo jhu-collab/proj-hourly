@@ -4,9 +4,21 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import Chip from "@mui/material/Chip"
+import Grid from "@mui/material/Grid";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
+
+// TODO: Registration route needs to be updated to include topics
+const sampleTopics = [{ id: 1, value: "Arrays" },
+{ id: 2, value: "Recursion" },
+{ id: 3, value: "Loops" },
+{ id: 4, value: "Conditionals" },
+{ id: 5, value: "Sorting" },
+{ id: 6, value: "Input" },
+{ id: 7, value: "Trees" },
+{ id: 8, value: "Linear Search" },];
 
 /**
  * Represents a single Registration card.
@@ -28,16 +40,16 @@ function Registration({ registration, type }) {
           spacing={2}
         >
           <Typography fontWeight={600}>
-            {DateTime.fromJSDate(registration.date, {
+            {DateTime.fromISO(registration.date, {
               zone: "utc",
             }).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
           </Typography>
           <Typography fontWeight={600}>
-            {DateTime.fromJSDate(registration.startTime, {
+            {DateTime.fromISO(registration.startTime, {
               zone: "utc",
             }).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
             -{" "}
-            {DateTime.fromJSDate(registration.endTime, {
+            {DateTime.fromISO(registration.endTime, {
               zone: "utc",
             }).toLocaleString(DateTime.TIME_SIMPLE)}
           </Typography>
@@ -51,6 +63,16 @@ function Registration({ registration, type }) {
          details about the event will be provided here */}
         {type === 0 && (
           <>
+            <Typography fontWeight={600}>Selected Topics:</Typography>
+            <Grid container spacing={1} marginBottom={4}>
+              {sampleTopics.map((topic) => {
+                return (
+                  <Grid item key={topic.id}>
+                    <Chip label={topic.value} color="primary"/>
+                  </Grid>
+                );
+              })}
+            </Grid>
             <Button
               variant="contained"
               size="large"
