@@ -40,6 +40,7 @@ function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/registrations" element={<Registrations />} />
               <Route path="/roster" element={<Roster />} />
+              <Route path="/topics" element={<Topics />} />
               <Route path="/courseinformation" element={<CourseInfoPage />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="admin/" element={<AdminOnlyRoute />}>

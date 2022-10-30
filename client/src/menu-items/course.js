@@ -2,12 +2,14 @@ import CalendarOutlined from "@ant-design/icons/CalendarOutlined";
 import UsergroupAddOutlined from "@ant-design/icons/UsergroupAddOutlined";
 import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
+import BulbOutlined from "@ant-design/icons/BulbOutlined";
 import useStoreLayout from "../hooks/useStoreLayout";
 const icons = {
   CalendarOutlined,
   UsergroupAddOutlined,
   ScheduleOutlined,
   InfoCircleOutlined,
+  BulbOutlined,
 };
 
 export const course = (currentCourse) => {
@@ -40,6 +42,14 @@ export const course = (currentCourse) => {
       type: "item",
       url: "/roster",
       icon: icons.UsergroupAddOutlined,
+      breadcrumbs: false,
+    });
+    children.push({
+      id: "topics",
+      title: "Topics",
+      type: "item",
+      url: "/topics",
+      icon: icons.BulbOutlined,
       breadcrumbs: false,
     });
   }
