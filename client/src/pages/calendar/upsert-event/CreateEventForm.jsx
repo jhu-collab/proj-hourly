@@ -194,7 +194,6 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
@@ -216,7 +215,10 @@ function CreateEventForm() {
                     ({ value: v }) => v === value
                   );
                   return (
-                    <Chip key={value} color="primary" label={item.label} />
+                    <Chip
+                      key={value}
+                      label={item.label}
+                    />
                   );
                 })}
               </Box>
