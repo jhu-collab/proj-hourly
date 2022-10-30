@@ -7,14 +7,16 @@ import NiceModal from "@ebay/nice-modal-react";
 import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
 import Topic from "./Topic";
 import Typography from "@mui/material/Typography";
+import useQueryMyRole from "../../hooks/useQueryMyRole";
+import Loader from "../../components/Loader";
 
 /**
  * Represents the Topics page.
  * @returns Topics page
  */
-func;
 function Topics() {
   const { isLoading, error, data } = useQueryTopicCounts();
+  const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
 
   const noRegistrations = () => {
     return (
@@ -28,6 +30,10 @@ function Topics() {
     return <Alert severity="warning">Retrieving topics ...</Alert>;
   }
 
+  if (isLoadingRole) {
+    return <Loader />;
+  }
+
   if (error) {
     return <Alert severity="error">Unable to retrieve topics</Alert>;
   }
@@ -39,7 +45,7 @@ function Topics() {
         noRegistrations()
       ) : (
         <Grid container spacing={2} marginTop={1}>
-          {data.counts.map((topic, index) => {
+          {data.counts.map((topic) => {
             return (
               <Grid item xs={12} key={topic.id}>
                 <Topic topic={topic} />
@@ -48,17 +54,19 @@ function Topics() {
           })}
         </Grid>
       )}
-      <Fab
-        color="primary"
-        onClick={() => NiceModal.show("create-topic")}
-        sx={{
-          position: "fixed",
-          bottom: (theme) => theme.spacing(3),
-          right: (theme) => theme.spacing(3),
-        }}
-      >
-        <SpeedDialIcon />
-      </Fab>
+      {dataRole.role === "Instructor" && (
+        <Fab
+          color="primary"
+          onClick={() => NiceModal.show("create-topic")}
+          sx={{
+            position: "fixed",
+            bottom: (theme) => theme.spacing(3),
+            right: (theme) => theme.spacing(3),
+          }}
+        >
+          <SpeedDialIcon />
+        </Fab>
+      )}
     </>
   );
 }

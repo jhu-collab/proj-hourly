@@ -12,7 +12,10 @@ function useQueryMyRole() {
 
   const getMyRole = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/course/${course.id}/role`, getConfig(token));
+      const res = await axios.get(
+        `${BASE_URL}/api/course/${course.id}/role`,
+        getConfig(token)
+      );
       return res.data;
     } catch (err) {
       throw err;

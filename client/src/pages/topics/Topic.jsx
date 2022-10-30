@@ -9,15 +9,18 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useQueryMyRole from "../../hooks/useQueryMyRole";
 import { topicSchema } from "../../utils/validators";
 
 /**
  * Represents a single Topic card.
- * @param {*} type topic object
+ * @param {*} topic topic object
  * @returns a single Topic component.
  */
 function Topic({ topic }) {
   const [edit, setEdit] = useState(false);
+
+  const { isLoading, data } = useQueryMyRole();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -52,7 +55,7 @@ function Topic({ topic }) {
             alignItems="center"
             spacing={2}
           >
-            {edit ? (
+            {edit && data.role === "Instructor" ? (
               <FormInputText
                 name="name"
                 control={control}
@@ -61,8 +64,7 @@ function Topic({ topic }) {
             ) : (
               <Typography variant="h5">{topic.value}</Typography>
             )}
-            <Stack direction="row" spacing={1}></Stack>
-            {edit ? (
+            {edit && data.role === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" type="submit">
@@ -79,7 +81,8 @@ function Topic({ topic }) {
                   </Button>
                 </AnimateButton>
               </Stack>
-            ) : (
+            )}
+            {!edit && data.role === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>
