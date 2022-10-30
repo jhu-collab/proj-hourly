@@ -17,14 +17,7 @@ function FormCheckbox({ name, control, label, ...other }) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <FormControlLabel
-          control={
-            <Checkbox
-              {...field}
-              checked={field.value}
-              defaultChecked
-              {...other}
-            />
-          }
+          control={<Checkbox {...field} checked={field.value} {...other} />}
           label={label}
         />
       )}
