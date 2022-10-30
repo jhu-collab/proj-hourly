@@ -24,9 +24,7 @@ function Topics() {
   }
 
   if (error) {
-    return (
-      <Alert severity="error">Unable to retrieve topics</Alert>
-    );
+    return <Alert severity="error">Unable to retrieve topics</Alert>;
   }
 
   return (
@@ -36,15 +34,17 @@ function Topics() {
       ) : (
         <Grid container spacing={2} marginTop={2}>
           {data.counts.map((topic, index) => {
-            return <Grid item xs={12} key={topic.id}>
+            return (
+              <Grid item xs={12} key={topic.id}>
                 <Topic topic={topic} />
-            </Grid>;
+              </Grid>
+            );
           })}
         </Grid>
       )}
       <Fab
         color="primary"
-        onClick={() => NiceModal.show("create-registration-type")}
+        onClick={() => NiceModal.show("create-topic")}
         sx={{
           position: "fixed",
           bottom: (theme) => theme.spacing(3),
