@@ -20,10 +20,11 @@ const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))
 );
-const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
+const Roster = Loadable(lazy(() => import("./pages/roster/Roster")));
 const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))
 );
+const Topics = Loadable(lazy(() => import("./pages/topics/Topics")));
 const Users = Loadable(lazy(() => import("./pages/admin/Users")));
 const Profile = Loadable(lazy(() => import("./pages/account/Profile")));
 

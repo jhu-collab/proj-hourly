@@ -4,7 +4,7 @@ import MobileEventPopup from "../pages/calendar/event-details/MobileEventPopup";
 import Register from "../pages/calendar/register/Register";
 import UpsertEvent from "../pages/calendar/upsert-event/UpsertEvent";
 import CreateRegistrationType from "../pages/registrations/CreateRegistrationType";
-import InviteUser from "../pages/roster-page/InviteUser";
+import InviteUser from "../pages/roster/InviteUser";
 import CreateCourse from "../pages/your-courses/create-course/CreateCourse";
 import JoinCourse from "../pages/your-courses/join-course/JoinCourse";
 
