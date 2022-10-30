@@ -9,6 +9,11 @@ import useMutationCreateTopic from "../../hooks/useMutationCreateTopic";
 import { topicSchema } from "../../utils/validators";
 import useStoreCourse from "../../hooks/useStoreCourse";
 
+/**
+ * Component that represents the form that is used to create a
+ * topic.
+ * @returns A component representing the Create Topic form.
+ */
 function CreateTopicForm() {
   const { mutate } = useMutationCreateTopic();
   const course = useStoreCourse((state) => state.course);

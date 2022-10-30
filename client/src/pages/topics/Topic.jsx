@@ -11,6 +11,11 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import { topicSchema } from "../../utils/validators";
 
+/**
+ * Represents a single Topic card.
+ * @param {*} type topic object
+ * @returns a single Topic component.
+ */
 function Topic({ topic }) {
   const [edit, setEdit] = useState(false);
 

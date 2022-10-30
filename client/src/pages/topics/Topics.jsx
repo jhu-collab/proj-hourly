@@ -8,6 +8,11 @@ import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
 import Topic from "./Topic";
 import Typography from "@mui/material/Typography";
 
+/**
+ * Represents the Topics page.
+ * @returns Topics page
+ */
+func;
 function Topics() {
   const { isLoading, error, data } = useQueryTopicCounts();
 
