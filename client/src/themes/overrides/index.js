@@ -14,6 +14,7 @@ import Tab from "./Tab";
 import TableCell from "./TableCell";
 import Tabs from "./Tabs";
 import TextField from "./TextField";
+import ToggleButton from "./ToggleButton";
 import Typography from "./Typography";
 
 export default function ComponentsOverrides(theme) {
@@ -33,6 +34,7 @@ export default function ComponentsOverrides(theme) {
     TableCell(theme),
     Tabs(),
     TextField(),
+    ToggleButton(theme),
     Typography()
   );
 }

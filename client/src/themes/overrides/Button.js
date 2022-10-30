@@ -14,7 +14,7 @@ export default function Button(theme) {
         root: {
           fontWeight: 600,
           textTransform: "uppercase",
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.primary.main,
           color: theme.palette.text.primary,
         },
         contained: {

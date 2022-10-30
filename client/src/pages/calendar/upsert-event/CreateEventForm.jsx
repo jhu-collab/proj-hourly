@@ -194,7 +194,6 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
@@ -219,11 +218,6 @@ function CreateEventForm() {
                     <Chip
                       key={value}
                       label={item.label}
-                      sx={{
-                        color: "text.primary",
-                        backgroundColor: "secondary.main",
-                        borderColor: "secondary.main",
-                      }}
                     />
                   );
                 })}
