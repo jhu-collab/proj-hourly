@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography";
 
 function Topics() {
   const { isLoading, error, data } = useQueryTopicCounts();
-  console.log(data);
 
   const noRegistrations = () => {
     return (
