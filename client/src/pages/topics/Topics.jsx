@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid";
 import NiceModal from "@ebay/nice-modal-react";
 import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
 import Topic from "./Topic";
+import Typography from "@mui/material/Typography";
 
 function Topics() {
   const { isLoading, error, data } = useQueryTopicCounts();
@@ -13,7 +14,7 @@ function Topics() {
 
   const noRegistrations = () => {
     return (
-      <Alert severity="info" sx={{ mt: 4 }}>
+      <Alert severity="info" sx={{ mt: 2 }}>
         <AlertTitle>No Topics</AlertTitle>
       </Alert>
     );
@@ -29,10 +30,11 @@ function Topics() {
 
   return (
     <>
+      <Typography variant="h4">Topics</Typography>
       {data.counts.length === 0 ? (
         noRegistrations()
       ) : (
-        <Grid container spacing={2} marginTop={2}>
+        <Grid container spacing={2} marginTop={1}>
           {data.counts.map((topic, index) => {
             return (
               <Grid item xs={12} key={topic.id}>
