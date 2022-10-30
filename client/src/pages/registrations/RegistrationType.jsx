@@ -51,6 +51,7 @@ function RegistrationType({ type }) {
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
+            alignItems="center"
             spacing={2}
           >
             {edit ? (
