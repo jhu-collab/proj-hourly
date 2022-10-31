@@ -158,3 +158,7 @@ export const registrationTypeSchema = yup.object({
     .min(5, "Duration must be at least 5 minutes")
     .typeError("Please enter a valid duration"),
 });
+
+export const topicSchema = yup.object({
+  name: yup.string().required("Topic name is required"),
+});

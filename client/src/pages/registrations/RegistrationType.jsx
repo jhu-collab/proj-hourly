@@ -13,7 +13,7 @@ import { registrationTypeSchema } from "../../utils/validators";
 
 /**
  * Represents a single Registration Type card.
- * @param {Number} type type object
+ * @param {*} type type object
  * @returns a single Registration Type component.
  */
 function RegistrationType({ type }) {
@@ -51,6 +51,7 @@ function RegistrationType({ type }) {
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
+            alignItems="center"
             spacing={2}
           >
             {edit ? (
