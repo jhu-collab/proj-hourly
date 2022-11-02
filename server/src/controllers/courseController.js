@@ -493,6 +493,11 @@ export const addInstructor = async (req, res) => {
 
 export const deleteCourse = async (req, res) => {
   const id = parseInt(req.params.courseId, 10);
+  await prisma.registration.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
   await prisma.topic.deleteMany({
     where: {
       courseId: id,
