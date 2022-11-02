@@ -28,11 +28,6 @@ router.post(`${endpoint}`, checkApiKey, async (req, res, next) => {
       debug(
         `User role on SIS is ${role}; their role in our database will be ${Role.User}`
       );
-      let accountRole = Role.User;
-      const adminAccounts = process.env.ADMIN_JHED.split(",");
-      if (adminAccounts.includes(jhed.toLowerCase())) {
-        accountRole = Role.Admin;
-      }
       user = await prisma.account.create({
         data: {
           userName: jhed,
@@ -40,7 +35,7 @@ router.post(`${endpoint}`, checkApiKey, async (req, res, next) => {
           firstName,
           lastName,
           preferredName,
-          role: accountRole,
+          role: Role.User,
         },
       });
       status = 201;
