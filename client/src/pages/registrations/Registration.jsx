@@ -54,15 +54,19 @@ function Registration({ registration, type }) {
         {type === 0 && (
           <>
             <Typography fontWeight={600}>Selected Topics:</Typography>
-            <Grid container spacing={1} marginBottom={4}>
-              {registration.topics.map((topic) => {
-                return (
-                  <Grid item key={topic.id}>
-                    <Chip label={topic.value} />
-                  </Grid>
-                );
-              })}
-            </Grid>
+            {registration.topics.length === 0 ? (
+              <Typography marginBottom={4}>None</Typography>
+            ) : (
+              <Grid container spacing={1} marginBottom={4}>
+                {registration.topics.map((topic) => {
+                  return (
+                    <Grid item key={topic.id}>
+                      <Chip label={topic.value} />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            )}
             <Button
               variant="contained"
               size="large"
