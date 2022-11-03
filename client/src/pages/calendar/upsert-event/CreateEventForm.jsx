@@ -214,12 +214,7 @@ function CreateEventForm() {
                   const item = registrationTypes.find(
                     ({ value: v }) => v === value
                   );
-                  return (
-                    <Chip
-                      key={value}
-                      label={item.label}
-                    />
-                  );
+                  return <Chip key={value} label={item.label} />;
                 })}
               </Box>
             )}

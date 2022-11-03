@@ -10,18 +10,6 @@ import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
-// TODO: Registration route needs to be updated to include topics
-const sampleTopics = [
-  { id: 1, value: "Arrays" },
-  { id: 2, value: "Recursion" },
-  { id: 3, value: "Loops" },
-  { id: 4, value: "Conditionals" },
-  { id: 5, value: "Sorting" },
-  { id: 6, value: "Input" },
-  { id: 7, value: "Trees" },
-  { id: 8, value: "Linear Search" },
-];
-
 /**
  * Represents a single Registration card.
  * @param {*} registration registration object
@@ -67,10 +55,10 @@ function Registration({ registration, type }) {
           <>
             <Typography fontWeight={600}>Selected Topics:</Typography>
             <Grid container spacing={1} marginBottom={4}>
-              {sampleTopics.map((topic) => {
+              {registration.topics.map((topic) => {
                 return (
                   <Grid item key={topic.id}>
-                    <Chip label={topic.value} color="primary" />
+                    <Chip label={topic.value} />
                   </Grid>
                 );
               })}
