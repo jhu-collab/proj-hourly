@@ -309,7 +309,8 @@ export const isNotDuplicateTopic = async (req, res, next) => {
 };
 
 export const isNotInCourse = async (req, res, next) => {
-  const { code, id } = req.body;
+  const { code } = req.body;
+  const id = req.id;
   const roster = await prisma.course.findUnique({
     where: {
       code,
@@ -424,5 +425,72 @@ export const checkDemoteRoles = (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: invalid promotion role" });
+  }
+};
+
+export const doesTopicIdExist = async (req, res, next) => {
+  const { topicId, courseId } = req.body;
+  const topic = await prisma.topic.findUnique({
+    where: {
+      id: topicId,
+    },
+    include: {
+      course: true,
+    },
+  });
+  if (topic === null || topic === undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: topic does not exist" });
+  } else if (topic.course.id !== courseId) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: topic is not for specific course" });
+  } else {
+    next();
+  }
+};
+
+export const isAccountInstructorForTopic = async (req, res, next) => {
+  const topicId = parseInt(req.params.topicId, 10);
+  const id = req.id;
+  if (topicId === null || topicId === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: did not include a topic id" });
+  } else {
+    const topic = await prisma.topic.findUnique({
+      where: {
+        id: topicId,
+      },
+      include: {
+        course: true,
+      },
+    });
+    if (topic === null || topic === undefined) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: did not include a valid topic id" });
+    } else {
+      const query = await prisma.course.findUnique({
+        where: {
+          id: topic.course.id,
+        },
+        include: {
+          instructors: {
+            where: {
+              id,
+            },
+          },
+        },
+      });
+      if (query === null) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ msg: "Account is not an instructor in the course" });
+      } else {
+        next();
+      }
+    }
   }
 };
