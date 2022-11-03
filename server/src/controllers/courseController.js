@@ -442,6 +442,9 @@ export const getAllRegistrations = async (req, res) => {
         isCancelled: false,
         isCancelledStaff: false,
       },
+      include: {
+        topics: true,
+      },
     });
   } else {
     registrations = await prisma.registration.findMany({
@@ -456,6 +459,9 @@ export const getAllRegistrations = async (req, res) => {
         },
         isCancelled: false,
         isCancelledStaff: false,
+      },
+      include: {
+        topics: true,
       },
     });
   }
