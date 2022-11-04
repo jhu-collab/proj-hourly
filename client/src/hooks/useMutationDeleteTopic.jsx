@@ -23,7 +23,7 @@ function useMutationDeleteTopic() {
   const mutation = useMutation(deleteTopic, {
     onSuccess: (data) => {
       const topic = data.topic;
-      queryClient.invalidateQueries(["topicCounts"]);
+      queryClient.invalidateQueries(["topics"]);
       toast.success(`Successfully deleted the "${topic.value} topic!`);
     },
     onError: (err) => {
