@@ -633,7 +633,7 @@ export const deleteTopic = async (req, res) => {
       id: topicId,
     },
   });
-  return res.status(StatusCodes.ACCEPTED).json([topic]);
+  return res.status(StatusCodes.ACCEPTED).json(topic);
 };
 
 export const getTopics = async (req, res) => {
