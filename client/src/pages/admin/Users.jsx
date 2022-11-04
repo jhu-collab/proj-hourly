@@ -112,9 +112,6 @@ function Users() {
         components={{
           Toolbar: GridToolbar,
         }}
-        sx={{
-          fontSize: "1rem",
-        }}
       />
     </Stack>
   );

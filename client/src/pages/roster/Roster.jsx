@@ -40,7 +40,7 @@ const Roster = () => {
 
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
+      <Stack direction="row" justifyContent="space-between">
         <Typography variant="h4">Roster</Typography>
         <Button
           sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
