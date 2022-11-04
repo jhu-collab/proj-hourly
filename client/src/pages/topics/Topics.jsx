@@ -38,8 +38,6 @@ function Topics() {
     return <Alert severity="error">Unable to retrieve topics</Alert>;
   }
 
-  console.log(data);
-
   return (
     <>
       <Typography variant="h4">Topics</Typography>
