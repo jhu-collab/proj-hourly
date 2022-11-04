@@ -7,8 +7,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 /**
  * Represents a MUI Tabs component that allows users to
  * select between students, staff, or instructors.
- * @param {*} rows list of users 
- * @returns Returns a tabs component to manage roster. 
+ * @param {*} rows list of users
+ * @returns Returns a tabs component to manage roster.
  */
 function RosterTabs({ rows }) {
   const rosterTab = useStoreLayout((state) => state.rosterTab);
