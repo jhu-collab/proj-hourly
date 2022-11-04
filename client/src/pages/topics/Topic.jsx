@@ -9,7 +9,9 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationEditTopic from "../../hooks/useMutationEditTopic";
 import useQueryMyRole from "../../hooks/useQueryMyRole";
+import useStoreCourse from "../../hooks/useStoreCourse";
 import { topicSchema } from "../../utils/validators";
 
 /**
@@ -21,6 +23,9 @@ function Topic({ topic }) {
   const [edit, setEdit] = useState(false);
 
   const { isLoading, data } = useQueryMyRole();
+  const { mutate } = useMutationEditTopic();
+
+  const course = useStoreCourse((state) => state.course);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -32,6 +37,11 @@ function Topic({ topic }) {
   // TODO: Need a route that allows for the editing of
   // topics
   const onSubmit = (data) => {
+    mutate({
+      courseId: course.id,
+      topicId: topic.id,
+      value: data.name,
+    });
     setEdit(false);
   };
 
