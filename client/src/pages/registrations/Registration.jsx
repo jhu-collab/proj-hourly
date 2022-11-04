@@ -4,13 +4,15 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 
 /**
  * Represents a single Registration card.
- * @param {*} registrations a list of registrations
+ * @param {*} registration registration object
  * @param {Number} type a number that represents the type of
  *                      registrations. 0 for upcoming. 1 for
  *                      ongoing. 2 for past.
@@ -28,16 +30,16 @@ function Registration({ registration, type }) {
           spacing={2}
         >
           <Typography fontWeight={600}>
-            {DateTime.fromJSDate(registration.date, {
+            {DateTime.fromISO(registration.date, {
               zone: "utc",
             }).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
           </Typography>
           <Typography fontWeight={600}>
-            {DateTime.fromJSDate(registration.startTime, {
+            {DateTime.fromISO(registration.startTime, {
               zone: "utc",
             }).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
             -{" "}
-            {DateTime.fromJSDate(registration.endTime, {
+            {DateTime.fromISO(registration.endTime, {
               zone: "utc",
             }).toLocaleString(DateTime.TIME_SIMPLE)}
           </Typography>
@@ -51,6 +53,20 @@ function Registration({ registration, type }) {
          details about the event will be provided here */}
         {type === 0 && (
           <>
+            <Typography fontWeight={600}>Selected Topics:</Typography>
+            {registration.topics.length === 0 ? (
+              <Typography marginBottom={4}>None</Typography>
+            ) : (
+              <Grid container spacing={1} marginBottom={4}>
+                {registration.topics.map((topic) => {
+                  return (
+                    <Grid item key={topic.id}>
+                      <Chip label={topic.value} />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            )}
             <Button
               variant="contained"
               size="large"
