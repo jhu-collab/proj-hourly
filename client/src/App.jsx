@@ -7,6 +7,7 @@ import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
+import StaffOnlyRoute from "./layouts/StaffOnlyRoute";
 
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const YourCourses = Loadable(
@@ -39,10 +40,12 @@ function App() {
               <Route path="" element={<YourCourses />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/registrations" element={<Registrations />} />
-              <Route path="/roster" element={<Roster />} />
-              <Route path="/topics" element={<Topics />} />
               <Route path="/courseinformation" element={<CourseInfoPage />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="" element={<StaffOnlyRoute />}>
+                <Route path="/roster" element={<Roster />} />
+                <Route path="/topics" element={<Topics />} />
+              </Route>
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
               </Route>
