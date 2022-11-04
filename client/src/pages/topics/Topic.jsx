@@ -9,6 +9,7 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationDeleteTopic from "../../hooks/useMutationDeleteTopic";
 import useMutationEditTopic from "../../hooks/useMutationEditTopic";
 import useQueryMyRole from "../../hooks/useQueryMyRole";
 import useStoreCourse from "../../hooks/useStoreCourse";
@@ -24,6 +25,7 @@ function Topic({ topic }) {
 
   const { isLoading, data } = useQueryMyRole();
   const { mutate } = useMutationEditTopic();
+  const { mutate: mutateDelete } = useMutationDeleteTopic();
 
   const course = useStoreCourse((state) => state.course);
 
@@ -107,8 +109,7 @@ function Topic({ topic }) {
                       confirmDialog(
                         `Do you really want to delete the "${topic.value}" topic?`,
                         () => {
-                          // Need route that allows for deletion of topics
-                          window.alert(`Deleted the "${topic.value}" topic!`);
+                          mutateDelete(topic.id);
                         }
                       );
                     }}
