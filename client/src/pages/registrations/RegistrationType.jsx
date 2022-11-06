@@ -9,6 +9,7 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationDeleteRegType from "../../hooks/useMutationDeleteRegType";
 import useMutationEditRegType from "../../hooks/useMutationEditRegType";
 import { registrationTypeSchema } from "../../utils/validators";
 
@@ -21,6 +22,7 @@ function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
 
   const { mutate } = useMutationEditRegType(type.id);
+  const { mutate: mutateDelete } = useMutationDeleteRegType();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -104,27 +106,22 @@ function RegistrationType({ type }) {
                       Edit
                     </Button>
                   </AnimateButton>
-                  {!type.deletionDisabled && (
-                    <AnimateButton>
-                      {/* TODO: Need a route that allows for the deletion of registration types */}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                          confirmDialog(
-                            `Do you really want to delete the ${type.name} registration type?`,
-                            () => {
-                              window.alert(
-                                `Deleted the ${type.name} registration type!`
-                              );
-                            }
-                          );
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </AnimateButton>
-                  )}
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to delete the ${type.title} registration type?`,
+                          () => {
+                            mutateDelete(type.id);
+                          }
+                        );
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </AnimateButton>
                 </Stack>
               )}
             </Stack>
