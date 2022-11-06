@@ -21,8 +21,8 @@ function RegistrationType({ type }) {
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: type.name,
-      duration: type.duration,
+      name: type.title,
+      length: type.duration,
     },
     resolver: yupResolver(registrationTypeSchema),
   });
@@ -57,14 +57,14 @@ function RegistrationType({ type }) {
             {edit ? (
               <>
                 <FormInputText
-                  name="name"
+                  name="title"
                   control={control}
                   disabled={type.nameDisabled}
                   sx={{ width: 230 }}
                 />
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <FormInputText
-                    name="duration"
+                    name="length"
                     control={control}
                     type="number"
                     sx={{ width: 230 }}
@@ -74,7 +74,7 @@ function RegistrationType({ type }) {
               </>
             ) : (
               <Stack>
-                <Typography variant="h5">{type.name}</Typography>
+                <Typography variant="h5">{type.title}</Typography>
                 <Typography variant="h5">{type.duration} minutes</Typography>
               </Stack>
             )}

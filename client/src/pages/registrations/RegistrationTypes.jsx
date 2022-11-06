@@ -14,8 +14,9 @@ import NiceModal from "@ebay/nice-modal-react";
  * @param {*} types list of user's registration types
  * @returns RegistrationTypes page
  */
-function RegistrationTypes({ index, types }) {
+function RegistrationTypes({ index, types, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
+  console.log(types);
 
   const noRegistrations = () => {
     return (
@@ -24,6 +25,23 @@ function RegistrationTypes({ index, types }) {
       </Alert>
     );
   };
+
+  if (isLoading && registrationTab === index) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        <AlertTitle>Loading registrations types ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error && registrationTab === index) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   return (
     <>
