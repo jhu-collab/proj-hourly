@@ -13,7 +13,7 @@ import { DateTime } from "luxon";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import useQueryTopicCounts from "../../../hooks/useQueryTopicCounts";
+import useQueryTopics from "../../../hooks/useQueryTopics";
 
 // TODO: Need route to retrieve registration types
 const types = [
@@ -53,14 +53,14 @@ const getOptions = (timeSlots) => {
   return options;
 };
 
-const getTopicOptions = (topicCounts) => {
+const getTopicOptions = (topics) => {
   const options = [];
 
-  for (let i = 0; i < topicCounts.length; i++) {
+  for (let i = 0; i < topics.length; i++) {
     options.push({
-      id: topicCounts[i].id,
-      label: topicCounts[i].value,
-      value: topicCounts[i].id,
+      id: topics[i].id,
+      label: topics[i].value,
+      value: topics[i].id,
     });
   }
 
@@ -100,10 +100,9 @@ function RegisterForm() {
 
   const type = watch("type");
 
-  const { isLoading: isLoadingTopics, data: dataTopics } =
-    useQueryTopicCounts();
+  const { isLoading: isLoadingTopics, data: dataTopics } = useQueryTopics();
 
-  const topicOptions = getTopicOptions(dataTopics?.counts || []);
+  const topicOptions = getTopicOptions(dataTopics);
 
   // TODO: Time slots should be altered when registration type changes
   // useEffect(() => {
@@ -163,9 +162,7 @@ function RegisterForm() {
                       const item = topicOptions.find(
                         ({ value: v }) => v === value
                       );
-                      return (
-                        <Chip key={value} color="primary" label={item.label} />
-                      );
+                      return <Chip key={value} label={item.label} />;
                     })}
                   </Box>
                 )}

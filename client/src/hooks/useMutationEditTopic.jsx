@@ -2,18 +2,17 @@ import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
-import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 
-function useMutationCreateTopic() {
+function useMutationEditTopic() {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  const createTopic = async (body) => {
+  const editTopic = async (body) => {
     try {
-      const endpoint = `${BASE_URL}/api/course/createTopic`;
+      const endpoint = `${BASE_URL}/api/course/editTopic`;
       const res = await axios.post(endpoint, body, getConfig(token));
       return res.data;
     } catch (err) {
@@ -21,13 +20,10 @@ function useMutationCreateTopic() {
     }
   };
 
-  const mutation = useMutation(createTopic, {
+  const mutation = useMutation(editTopic, {
     onSuccess: (data) => {
-      const topic = data.topic;
-
       queryClient.invalidateQueries(["topics"]);
-      NiceModal.hide("create-topic");
-      toast.success(`Successfully created the "${topic.value}" topic!`);
+      toast.success(`Successfully updated the topic!`);
     },
     onError: (err) => {
       errorToast(err);
@@ -39,4 +35,4 @@ function useMutationCreateTopic() {
   };
 }
 
-export default useMutationCreateTopic;
+export default useMutationEditTopic;
