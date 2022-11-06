@@ -11,9 +11,6 @@ import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 
 const BUTTONS = [
   {
@@ -53,20 +50,6 @@ const BUTTONS = [
   },
 ];
 
-// TODO: Need a route that retrieves registration types.
-const registrationTypes = [
-  {
-    id: 0,
-    label: "Regular",
-    value: 0,
-  },
-  {
-    id: 1,
-    label: "Debugging",
-    value: 1,
-  },
-];
-
 /**
  * Component that represents the form that is used to edit an event.
  * @returns A component representing the Edit Event form.
@@ -75,7 +58,6 @@ function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
   const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
@@ -97,7 +79,6 @@ function EditEventForm() {
           )
         : "",
       location: location || "",
-      timeInterval: timeInterval || 10,
       registrationTypes: [0],
     },
     resolver: yupResolver(createEventSchema),
@@ -116,7 +97,6 @@ function EditEventForm() {
           endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
           location: data.location,
           daysOfWeek: data.days,
-          timePerStudent: data.timeInterval,
           endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
             "MM-dd-yyyy"
           ),
@@ -125,7 +105,6 @@ function EditEventForm() {
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
           location: data.location,
-          timePerStudent: data.timeInterval,
         });
   };
 
@@ -183,38 +162,6 @@ function EditEventForm() {
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
-          <FormInputDropdown
-            name="registrationTypes"
-            control={control}
-            label="Registration Type(s)"
-            options={registrationTypes}
-            multiple
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => {
-                  const item = registrationTypes.find(
-                    ({ value: v }) => v === value
-                  );
-                  return (
-                    <Chip
-                      key={value}
-                      label={item.label}
-                      sx={{
-                        color: "text.primary",
-                        backgroundColor: "secondary.main",
-                        borderColor: "secondary.main",
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-            )}
-          />
           <Button
             type="submit"
             variant="contained"
