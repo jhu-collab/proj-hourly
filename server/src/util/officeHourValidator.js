@@ -240,7 +240,6 @@ export const isTimeAvailable = async (req, res, next) => {
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
-      //startTime: startTimeObj,
       date: registrationDate,
       isCancelled: false,
       isCancelledStaff: false,

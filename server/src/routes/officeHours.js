@@ -34,10 +34,6 @@ router.post(
   )
     .isArray()
     .notEmpty(),
-  /*body(
-    "timeInterval",
-    "Please include a positive integer for time interval"
-  ).isInt({ min: 1 }),*/
   body("hosts", "Please include the staff ID(s) hosting the office hours")
     .isArray()
     .notEmpty(),
@@ -66,8 +62,8 @@ router.post(
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval, //TODO: fix
-  validator.isTimeAvailable,//TODO: fix
+  validator.isTimeCorrectInterval,
+  validator.isTimeAvailable,
   validator.isUserNotRegistered,
   courseValidator.areTopicsForCourse,
   controller.register
@@ -108,7 +104,6 @@ router.post(
   "/:officeHourId/editForDate/:date",
   body("startTime", "start time is required").notEmpty(),
   body("endTime", "end time is required").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
@@ -125,7 +120,6 @@ router.post(
   body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "Please specify a location for your office hours")
     .optional()
     .notEmpty(),

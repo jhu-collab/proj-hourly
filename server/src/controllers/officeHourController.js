@@ -45,7 +45,6 @@ const createOfficeHour = async (
   endTime,
   startDate,
   endDate,
-  timePerStudent,
   courseId,
   location,
   isRecurring,
@@ -57,7 +56,6 @@ const createOfficeHour = async (
       endTime,
       startDate,
       endDate,
-      timePerStudent,
       course: {
         connect: {
           id: courseId,
@@ -97,7 +95,6 @@ export const create = async (req, res) => {
     endDate,
     location,
     courseId,
-    //timeInterval,
     hosts,
     daysOfWeek,
   } = req.body;
@@ -108,7 +105,6 @@ export const create = async (req, res) => {
     endTimeObject,
     new Date(startDate),
     new Date(endDate),
-    //timeInterval,
     courseId,
     location,
     recurringEvent,
@@ -413,7 +409,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const { startTime, endTime, timePerStudent, location } = req.body;
+  const { startTime, endTime, location } = req.body;
   const dateObj = createJustDateObject(new Date(date));
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
@@ -456,10 +452,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       isCancelledStaff: true,
     },
   });
-  /*const timeInterval =
-    timePerStudent === null || timePerStudent === undefined
-      ? officehour.timePerStudent
-      : timePerStudent;*/
   const newLocation =
     location === null || location === undefined
       ? officehour.location
@@ -472,7 +464,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       endTime: endTimeObject,
       startDate: new Date(date),
       endDate: new Date(date),
-      //timePerStudent: timeInterval,
       course: {
         connect: {
           id: officehour.course.id,
@@ -518,7 +509,6 @@ export const editAll = async (req, res) => {
     endTime,
     location,
     daysOfWeek,
-    timePerStudent,
     endDateOldOfficeHour,
   } = req.body;
   const startTimeObject = stringToTimeObj(startTime);
@@ -539,7 +529,6 @@ export const editAll = async (req, res) => {
     endTimeObject,
     new Date(startDate),
     new Date(endDate),
-    timePerStudent === undefined ? update.timePerStudent : timePerStudent,
     update.courseId,
     location === undefined ? update.location : location,
     true,

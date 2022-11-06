@@ -62,7 +62,6 @@ model OfficeHour {
   endTime        DateTime            @db.Timetz()
   startDate      DateTime            @db.Date
   endDate        DateTime            @db.Date
-  //timePerStudent Int
   course         Course              @relation(fields: [courseId], references: [id])
   courseId       Int
   location       String
