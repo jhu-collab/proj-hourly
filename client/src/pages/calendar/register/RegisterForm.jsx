@@ -14,43 +14,37 @@ import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useQueryTopics from "../../../hooks/useQueryTopics";
+import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
+import { useEffect, useState } from "react";
 
-// TODO: Need route to retrieve registration types
-const types = [
-  {
-    id: 0,
-    label: "Regular",
-    value: 0,
-  },
-  {
-    id: 1,
-    label: "Debugging",
-    value: 1,
-  },
-];
+const getTimeSlotOptions = (timeSlotsPerType, type) => {
+  const found = timeSlotsPerType.find((element) => element.type === type);
 
-const getOptions = (timeSlots) => {
-  const options = [];
+  if (!found) {
+    return [];
+  } else {
+    const options = [];
 
-  for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, {
-      zone: "utc",
-    }).toLocaleString(DateTime.TIME_SIMPLE);
-    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, {
-      zone: "utc",
-    }).toLocaleString(DateTime.TIME_SIMPLE);
-    options.push({
-      id: i,
-      label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${DateTime.fromISO(timeSlots[i].startTime, {
+    for (let i = 0; i < found.times.length; i++) {
+      const localeStartTime = DateTime.fromISO(found.times[i].startTime, {
         zone: "utc",
-      }).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, {
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const localeEndTime = DateTime.fromISO(found.times[i].endTime, {
         zone: "utc",
-      }).toFormat("TT")}`,
-    });
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      options.push({
+        id: i,
+        label: `${localeStartTime} - ${localeEndTime}`,
+        value: `${DateTime.fromISO(found.times[i].startTime, {
+          zone: "utc",
+        }).toFormat("TT")} - ${DateTime.fromISO(found.times[i].endTime, {
+          zone: "utc",
+        }).toFormat("TT")}`,
+      });
+    }
+
+    return options;
   }
-
-  return options;
 };
 
 const getTopicOptions = (topics) => {
@@ -67,6 +61,20 @@ const getTopicOptions = (topics) => {
   return options;
 };
 
+const getRegTypeOptions = (registrationTypes) => {
+  const options = [];
+
+  for (let i = 0; i < registrationTypes.length; i++) {
+    options.push({
+      id: registrationTypes[i].id,
+      label: registrationTypes[i].title,
+      value: registrationTypes[i].title,
+    });
+  }
+
+  return options;
+};
+
 /**
  * Component that represents the form that is used to register for a session.
  * @returns A component representing the Register form.
@@ -75,6 +83,7 @@ function RegisterForm() {
   const { isLoading, data } = useQueryTimeSlots();
 
   const { mutate, isLoading: isLoadingRegister } = useMutationRegister();
+  const [timeSlots, setTimeSlots] = useState([]);
 
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
@@ -101,13 +110,17 @@ function RegisterForm() {
   const type = watch("type");
 
   const { isLoading: isLoadingTopics, data: dataTopics } = useQueryTopics();
+  const { isLoading: isLoadingRegTypes, data: dataRegTypes } =
+    useQueryRegistrationTypes();
 
-  const topicOptions = getTopicOptions(dataTopics);
+  const topicOptions = getTopicOptions(dataTopics || []);
+  const registrationTypeOptions = getRegTypeOptions(dataRegTypes?.times || []);
 
-  // TODO: Time slots should be altered when registration type changes
-  // useEffect(() => {
-  //   console.log("Registration type changed!")
-  // }, [type])
+  useEffect(() => {
+    if (data?.timeSlotsPerType) {
+      setTimeSlots(getTimeSlotOptions(data.timeSlotsPerType, type));
+    }
+  }, [type]);
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
@@ -120,7 +133,7 @@ function RegisterForm() {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRegTypes || isLoadingTopics) {
     return <Loader />;
   }
 
@@ -140,7 +153,7 @@ function RegisterForm() {
             name="type"
             control={control}
             label="Registration Type"
-            options={types}
+            options={registrationTypeOptions}
           />
           {type !== "" && (
             <>
@@ -148,7 +161,7 @@ function RegisterForm() {
                 name="times"
                 control={control}
                 label="Available Time Slots"
-                options={getOptions(data.timeSlots)}
+                options={timeSlots}
               />
               <FormInputDropdown
                 name="topicIds"
