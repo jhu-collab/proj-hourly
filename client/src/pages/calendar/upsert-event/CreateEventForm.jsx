@@ -115,6 +115,7 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       timeInterval: timeInterval || 10,
+      feedback: true,
       registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
