@@ -14,6 +14,9 @@ import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeH
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
+import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 
 const DAYS = [
   "Sunday",
@@ -27,39 +30,53 @@ const DAYS = [
 
 const BUTTONS = [
   {
-    id: "0",
+    id: 0,
     label: "Mon",
     value: "Monday",
   },
   {
-    id: "1",
+    id: 1,
     label: "Tue",
     value: "Tuesday",
   },
   {
-    id: "2",
+    id: 2,
     label: "Wed",
     value: "Wednesday",
   },
   {
-    id: "3",
+    id: 3,
     label: "Thu",
     value: "Thursday",
   },
   {
-    id: "4",
+    id: 4,
     label: "Fri",
     value: "Friday",
   },
   {
-    id: "5",
+    id: 5,
     label: "Sat",
     value: "Saturday",
   },
   {
-    id: "6",
+    id: 6,
     label: "Sun",
     value: "Sunday",
+  },
+];
+
+// TODO: Need a route that retrieves registration types.
+const registrationTypes = [
+  {
+    id: 0,
+    label: "Regular",
+    value: 0,
+  },
+  {
+    id: 1,
+    label: "Debugging",
+    value: 1,
   },
 ];
 
@@ -98,6 +115,8 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       timeInterval: timeInterval || 10,
+      feedback: true,
+      registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -176,7 +195,6 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
@@ -184,6 +202,23 @@ function CreateEventForm() {
             name="timeInterval"
             label="Time Limit Per Student in Minutes"
             control={control}
+          />
+          <FormInputDropdown
+            name="registrationTypes"
+            control={control}
+            label="Registration Type(s)"
+            options={registrationTypes}
+            multiple
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map((value) => {
+                  const item = registrationTypes.find(
+                    ({ value: v }) => v === value
+                  );
+                  return <Chip key={value} label={item.label} />;
+                })}
+              </Box>
+            )}
           />
           <Button
             type="submit"

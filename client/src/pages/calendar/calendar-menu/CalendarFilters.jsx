@@ -1,7 +1,4 @@
-import DownOutlined from "@ant-design/icons/DownOutlined";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import Stack from "@mui/material/Stack";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -14,42 +11,29 @@ import { useState } from "react";
  */
 function CalendarFilters() {
   const [filter, setFilter] = useState("myEvents");
-  const [expanded, setExpanded] = useState(true);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
 
-  const handleExpandedChange = (event, isExpanded) => {
-    setExpanded(isExpanded);
-  };
-
   return (
-    <Accordion
-      elevation={0}
-      expanded={expanded}
-      onChange={handleExpandedChange}
-    >
-      <AccordionSummary expandIcon={<DownOutlined />}>
-        <Typography variant="h5" fontWeight={600}>
-          Filters
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <RadioGroup value={filter} onChange={handleFilterChange}>
-          <FormControlLabel
-            value="myEvents"
-            control={<Radio />}
-            label="My Events"
-          />
-          <FormControlLabel
-            value="allEvents"
-            control={<Radio color="success" />}
-            label="All Events"
-          />
-        </RadioGroup>
-      </AccordionDetails>
-    </Accordion>
+    <Stack direction="column" spacing={1}>
+      <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+        filters
+      </Typography>
+      <RadioGroup value={filter} onChange={handleFilterChange}>
+        <FormControlLabel
+          value="myEvents"
+          control={<Radio color="tertiary" />}
+          label="my events"
+        />
+        <FormControlLabel
+          value="allEvents"
+          control={<Radio />}
+          label="all events"
+        />
+      </RadioGroup>
+    </Stack>
   );
 }
 

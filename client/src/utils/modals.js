@@ -3,7 +3,9 @@ import { SignOutPopup } from "../components/WindowFocusHandler";
 import MobileEventPopup from "../pages/calendar/event-details/MobileEventPopup";
 import Register from "../pages/calendar/register/Register";
 import UpsertEvent from "../pages/calendar/upsert-event/UpsertEvent";
-import InviteUser from "../pages/roster-page/InviteUser";
+import CreateRegistrationType from "../pages/registrations/CreateRegistrationType";
+import InviteUser from "../pages/roster/InviteUser";
+import CreateTopic from "../pages/topics/CreateTopic";
 import CreateCourse from "../pages/your-courses/create-course/CreateCourse";
 import JoinCourse from "../pages/your-courses/join-course/JoinCourse";
 
@@ -14,3 +16,5 @@ NiceModal.register("upsert-event", UpsertEvent);
 NiceModal.register("register-event", Register);
 NiceModal.register("invite-user", InviteUser);
 NiceModal.register("sign-out", SignOutPopup);
+NiceModal.register("create-registration-type", CreateRegistrationType);
+NiceModal.register("create-topic", CreateTopic);
