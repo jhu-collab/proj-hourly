@@ -6,6 +6,7 @@ import RegistrationType from "./RegistrationType";
 import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import NiceModal from "@ebay/nice-modal-react";
+import useQueryMyRole from "../../hooks/useQueryMyRole";
 
 /**
  * Represents the tab panel for Registration Type cards.
@@ -16,7 +17,8 @@ import NiceModal from "@ebay/nice-modal-react";
  */
 function RegistrationTypes({ index, types, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
-  console.log(types);
+
+  const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
 
   const noRegistrations = () => {
     return (
@@ -60,17 +62,19 @@ function RegistrationTypes({ index, types, isLoading, error }) {
               })}
             </Grid>
           )}
-          <Fab
-            color="primary"
-            onClick={() => NiceModal.show("create-registration-type")}
-            sx={{
-              position: "fixed",
-              bottom: (theme) => theme.spacing(3),
-              right: (theme) => theme.spacing(3),
-            }}
-          >
-            <SpeedDialIcon />
-          </Fab>
+          {dataRole?.role === "Instructor" && (
+            <Fab
+              color="primary"
+              onClick={() => NiceModal.show("create-registration-type")}
+              sx={{
+                position: "fixed",
+                bottom: (theme) => theme.spacing(3),
+                right: (theme) => theme.spacing(3),
+              }}
+            >
+              <SpeedDialIcon />
+            </Fab>
+          )}
         </>
       )}
     </>

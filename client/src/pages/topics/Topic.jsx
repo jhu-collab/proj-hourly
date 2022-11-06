@@ -36,8 +36,6 @@ function Topic({ topic }) {
     resolver: yupResolver(topicSchema),
   });
 
-  // TODO: Need a route that allows for the editing of
-  // topics
   const onSubmit = (data) => {
     mutate({
       courseId: course.id,

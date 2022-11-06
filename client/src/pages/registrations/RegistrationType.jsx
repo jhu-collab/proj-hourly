@@ -11,6 +11,7 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import useMutationDeleteRegType from "../../hooks/useMutationDeleteRegType";
 import useMutationEditRegType from "../../hooks/useMutationEditRegType";
+import useQueryMyRole from "../../hooks/useQueryMyRole";
 import { registrationTypeSchema } from "../../utils/validators";
 
 /**
@@ -20,6 +21,8 @@ import { registrationTypeSchema } from "../../utils/validators";
  */
 function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
+
+  const { isLoading, data } = useQueryMyRole();
 
   const { mutate } = useMutationEditRegType(type.id);
   const { mutate: mutateDelete } = useMutationDeleteRegType();
@@ -51,14 +54,13 @@ function RegistrationType({ type }) {
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          {/*TODO: Change Stack into a box to better handle spacing between children */}
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             alignItems="center"
             spacing={2}
           >
-            {edit ? (
+            {edit && data?.role === "Instructor" ? (
               <>
                 <FormInputText
                   name="title"
@@ -81,50 +83,49 @@ function RegistrationType({ type }) {
                 <Typography variant="h5">{type.duration} minutes</Typography>
               </Stack>
             )}
-            <Stack direction="row" spacing={1}>
-              {edit ? (
-                <Stack direction="row" spacing={1}>
-                  <AnimateButton>
-                    <Button variant="contained" type="submit">
-                      Submit
-                    </Button>
-                  </AnimateButton>
-                  <AnimateButton>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={handleOnClickCancelBtn}
-                    >
-                      Cancel
-                    </Button>
-                  </AnimateButton>
-                </Stack>
-              ) : (
-                <Stack direction="row" spacing={1}>
-                  <AnimateButton>
-                    <Button variant="contained" onClick={handleOnClickEditBtn}>
-                      Edit
-                    </Button>
-                  </AnimateButton>
-                  <AnimateButton>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => {
-                        confirmDialog(
-                          `Do you really want to delete the ${type.title} registration type?`,
-                          () => {
-                            mutateDelete(type.id);
-                          }
-                        );
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </AnimateButton>
-                </Stack>
-              )}
-            </Stack>
+            {edit && data?.role === "Instructor" && (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button variant="contained" type="submit">
+                    Submit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleOnClickCancelBtn}
+                  >
+                    Cancel
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            )}
+            {!edit && data?.role === "Instructor" && (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button variant="contained" onClick={handleOnClickEditBtn}>
+                    Edit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      confirmDialog(
+                        `Do you really want to delete the ${type.title} registration type?`,
+                        () => {
+                          mutateDelete(type.id);
+                        }
+                      );
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            )}
           </Stack>
         </Form>
       </MainCard>
