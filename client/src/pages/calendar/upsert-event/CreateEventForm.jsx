@@ -195,7 +195,6 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
@@ -216,9 +215,7 @@ function CreateEventForm() {
                   const item = registrationTypes.find(
                     ({ value: v }) => v === value
                   );
-                  return (
-                    <Chip key={value} color="primary" label={item.label} />
-                  );
+                  return <Chip key={value} label={item.label} />;
                 })}
               </Box>
             )}

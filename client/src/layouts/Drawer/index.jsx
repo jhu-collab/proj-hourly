@@ -48,6 +48,7 @@ function MainDrawer({ open, handleDrawerToggle, window }) {
               borderRight: `1px solid ${theme.palette.divider}`,
               backgroundImage: "none",
               boxShadow: "inherit",
+              backgroundColor: "primary.main",
             },
           }}
         >

@@ -4,6 +4,7 @@ import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
+import { parse } from "path";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -83,7 +84,8 @@ export const register = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
-  const { code, id } = req.body;
+  const { code } = req.body;
+  const id = req.id;
   const course = await prisma.Course.findUnique({
     where: {
       code,
@@ -442,6 +444,9 @@ export const getAllRegistrations = async (req, res) => {
         isCancelled: false,
         isCancelledStaff: false,
       },
+      include: {
+        topics: true,
+      },
     });
   } else {
     registrations = await prisma.registration.findMany({
@@ -456,6 +461,9 @@ export const getAllRegistrations = async (req, res) => {
         },
         isCancelled: false,
         isCancelledStaff: false,
+      },
+      include: {
+        topics: true,
       },
     });
   }
@@ -493,6 +501,22 @@ export const addInstructor = async (req, res) => {
 
 export const deleteCourse = async (req, res) => {
   const id = parseInt(req.params.courseId, 10);
+  const officeHour = await prisma.officeHour.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let officeHourIds = [];
+  officeHour.forEach((oh) => {
+    officeHourIds.push(oh.id);
+  });
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
   await prisma.topic.deleteMany({
     where: {
       courseId: id,
@@ -603,4 +627,37 @@ export const demote = async (req, res) => {
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
+};
+
+export const editTopic = async (req, res) => {
+  const { topicId, value } = req.body;
+  const topic = await prisma.topic.update({
+    where: {
+      id: topicId,
+    },
+    data: {
+      value,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(topic);
+};
+
+export const deleteTopic = async (req, res) => {
+  const topicId = parseInt(req.params.topicId, 10);
+  const topic = await prisma.topic.delete({
+    where: {
+      id: topicId,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(topic);
+};
+
+export const getTopics = async (req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const topics = await prisma.topic.findMany({
+    where: {
+      courseId,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json(topics);
 };

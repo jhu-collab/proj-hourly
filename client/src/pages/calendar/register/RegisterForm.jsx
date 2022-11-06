@@ -2,6 +2,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import { useForm } from "react-hook-form";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
@@ -11,7 +13,7 @@ import { DateTime } from "luxon";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import { useEffect } from "react";
+import useQueryTopics from "../../../hooks/useQueryTopics";
 
 // TODO: Need route to retrieve registration types
 const types = [
@@ -51,6 +53,20 @@ const getOptions = (timeSlots) => {
   return options;
 };
 
+const getTopicOptions = (topics) => {
+  const options = [];
+
+  for (let i = 0; i < topics.length; i++) {
+    options.push({
+      id: topics[i].id,
+      label: topics[i].value,
+      value: topics[i].id,
+    });
+  }
+
+  return options;
+};
+
 /**
  * Component that represents the form that is used to register for a session.
  * @returns A component representing the Register form.
@@ -58,7 +74,7 @@ const getOptions = (timeSlots) => {
 function RegisterForm() {
   const { isLoading, data } = useQueryTimeSlots();
 
-  const { mutate, isLoading: isLoadingMutate } = useMutationRegister();
+  const { mutate, isLoading: isLoadingRegister } = useMutationRegister();
 
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
@@ -77,11 +93,16 @@ function RegisterForm() {
     defaultValues: {
       type: "",
       times: "",
+      topicIds: [],
     },
     resolver: yupResolver(registerSchema),
   });
 
   const type = watch("type");
+
+  const { isLoading: isLoadingTopics, data: dataTopics } = useQueryTopics();
+
+  const topicOptions = getTopicOptions(dataTopics);
 
   // TODO: Time slots should be altered when registration type changes
   // useEffect(() => {
@@ -95,6 +116,7 @@ function RegisterForm() {
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      TopicIds: data.topicIds,
     });
   };
 
@@ -128,11 +150,28 @@ function RegisterForm() {
                 label="Available Time Slots"
                 options={getOptions(data.timeSlots)}
               />
+              <FormInputDropdown
+                name="topicIds"
+                control={control}
+                label="Topics (optional)"
+                options={topicOptions}
+                multiple
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => {
+                      const item = topicOptions.find(
+                        ({ value: v }) => v === value
+                      );
+                      return <Chip key={value} label={item.label} />;
+                    })}
+                  </Box>
+                )}
+              />
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
-                disabled={isLoadingMutate}
+                disabled={isLoadingRegister}
               >
                 Submit
               </Button>
@@ -140,7 +179,7 @@ function RegisterForm() {
           )}
         </Stack>
       </Form>
-      {isLoadingMutate && <Loader />}
+      {isLoadingRegister && <Loader />}
     </>
   );
 }

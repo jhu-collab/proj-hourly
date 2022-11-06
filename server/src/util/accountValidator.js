@@ -49,7 +49,7 @@ export const isUniquePhone = async (req, res, next) => {
 };
 
 export const isAccountIdValid = async (req, res, next) => {
-  const { id } = req.body;
+  const id = req.id;
   const query = await prisma.Account.findUnique({
     where: {
       id,
