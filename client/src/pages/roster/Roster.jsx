@@ -7,7 +7,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
 import NiceModal from "@ebay/nice-modal-react";
 import Button from "@mui/material/Button";
-import useQueryUsers from "../../hooks/useQueryUsers";
+import useQueryCourseUsers from "../../hooks/useQueryCourseUsers";
 
 /**
  * A component that represents the roster page that the user visits
@@ -19,7 +19,7 @@ const Roster = () => {
   const [value, setValue] = useState(0);
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQueryUsers();
+  const { isLoading, error, data } = useQueryCourseUsers();
 
   if (isLoading) {
     return (
