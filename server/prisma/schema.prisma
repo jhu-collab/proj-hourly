@@ -51,8 +51,8 @@ model OfficeHour {
   id             Int                 @id @default(autoincrement())
   startTime      DateTime            @db.Timetz()
   endTime        DateTime            @db.Timetz()
-  startDate      DateTime            @db.Date
-  endDate        DateTime            @db.Date
+  startDate      DateTime            //@db.Date
+  endDate        DateTime            //@db.Date
   timePerStudent Int
   course         Course              @relation(fields: [courseId], references: [id])
   courseId       Int

@@ -48,9 +48,9 @@ export const getDateStringArray = (arr) => {
 export const combineTimeAndDate = (time, date) => {
   const newDate = new Date();
   newDate.setFullYear(date.getFullYear());
-  newDate.setDate(date.getDate() + 1);
+  newDate.setDate(date.getDate());
   newDate.setMonth(date.getMonth());
-  newDate.setHours(time.getHours() + 1);
+  newDate.setHours(time.getHours());
   newDate.setMinutes(time.getMinutes());
   newDate.setSeconds(time.getSeconds());
   return newDate;
@@ -134,14 +134,8 @@ export const generateSingleEventJson = (officeHour) => {
   return {
     id: officeHour.id,
     title: generateTitle(officeHour),
-    start: combineTimeAndDate(
-      officeHour.startTime,
-      officeHour.startDate
-    ).toISOString(),
-    end: combineTimeAndDate(
-      officeHour.endTime,
-      officeHour.endDate
-    ).toISOString(),
+    start: officeHour.startDate.toISOString(),
+    end: officeHour.endDate.toISOString(),
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,

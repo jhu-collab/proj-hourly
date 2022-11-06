@@ -5,14 +5,17 @@ export const officeHourDateCheck = (req, res, next) => {
   const startObj = new Date(startDate);
   const endObj = new Date(endDate);
   if (recurringEvent && startObj > endObj) {
+    console.log("error1");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Start date is after end date" });
-  } else if (!recurringEvent && startDate !== endDate) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "ERROR: Start Date and End Date must match for single events",
-    });
-  } else {
+  }
+  // } else if (!recurringEvent && startDate !== endDate) {
+  //   return res.status(StatusCodes.BAD_REQUEST).json({
+  //     msg: "ERROR: Start Date and End Date must match for single events",
+  //   });
+  // }
+  else {
     next();
   }
 };

@@ -2,7 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import checkValidation from "../util/checkValidation.js";
-import { generateCalendar } from "../util/icalHelpers.js";
+import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
 import { createTimeString } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 
@@ -101,11 +101,15 @@ export const create = async (req, res) => {
   } = req.body;
   const startTimeObject = stringToTimeObj(startTime);
   const endTimeObject = stringToTimeObj(endTime);
+  //const start = combineTimeAndDate(startTimeObject, new Date(startDate));
+  //const end = combineTimeAndDate(endTimeObject, new Date(endDate));
+  const start = new Date(startDate);
+  const end = new Date(endDate);
   const officeHour = await createOfficeHour(
     startTimeObject,
     endTimeObject,
-    new Date(startDate),
-    new Date(endDate),
+    start,
+    end,
     timeInterval,
     courseId,
     location,

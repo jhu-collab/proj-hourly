@@ -94,15 +94,26 @@ function CreateEventForm() {
   });
 
   const onSubmit = (data) => {
+    console.log(
+      moment(data.startDate).format("YYYY-MM-DD") +
+        "T" +
+        `${data.startTime}:00Z`
+    );
     mutate({
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate: moment(data.startDate).format("MM-DD-YYYY"),
-      endDate: recurring
-        ? moment(data.endDate).format("MM-DD-YYYY")
-        : moment(data.startDate).format("MM-DD-YYYY"),
+      startDate:
+        moment(data.startDate).format("YYYY-MM-DD") +
+        "T" +
+        `${data.startTime}:00Z`,
+      endDate:
+        (recurring
+          ? moment(data.endDate).format("YYYY-MM-DD")
+          : moment(data.startDate).format("YYYY-MM-DD")) +
+        "T" +
+        `${data.endTime}:00Z`,
       location: data.location,
       daysOfWeek: recurring ? days : [DAYS[data.startDate.getDay()]],
       timeInterval: data.timeInterval,
