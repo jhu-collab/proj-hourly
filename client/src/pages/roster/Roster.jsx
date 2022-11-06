@@ -3,7 +3,7 @@ import RosterTabs from "./RosterTabs";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
-import useQueryUsers from "../../hooks/useQueryUsers";
+import useQueryCourseUsers from "../../hooks/useQueryCourseUsers";
 
 /**
  * A component that represents the roster page that the user visits
@@ -13,7 +13,7 @@ import useQueryUsers from "../../hooks/useQueryUsers";
 const Roster = () => {
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQueryUsers();
+  const { isLoading, error, data } = useQueryCourseUsers();
 
   if (isLoading) {
     return (
