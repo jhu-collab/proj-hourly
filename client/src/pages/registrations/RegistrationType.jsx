@@ -9,6 +9,7 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationEditRegType from "../../hooks/useMutationEditRegType";
 import { registrationTypeSchema } from "../../utils/validators";
 
 /**
@@ -19,17 +20,18 @@ import { registrationTypeSchema } from "../../utils/validators";
 function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
 
+  const { mutate } = useMutationEditRegType(type.id);
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: type.title,
+      title: type.title,
       length: type.duration,
     },
     resolver: yupResolver(registrationTypeSchema),
   });
 
-  // TODO: Need a route that allows for the editing of
-  // registration types
   const onSubmit = (data) => {
+    mutate(data);
     setEdit(false);
   };
 
@@ -59,7 +61,6 @@ function RegistrationType({ type }) {
                 <FormInputText
                   name="title"
                   control={control}
-                  disabled={type.nameDisabled}
                   sx={{ width: 230 }}
                 />
                 <Stack direction="row" alignItems="center" spacing={1}>
