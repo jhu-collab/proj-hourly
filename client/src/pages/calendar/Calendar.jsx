@@ -17,6 +17,8 @@ import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
+import { styled } from '@mui/material/styles';
+
 
 /**
  * A component that represents the Calendar page for a course.
@@ -76,6 +78,46 @@ function Calendar() {
     info.revert();
   };
 
+
+ const StyleWrapper = styled('div') ({
+  height: "100%",
+  '.fc .fc-toolbar-title': {
+    fontSize: "30px",
+    fontWeight: 400,
+    lineHeight: "36px",
+    padding: 0,
+    display: "inline",
+  },
+  '.fc-toolbar-chunk': {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  '.fc-direction-ltr .fc-toolbar > * > :not(:first-child)': {
+    marginLeft: 0
+   },
+   '.fc-button.fc-button-primary': {
+    backgroundColor: "transparent",
+    border: "none",
+    color: "#48768C",
+    fontSize: "20px",   
+   },
+   '.fc-button.fc-button-primary:focus': {
+    backgroundColor: "transparent",
+    border: "none",
+    color: "#48768C",
+    fontSize: "20px",
+  },
+  '.fc .fc-button-primary:not(:disabled):active': {
+    backgroundColor: "transparent",
+    border: "none",
+    color: "#48768C",
+    fontSize: "20px",
+  }
+});
+
+
+
   return (
     <>
       <Stack
@@ -83,6 +125,7 @@ function Calendar() {
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
         <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
+          <StyleWrapper>
           <FullCalendar
             plugins={[
               rrulePlugin,
@@ -101,9 +144,9 @@ function Calendar() {
             headerToolbar={
               matchUpSm
                 ? {
-                    start: "prev",
-                    center: "title",
-                    end: "next",
+                    start: "",
+                    center: "prev title next",
+                    end: ""
                   }
                 : { start: "title", end: "prev,next" }
             }
@@ -123,6 +166,7 @@ function Calendar() {
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
+          </StyleWrapper>
         </Box>
         {matchUpSm && (
           <Box
