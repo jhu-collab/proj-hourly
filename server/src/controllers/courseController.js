@@ -499,6 +499,22 @@ export const addInstructor = async (req, res) => {
 
 export const deleteCourse = async (req, res) => {
   const id = parseInt(req.params.courseId, 10);
+  const officeHour = await prisma.officeHour.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let officeHourIds = [];
+  officeHour.forEach((oh) => {
+    officeHourIds.push(oh.id);
+  });
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
   await prisma.topic.deleteMany({
     where: {
       courseId: id,
