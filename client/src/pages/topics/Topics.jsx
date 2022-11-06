@@ -4,18 +4,18 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import NiceModal from "@ebay/nice-modal-react";
-import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
 import Topic from "./Topic";
 import Typography from "@mui/material/Typography";
 import useQueryMyRole from "../../hooks/useQueryMyRole";
 import Loader from "../../components/Loader";
+import useQueryTopics from "../../hooks/useQueryTopics";
 
 /**
  * Represents the Topics page.
  * @returns Topics page
  */
 function Topics() {
-  const { isLoading, error, data } = useQueryTopicCounts();
+  const { isLoading, error, data } = useQueryTopics();
   const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
 
   const noRegistrations = () => {
@@ -41,11 +41,11 @@ function Topics() {
   return (
     <>
       <Typography variant="h4">Topics</Typography>
-      {data.counts.length === 0 ? (
+      {data.length === 0 ? (
         noRegistrations()
       ) : (
         <Grid container spacing={2} marginTop={1}>
-          {data.counts.map((topic) => {
+          {data.map((topic) => {
             return (
               <Grid item xs={12} key={topic.id}>
                 <Topic topic={topic} />

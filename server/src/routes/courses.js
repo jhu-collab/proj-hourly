@@ -33,7 +33,6 @@ router.post(
 router.post(
   "/signup",
   body("code", "Course code is required").notEmpty(),
-  body("id", "Account id is required").isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,
@@ -118,6 +117,35 @@ router.post(
   accountValidator.isAccountInstructorBody,
   validator.isNotDuplicateTopic,
   controller.createTopic
+);
+
+router.post(
+  "/editTopic",
+  body("courseId", "must include courseid for a topic").notEmpty(),
+  body("topicId", "must include a topic id to edit").notEmpty(),
+  body("value", "must include a value for the topic").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseId,
+  accountValidator.isAccountInstructorBody,
+  validator.doesTopicIdExist,
+  validator.isNotDuplicateTopic,
+  controller.editTopic
+);
+
+router.delete(
+  "/topic/:topicId",
+  param("topicId", "TopicId must be included").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isAccountInstructorForTopic,
+  controller.deleteTopic
+);
+
+router.get(
+  "/:courseId/topics",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getTopics
 );
 
 router.get(

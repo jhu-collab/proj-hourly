@@ -46,7 +46,7 @@ export const course = (currentCourse) => {
     });
     children.push({
       id: "topics",
-      title: "Topics",
+      title: "topics",
       type: "item",
       url: "/topics",
       icon: icons.BulbOutlined,

@@ -9,7 +9,10 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationDeleteTopic from "../../hooks/useMutationDeleteTopic";
+import useMutationEditTopic from "../../hooks/useMutationEditTopic";
 import useQueryMyRole from "../../hooks/useQueryMyRole";
+import useStoreCourse from "../../hooks/useStoreCourse";
 import { topicSchema } from "../../utils/validators";
 
 /**
@@ -21,6 +24,10 @@ function Topic({ topic }) {
   const [edit, setEdit] = useState(false);
 
   const { isLoading, data } = useQueryMyRole();
+  const { mutate } = useMutationEditTopic();
+  const { mutate: mutateDelete } = useMutationDeleteTopic();
+
+  const course = useStoreCourse((state) => state.course);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -32,6 +39,11 @@ function Topic({ topic }) {
   // TODO: Need a route that allows for the editing of
   // topics
   const onSubmit = (data) => {
+    mutate({
+      courseId: course.id,
+      topicId: topic.id,
+      value: data.name,
+    });
     setEdit(false);
   };
 
@@ -97,8 +109,7 @@ function Topic({ topic }) {
                       confirmDialog(
                         `Do you really want to delete the "${topic.value}" topic?`,
                         () => {
-                          // Need route that allows for deletion of topics
-                          window.alert(`Deleted the "${topic.value}" topic!`);
+                          mutateDelete(topic.id);
                         }
                       );
                     }}
