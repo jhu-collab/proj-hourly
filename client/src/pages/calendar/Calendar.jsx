@@ -129,8 +129,8 @@ function Calendar() {
             variant="outlined"
             sx={{
               height: "100%",
-              boxShadow: theme.customShadows.z1,
-              borderLeft: `2px solid ${theme.palette.divider}`,
+              boxShadow: `0px 6px 30px 5px rgba(0,0,0,0.12), 0px 16px 24px 2px rgba(0,0,0,0.14), 0px 8px 10px -5px rgba(0,0,0,0.20)`,
+              backgroundColor: "background.paper",
             }}
           >
             <CalendarMenu calendarRef={calendarRef} />
