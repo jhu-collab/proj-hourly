@@ -40,6 +40,15 @@ router.post(
   controller.register
 );
 
+router.post(
+  "/addInstructor/:courseId/:id",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  accountValidator.accountIsNotInstructor,
+  validator.isCourseIdUrlValid,
+  controller.addInstructor
+);
+
 router.get("/", accountController.getCourses);
 
 // account id will be stored in header until we get a token
@@ -140,6 +149,50 @@ router.get(
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   controller.getAllRegistrations
+);
+
+router.delete(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.deleteCourse
+);
+
+router.post(
+  "/:courseId",
+  param("courseId", "Must include course id").notEmpty().isInt(),
+  body("studentId", "Must provide id of a student to promote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to promote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Staff", "Instructor"]),
+  accountValidator.isAccountValidHeader,
+  validator.checkPromoteRoles,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForPromotionTo,
+  controller.promote
+);
+
+router.post(
+  "/:courseId/demote",
+  param("courseId", "Must include course id").notEmpty().isInt(),
+  body("studentId", "Must provide id of a student to demote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to demote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Student"]),
+  accountValidator.isAccountValidHeader,
+  validator.checkDemoteRoles,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForDemotionTo,
+  controller.demote
 );
 
 export default router;

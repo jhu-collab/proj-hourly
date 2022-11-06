@@ -27,28 +27,26 @@ function RosterTabs(props) {
   const columns = useMemo(() => {
     return [
       {
-        field: "userName",
-        headerName: "Username",
-        flex: 4,
+        field: "firstName",
+        headerName: "First Name",
+        flex: 2.6,
+      },
+      {
+        field: "lastName",
+        headerName: "Last Name",
+        flex: 2.6,
       },
       {
         field: "email",
         headerName: "Email",
-        flex: 4,
+        flex: 2.6,
       },
       {
         field: "actions",
         type: "actions",
         flex: 1,
         getActions: (params) => [
-          <DeleteButton
-            //setRows={setRows}
-            // courseId={courseId}
-            // token={token}
-            params={params}
-            rows={rows}
-            isStaff={false}
-          />,
+          <DeleteButton params={params} rows={rows} isStaff={false} />,
         ],
       },
       {
@@ -96,7 +94,7 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={rows.students}
-            columns={columns.slice(0, 3)}
+            columns={columns.slice(0, 4)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />
@@ -106,7 +104,7 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={rows.staff}
-            columns={columns.filter((_, index) => index !== 2)}
+            columns={columns.filter((_, index) => index !== 3)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />
@@ -116,7 +114,7 @@ function RosterTabs(props) {
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={rows.instructors}
-            columns={columns.slice(0, 2)}
+            columns={columns.slice(0, 3)}
             autoPageSize
             sx={{ fontSize: "20px" }}
           />

@@ -7,6 +7,7 @@ import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
+
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const YourCourses = Loadable(
   lazy(() => import("./pages/your-courses/YourCourses"))
@@ -19,10 +20,11 @@ const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))
 );
-const Roster = Loadable(lazy(() => import("./pages/roster-page/Roster")));
+const Roster = Loadable(lazy(() => import("./pages/roster/Roster")));
 const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))
 );
+const Topics = Loadable(lazy(() => import("./pages/topics/Topics")));
 const Users = Loadable(lazy(() => import("./pages/admin/Users")));
 const Profile = Loadable(lazy(() => import("./pages/account/Profile")));
 
@@ -38,6 +40,7 @@ function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/registrations" element={<Registrations />} />
               <Route path="/roster" element={<Roster />} />
+              <Route path="/topics" element={<Topics />} />
               <Route path="/courseinformation" element={<CourseInfoPage />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="admin/" element={<AdminOnlyRoute />}>

@@ -8,13 +8,13 @@ import Drawer from "./Drawer";
 import Header from "./Header";
 import { menuItems } from "../menu-items";
 import Breadcrumbs from "../components/Breadcrumbs";
-import { useLayoutStore } from "../services/store";
+import useStoreLayout from "../hooks/useStoreLayout";
 
 function MainLayout() {
   const theme = useTheme();
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
-  const openSidebar = useLayoutStore((state) => state.openSidebar);
-  const toggleOpenSidebar = useLayoutStore((state) => state.toggleOpenSidebar);
+  const openSidebar = useStoreLayout((state) => state.openSidebar);
+  const toggleOpenSidebar = useStoreLayout((state) => state.toggleOpenSidebar);
 
   // drawer toggler
   const [open, setOpen] = useState(openSidebar);
@@ -37,7 +37,7 @@ function MainLayout() {
   }, [openSidebar]);
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ display: "flex", width: "100%", height: "98.5vh" }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

@@ -5,6 +5,7 @@ function DrawerContent() {
   return (
     <SimpleBar
       sx={{
+        padding: 1,
         "& .simplebar-content": {
           display: "flex",
           flexDirection: "column",

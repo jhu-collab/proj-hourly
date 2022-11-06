@@ -8,15 +8,15 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
-import { useLayoutStore } from "../../services/store";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 function NavItem({ item, level }) {
   const theme = useTheme();
-  const openSidebar = useLayoutStore((state) => state.openSidebar);
-  const selectedSidebarItem = useLayoutStore(
+  const openSidebar = useStoreLayout((state) => state.openSidebar);
+  const selectedSidebarItem = useStoreLayout(
     (state) => state.selectedSidebarItem
   );
-  const selectSidebarItem = useLayoutStore((state) => state.selectSidebarItem);
+  const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
 
   let itemTarget = "_self";
   if (item.target) {
@@ -57,7 +57,7 @@ function NavItem({ item, level }) {
   }, []);
 
   const textColor = "text.primary";
-  const iconSelectedColor = "primary.main";
+  const iconSelectedColor = "text.primary";
 
   return (
     <ListItemButton
@@ -71,15 +71,16 @@ function NavItem({ item, level }) {
         py: !openSidebar && level === 1 ? 1.25 : 1,
         ...(openSidebar && {
           "&:hover": {
-            bgcolor: "primary.lighter",
+            bgcolor: "secondary.main",
+            borderRadius: 1,
           },
           "&.Mui-selected": {
-            bgcolor: "primary.lighter",
-            borderRight: `2px solid ${theme.palette.primary.main}`,
+            bgcolor: "secondary.main",
+            borderRadius: 1,
             color: iconSelectedColor,
             "&:hover": {
               color: iconSelectedColor,
-              bgcolor: "primary.lighter",
+              bgcolor: "secondary.main",
             },
           },
         }),
@@ -108,14 +109,14 @@ function NavItem({ item, level }) {
               alignItems: "center",
               justifyContent: "center",
               "&:hover": {
-                bgcolor: "secondary.lighter",
+                bgcolor: "secondary.main",
               },
             }),
             ...(!openSidebar &&
               isSelected && {
-                bgcolor: "primary.lighter",
+                bgcolor: "primary.main",
                 "&:hover": {
-                  bgcolor: "primary.lighter",
+                  bgcolor: "primary.main",
                 },
               }),
           }}

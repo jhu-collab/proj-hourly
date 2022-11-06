@@ -2,31 +2,65 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import moment from "moment";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
 import Loader from "../../../components/Loader";
-import { useEventStore, useLayoutStore } from "../../../services/store";
-import { getTimeSlots, register } from "../../../utils/requests";
-import { errorToast } from "../../../utils/toasts";
 import { registerSchema } from "../../../utils/validators";
-import useTheme from "@mui/material/styles/useTheme";
-import { useMediaQuery } from "@mui/material";
-import NiceModal from "@ebay/nice-modal-react";
+import { DateTime } from "luxon";
+import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
+import useMutationRegister from "../../../hooks/useMutationRegister";
+import useStoreEvent from "../../../hooks/useStoreEvent";
+import useQueryTopicCounts from "../../../hooks/useQueryTopicCounts";
+
+// TODO: Need route to retrieve registration types
+const types = [
+  {
+    id: 0,
+    label: "Regular",
+    value: 0,
+  },
+  {
+    id: 1,
+    label: "Debugging",
+    value: 1,
+  },
+];
 
 const getOptions = (timeSlots) => {
   const options = [];
 
   for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = moment(timeSlots[i].start, "hh:mm").format("LT");
-    const localeEndTime = moment(timeSlots[i].end, "hh:mm").format("LT");
+    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
+    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, {
+      zone: "utc",
+    }).toLocaleString(DateTime.TIME_SIMPLE);
     options.push({
       id: i,
       label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].start} - ${timeSlots[i].end}`,
+      value: `${DateTime.fromISO(timeSlots[i].startTime, {
+        zone: "utc",
+      }).toFormat("TT")} - ${DateTime.fromISO(timeSlots[i].endTime, {
+        zone: "utc",
+      }).toFormat("TT")}`,
+    });
+  }
+
+  return options;
+};
+
+const getTopicOptions = (topicCounts) => {
+  const options = [];
+
+  for (let i = 0; i < topicCounts.length; i++) {
+    options.push({
+      id: topicCounts[i].id,
+      label: topicCounts[i].value,
+      value: topicCounts[i].id,
     });
   }
 
@@ -38,52 +72,43 @@ const getOptions = (timeSlots) => {
  * @returns A component representing the Register form.
  */
 function RegisterForm() {
-  const theme = useTheme();
-  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const { isLoading, data } = useQueryTimeSlots();
 
-  const setAnchorEl = useLayoutStore((state) => state.setEventAnchorEl);
+  const { mutate, isLoading: isLoadingRegister } = useMutationRegister();
 
-  const { isLoading, data } = useQuery(["timeSlots"], getTimeSlots, {
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
-
-  const { mutate, isLoading: isLoadingMutate } = useMutation(register, {
-    onSuccess: (data) => {
-      const registration = data.registration;
-
-      const date = moment(registration.date).utc().format("L");
-      const startTime = moment(registration.startTime).utc().format("LT");
-      const endTime = moment(registration.endTime).utc().format("LT");
-
-      NiceModal.hide("register-event");
-      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-      toast.success(
-        `Successfully registered for session on ${date} from 
-         ${startTime} to ${endTime}`
-      );
-    },
-    onError: (error) => {
-      errorToast(error);
-    },
-  });
-
-  const title = useEventStore((state) => state.title);
-  const start = useEventStore((state) => state.start);
-  const end = useEventStore((state) => state.end);
-  const id = useEventStore((state) => state.id);
+  const title = useStoreEvent((state) => state.title);
+  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
+  const id = useStoreEvent((state) => state.id);
 
   const date = start.toDateString();
-  const startTime = moment(start).utc().format("LT");
-  const endTime = moment(end).utc().format("LT");
+  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
+  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+    DateTime.TIME_SIMPLE
+  );
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
+      type: "",
       times: "",
+      topicIds: [],
     },
     resolver: yupResolver(registerSchema),
   });
+
+  const type = watch("type");
+
+  const { isLoading: isLoadingTopics, data: dataTopics } =
+    useQueryTopicCounts();
+
+  const topicOptions = getTopicOptions(dataTopics?.counts || []);
+
+  // TODO: Time slots should be altered when registration type changes
+  // useEffect(() => {
+  //   console.log("Registration type changed!")
+  // }, [type])
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
@@ -91,7 +116,8 @@ function RegisterForm() {
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
-      date: moment(start).format("MM-DD-YYYY"),
+      date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      TopicIds: data.topicIds,
     });
   };
 
@@ -112,22 +138,51 @@ function RegisterForm() {
             </u>
           </Typography>
           <FormInputDropdown
-            name="times"
+            name="type"
             control={control}
-            label="Available Time Slots"
-            options={getOptions(data.timeSlots)}
+            label="Registration Type"
+            options={types}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isLoadingMutate}
-          >
-            Submit
-          </Button>
+          {type !== "" && (
+            <>
+              <FormInputDropdown
+                name="times"
+                control={control}
+                label="Available Time Slots"
+                options={getOptions(data.timeSlots)}
+              />
+              <FormInputDropdown
+                name="topicIds"
+                control={control}
+                label="Topics (optional)"
+                options={topicOptions}
+                multiple
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => {
+                      const item = topicOptions.find(
+                        ({ value: v }) => v === value
+                      );
+                      return (
+                        <Chip key={value} color="primary" label={item.label} />
+                      );
+                    })}
+                  </Box>
+                )}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={isLoadingRegister}
+              >
+                Submit
+              </Button>
+            </>
+          )}
         </Stack>
       </Form>
-      {isLoadingMutate && <Loader />}
+      {isLoadingRegister && <Loader />}
     </>
   );
 }

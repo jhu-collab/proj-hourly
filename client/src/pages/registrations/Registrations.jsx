@@ -1,14 +1,38 @@
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { useLayoutStore } from "../../services/store";
-import { getAllRegistrations } from "../../utils/requests";
+import useQueryRegistrations from "../../hooks/useQueryRegistrations";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
+import RegistrationTypes from "./RegistrationTypes";
 
-const filterByTime = (array, timeTab) => {
+// TODO: Need route to retrieve registration types
+const types = [
+  {
+    name: "Regular",
+    nameDisabled: true,
+    duration: 10,
+    deletionDisabled: true,
+  },
+  {
+    name: "Debugging",
+    nameDisabled: false,
+    duration: 30,
+    deletionDisabled: false,
+  },
+];
+
+function latestEventsFirst(a, b) {
+  return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
+}
+
+function earliestEventsFirst(a, b) {
+  return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
+}
+
+const filterByTime = (array, registrationTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
 
@@ -22,16 +46,16 @@ const filterByTime = (array, timeTab) => {
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
 
-    switch (timeTab) {
+    switch (registrationTab) {
       case 0:
-        return moment(startObj).isAfter(today);
+        return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
       case 1:
         return (
-          moment(startObj).isSameOrBefore(today) &&
-          moment(endObj).isSameOrAfter(today)
+          DateTime.fromJSDate(startObj) <= DateTime.fromJSDate(today) &&
+          DateTime.fromJSDate(endObj) >= DateTime.fromJSDate(today)
         );
       case 2:
-        return moment(endObj).isBefore(today);
+        return DateTime.fromJSDate(endObj) < DateTime.fromJSDate(today);
       default:
         return true;
     }
@@ -43,19 +67,17 @@ const filterByTime = (array, timeTab) => {
  * @returns Registrations page
  */
 function Registrations() {
-  const timeTab = useLayoutStore((state) => state.timeTab);
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
+  const courseType = useStoreLayout((state) => state.courseType);
   const [registrations, setRegistrations] = useState([]);
 
-  const { isLoading, error, data } = useQuery(
-    ["allRegistrations"],
-    getAllRegistrations
-  );
+  const { isLoading, error, data } = useQueryRegistrations();
 
   useEffect(() => {
     let result = data?.registrations || [];
-    result = filterByTime(result, timeTab);
+    result = filterByTime(result, registrationTab);
     setRegistrations(result);
-  }, [data, timeTab]);
+  }, [data, registrationTab]);
 
   return (
     <>
@@ -74,20 +96,23 @@ function Registrations() {
       {!isLoading && !error && (
         <>
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={0}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={1}
-            registrations={registrations}
+            registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={2}
-            registrations={registrations}
+            registrations={registrations.sort(latestEventsFirst)}
           />
+          {courseType === "staff" && (
+            <RegistrationTypes index={4} types={types} />
+          )}
         </>
       )}
     </>

@@ -18,7 +18,9 @@ function makeCourseCode() {
 }
 
 export const create = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   let code = "";
   let codeIsUnique = false;
   while (!codeIsUnique) {
@@ -78,7 +80,9 @@ export const create = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const { code, id } = req.body;
   const course = await prisma.Course.findUnique({
     where: {
@@ -101,6 +105,9 @@ export const register = async (req, res) => {
 };
 
 export const getTopicCounts = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const id = parseInt(req.params.courseId, 10);
   const counts = await prisma.topic.findMany({
     where: {
@@ -118,6 +125,9 @@ export const getTopicCounts = async (req, res) => {
 };
 
 export const createTopic = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { value, courseId } = req.body;
   const topic = await prisma.topic.create({
     data: {
@@ -129,6 +139,9 @@ export const createTopic = async (req, res) => {
 };
 
 export const getRegistrationStudentCounts = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const id = parseInt(req.params.courseId, 10);
   const registrationsList = await prisma.registration.groupBy({
     by: ["accountId"],
@@ -177,7 +190,9 @@ export const getRegistrationStudentCounts = async (req, res) => {
 };
 
 export const removeStaff = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const id = parseInt(req.params.staffId, 10);
   const course = await prisma.course.update({
@@ -229,7 +244,9 @@ export const removeStaff = async (req, res) => {
 };
 
 export const removeStudent = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const id = parseInt(req.params.studentId, 10);
   const course = await prisma.course.update({
@@ -256,7 +273,9 @@ export const removeStudent = async (req, res) => {
 };
 
 export const leaveCourse = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const accountId = req.id;
   const course = await prisma.course.update({
@@ -283,7 +302,9 @@ export const leaveCourse = async (req, res) => {
 };
 
 export const getCourse = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const accountId = req.id;
   const course = await prisma.course.findUnique({
@@ -312,6 +333,9 @@ export const getCourse = async (req, res) => {
 };
 
 export const getRoleInCourse = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const id = req.id;
   const course = await prisma.course.findUnique({
@@ -352,7 +376,9 @@ export const getRoleInCourse = async (req, res) => {
 };
 
 export const getRoster = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const curCourse = await prisma.course.findUnique({
     where: {
@@ -372,7 +398,9 @@ export const getRoster = async (req, res) => {
 };
 
 export const getAllRegistrations = async (req, res) => {
-  validate(req);
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const id = req.id;
   const course = await prisma.course.findUnique({
@@ -414,6 +442,9 @@ export const getAllRegistrations = async (req, res) => {
         isCancelled: false,
         isCancelledStaff: false,
       },
+      include: {
+        topics: true,
+      },
     });
   } else {
     registrations = await prisma.registration.findMany({
@@ -429,7 +460,169 @@ export const getAllRegistrations = async (req, res) => {
         isCancelled: false,
         isCancelledStaff: false,
       },
+      include: {
+        topics: true,
+      },
     });
   }
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};
+
+export const addInstructor = async (req, res) => {
+  validate(req);
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const prevCourse = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+    },
+    select: {
+      instructors: true,
+    },
+  });
+  const instructorIds = prevCourse.instructors.map((instructor) => ({
+    id: instructor.id,
+  }));
+  const allInstructors = [...instructorIds, { id: id }];
+  const course = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      instructors: {
+        set: allInstructors,
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const deleteCourse = async (req, res) => {
+  const id = parseInt(req.params.courseId, 10);
+  const officeHour = await prisma.officeHour.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let officeHourIds = [];
+  officeHour.forEach((oh) => {
+    officeHourIds.push(oh.id);
+  });
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
+  await prisma.topic.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  const course = await prisma.course.delete({
+    where: {
+      id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ deletedCourse: course });
+};
+
+export const promote = async (req, res) => {
+  const id = req.body.studentId;
+  const role = req.body.role;
+  const courseId = parseInt(req.params.courseId, 10);
+  let account;
+  if (role === "Instructor" && req.currentRole === "Student") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        instructorCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  } else if (role === "Instructor" && req.currentRole === "Staff") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        staffCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        instructorCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  } else {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+        staffCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  }
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ ...account, newRole: role, oldRole: req.currentRole });
+};
+
+export const demote = async (req, res) => {
+  const id = req.body.studentId;
+  const role = req.body.role;
+  const courseId = parseInt(req.params.courseId, 10);
+  let account;
+  if (role === "Student" && req.currentRole === "Staff") {
+    account = await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        studentCourses: {
+          connect: {
+            id: courseId,
+          },
+        },
+        staffCourses: {
+          disconnect: {
+            id: courseId,
+          },
+        },
+      },
+    });
+  }
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ ...account, newRole: role, oldRole: req.currentRole });
 };
