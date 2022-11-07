@@ -3,6 +3,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CalendarMenu from "./CalendarMenu";
 import styled from "@mui/material/styles/styled";
 import grey from "@mui/material/colors/grey";
+import useStoreLayout from "../../../hooks/useStoreLayout";
 
 const drawerBleeding = 0;
 
@@ -21,7 +22,7 @@ const Puller = styled(Box)(({ theme }) => ({
  * for mobile devices.
  * @returns a mobile calendar menu
  */
-function MobileCalendarMenu() {
+function MobileCalendarMenu({ calendarRef }) {
   const open = useStoreLayout((state) => state.mobileCalMenu);
   const setOpen = useStoreLayout((state) => state.setMobileCalMenu);
 
@@ -62,7 +63,7 @@ function MobileCalendarMenu() {
           overflow: "auto",
         }}
       >
-        <CalendarMenu />
+        <CalendarMenu calendarRef={calendarRef} />
       </Box>
     </SwipeableDrawer>
   );

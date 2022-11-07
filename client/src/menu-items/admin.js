@@ -10,7 +10,7 @@ export const admin = {
   children: [
     {
       id: "users",
-      title: "Users",
+      title: "users",
       type: "item",
       url: "/admin/users",
       icon: icons.UserOutlined,

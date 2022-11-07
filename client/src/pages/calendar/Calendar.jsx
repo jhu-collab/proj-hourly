@@ -6,10 +6,8 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { useEffect, useRef, useState } from "react";
-import CalendarSpeedDial from "./CalendarSpeedDial";
 import EventPopover from "./event-details/EventPopover";
 import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
@@ -18,6 +16,7 @@ import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
+import Box from "@mui/material/Box";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -79,17 +78,11 @@ function Calendar() {
 
   return (
     <>
-      <Stack direction="row" spacing={1}>
-        {menuOpen && matchUpSm && (
-          <Paper variant="outlined" sx={{ height: "76vh" }}>
-            <CalendarMenu />
-          </Paper>
-        )}
-        <Paper
-          variant="outlined"
-          square
-          sx={{ flexGrow: 1, height: "76vh", p: 2 }}
-        >
+      <Stack
+        direction="row"
+        sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
+      >
+        <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
           <FullCalendar
             plugins={[
               rrulePlugin,
@@ -98,12 +91,6 @@ function Calendar() {
               interactionPlugin,
             ]}
             customButtons={{
-              calendarMenu: {
-                icon: menuOpen ? "chevrons-right" : "chevrons-left",
-                click: function () {
-                  setMenuOpen(!menuOpen);
-                },
-              },
               mobileCalMenu: {
                 text: "menu",
                 click: function () {
@@ -114,8 +101,9 @@ function Calendar() {
             headerToolbar={
               matchUpSm
                 ? {
-                    start: "calendarMenu dayGridMonth,timeGridWeek,timeGridDay",
+                    start: "prev",
                     center: "title",
+                    end: "next",
                   }
                 : { start: "title", end: "prev,next" }
             }
@@ -135,11 +123,22 @@ function Calendar() {
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
-        </Paper>
+        </Box>
+        {matchUpSm && (
+          <Box
+            variant="outlined"
+            sx={{
+              height: "100%",
+              boxShadow: theme.customShadows.z1,
+              borderLeft: `2px solid ${theme.palette.divider}`,
+            }}
+          >
+            <CalendarMenu calendarRef={calendarRef} />
+          </Box>
+        )}
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu />}
-      {isStaff && <CalendarSpeedDial calendarRef={calendarRef} />}
+      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
       {isLoading && <Loader />}
     </>
   );

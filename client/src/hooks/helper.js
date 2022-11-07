@@ -26,7 +26,9 @@ export function useResetStates() {
   const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
   const toggleCourseType = useStoreLayout((state) => state.toggleCourseType);
   const setEventAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
-  const setTimeTab = useStoreLayout((state) => state.setTimeTab);
+  const setRegistrationTab = useStoreLayout(
+    (state) => state.setRegistrationTab
+  );
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
   const updateToken = useStoreToken((state) => state.updateToken);
 
@@ -44,26 +46,26 @@ export function useResetStates() {
     selectSidebarItem("your-courses");
     toggleCourseType("student");
     setEventAnchorEl();
-    setTimeTab();
+    setRegistrationTab();
     setMobileCalMenu(false);
   };
 
   const resetStoreToken = () => {
     updateToken("");
-  }
+  };
 
   const resetAll = () => {
     resetStoreCourse();
     resetStoreEvent();
     resetStoreLayout();
     resetStoreToken();
-  }
+  };
 
   return {
     resetStoreCourse,
     resetStoreEvent,
     resetStoreLayout,
     resetStoreToken,
-    resetAll
+    resetAll,
   };
 }

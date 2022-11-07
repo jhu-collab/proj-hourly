@@ -1,21 +1,20 @@
 import DashboardOutlined from "@ant-design/icons/DashboardOutlined";
-import BookOutlined from "@ant-design/icons/BookOutlined";
+import ReadOutlined from "@ant-design/icons/ReadOutlined";
 const icons = {
   DashboardOutlined,
-  BookOutlined,
+  ReadOutlined,
 };
 
 export const dashboard = {
   id: "group-dashboard",
-  title: "Navigation",
   type: "group",
   children: [
     {
       id: "your-courses",
-      title: "Your Courses",
+      title: "my courses",
       type: "item",
       url: "/",
-      icon: icons.BookOutlined,
+      icon: icons.ReadOutlined,
       breadcrumbs: false,
     },
   ],

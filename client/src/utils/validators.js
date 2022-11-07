@@ -149,3 +149,16 @@ export const profileSchema = yup.object({
   email: yup.string().email("Invalid email"),
   role: yup.string(),
 });
+
+export const registrationTypeSchema = yup.object({
+  name: yup.string().required("Registration name is required"),
+  duration: yup
+    .number()
+    .required("Duration is required")
+    .min(5, "Duration must be at least 5 minutes")
+    .typeError("Please enter a valid duration"),
+});
+
+export const topicSchema = yup.object({
+  name: yup.string().required("Topic name is required"),
+});
