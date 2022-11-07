@@ -49,8 +49,8 @@ model Course {
 
 model OfficeHour {
   id             Int                 @id @default(autoincrement())
-  startTime      DateTime            @db.Timetz()
-  endTime        DateTime            @db.Timetz()
+  //startTime      DateTime            @db.Timetz()
+  //endTime        DateTime            @db.Timetz()
   startDate      DateTime            //@db.Date
   endDate        DateTime            //@db.Date
   timePerStudent Int

@@ -41,8 +41,6 @@ const connectOfficeHourToHosts = async (officeHourId, hosts) => {
 };
 
 const createOfficeHour = async (
-  startTime,
-  endTime,
   startDate,
   endDate,
   timePerStudent,
@@ -53,8 +51,6 @@ const createOfficeHour = async (
 ) => {
   return await prisma.officeHour.create({
     data: {
-      startTime,
-      endTime,
       startDate,
       endDate,
       timePerStudent,
@@ -90,8 +86,6 @@ export const create = async (req, res) => {
     return res;
   }
   const {
-    startTime,
-    endTime,
     recurringEvent,
     startDate,
     endDate,
@@ -101,15 +95,9 @@ export const create = async (req, res) => {
     hosts,
     daysOfWeek,
   } = req.body;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
-  //const start = combineTimeAndDate(startTimeObject, new Date(startDate));
-  //const end = combineTimeAndDate(endTimeObject, new Date(endDate));
   const start = new Date(startDate);
   const end = new Date(endDate);
   const officeHour = await createOfficeHour(
-    startTimeObject,
-    endTimeObject,
     start,
     end,
     timeInterval,
@@ -169,12 +157,12 @@ export const register = async (req, res) => {
     },
   });
   const dateObj = new Date(date);
-  if (
-    officeHour.startTime > officeHour.endTime &&
-    startTime < officeHour.startTime
-  ) {
-    dateObj.setDate(dateObj.getDate() + 1);
-  }
+  // if (
+  //   officeHour.startTime > officeHour.endTime &&
+  //   startTime < officeHour.startTime
+  // ) {
+  //   dateObj.setDate(dateObj.getDate() + 1);
+  // }
   const registration = await prisma.registration.create({
     data: {
       startTime: stringToTimeObj(startTime),
@@ -264,9 +252,6 @@ export const cancelAll = async (req, res) => {
     },
   });
   const startObj = officeHour.startDate;
-  startObj.setUTCHours(officeHour.startTime.getUTCHours() - 2);
-  startObj.setUTCMinutes(officeHour.startTime.getUTCMinutes());
-  startObj.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
     await prisma.registration.updateMany({
@@ -327,8 +312,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
       id: officeHourId,
     },
   });
-  let start = officeHour.startTime;
-  let end = officeHour.endTime;
+  let start = createJustTimeObject(officeHour.startDate);
+  let end = createJustTimeObject(officeHour.endDate);
   if (start > end) {
     end.setDate(end.getDate() + 1);
   }
@@ -364,7 +349,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const { startTime, endTime, timePerStudent, location } = req.body;
+  const { startDate, endDate, timePerStudent, location } = req.body;
   const dateObj = createJustDateObject(new Date(date));
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
@@ -415,14 +400,10 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     location === null || location === undefined
       ? officehour.location
       : location;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
   const newOfficeHour = await prisma.officeHour.create({
     data: {
-      startTime: startTimeObject,
-      endTime: endTimeObject,
-      startDate: new Date(date),
-      endDate: new Date(date),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
       timePerStudent: timeInterval,
       course: {
         connect: {
@@ -465,15 +446,11 @@ export const editAll = async (req, res) => {
   const {
     startDate,
     endDate,
-    startTime,
-    endTime,
     location,
     daysOfWeek,
     timePerStudent,
     endDateOldOfficeHour,
   } = req.body;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
   const update = await prisma.officeHour.update({
     where: {
       id: officeHourId,
@@ -486,8 +463,6 @@ export const editAll = async (req, res) => {
     },
   });
   const newOfficeHour = await createOfficeHour(
-    startTimeObject,
-    endTimeObject,
     new Date(startDate),
     new Date(endDate),
     timePerStudent === undefined ? update.timePerStudent : timePerStudent,

@@ -322,7 +322,7 @@ export const isInFuture = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const officehourstart = officeHour.startTime;
+  const officehourstart = officeHour.startDate;
   officehourstart.setMonth(dateObj.getMonth());
   officehourstart.setDate(dateObj.getDate());
   officehourstart.setFullYear(dateObj.getFullYear());
