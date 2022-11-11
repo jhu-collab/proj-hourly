@@ -10,6 +10,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { inviteUserSchema } from "../../utils/validators";
+import { toast } from "react-toastify";
 
 function InviteUserForm(props) {
   const { isInstructor } = props;
