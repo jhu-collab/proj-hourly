@@ -32,10 +32,6 @@ router.post(
   )
     .isArray()
     .notEmpty(),
-  body(
-    "timeInterval",
-    "Please include a positive integer for time interval"
-  ).isInt({ min: 1 }),
   body("hosts", "Please include the staff ID(s) hosting the office hours")
     .isArray()
     .notEmpty(),
@@ -107,7 +103,6 @@ router.post(
   "/:officeHourId/editForDate/:date",
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
@@ -122,7 +117,6 @@ router.post(
   "/:officeHourId/editAll",
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "Please specify a location for your office hours")
     .optional()
     .notEmpty(),

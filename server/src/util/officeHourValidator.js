@@ -217,40 +217,72 @@ export const isTimeCorrectInterval = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  if (officeHour.startTime > officeHour.endTime && startTimeObj > endTimeObj) {
-    endTimeObj.setDate(endTimeObj.getDate() + 1);
-  }
-  const timeInterval = officeHour.timePerStudent * 1000 * 60;
-  const diff = endTimeObj - startTimeObj;
-  if (diff !== timeInterval) {
+  const timeOptions = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: officeHour.courseId,
+    },
+  });
+  let valid = false;
+  timeOptions.forEach((timeOption) => {
+    const timeInterval = timeOption.duration * 1000 * 60;
+    const diff = endTimeObj - startTimeObj;
+    if (diff === timeInterval) {
+      valid = true;
+    }
+  });
+
+  if (!valid) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: time interval is not the correct length" });
-  }
-  const diffFromStart = startTimeObj - officeHour.startTime;
-  if (diffFromStart % timeInterval !== 0) {
-    return res.status(StatusCodes.CONFLICT).json({
-      msg: "ERROR: time interval is not at one of the specified start times",
-    });
   } else {
     next();
   }
 };
 
 export const isTimeAvailable = async (req, res, next) => {
-  const { startTime, officeHourId, date } = req.body;
+  const { startTime, officeHourId, date, endTime } = req.body;
   const registrationDate = new Date(date);
   const startTimeObj = stringToTimeObj(startTime);
-  const registration = await prisma.registration.findFirst({
+  const endTimeObj = stringToTimeObj(endTime);
+  const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
-      startTime: startTimeObj,
       date: registrationDate,
       isCancelled: false,
       isCancelledStaff: false,
     },
   });
-  if (registration !== null) {
+  let valid = true;
+  registrations.forEach((registration) => {
+    if (registration.startTimeObj == startTimeObj) {
+      valid = false;
+    } else if (registration.endTimeObj == endTimeObj) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > startTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.endTime > endTimeObj &&
+      registration.startTime < endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      startTimeObj < registration.startTime &&
+      endTimeObj > registration.startTimeObj
+    ) {
+      valid = false;
+    }
+  });
+
+  if (!valid) {
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: time interval is already taken",
     });
