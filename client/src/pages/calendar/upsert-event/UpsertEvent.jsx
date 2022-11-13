@@ -2,7 +2,6 @@ import Popup from "../../../components/Popup";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import CreateEventForm from "./CreateEventForm";
 import EditEventForm from "./EditEventForm";
-import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Parent component for the UpsertForm component.

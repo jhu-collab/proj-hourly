@@ -2,6 +2,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import { useForm } from "react-hook-form";
 import Form from "../../../components/form-ui/Form";
 import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
@@ -11,21 +13,62 @@ import { DateTime } from "luxon";
 import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
 import useMutationRegister from "../../../hooks/useMutationRegister";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import useQueryTopics from "../../../hooks/useQueryTopics";
+import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
+import { useEffect, useState } from "react";
 
-const getOptions = (timeSlots) => {
+const getTimeSlotOptions = (timeSlotsPerType, type) => {
+  const found = timeSlotsPerType.find((element) => element.type === type);
+
+  if (!found) {
+    return [];
+  } else {
+    const options = [];
+
+    for (let i = 0; i < found.times.length; i++) {
+      const localeStartTime = DateTime.fromISO(found.times[i].startTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const localeEndTime = DateTime.fromISO(found.times[i].endTime, {
+        zone: "utc",
+      }).toLocaleString(DateTime.TIME_SIMPLE);
+      options.push({
+        id: i,
+        label: `${localeStartTime} - ${localeEndTime}`,
+        value: `${DateTime.fromISO(found.times[i].startTime, {
+          zone: "utc",
+        }).toFormat("TT")} - ${DateTime.fromISO(found.times[i].endTime, {
+          zone: "utc",
+        }).toFormat("TT")}`,
+      });
+    }
+
+    return options;
+  }
+};
+
+const getTopicOptions = (topics) => {
   const options = [];
 
-  for (let i = 0; i < timeSlots.length; i++) {
-    const localeStartTime = DateTime.fromISO(timeSlots[i].startTime, {
-      zone: "utc",
-    }).toLocaleString(DateTime.TIME_SIMPLE);
-    const localeEndTime = DateTime.fromISO(timeSlots[i].endTime, {
-      zone: "utc",
-    }).toLocaleString(DateTime.TIME_SIMPLE);
+  for (let i = 0; i < topics.length; i++) {
     options.push({
-      id: i,
-      label: `${localeStartTime} - ${localeEndTime}`,
-      value: `${timeSlots[i].startTime} - ${timeSlots[i].endTime}`,
+      id: topics[i].id,
+      label: topics[i].value,
+      value: topics[i].id,
+    });
+  }
+
+  return options;
+};
+
+const getRegTypeOptions = (registrationTypes) => {
+  const options = [];
+
+  for (let i = 0; i < registrationTypes.length; i++) {
+    options.push({
+      id: registrationTypes[i].id,
+      label: registrationTypes[i].title,
+      value: registrationTypes[i].title,
     });
   }
 
@@ -39,7 +82,8 @@ const getOptions = (timeSlots) => {
 function RegisterForm() {
   const { isLoading, data } = useQueryTimeSlots();
 
-  const { mutate, isLoading: isLoadingMutate } = useMutationRegister();
+  const { mutate, isLoading: isLoadingRegister } = useMutationRegister();
+  const [timeSlots, setTimeSlots] = useState([]);
 
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
@@ -54,12 +98,29 @@ function RegisterForm() {
     DateTime.TIME_SIMPLE
   );
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
+      type: "",
       times: "",
+      topicIds: [],
     },
     resolver: yupResolver(registerSchema),
   });
+
+  const type = watch("type");
+
+  const { isLoading: isLoadingTopics, data: dataTopics } = useQueryTopics();
+  const { isLoading: isLoadingRegTypes, data: dataRegTypes } =
+    useQueryRegistrationTypes();
+
+  const topicOptions = getTopicOptions(dataTopics || []);
+  const registrationTypeOptions = getRegTypeOptions(dataRegTypes?.times || []);
+
+  useEffect(() => {
+    if (data?.timeSlotsPerType) {
+      setTimeSlots(getTimeSlotOptions(data.timeSlotsPerType, type));
+    }
+  }, [type]);
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
@@ -68,10 +129,11 @@ function RegisterForm() {
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      TopicIds: data.topicIds,
     });
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRegTypes || isLoadingTopics) {
     return <Loader />;
   }
 
@@ -88,22 +150,49 @@ function RegisterForm() {
             </u>
           </Typography>
           <FormInputDropdown
-            name="times"
+            name="type"
             control={control}
-            label="Available Time Slots"
-            options={getOptions(data.timeSlots)}
+            label="Registration Type"
+            options={registrationTypeOptions}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={isLoadingMutate}
-          >
-            Submit
-          </Button>
+          {type !== "" && (
+            <>
+              <FormInputDropdown
+                name="times"
+                control={control}
+                label="Available Time Slots"
+                options={timeSlots}
+              />
+              <FormInputDropdown
+                name="topicIds"
+                control={control}
+                label="Topics (optional)"
+                options={topicOptions}
+                multiple
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => {
+                      const item = topicOptions.find(
+                        ({ value: v }) => v === value
+                      );
+                      return <Chip key={value} label={item.label} />;
+                    })}
+                  </Box>
+                )}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={isLoadingRegister}
+              >
+                Submit
+              </Button>
+            </>
+          )}
         </Stack>
       </Form>
-      {isLoadingMutate && <Loader />}
+      {isLoadingRegister && <Loader />}
     </>
   );
 }

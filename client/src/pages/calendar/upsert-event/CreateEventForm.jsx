@@ -27,39 +27,53 @@ const DAYS = [
 
 const BUTTONS = [
   {
-    id: "0",
+    id: 0,
     label: "Mon",
     value: "Monday",
   },
   {
-    id: "1",
+    id: 1,
     label: "Tue",
     value: "Tuesday",
   },
   {
-    id: "2",
+    id: 2,
     label: "Wed",
     value: "Wednesday",
   },
   {
-    id: "3",
+    id: 3,
     label: "Thu",
     value: "Thursday",
   },
   {
-    id: "4",
+    id: 4,
     label: "Fri",
     value: "Friday",
   },
   {
-    id: "5",
+    id: 5,
     label: "Sat",
     value: "Saturday",
   },
   {
-    id: "6",
+    id: 6,
     label: "Sun",
     value: "Sunday",
+  },
+];
+
+// TODO: Need a route that retrieves registration types.
+const registrationTypes = [
+  {
+    id: 0,
+    label: "Regular",
+    value: 0,
+  },
+  {
+    id: 1,
+    label: "Debugging",
+    value: 1,
   },
 ];
 
@@ -76,7 +90,6 @@ function CreateEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -98,6 +111,8 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       timeInterval: timeInterval || 10,
+      feedback: true,
+      registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -118,7 +133,6 @@ function CreateEventForm() {
         : DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
-      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -143,11 +157,18 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <FormCheckbox
-            name="recurringEvent"
-            control={control}
-            label="Recurring event"
-          />
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
+            <FormCheckbox
+              name="recurringEvent"
+              control={control}
+              label="Recurring event"
+            />
+            <FormCheckbox
+              name="feedback"
+              control={control}
+              label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
+            />
+          </Stack>
           <FormInputText
             name="startDate"
             control={control}
@@ -169,15 +190,9 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
           <Button
             type="submit"
             variant="contained"

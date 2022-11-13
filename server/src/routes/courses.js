@@ -33,11 +33,19 @@ router.post(
 router.post(
   "/signup",
   body("code", "Course code is required").notEmpty(),
-  body("id", "Account id is required").isInt(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,
   controller.register
+);
+
+router.post(
+  "/addInstructor/:courseId/:id",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  accountValidator.accountIsNotInstructor,
+  validator.isCourseIdUrlValid,
+  controller.addInstructor
 );
 
 router.get("/", accountController.getCourses);
@@ -111,6 +119,35 @@ router.post(
   controller.createTopic
 );
 
+router.post(
+  "/editTopic",
+  body("courseId", "must include courseid for a topic").notEmpty(),
+  body("topicId", "must include a topic id to edit").notEmpty(),
+  body("value", "must include a value for the topic").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseId,
+  accountValidator.isAccountInstructorBody,
+  validator.doesTopicIdExist,
+  validator.isNotDuplicateTopic,
+  controller.editTopic
+);
+
+router.delete(
+  "/topic/:topicId",
+  param("topicId", "TopicId must be included").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isAccountInstructorForTopic,
+  controller.deleteTopic
+);
+
+router.get(
+  "/:courseId/topics",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getTopics
+);
+
 router.get(
   "/:courseId/studentRegistrationCounts",
   accountValidator.isAccountValidHeader,
@@ -140,6 +177,97 @@ router.get(
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   controller.getAllRegistrations
+);
+
+router.delete(
+  "/:courseId",
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.deleteCourse
+);
+
+router.post(
+  "/:courseId/officeHourTimeInterval",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
+  body("title", "Body must have a title").isString(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isLengthMultipleOf5,
+  accountValidator.isAccountInstructor,
+  controller.createTimeLength
+);
+
+router.get(
+  "/:courseId/officeHourTimeInterval",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getTimeLengths
+);
+
+router.post(
+  "/:courseId/officeHourTimeInterval/:id/update",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
+  body("title", "Body must have a title").isString(),
+  param("id", "Param must have id").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.doesTimeLengthExist,
+  validator.isLengthMultipleOf5,
+  validator.isTimeLengthForCourse,
+  controller.editTimeLength
+);
+
+router.delete(
+  "/:courseId/officeHourTimeInterval/:id",
+  param("id", "Param must have id").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.doesTimeLengthExist,
+  validator.isTimeLengthForCourse,
+  controller.deleteTimeLength
+);
+
+router.post(
+  "/:courseId",
+  param("courseId", "Must include course id").notEmpty().isInt(),
+  body("studentId", "Must provide id of a student to promote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to promote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Staff", "Instructor"]),
+  accountValidator.isAccountValidHeader,
+  validator.checkPromoteRoles,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForPromotionTo,
+  controller.promote
+);
+
+router.post(
+  "/:courseId/demote",
+  param("courseId", "Must include course id").notEmpty().isInt(),
+  body("studentId", "Must provide id of a student to demote")
+    .notEmpty()
+    .isInt(),
+  body("role", "Must provide a role to demote to")
+    .notEmpty()
+    .isString()
+    .isIn(["Student"]),
+  accountValidator.isAccountValidHeader,
+  validator.checkDemoteRoles,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.isInCourseBelowRoleForDemotionTo,
+  controller.demote
 );
 
 export default router;

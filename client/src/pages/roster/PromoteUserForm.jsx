@@ -12,28 +12,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { inviteUserSchema } from "../../utils/validators";
 
 function PromoteUserForm(props) {
-  const { isInstructor } = props;
-  const [role, setRole] = useState("");
-
-  const handleClose = () => {
-    NiceModal.hide("promote-user");
-  };
-
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      email: "",
-    },
-    resolver: yupResolver(inviteUserSchema),
-  });
-  const handleRoleChange = (event) => setRole(event.target.value);
-
-  const onSubmit = () => {
-    handleClose();
-    toast.success("Successfully invited the user");
-  };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form >
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
         <Button
           sx={{ margin: 2, fontSize: 17 }}

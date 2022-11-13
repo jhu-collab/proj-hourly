@@ -34,10 +34,6 @@ router.post(
   )
     .isArray()
     .notEmpty(),
-  body(
-    "timeInterval",
-    "Please include a positive integer for time interval"
-  ).isInt({ min: 1 }),
   body("hosts", "Please include the staff ID(s) hosting the office hours")
     .isArray()
     .notEmpty(),
@@ -45,6 +41,7 @@ router.post(
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
   timeValidator.isTime,
+  validator.areValidDOW,
   dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
@@ -107,7 +104,6 @@ router.post(
   "/:officeHourId/editForDate/:date",
   body("startTime", "start time is required").notEmpty(),
   body("endTime", "end time is required").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
@@ -124,7 +120,6 @@ router.post(
   body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "Please specify a location for your office hours")
     .optional()
     .notEmpty(),
@@ -143,6 +138,14 @@ router.post(
   timeValidator.isTime,
   dateValidator.endIsAfterStart,
   controller.editAll
+);
+
+router.post(
+  "/cancelRegistration/:registrationId",
+  accountValidator.isAccountValidHeader,
+  validator.doesRegistrationExistParams,
+  validator.isStudentRegisteredBody,
+  controller.cancelRegistration
 );
 
 router.get(
@@ -170,6 +173,27 @@ router.get(
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourOnDayParam,
   controller.getAllRegistrationsOnDate
+);
+
+router.post(
+  "/editRegistration/:registrationId",
+  body("officeHourId", "Office Hour is required").isInt(),
+  body("startTime", "Please include a startTime").notEmpty(),
+  body("endTime", "Please include an endtime").notEmpty(),
+  body("date", "Please include a date").notEmpty(),
+  body("question", "Please include questions as a string")
+    .optional()
+    .isString(),
+  body("TopicIds", "Please include topics as an array").optional().isArray(),
+  accountValidator.isAccountValidHeader,
+  validator.isOfficeHourOnDay,
+  validator.doesRegistrationExistParams,
+  validator.isStudentRegistered,
+  validator.isWithinTimeOffering,
+  validator.isTimeCorrectInterval,
+  validator.isTimeAvailable,
+  courseValidator.areTopicsForCourse,
+  controller.editRegistration
 );
 
 export default router;

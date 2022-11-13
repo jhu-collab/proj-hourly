@@ -18,9 +18,11 @@ function LogoSection({ sx, to }) {
       to={!to ? config.defaultPath : to}
       sx={sx}
     >
-      <Stack direction="row" spacing={2}>
-        <img src={logo} alt="Mantis" width="30" />
-        <Typography>Hourly</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <img src={logo} alt="Mantis" width="27" />
+        <Typography fontWeight={500} fontSize={30}>
+          Hourly
+        </Typography>
       </Stack>
     </ButtonBase>
   );

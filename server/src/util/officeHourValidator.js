@@ -1,6 +1,8 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { STATUS_CODES } from "http";
+import { decodeToken } from "./token.js";
+import { body } from "express-validator";
 
 export const weekday = [
   "Sunday",
@@ -207,39 +209,78 @@ export const isTimeCorrectInterval = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const timeInterval = officeHour.timePerStudent * 1000 * 60;
-  const diff = endTimeObj - startTimeObj;
-  if (diff !== timeInterval) {
+  const timeOptions = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: officeHour.courseId,
+    },
+  });
+  let valid = false;
+  timeOptions.forEach((timeOption) => {
+    const timeInterval = timeOption.duration * 1000 * 60;
+    const diff = endTimeObj - startTimeObj;
+    if (diff === timeInterval) {
+      valid = true;
+    }
+  });
+
+  if (!valid) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: time interval is not the correct length" });
+  } else {
+    next();
   }
-  const diffFromStart = startTimeObj - officeHour.startTime;
-  if (diffFromStart % timeInterval !== 0) {
-    return res.status(StatusCodes.CONFLICT).json({
-      msg: "ERROR: time interval is not at one of the specified start times",
-    });
-  }
-  next();
 };
 
 export const isTimeAvailable = async (req, res, next) => {
-  const { startTime, officeHourId, date } = req.body;
+  const { startTime, officeHourId, date, endTime } = req.body;
   const registrationDate = new Date(date);
   const startTimeObj = stringToTimeObj(startTime);
-  const registration = await prisma.registration.findFirst({
+  const endTimeObj = stringToTimeObj(endTime);
+  const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
-      startTime: startTimeObj,
       date: registrationDate,
+      isCancelled: false,
+      isCancelledStaff: false,
     },
   });
-  if (registration !== null) {
+  let valid = true;
+  registrations.forEach((registration) => {
+    if (registration.startTimeObj == startTimeObj) {
+      valid = false;
+    } else if (registration.endTimeObj == endTimeObj) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > startTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.endTime > endTimeObj &&
+      registration.startTime < endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      startTimeObj < registration.startTime &&
+      endTimeObj > registration.startTimeObj
+    ) {
+      valid = false;
+    }
+  });
+
+  if (!valid) {
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: time interval is already taken",
     });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isOfficeHourHost = async (req, res, next) => {
@@ -368,5 +409,69 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: office hour does not exist" });
   }
+  next();
+};
+
+export const isStudentRegistered = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = parseInt(req.get("id"), 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+export const isStudentRegisteredBody = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = req.id;
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration.accountId !== id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered" });
+  }
+  next();
+};
+
+export const doesRegistrationExistParams = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+  });
+  if (registration === null) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Registration does not exist" });
+  }
+  next();
+};
+
+export const areValidDOW = (req, res, next) => {
+  const { daysOfWeek } = req.body;
+  if (daysOfWeek === undefined || daysOfWeek.length === 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: days of the week not included" });
+  }
+  daysOfWeek.forEach((dow) => {
+    if (!weekday.includes(dow)) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: invalid days of week" });
+    }
+  });
   next();
 };

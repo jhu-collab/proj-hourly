@@ -58,7 +58,6 @@ function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
   const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
@@ -80,7 +79,7 @@ function EditEventForm() {
           )
         : "",
       location: location || "",
-      timeInterval: timeInterval || 10,
+      registrationTypes: [0],
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -98,7 +97,6 @@ function EditEventForm() {
           endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
           location: data.location,
           daysOfWeek: data.days,
-          timePerStudent: data.timeInterval,
           endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
             "MM-dd-yyyy"
           ),
@@ -107,7 +105,6 @@ function EditEventForm() {
           startTime: `${data.startTime}:00`,
           endTime: `${data.endTime}:00`,
           location: data.location,
-          timePerStudent: data.timeInterval,
         });
   };
 
@@ -165,11 +162,6 @@ function EditEventForm() {
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
           <Button
             type="submit"
             variant="contained"

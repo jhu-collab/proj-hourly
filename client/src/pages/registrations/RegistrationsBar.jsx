@@ -2,7 +2,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
-import TimeTabs from "./TimeTabs";
+import RegistrationTabs from "./RegistrationTabs";
 import FilterOutlined from "@ant-design/icons/FilterOutlined";
 import FilterFilled from "@ant-design/icons/FilterFilled";
 import useTheme from "@mui/material/styles/useTheme";
@@ -28,7 +28,7 @@ function RegistrationsBar() {
         sx={{ borderRadius: 1, backgroundColor: "white" }}
       >
         <Toolbar>
-          <TimeTabs />
+          <RegistrationTabs />
           <Box sx={{ flexGrow: 1 }} />
           {/* TODO: Need to create a filter panel for registrations */}
           <IconButton onClick={onClick}>

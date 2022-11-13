@@ -37,7 +37,6 @@ const Roster = () => {
       </Alert>
     );
   }
-
   return (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -48,13 +47,6 @@ const Roster = () => {
           variant="contained"
         >
           Invite User
-        </Button>
-        <Button
-          sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
-          onClick={() => NiceModal.show("promote-user", { isInstructor: true })}
-          variant="contained"
-        >
-          Promote Student
         </Button>
       </Stack>
       <RosterTabs rows={data} value={value} setValue={setValue} />
