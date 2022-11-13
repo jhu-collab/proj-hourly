@@ -1,401 +1,401 @@
 export const sampleStudentRegistration = [{
     "id": 1,
-    "name": "Ive Toyne",
-    "registrations": 15
+    "x": "Ive Toyne",
+    "y": 15
   }, {
     "id": 2,
-    "name": "Mendel McGowan",
-    "registrations": 59
+    "x": "Mendel McGowan",
+    "y": 59
   }, {
     "id": 3,
-    "name": "Brett Sandlin",
-    "registrations": 36
+    "x": "Brett Sandlin",
+    "y": 36
   }, {
     "id": 4,
-    "name": "Tracie Sennett",
-    "registrations": 54
+    "x": "Tracie Sennett",
+    "y": 54
   }, {
     "id": 5,
-    "name": "Loralyn Fishley",
-    "registrations": 62
+    "x": "Loralyn Fishley",
+    "y": 62
   }, {
     "id": 6,
-    "name": "Katee Studdard",
-    "registrations": 45
+    "x": "Katee Studdard",
+    "y": 45
   }, {
     "id": 7,
-    "name": "Ilka Mebs",
-    "registrations": 55
+    "x": "Ilka Mebs",
+    "y": 55
   }, {
     "id": 8,
-    "name": "Beverley Pryer",
-    "registrations": 74
+    "x": "Beverley Pryer",
+    "y": 74
   }, {
     "id": 9,
-    "name": "Bernice Leveritt",
-    "registrations": 15
+    "x": "Bernice Leveritt",
+    "y": 15
   }, {
     "id": 10,
-    "name": "Vince Dungate",
-    "registrations": 31
+    "x": "Vince Dungate",
+    "y": 31
   }, {
     "id": 11,
-    "name": "Huntley Osbidston",
-    "registrations": 22
+    "x": "Huntley Osbidston",
+    "y": 22
   }, {
     "id": 12,
-    "name": "Astrid McVaugh",
-    "registrations": 60
+    "x": "Astrid McVaugh",
+    "y": 60
   }, {
     "id": 13,
-    "name": "Horace But",
-    "registrations": 3
+    "x": "Horace But",
+    "y": 3
   }, {
     "id": 14,
-    "name": "Janetta Klugel",
-    "registrations": 69
+    "x": "Janetta Klugel",
+    "y": 69
   }, {
     "id": 15,
-    "name": "Jake Venart",
-    "registrations": 92
+    "x": "Jake Venart",
+    "y": 92
   }, {
     "id": 16,
-    "name": "Ingaborg Marvel",
-    "registrations": 73
+    "x": "Ingaborg Marvel",
+    "y": 73
   }, {
     "id": 17,
-    "name": "Milzie Chat",
-    "registrations": 29
+    "x": "Milzie Chat",
+    "y": 29
   }, {
     "id": 18,
-    "name": "Peggie MacTrustey",
-    "registrations": 95
+    "x": "Peggie MacTrustey",
+    "y": 95
   }, {
     "id": 19,
-    "name": "Dennie Hosburn",
-    "registrations": 5
+    "x": "Dennie Hosburn",
+    "y": 5
   }, {
     "id": 20,
-    "name": "Colman Cleminshaw",
-    "registrations": 43
+    "x": "Colman Cleminshaw",
+    "y": 43
   }, {
     "id": 21,
-    "name": "Sadie Moar",
-    "registrations": 68
+    "x": "Sadie Moar",
+    "y": 68
   }, {
     "id": 22,
-    "name": "Gradeigh Ladson",
-    "registrations": 43
+    "x": "Gradeigh Ladson",
+    "y": 43
   }, {
     "id": 23,
-    "name": "Antone Fall",
-    "registrations": 82
+    "x": "Antone Fall",
+    "y": 82
   }, {
     "id": 24,
-    "name": "Wiatt Matczak",
-    "registrations": 49
+    "x": "Wiatt Matczak",
+    "y": 49
   }, {
     "id": 25,
-    "name": "Ellery Baglan",
-    "registrations": 62
+    "x": "Ellery Baglan",
+    "y": 62
   }, {
     "id": 26,
-    "name": "Olvan Karet",
-    "registrations": 29
+    "x": "Olvan Karet",
+    "y": 29
   }, {
     "id": 27,
-    "name": "Lorna Burgot",
-    "registrations": 81
+    "x": "Lorna Burgot",
+    "y": 81
   }, {
     "id": 28,
-    "name": "Pamelina Smelley",
-    "registrations": 22
+    "x": "Pamelina Smelley",
+    "y": 22
   }, {
     "id": 29,
-    "name": "Ferne Betje",
-    "registrations": 10
+    "x": "Ferne Betje",
+    "y": 10
   }, {
     "id": 30,
-    "name": "Klarrisa Hinckes",
-    "registrations": 98
+    "x": "Klarrisa Hinckes",
+    "y": 98
   }, {
     "id": 31,
-    "name": "Tildy Matessian",
-    "registrations": 10
+    "x": "Tildy Matessian",
+    "y": 10
   }, {
     "id": 32,
-    "name": "Oliviero De Pero",
-    "registrations": 3
+    "x": "Oliviero De Pero",
+    "y": 3
   }, {
     "id": 33,
-    "name": "Sayres Ainscough",
-    "registrations": 73
+    "x": "Sayres Ainscough",
+    "y": 73
   }, {
     "id": 34,
-    "name": "Gisella Muxworthy",
-    "registrations": 57
+    "x": "Gisella Muxworthy",
+    "y": 57
   }, {
     "id": 35,
-    "name": "Hammad Celes",
-    "registrations": 40
+    "x": "Hammad Celes",
+    "y": 40
   }, {
     "id": 36,
-    "name": "Ike Kilby",
-    "registrations": 90
+    "x": "Ike Kilby",
+    "y": 90
   }, {
     "id": 37,
-    "name": "Maury Grzegorczyk",
-    "registrations": 22
+    "x": "Maury Grzegorczyk",
+    "y": 22
   }, {
     "id": 38,
-    "name": "Byran Resun",
-    "registrations": 66
+    "x": "Byran Resun",
+    "y": 66
   }, {
     "id": 39,
-    "name": "Vilhelmina Sully",
-    "registrations": 19
+    "x": "Vilhelmina Sully",
+    "y": 19
   }, {
     "id": 40,
-    "name": "Madel Beardsdale",
-    "registrations": 83
+    "x": "Madel Beardsdale",
+    "y": 83
   }, {
     "id": 41,
-    "name": "Killian Picot",
-    "registrations": 91
+    "x": "Killian Picot",
+    "y": 91
   }, {
     "id": 42,
-    "name": "Brnaba Lympenie",
-    "registrations": 2
+    "x": "Brnaba Lympenie",
+    "y": 2
   }, {
     "id": 43,
-    "name": "Lea Fice",
-    "registrations": 98
+    "x": "Lea Fice",
+    "y": 98
   }, {
     "id": 44,
-    "name": "Wren Deam",
-    "registrations": 65
+    "x": "Wren Deam",
+    "y": 65
   }, {
     "id": 45,
-    "name": "Laurene Lux",
-    "registrations": 81
+    "x": "Laurene Lux",
+    "y": 81
   }, {
     "id": 46,
-    "name": "Garrek Rutter",
-    "registrations": 77
+    "x": "Garrek Rutter",
+    "y": 77
   }, {
     "id": 47,
-    "name": "Lisa Launchbury",
-    "registrations": 37
+    "x": "Lisa Launchbury",
+    "y": 37
   }, {
     "id": 48,
-    "name": "Van Stoneman",
-    "registrations": 16
+    "x": "Van Stoneman",
+    "y": 16
   }, {
     "id": 49,
-    "name": "Rossy Ivison",
-    "registrations": 74
+    "x": "Rossy Ivison",
+    "y": 74
   }, {
     "id": 50,
-    "name": "Korie Dawby",
-    "registrations": 26
+    "x": "Korie Dawby",
+    "y": 26
   }, {
     "id": 51,
-    "name": "Mureil Berrygun",
-    "registrations": 13
+    "x": "Mureil Berrygun",
+    "y": 13
   }, {
     "id": 52,
-    "name": "Dyann Hulls",
-    "registrations": 99
+    "x": "Dyann Hulls",
+    "y": 99
   }, {
     "id": 53,
-    "name": "Thor Scotter",
-    "registrations": 9
+    "x": "Thor Scotter",
+    "y": 9
   }, {
     "id": 54,
-    "name": "Jonah Shackleton",
-    "registrations": 29
+    "x": "Jonah Shackleton",
+    "y": 29
   }, {
     "id": 55,
-    "name": "Laverne McCloch",
-    "registrations": 70
+    "x": "Laverne McCloch",
+    "y": 70
   }, {
     "id": 56,
-    "name": "Leif Brookbank",
-    "registrations": 85
+    "x": "Leif Brookbank",
+    "y": 85
   }, {
     "id": 57,
-    "name": "Cal Brittle",
-    "registrations": 77
+    "x": "Cal Brittle",
+    "y": 77
   }, {
     "id": 58,
-    "name": "Flore Massimo",
-    "registrations": 74
+    "x": "Flore Massimo",
+    "y": 74
   }, {
     "id": 59,
-    "name": "Norbert Gaskill",
-    "registrations": 87
+    "x": "Norbert Gaskill",
+    "y": 87
   }, {
     "id": 60,
-    "name": "Allister Harkin",
-    "registrations": 56
+    "x": "Allister Harkin",
+    "y": 56
   }, {
     "id": 61,
-    "name": "Lois Alred",
-    "registrations": 42
+    "x": "Lois Alred",
+    "y": 42
   }, {
     "id": 62,
-    "name": "Lucia Spadeck",
-    "registrations": 97
+    "x": "Lucia Spadeck",
+    "y": 97
   }, {
     "id": 63,
-    "name": "Megen Waleworke",
-    "registrations": 29
+    "x": "Megen Waleworke",
+    "y": 29
   }, {
     "id": 64,
-    "name": "Jay Hitschke",
-    "registrations": 56
+    "x": "Jay Hitschke",
+    "y": 56
   }, {
     "id": 65,
-    "name": "Gregorio Hance",
-    "registrations": 77
+    "x": "Gregorio Hance",
+    "y": 77
   }, {
     "id": 66,
-    "name": "Caren Beaten",
-    "registrations": 27
+    "x": "Caren Beaten",
+    "y": 27
   }, {
     "id": 67,
-    "name": "Bel Birwhistle",
-    "registrations": 46
+    "x": "Bel Birwhistle",
+    "y": 46
   }, {
     "id": 68,
-    "name": "Nicolas Elfe",
-    "registrations": 78
+    "x": "Nicolas Elfe",
+    "y": 78
   }, {
     "id": 69,
-    "name": "Roseann Gatlin",
-    "registrations": 87
+    "x": "Roseann Gatlin",
+    "y": 87
   }, {
     "id": 70,
-    "name": "Paco Brinson",
-    "registrations": 31
+    "x": "Paco Brinson",
+    "y": 31
   }, {
     "id": 71,
-    "name": "Emmey Aveling",
-    "registrations": 1
+    "x": "Emmey Aveling",
+    "y": 1
   }, {
     "id": 72,
-    "name": "Jo Brockherst",
-    "registrations": 84
+    "x": "Jo Brockherst",
+    "y": 84
   }, {
     "id": 73,
-    "name": "Joleen Janks",
-    "registrations": 40
+    "x": "Joleen Janks",
+    "y": 40
   }, {
     "id": 74,
-    "name": "Alica Revelle",
-    "registrations": 83
+    "x": "Alica Revelle",
+    "y": 83
   }, {
     "id": 75,
-    "name": "Shea Fitzroy",
-    "registrations": 57
+    "x": "Shea Fitzroy",
+    "y": 57
   }, {
     "id": 76,
-    "name": "Sibel Wethered",
-    "registrations": 21
+    "x": "Sibel Wethered",
+    "y": 21
   }, {
     "id": 77,
-    "name": "Mallory Schober",
-    "registrations": 37
+    "x": "Mallory Schober",
+    "y": 37
   }, {
     "id": 78,
-    "name": "Quillan De Luna",
-    "registrations": 97
+    "x": "Quillan De Luna",
+    "y": 97
   }, {
     "id": 79,
-    "name": "Kermie Punton",
-    "registrations": 29
+    "x": "Kermie Punton",
+    "y": 29
   }, {
     "id": 80,
-    "name": "Nahum Shelly",
-    "registrations": 14
+    "x": "Nahum Shelly",
+    "y": 14
   }, {
     "id": 81,
-    "name": "Rourke Muffin",
-    "registrations": 62
+    "x": "Rourke Muffin",
+    "y": 62
   }, {
     "id": 82,
-    "name": "Ted Potte",
-    "registrations": 61
+    "x": "Ted Potte",
+    "y": 61
   }, {
     "id": 83,
-    "name": "Kingsly Enrietto",
-    "registrations": 75
+    "x": "Kingsly Enrietto",
+    "y": 75
   }, {
     "id": 84,
-    "name": "Svend Digg",
-    "registrations": 63
+    "x": "Svend Digg",
+    "y": 63
   }, {
     "id": 85,
-    "name": "Osborn Potticary",
-    "registrations": 20
+    "x": "Osborn Potticary",
+    "y": 20
   }, {
     "id": 86,
-    "name": "Tyson Malby",
-    "registrations": 77
+    "x": "Tyson Malby",
+    "y": 77
   }, {
     "id": 87,
-    "name": "Tamiko Franchioni",
-    "registrations": 45
+    "x": "Tamiko Franchioni",
+    "y": 45
   }, {
     "id": 88,
-    "name": "Arlyne Neaverson",
-    "registrations": 5
+    "x": "Arlyne Neaverson",
+    "y": 5
   }, {
     "id": 89,
-    "name": "Bambi Mawford",
-    "registrations": 39
+    "x": "Bambi Mawford",
+    "y": 39
   }, {
     "id": 90,
-    "name": "Glori Southerns",
-    "registrations": 86
+    "x": "Glori Southerns",
+    "y": 86
   }, {
     "id": 91,
-    "name": "Kaia Stovold",
-    "registrations": 25
+    "x": "Kaia Stovold",
+    "y": 25
   }, {
     "id": 92,
-    "name": "Ted Oglesbee",
-    "registrations": 60
+    "x": "Ted Oglesbee",
+    "y": 60
   }, {
     "id": 93,
-    "name": "Tonie Semarke",
-    "registrations": 5
+    "x": "Tonie Semarke",
+    "y": 5
   }, {
     "id": 94,
-    "name": "Salomone Crennan",
-    "registrations": 76
+    "x": "Salomone Crennan",
+    "y": 76
   }, {
     "id": 95,
-    "name": "Erinna Brisset",
-    "registrations": 20
+    "x": "Erinna Brisset",
+    "y": 20
   }, {
     "id": 96,
-    "name": "Kip Steinham",
-    "registrations": 39
+    "x": "Kip Steinham",
+    "y": 39
   }, {
     "id": 97,
-    "name": "Galven Lobell",
-    "registrations": 9
+    "x": "Galven Lobell",
+    "y": 9
   }, {
     "id": 98,
-    "name": "Gipsy Smithies",
-    "registrations": 14
+    "x": "Gipsy Smithies",
+    "y": 14
   }, {
     "id": 99,
-    "name": "Ches Vasyutin",
-    "registrations": 67
+    "x": "Ches Vasyutin",
+    "y": 67
   }, {
     "id": 100,
-    "name": "Ricky Clewlowe",
-    "registrations": 70
+    "x": "Ricky Clewlowe",
+    "y": 70
   }];
