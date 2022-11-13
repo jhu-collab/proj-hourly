@@ -2,7 +2,6 @@ import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
-import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
