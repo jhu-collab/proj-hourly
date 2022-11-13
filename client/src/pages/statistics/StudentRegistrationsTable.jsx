@@ -1,6 +1,6 @@
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
-import { sampleStudentRegistration } from "./sample-data/student-registrations";
+import { getStudentRegFormattedData } from "./helper";
 
 const columns = [
   {
@@ -18,10 +18,10 @@ const columns = [
   },
 ];
 
-function StudentRegistrationsTable() {
+function StudentRegistrationsTable({ data }) {
   return (
     <DataGrid
-      rows={sampleStudentRegistration}
+      rows={getStudentRegFormattedData(data)}
       columns={columns}
       density="compact"
       disableSelectionOnClick

@@ -7,9 +7,16 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useState } from "react";
 import StudentRegistrationsTable from "./StudentRegistrationsTable";
+import useQueryStudentRegCounts from "../../hooks/useQueryStudentRegCounts";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 function StudentRegistrations() {
   const [studentRegType, setStudentRegType] = useState("graph");
+
+  const { isLoading, error, data } = useQueryStudentRegCounts();
+
+  console.log(data);
 
   const sxToggleButton = {
     color: "white",
@@ -60,13 +67,24 @@ function StudentRegistrations() {
         </Grid>
       </Grid>
       <MainCard content={false} sx={{ mt: 1.5 }}>
-        <Box sx={{ height: 375, width: "100%", paddingY: 1 }}>
-          {studentRegType == "graph" ? (
-            <StudentRegistrationsChart />
-          ) : (
-            <StudentRegistrationsTable />
-          )}
-        </Box>
+        {isLoading ? (
+          <Alert severity="warning">
+            <AlertTitle>Loading data ...</AlertTitle>
+          </Alert>
+        ) : Boolean(error) ? (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            {"An error has occurred: " + error.message}
+          </Alert>
+        ) : (
+          <Box sx={{ height: 375, width: "100%", paddingY: 1 }}>
+            {studentRegType == "graph" ? (
+              <StudentRegistrationsChart data={data?.countsAndAccount || []} />
+            ) : (
+              <StudentRegistrationsTable data={data?.countsAndAccount || []} />
+            )}
+          </Box>
+        )}
       </MainCard>
     </>
   );

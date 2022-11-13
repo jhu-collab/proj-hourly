@@ -102,7 +102,7 @@ function RegisterForm() {
 
   const { isLoading: isLoadingTopics, data: dataTopics } = useQueryTopics();
 
-  const topicOptions = getTopicOptions(dataTopics);
+  const topicOptions = getTopicOptions(dataTopics || []);
 
   // TODO: Time slots should be altered when registration type changes
   // useEffect(() => {

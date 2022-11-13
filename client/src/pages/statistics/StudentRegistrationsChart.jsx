@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
-import { sampleStudentRegistration } from "./sample-data/student-registrations";
+import { getStudentRegFormattedData } from "./helper";
 
 // chart options
 const barChartOptions = {
@@ -100,13 +100,13 @@ const barChartOptions = {
   ],
 };
 
-const StudentRegistrationsChart = () => {
+const StudentRegistrationsChart = ({ data }) => {
   const theme = useTheme();
 
   const [series] = useState([
     {
       name: "Number of registrations",
-      data: sampleStudentRegistration,
+      data: getStudentRegFormattedData(data),
     },
   ]);
 
