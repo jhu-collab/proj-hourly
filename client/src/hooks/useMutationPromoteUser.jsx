@@ -27,7 +27,6 @@ function useMutationPromoteUser(promoteId, role) {
   const mutation = useMutation(promoteStudent, {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
-      toast.success(`Successfully promoted Student`);
     },
     onError: (err) => {
       errorToast(err);
