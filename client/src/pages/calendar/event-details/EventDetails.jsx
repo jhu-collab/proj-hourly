@@ -12,6 +12,7 @@ function EventDetails() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
+  // TODO: need to be the time of the registration type!
   const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const date = start.toDateString();
