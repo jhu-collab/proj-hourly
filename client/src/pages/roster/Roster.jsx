@@ -37,6 +37,7 @@ const Roster = () => {
       </Alert>
     );
   }
+  
   return (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
