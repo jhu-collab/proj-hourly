@@ -11,7 +11,7 @@ const icons = {
   SafetyCertificateOutlined,
   InfoCircleOutlined,
   BulbOutlined,
-  BarChartOutlined
+  BarChartOutlined,
 };
 
 export const course = (currentCourse) => {

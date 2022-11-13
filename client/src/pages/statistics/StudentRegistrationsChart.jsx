@@ -42,12 +42,18 @@ const barChartOptions = {
     {
       breakpoint: 600,
       options: {
-        chart: {
-            height: 600,
-        },
         plotOptions: {
           bar: {
             horizontal: true,
+          },
+        },
+        yaxis: {
+          show: false,
+        },
+        xaxis: {
+          show: true,
+          labels: {
+            show: true,
           },
         },
         grid: {
@@ -83,7 +89,6 @@ const barChartOptions = {
   yaxis: {
     show: true,
   },
-
 };
 
 const StudentRegistrationsChart = () => {
@@ -94,7 +99,7 @@ const StudentRegistrationsChart = () => {
 
   const [series] = useState([
     {
-        name: "Number of registrations",
+      name: "Number of registrations",
       data: sampleStudentRegistration,
     },
   ]);
@@ -104,7 +109,12 @@ const StudentRegistrationsChart = () => {
   useEffect(() => {
     setOptions((prevState) => ({
       ...prevState,
-      colors: [theme.palette.primary.main, theme.palette.secondary.main, theme.palette.tertiary.main, theme.palette.error.main],
+      colors: [
+        theme.palette.primary.main,
+        theme.palette.secondary.main,
+        theme.palette.tertiary.main,
+        theme.palette.error.main,
+      ],
       xaxis: {
         labels: {
           show: false,
@@ -126,7 +136,7 @@ const StudentRegistrationsChart = () => {
         followCursor: true,
         fillSeriesColor: true,
         onDatasetHover: {
-            highlightDataSeries: true,
+          highlightDataSeries: true,
         },
       },
     }));
