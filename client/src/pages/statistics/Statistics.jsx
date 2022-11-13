@@ -4,6 +4,7 @@ import StudentRegistrationsChart from "./StudentRegistrationsChart";
 import Grid from "@mui/material/Grid";
 import MainCard from "../../components/MainCard";
 import { Button, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import AnalyticEcommerce from "../../components/AnalyticEcommerce";
 
 import { useState } from "react";
 import StudentRegistrationsTable from "./StudentRegistrationsTable";
@@ -42,12 +43,42 @@ function Statistics() {
       <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h4">Statistics Dashboard</Typography>
       </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <AnalyticEcommerce
+          title="Total Number of Registrations This Week"
+          count="20"
+          percentage={59.3}
+          color="tertiary"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <AnalyticEcommerce
+          title="Total Number of Registrations This Month"
+          count="300"
+          percentage={27.4}
+          isLoss
+          color="error"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <AnalyticEcommerce
+          title="Most Challenging Topic This Week"
+          count="Recursion"
+        />
+      </Grid>
 
-      {/* <Grid
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <AnalyticEcommerce
+          title="Student with Most Registrations This Month"
+          count="Tony Stark"
+        />
+      </Grid>
+
+      <Grid
         item
         md={8}
         sx={{ display: { sm: "none", md: "block", lg: "none" } }}
-      /> */}
+      />
 
       {/* row 2 */}
       <Grid item xs={12} md={7} lg={8}>
