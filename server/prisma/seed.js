@@ -105,6 +105,21 @@ const generateFakeData = async () => {
     });
   });
   const cal = ical({ name: "Avengers" });
+  const ironMan = await prisma.Account.findUnique({
+    where: {
+      userName: "iron man",
+    },
+  });
+  const thor = await prisma.Account.findUnique({
+    where: {
+      userName: "thor",
+    },
+  });
+  const cap = await prisma.Account.findUnique({
+    where: {
+      userName: "captain america",
+    },
+  });
   const course = await prisma.Course.create({
     data: {
       title: "Avengers",
@@ -114,7 +129,7 @@ const generateFakeData = async () => {
       code: "AVENGE",
       instructors: {
         connect: {
-          id: defaultUsers[0].id,
+          id: ironMan.id,
         },
       },
       iCalJson: cal.toJSON(),
@@ -122,7 +137,7 @@ const generateFakeData = async () => {
   });
   await prisma.account.update({
     where: {
-      id: defaultUsers[1].id,
+      id: cap.id,
     },
     data: {
       studentCourses: {
@@ -134,7 +149,7 @@ const generateFakeData = async () => {
   });
   await prisma.account.update({
     where: {
-      id: defaultUsers[2].id,
+      id: thor.id,
     },
     data: {
       staffCourses: {

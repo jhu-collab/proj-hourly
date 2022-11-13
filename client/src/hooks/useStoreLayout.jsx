@@ -26,10 +26,10 @@ export const useStoreLayout = create(
         set((state) => ({
           eventAnchorEl: value || null,
         })),
-      timeTab: 0,
-      setTimeTab: (value) =>
+      registrationTab: 0,
+      setRegistrationTab: (value) =>
         set(() => ({
-          timeTab: value || 0,
+          registrationTab: value || 0,
         })),
       mobileCalMenu: false,
       setMobileCalMenu: (value) =>

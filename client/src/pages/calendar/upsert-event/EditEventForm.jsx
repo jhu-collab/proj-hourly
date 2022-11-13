@@ -11,6 +11,9 @@ import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 
 const BUTTONS = [
   {
@@ -50,6 +53,20 @@ const BUTTONS = [
   },
 ];
 
+// TODO: Need a route that retrieves registration types.
+const registrationTypes = [
+  {
+    id: 0,
+    label: "Regular",
+    value: 0,
+  },
+  {
+    id: 1,
+    label: "Debugging",
+    value: 1,
+  },
+];
+
 /**
  * Component that represents the form that is used to edit an event.
  * @returns A component representing the Edit Event form.
@@ -81,6 +98,7 @@ function EditEventForm() {
         : "",
       location: location || "",
       timeInterval: timeInterval || 10,
+      registrationTypes: [0],
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -169,6 +187,25 @@ function EditEventForm() {
             name="timeInterval"
             label="Time Limit Per Student in Minutes"
             control={control}
+          />
+          <FormInputDropdown
+            name="registrationTypes"
+            control={control}
+            label="Registration Type(s)"
+            options={registrationTypes}
+            multiple
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map((value) => {
+                  const item = registrationTypes.find(
+                    ({ value: v }) => v === value
+                  );
+                  return (
+                    <Chip key={value} color="primary" label={item.label} />
+                  );
+                })}
+              </Box>
+            )}
           />
           <Button
             type="submit"

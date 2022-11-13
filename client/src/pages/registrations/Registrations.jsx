@@ -6,6 +6,23 @@ import useQueryRegistrations from "../../hooks/useQueryRegistrations";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
+import RegistrationTypes from "./RegistrationTypes";
+
+// TODO: Need route to retrieve registration types
+const types = [
+  {
+    name: "Regular",
+    nameDisabled: true,
+    duration: 10,
+    deletionDisabled: true,
+  },
+  {
+    name: "Debugging",
+    nameDisabled: false,
+    duration: 30,
+    deletionDisabled: false,
+  },
+];
 
 function latestEventsFirst(a, b) {
   return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
@@ -15,7 +32,7 @@ function earliestEventsFirst(a, b) {
   return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
 }
 
-const filterByTime = (array, timeTab) => {
+const filterByTime = (array, registrationTab) => {
   const today = new Date();
   today.setUTCHours(today.getHours());
 
@@ -29,7 +46,7 @@ const filterByTime = (array, timeTab) => {
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
 
-    switch (timeTab) {
+    switch (registrationTab) {
       case 0:
         return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
       case 1:
@@ -50,16 +67,17 @@ const filterByTime = (array, timeTab) => {
  * @returns Registrations page
  */
 function Registrations() {
-  const timeTab = useStoreLayout((state) => state.timeTab);
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
+  const courseType = useStoreLayout((state) => state.courseType);
   const [registrations, setRegistrations] = useState([]);
 
   const { isLoading, error, data } = useQueryRegistrations();
 
   useEffect(() => {
     let result = data?.registrations || [];
-    result = filterByTime(result, timeTab);
+    result = filterByTime(result, registrationTab);
     setRegistrations(result);
-  }, [data, timeTab]);
+  }, [data, registrationTab]);
 
   return (
     <>
@@ -78,20 +96,23 @@ function Registrations() {
       {!isLoading && !error && (
         <>
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={0}
             registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={1}
             registrations={registrations.sort(earliestEventsFirst)}
           />
           <RegistrationsPanel
-            value={timeTab}
+            value={registrationTab}
             index={2}
             registrations={registrations.sort(latestEventsFirst)}
           />
+          {courseType === "staff" && (
+            <RegistrationTypes index={4} types={types} />
+          )}
         </>
       )}
     </>
