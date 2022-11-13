@@ -6,12 +6,8 @@ import Box from "@mui/material/Box";
 import { useMemo } from "react";
 import DeleteButton from "./DeleteButton";
 import PromoteUser from "./PromoteUser";
-import PromoteUserForm from "./PromoteUserForm";
-import Checkbox from '@mui/material/Checkbox';
-import ChangeRole from "./ChangeRole";
 
 function RosterTabs(props) {
-
   const isInstructor = true;
   const { rows, value, setValue, deleteUser } = props;
   function TabPanel(props) {
@@ -52,7 +48,7 @@ function RosterTabs(props) {
         type: "actions",
         flex: 1,
         getActions: (params) => [
-          <ChangeRole params={params} rows={rows} isStaff={false}/>,
+          <PromoteUser params={params} rows={rows} isStaff={false}/>,
           <DeleteButton params={params} rows={rows} isStaff={false} />,
         ],
       },
