@@ -7,7 +7,6 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import Search from "./Search";
 import Profile from "./Profile";
 import Transitions from "../../components/Transitions";
 import MoreOutlined from "@ant-design/icons/MoreOutlined";
@@ -84,7 +83,6 @@ function MobileSection() {
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
                   <Toolbar>
-                    <Search />
                     <Profile />
                   </Toolbar>
                 </AppBar>
