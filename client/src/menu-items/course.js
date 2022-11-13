@@ -3,6 +3,7 @@ import TeamOutlined from "@ant-design/icons/TeamOutlined";
 import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
+import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
 import useStoreLayout from "../hooks/useStoreLayout";
 const icons = {
   CalendarOutlined,
@@ -10,6 +11,7 @@ const icons = {
   SafetyCertificateOutlined,
   InfoCircleOutlined,
   BulbOutlined,
+  BarChartOutlined,
 };
 
 export const course = (currentCourse) => {
@@ -50,6 +52,14 @@ export const course = (currentCourse) => {
       type: "item",
       url: "/topics",
       icon: icons.BulbOutlined,
+      breadcrumbs: false,
+    });
+    children.push({
+      id: "statistics",
+      title: "statistics",
+      type: "item",
+      url: "/statistics",
+      icon: icons.BarChartOutlined,
       breadcrumbs: false,
     });
   }
