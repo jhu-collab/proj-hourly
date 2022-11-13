@@ -46,10 +46,10 @@ function Statistics() {
         sx={{ display: { sm: "none", md: "block", lg: "none" } }}
       />
       {/* row 2 */}
-      <Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={7} lg={8.25}>
         <StudentRegistrations />
       </Grid>
-      <Grid item xs={12} md={5} lg={4}>
+      <Grid item xs={12} md={5} lg={3.75}>
         <TopicRegistrations />
       </Grid>
     </Grid>

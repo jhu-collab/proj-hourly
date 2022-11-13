@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
+import { getTopicRegChartData } from "./helper";
 
 // chart options
 const polarAreaChartOptions = {
@@ -33,6 +34,19 @@ const polarAreaChartOptions = {
       fontSize: 15,
     },
   },
+  plotOptions: {
+    polarArea: {
+      rings: {
+        strokeWidth: 0,
+      },
+      spokes: {
+        strokeWidth: 0,
+      },
+    },
+  },
+  yaxis: {
+    show: false,
+  },
   tooltip: {
     theme: "light",
     followCursor: true,
@@ -43,24 +57,15 @@ const polarAreaChartOptions = {
   },
 };
 
-const TopicRegistrationsChart = () => {
+const TopicRegistrationsChart = ({ data }) => {
   const theme = useTheme();
 
-  const [series] = useState([14, 23, 21, 17, 15, 10, 12, 17, 21]);
+  const [formattedData] = useState(getTopicRegChartData(data));
+  const [series] = useState(formattedData.topicData);
 
   const [options] = useState({
     ...polarAreaChartOptions,
-    labels: [
-      "Sorting",
-      "Recursion",
-      "Loops",
-      "Conditionals",
-      "Arrays",
-      "Hash Tables",
-      "Linked List",
-      "Binary Search",
-      "Linear Search",
-    ],
+    labels: formattedData.topicLabels,
     colors: [
       theme.palette.primary.main,
       theme.palette.secondary.main,

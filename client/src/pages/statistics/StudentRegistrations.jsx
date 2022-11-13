@@ -16,8 +16,6 @@ function StudentRegistrations() {
 
   const { isLoading, error, data } = useQueryStudentRegCounts();
 
-  console.log(data);
-
   const sxToggleButton = {
     color: "white",
     border: 0,

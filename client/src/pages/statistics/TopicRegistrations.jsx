@@ -7,9 +7,15 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useState } from "react";
 import TopicRegistrationsChart from "./TopicRegistrationsChart";
 import TopicRegistrationsTable from "./TopicRegistrationsTable";
+import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 function TopicRegistrations() {
   const [topicRegType, setTopicRegType] = useState("graph");
+
+  const { isLoading, error, data } = useQueryTopicCounts();
+  console.log(data);
 
   const sxToggleButton = {
     color: "white",
@@ -58,13 +64,24 @@ function TopicRegistrations() {
         </Grid>
       </Grid>
       <MainCard sx={{ mt: 1.5 }} content={false}>
-        <Box sx={{ height: 375, width: "100%", pt: 2 }}>
-          {topicRegType == "graph" ? (
-            <TopicRegistrationsChart />
-          ) : (
-            <TopicRegistrationsTable />
-          )}
-        </Box>
+        {isLoading ? (
+          <Alert severity="warning">
+            <AlertTitle>Loading data ...</AlertTitle>
+          </Alert>
+        ) : Boolean(error) ? (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            {"An error has occurred: " + error.message}
+          </Alert>
+        ) : (
+          <Box sx={{ height: 375, width: "100%", pt: 2 }}>
+            {topicRegType == "graph" ? (
+              <TopicRegistrationsChart data={data?.counts || []} />
+            ) : (
+              <TopicRegistrationsTable data={data?.counts || []} />
+            )}
+          </Box>
+        )}
       </MainCard>
     </>
   );
