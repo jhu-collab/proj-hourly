@@ -24,12 +24,10 @@ const barChartOptions = {
       shade: "dark",
       type: "vertical",
       shadeIntensity: 0.2,
-      gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
       inverseColors: false,
       opacityFrom: 1,
       opacityTo: 1,
       stops: [0, 50, 100],
-      colorStops: [],
     },
   },
   dataLabels: {
@@ -95,7 +93,6 @@ const StudentRegistrationsChart = () => {
   const theme = useTheme();
 
   const { primary, secondary } = theme.palette.text;
-  const info = theme.palette.info.light;
 
   const [series] = useState([
     {
@@ -114,21 +111,11 @@ const StudentRegistrationsChart = () => {
         theme.palette.secondary.main,
         theme.palette.tertiary.main,
         theme.palette.error.main,
+        theme.palette.warning.main,
       ],
       xaxis: {
         labels: {
           show: false,
-          style: {
-            colors: [
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-              secondary,
-            ],
-          },
         },
       },
       tooltip: {
@@ -140,8 +127,7 @@ const StudentRegistrationsChart = () => {
         },
       },
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [primary, info, secondary]);
+  }, [primary, secondary]);
 
   return (
     <>
@@ -149,7 +135,7 @@ const StudentRegistrationsChart = () => {
         options={options}
         series={series}
         type="bar"
-        height={365}
+        height="100%"
       />
     </>
   );

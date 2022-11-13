@@ -8,6 +8,7 @@ import AnalyticEcommerce from "../../components/AnalyticEcommerce";
 
 import { useState } from "react";
 import StudentRegistrationsTable from "./StudentRegistrationsTable";
+import TopicRegistrationsChart from "./TopicRegistrationsChart";
 
 function Statistics() {
   const [studentRegType, setStudentRegType] = useState("graph");
@@ -112,6 +113,25 @@ function Statistics() {
             ) : (
               <StudentRegistrationsTable />
             )}
+          </Box>
+        </MainCard>
+      </Grid>
+      <Grid item xs={12} md={5} lg={4}>
+        <Grid container alignItems="center" justifyContent="space-between">
+          <Grid item>
+            <Typography variant="h5">
+              Number of Registrations / Topic
+            </Typography>
+          </Grid>
+          <Grid item />
+        </Grid>
+        <MainCard sx={{ mt: 2 }} content={false}>
+          <Box sx={{ height: { sm: 375 }, width: "100%", pt: 2 }}>
+            {/* {studentRegType == "graph" ? ( */}
+            <TopicRegistrationsChart />
+            {/* ) : (
+              <StudentRegistrationsTable />
+            )} */}
           </Box>
         </MainCard>
       </Grid>
