@@ -56,6 +56,7 @@ function RosterTabs(props) {
         type: "actions",
         flex: 1,
         getActions: (params) => [
+          <PromoteUser params={params} rows={rows} isStaff={true} />,
           <DeleteButton params={params} rows={rows} isStaff={true} />,
         ],
       },

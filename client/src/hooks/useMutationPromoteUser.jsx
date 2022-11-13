@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import { BASE_URL } from "../services/common";
@@ -26,6 +27,7 @@ function useMutationPromoteUser(promoteId, role) {
   const mutation = useMutation(promoteStudent, {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
+      toast.success("Successfully promoted the user!");
     },
     onError: (err) => {
       errorToast(err);

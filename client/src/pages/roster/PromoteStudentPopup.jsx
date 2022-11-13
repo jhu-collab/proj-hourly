@@ -22,10 +22,8 @@ function PromoteStudentPopup(props) {
   const { mutate } = useMutationPromoteUser(params.id, role);
 
   const onSubmit = () => {
-   
     mutate();
     handleClose();
-    toast.success("Successfully promoted the user!");
   };
 return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth >
@@ -57,7 +55,6 @@ return (
             if (onSubmit) {
               onSubmit();
             }
-            handleClose();
           }}
         >
           Promote
