@@ -31,6 +31,11 @@ export const useStoreLayout = create(
         set(() => ({
           registrationTab: value || 0,
         })),
+      rosterTab: 0,
+      setRosterTab: (value) =>
+        set(() => ({
+          rosterTab: value || 0,
+        })),
       mobileCalMenu: false,
       setMobileCalMenu: (value) =>
         set((state) => ({
