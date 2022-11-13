@@ -16,14 +16,14 @@ function DemoteUser(props) {
     return !isMemberInstructor;
   };
 
-  const { mutate } = useMutationDemoteUser(params.id, "Student");
-
+  const { mutate } = useMutationDemoteUser(params, "Student");
+  console.log(params);
   return (
     <>
       <GridActionsCellItem
         icon={<UserSwitchOutlined />}
         onClick={() => {
-            confirmDialog("Do you want to change user role to Student", () => {
+            confirmDialog(`Do you want to change ${params.row.firstName} ${params.row.lastName} to Student`, () => {
                 mutate();
               });
         }}

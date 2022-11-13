@@ -7,8 +7,9 @@ import { toast } from "react-toastify";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 
-function useMutationDemoteUser(demoteId, role) {
+function useMutationDemoteUser(params, role) {
   const { token } = useStoreToken();
+  const demoteId = params.id;
   const queryClient = useQueryClient();
 
   const course = useStoreCourse((state) => state.course);
@@ -28,7 +29,7 @@ function useMutationDemoteUser(demoteId, role) {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
       toast.success(
-        `Successfully changed user role to Student`
+        `Successfully changed ${params.row.firstName} ${params.row.lastName} to Student`
       );
     },
     onError: (err) => {
