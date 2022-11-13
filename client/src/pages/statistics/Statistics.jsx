@@ -4,6 +4,10 @@ import AnalyticEcommerce from "../../components/AnalyticEcommerce";
 import StudentRegistrations from "./StudentRegistrations";
 import TopicRegistrations from "./TopicRegistrations";
 
+/**
+ * Component that represents the "Statistics" page.
+ * @returns A component representing the "Statistics" page.
+ */
 function Statistics() {
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>

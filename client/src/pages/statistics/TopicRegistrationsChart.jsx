@@ -57,6 +57,12 @@ const polarAreaChartOptions = {
   },
 };
 
+/**
+ * A polar area chart that illustrates the number of registrations that
+ * were made for each topic in a course.
+ * @param {*} data topic-registration data
+ * @returns Topic-registration chart
+ */
 const TopicRegistrationsChart = ({ data }) => {
   const theme = useTheme();
 

@@ -11,6 +11,11 @@ import useQueryTopicCounts from "../../hooks/useQueryTopicCounts";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 
+/**
+ * Wrapper component that displays data regarding the number of registrations
+ * per topic.
+ * @returns Topic Registrations wrapper component.
+ */
 function TopicRegistrations() {
   const [topicRegType, setTopicRegType] = useState("graph");
 

@@ -9,7 +9,7 @@ import CoursesSpeedDial from "./CoursesSpeedDial";
 import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
- * Component that represents the "Your Courses" page.
+ * Component that represents the "My Courses" page.
  * @returns A component representing the "Your Courses" page.
  */
 function MyCourses() {

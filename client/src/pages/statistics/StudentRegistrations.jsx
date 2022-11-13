@@ -11,6 +11,11 @@ import useQueryStudentRegCounts from "../../hooks/useQueryStudentRegCounts";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 
+/**
+ * Wrapper component that displays data regarding the number of registrations
+ * per student.
+ * @returns Student Registrations wrapper component.
+ */
 function StudentRegistrations() {
   const [studentRegType, setStudentRegType] = useState("graph");
 

@@ -100,6 +100,12 @@ const barChartOptions = {
   ],
 };
 
+/**
+ * A bar chart that illustrates the number of registrations that
+ * were made by each student in a course.
+ * @param {*} data student-registration data
+ * @returns Student-registration chart
+ */
 const StudentRegistrationsChart = ({ data }) => {
   const theme = useTheme();
 

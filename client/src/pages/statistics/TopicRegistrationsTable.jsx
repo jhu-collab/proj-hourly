@@ -17,6 +17,12 @@ const columns = [
   },
 ];
 
+/**
+ * A data grid that illustrates the number of registrations that
+ * were made for each topic in a course.
+ * @param {*} data topic-registration data
+ * @returns Topic-registration table
+ */
 function TopicRegistrationsTable({ data }) {
   return (
     <DataGrid
