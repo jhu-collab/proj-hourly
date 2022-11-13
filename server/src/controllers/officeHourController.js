@@ -45,7 +45,6 @@ const createOfficeHour = async (
   endTime,
   startDate,
   endDate,
-  timePerStudent,
   courseId,
   location,
   isRecurring,
@@ -57,7 +56,6 @@ const createOfficeHour = async (
       endTime,
       startDate,
       endDate,
-      timePerStudent,
       course: {
         connect: {
           id: courseId,
@@ -97,7 +95,6 @@ export const create = async (req, res) => {
     endDate,
     location,
     courseId,
-    timeInterval,
     hosts,
     daysOfWeek,
   } = req.body;
@@ -108,7 +105,6 @@ export const create = async (req, res) => {
     endTimeObject,
     new Date(startDate),
     new Date(endDate),
-    timeInterval,
     courseId,
     location,
     recurringEvent,
@@ -301,20 +297,37 @@ export const cancelAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
+/**
+ * This function computes the remaining time slots for a specific
+ * office hour and returns them. This will compute time slots for each
+ * possible time option picked
+ * 5 minute intervals were a design decision to limit the number of options
+ * while allowing for every multiple of 5 mins to be a time slot length
+ * @param {*} req request to the api
+ * @param {*} res response from the api
+ * @returns res
+ */
 export const getTimeSlotsRemaining = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
   const date = new Date(req.params.date);
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  //gets the office hour
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
     },
   });
+  //gets the office hour session lengths for the course
+  const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: officeHour.courseId,
+    },
+  });
   let start = officeHour.startTime;
   const end = officeHour.endTime;
-
+  //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -322,23 +335,72 @@ export const getTimeSlotsRemaining = async (req, res) => {
       isCancelled: false,
     },
   });
-  const registrationTimes = registrations.map((registration) =>
-    registration.startTime.getTime()
-  );
-  let timeSlots = [];
+  //maps a start time to its registration
+  const registrationTimes = new Map();
+  registrations.forEach((registration) => {
+    registrationTimes.set(registration.startTime.getTime(), registration);
+  });
+  //number of 5 minute intervals in the office hour
+  let n =
+    (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
+    (5 * 60000);
+  //an array of 5 minute intervals, marking if the interval is occupied
+  let timeSlots = Array(n).fill(true);
+  let count = 0;
+  // loops from start to end and checks if a given interval is taken
   while (start < end) {
-    if (!registrationTimes.includes(start.getTime())) {
-      const startTime = new Date(start);
-      const endTime = new Date(start);
-      endTime.setMinutes(endTime.getMinutes() + officeHour.timePerStudent);
-      timeSlots.push({
-        startTime,
-        endTime,
-      });
+    if (registrationTimes.has(start.getTime())) {
+      let registration = registrationTimes.get(start.getTime());
+      const regEndTime = registration.endTime;
+      while (start < regEndTime) {
+        timeSlots[count++] = false;
+        start.setMinutes(start.getMinutes() + 5);
+      }
+    } else {
+      start.setMinutes(start.getMinutes() + 5);
+      count++;
     }
-    start.setMinutes(start.getMinutes() + officeHour.timePerStudent);
   }
-  return res.status(StatusCodes.ACCEPTED).json({ timeSlots });
+  let timeSlotsPerType = [];
+  let sessionStartTime;
+  // loops over each time length
+  timeLengths.forEach((timeLength) => {
+    sessionStartTime = new Date(officeHour.startTime);
+    let times = [];
+    const length = timeLength.duration;
+    // loops over the number of 5 minute time intervals
+    // that could be used as the start of the session
+    for (let i = 0; i <= n - length / 5; i++) {
+      let available = true;
+      // loops over all 5 minute intervals from the
+      // start time till the length has been reached
+      // checking if all intervals are available
+      for (let j = 0; j < length / 5; j++) {
+        if (!timeSlots[i + j]) {
+          available = false;
+          break;
+        }
+      }
+      // if available, adds to times array
+      if (available) {
+        const startTime = new Date(sessionStartTime);
+        const endTime = new Date(sessionStartTime);
+        endTime.setMinutes(endTime.getMinutes() + length);
+        times.push({
+          startTime,
+          endTime,
+        });
+      }
+      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + 5);
+    }
+    // adds times array and type to the timeSlotsPerType array
+    timeSlotsPerType.push({
+      type: timeLength.title,
+      duration: timeLength.duration,
+      times,
+    });
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ timeSlotsPerType });
 };
 
 export const rescheduleSingleOfficeHour = async (req, res) => {
@@ -347,7 +409,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const { startTime, endTime, timePerStudent, location } = req.body;
+  const { startTime, endTime, location } = req.body;
   const dateObj = createJustDateObject(new Date(date));
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
@@ -390,10 +452,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       isCancelledStaff: true,
     },
   });
-  const timeInterval =
-    timePerStudent === null || timePerStudent === undefined
-      ? officehour.timePerStudent
-      : timePerStudent;
   const newLocation =
     location === null || location === undefined
       ? officehour.location
@@ -406,7 +464,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       endTime: endTimeObject,
       startDate: new Date(date),
       endDate: new Date(date),
-      timePerStudent: timeInterval,
       course: {
         connect: {
           id: officehour.course.id,
@@ -452,7 +509,6 @@ export const editAll = async (req, res) => {
     endTime,
     location,
     daysOfWeek,
-    timePerStudent,
     endDateOldOfficeHour,
   } = req.body;
   const startTimeObject = stringToTimeObj(startTime);
@@ -473,7 +529,6 @@ export const editAll = async (req, res) => {
     endTimeObject,
     new Date(startDate),
     new Date(endDate),
-    timePerStudent === undefined ? update.timePerStudent : timePerStudent,
     update.courseId,
     location === undefined ? update.location : location,
     true,

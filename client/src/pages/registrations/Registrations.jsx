@@ -3,6 +3,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import useQueryRegistrations from "../../hooks/useQueryRegistrations";
+import useQueryRegistrationTypes from "../../hooks/useQueryRegistrationTypes";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
@@ -72,6 +73,11 @@ function Registrations() {
   const [registrations, setRegistrations] = useState([]);
 
   const { isLoading, error, data } = useQueryRegistrations();
+  const {
+    isLoading: isLoadingTypes,
+    error: errorTypes,
+    data: dataTypes,
+  } = useQueryRegistrationTypes();
 
   useEffect(() => {
     let result = data?.registrations || [];
@@ -82,38 +88,34 @@ function Registrations() {
   return (
     <>
       <RegistrationsBar />
-      {isLoading && (
-        <Alert severity="warning" sx={{ mt: 2 }}>
-          <AlertTitle>Loading registrations ...</AlertTitle>
-        </Alert>
-      )}
-      {error && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          <AlertTitle>Error</AlertTitle>
-          {"An error has occurred: " + error.message}
-        </Alert>
-      )}
-      {!isLoading && !error && (
-        <>
-          <RegistrationsPanel
-            value={registrationTab}
-            index={0}
-            registrations={registrations.sort(earliestEventsFirst)}
-          />
-          <RegistrationsPanel
-            value={registrationTab}
-            index={1}
-            registrations={registrations.sort(earliestEventsFirst)}
-          />
-          <RegistrationsPanel
-            value={registrationTab}
-            index={2}
-            registrations={registrations.sort(latestEventsFirst)}
-          />
-          {courseType === "staff" && (
-            <RegistrationTypes index={4} types={types} />
-          )}
-        </>
+      <RegistrationsPanel
+        value={registrationTab}
+        index={0}
+        registrations={registrations.sort(earliestEventsFirst)}
+        isLoading={isLoading}
+        error={error}
+      />
+      <RegistrationsPanel
+        value={registrationTab}
+        index={1}
+        registrations={registrations.sort(earliestEventsFirst)}
+        isLoading={isLoading}
+        error={error}
+      />
+      <RegistrationsPanel
+        value={registrationTab}
+        index={2}
+        registrations={registrations.sort(latestEventsFirst)}
+        isLoading={isLoading}
+        error={error}
+      />
+      {courseType === "staff" && (
+        <RegistrationTypes
+          index={4}
+          types={dataTypes?.times || []}
+          isLoading={isLoadingTypes}
+          error={errorTypes}
+        />
       )}
     </>
   );

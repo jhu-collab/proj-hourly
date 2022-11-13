@@ -14,9 +14,6 @@ import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeH
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
-import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 
 const DAYS = [
   "Sunday",
@@ -93,7 +90,6 @@ function CreateEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -115,6 +111,7 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       timeInterval: timeInterval || 10,
+      feedback: true,
       registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
@@ -136,7 +133,6 @@ function CreateEventForm() {
         : DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
-      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -197,28 +193,6 @@ function CreateEventForm() {
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
-          <FormInputDropdown
-            name="registrationTypes"
-            control={control}
-            label="Registration Type(s)"
-            options={registrationTypes}
-            multiple
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => {
-                  const item = registrationTypes.find(
-                    ({ value: v }) => v === value
-                  );
-                  return <Chip key={value} label={item.label} />;
-                })}
-              </Box>
-            )}
-          />
           <Button
             type="submit"
             variant="contained"
