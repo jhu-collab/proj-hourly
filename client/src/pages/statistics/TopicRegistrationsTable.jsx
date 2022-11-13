@@ -1,27 +1,26 @@
 import { DataGrid } from "@mui/x-data-grid";
-import React from "react";
-import { sampleStudentRegistration } from "./sample-data/student-registrations";
+import { sampleTopicRegistration } from "./sample-data/topic-registration";
 
 const columns = [
   {
     field: "x",
-    headerName: "Student's Name",
-    description: "Student's name",
+    headerName: "Topic",
+    description: "Topic name",
     flex: 1,
   },
 
   {
     field: "y",
     headerName: "Number of Registrations",
-    description: "Student's number of registrations",
+    description: "Number of registrations",
     flex: 1,
   },
 ];
 
-function StudentRegistrationsTable() {
+function TopicRegistrationsTable() {
   return (
     <DataGrid
-      rows={sampleStudentRegistration}
+      rows={sampleTopicRegistration}
       columns={columns}
       density="compact"
       disableSelectionOnClick
@@ -31,4 +30,4 @@ function StudentRegistrationsTable() {
   );
 }
 
-export default StudentRegistrationsTable;
+export default TopicRegistrationsTable;

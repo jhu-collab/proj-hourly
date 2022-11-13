@@ -9,9 +9,11 @@ import AnalyticEcommerce from "../../components/AnalyticEcommerce";
 import { useState } from "react";
 import StudentRegistrationsTable from "./StudentRegistrationsTable";
 import TopicRegistrationsChart from "./TopicRegistrationsChart";
+import TopicRegistrationsTable from "./TopicRegistrationsTable";
 
 function Statistics() {
   const [studentRegType, setStudentRegType] = useState("graph");
+  const [topicRegType, setTopicRegType] = useState("graph");
 
   const sxToggleButton = {
     color: "white",
@@ -30,12 +32,6 @@ function Statistics() {
         bgcolor: "secondary.main",
       },
     },
-  };
-
-  const handleChange = (event, newValue) => {
-    if (newValue != null) {
-      setStudentRegType(newValue);
-    }
   };
 
   return (
@@ -94,7 +90,11 @@ function Statistics() {
               value={studentRegType}
               exclusive
               size="small"
-              onChange={handleChange}
+              onChange={(event, newValue) => {
+                if (newValue != null) {
+                  setStudentRegType(newValue);
+                }
+              }}
               sx={{ bgcolor: "tertiary.main" }}
             >
               <ToggleButton value="table" sx={sxToggleButton}>
@@ -107,7 +107,7 @@ function Statistics() {
           </Grid>
         </Grid>
         <MainCard content={false} sx={{ mt: 1.5 }}>
-          <Box sx={{ height: { sm: 375 }, width: "100%", paddingY: 1 }}>
+          <Box sx={{ height: 375, width: "100%", paddingY: 1 }}>
             {studentRegType == "graph" ? (
               <StudentRegistrationsChart />
             ) : (
@@ -123,15 +123,34 @@ function Statistics() {
               Number of Registrations / Topic
             </Typography>
           </Grid>
-          <Grid item />
+          <Grid item>
+            <ToggleButtonGroup
+              value={topicRegType}
+              exclusive
+              size="small"
+              onChange={(event, newValue) => {
+                if (newValue != null) {
+                  setTopicRegType(newValue);
+                }
+              }}
+              sx={{ bgcolor: "tertiary.main" }}
+            >
+              <ToggleButton value="table" sx={sxToggleButton}>
+                TABLE
+              </ToggleButton>
+              <ToggleButton value="graph" sx={sxToggleButton}>
+                GRAPH
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
         </Grid>
-        <MainCard sx={{ mt: 2 }} content={false}>
-          <Box sx={{ height: { sm: 375 }, width: "100%", pt: 2 }}>
-            {/* {studentRegType == "graph" ? ( */}
-            <TopicRegistrationsChart />
-            {/* ) : (
-              <StudentRegistrationsTable />
-            )} */}
+        <MainCard sx={{ mt: 1.5 }} content={false}>
+          <Box sx={{ height: 375, width: "100%", pt: 2 }}>
+            {topicRegType == "graph" ? (
+              <TopicRegistrationsChart />
+            ) : (
+              <TopicRegistrationsTable />
+            )}
           </Box>
         </MainCard>
       </Grid>

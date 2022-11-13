@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
 
@@ -33,48 +33,42 @@ const polarAreaChartOptions = {
       fontSize: 15,
     },
   },
+  tooltip: {
+    theme: "light",
+    followCursor: true,
+    fillSeriesColor: false,
+    onDatasetHover: {
+      highlightDataSeries: true,
+    },
+  },
 };
 
 const TopicRegistrationsChart = () => {
   const theme = useTheme();
 
-  const { primary, secondary } = theme.palette.text;
-
   const [series] = useState([14, 23, 21, 17, 15, 10, 12, 17, 21]);
 
-  const [options, setOptions] = useState(polarAreaChartOptions);
-
-  useEffect(() => {
-    setOptions((prevState) => ({
-      ...prevState,
-      labels: [
-        "Sorting",
-        "Recursion",
-        "Loops",
-        "Conditionals",
-        "Arrays",
-        "Hash Tables",
-        "Linked List",
-        "Binary Search",
-        "Linear Search",
-      ],
-      colors: [
-        theme.palette.primary.main,
-        theme.palette.secondary.main,
-        theme.palette.tertiary.main,
-        theme.palette.error.main,
-        theme.palette.warning.main,
-      ],
-      tooltip: {
-        theme: "light",
-        followCursor: true,
-        fillSeriesColor: false,
-        onDatasetHover: {
-          highlightDataSeries: true,
-        },
-      },
-    }));
-  }, [primary, secondary]);
+  const [options] = useState({
+    ...polarAreaChartOptions,
+    labels: [
+      "Sorting",
+      "Recursion",
+      "Loops",
+      "Conditionals",
+      "Arrays",
+      "Hash Tables",
+      "Linked List",
+      "Binary Search",
+      "Linear Search",
+    ],
+    colors: [
+      theme.palette.primary.main,
+      theme.palette.secondary.main,
+      theme.palette.tertiary.main,
+      theme.palette.error.main,
+      theme.palette.warning.main,
+    ],
+  });
 
   return (
     <ReactApexChart

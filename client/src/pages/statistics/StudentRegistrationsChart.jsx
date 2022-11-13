@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
 import { sampleStudentRegistration } from "./sample-data/student-registrations";
@@ -36,6 +36,35 @@ const barChartOptions = {
   legend: {
     show: false,
   },
+  tooltip: {
+    theme: "light",
+    followCursor: true,
+    fillSeriesColor: true,
+    onDatasetHover: {
+      highlightDataSeries: true,
+    },
+  },
+  xaxis: {
+    type: "category",
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+    labels: {
+      show: false,
+    },
+  },
+  noData: {
+    text: "There is no student-registration data!",
+    style: {
+      fontSize: 15,
+    },
+  },
+  yaxis: {
+    show: true,
+  },
   responsive: [
     {
       breakpoint: 600,
@@ -69,30 +98,10 @@ const barChartOptions = {
       },
     },
   ],
-  xaxis: {
-    type: "category",
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  noData: {
-    text: "There is no student-registration data!",
-    style: {
-      fontSize: 15,
-    },
-  },
-  yaxis: {
-    show: true,
-  },
 };
 
 const StudentRegistrationsChart = () => {
   const theme = useTheme();
-
-  const { primary, secondary } = theme.palette.text;
 
   const [series] = useState([
     {
@@ -101,33 +110,16 @@ const StudentRegistrationsChart = () => {
     },
   ]);
 
-  const [options, setOptions] = useState(barChartOptions);
-
-  useEffect(() => {
-    setOptions((prevState) => ({
-      ...prevState,
-      colors: [
-        theme.palette.primary.main,
-        theme.palette.secondary.main,
-        theme.palette.tertiary.main,
-        theme.palette.error.main,
-        theme.palette.warning.main,
-      ],
-      xaxis: {
-        labels: {
-          show: false,
-        },
-      },
-      tooltip: {
-        theme: "light",
-        followCursor: true,
-        fillSeriesColor: true,
-        onDatasetHover: {
-          highlightDataSeries: true,
-        },
-      },
-    }));
-  }, [primary, secondary]);
+  const [options] = useState({
+    ...barChartOptions,
+    colors: [
+      theme.palette.primary.main,
+      theme.palette.secondary.main,
+      theme.palette.tertiary.main,
+      theme.palette.error.main,
+      theme.palette.warning.main,
+    ],
+  });
 
   return (
     <>
