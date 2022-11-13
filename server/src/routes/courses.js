@@ -179,15 +179,6 @@ router.get(
   controller.getAllRegistrations
 );
 
-router.get(
-  "/:courseId/:id/getRole",
-  accountValidator.isAccountValidHeader,
-  accountValidator.isAccountValidParams,
-  validator.isInCourseFromHeader,
-  validator.isCourseStaffOrInstructor,
-  controller.getRoleInCourseParams
-);
-
 router.delete(
   "/:courseId",
   accountValidator.isAccountValidHeader,
@@ -277,6 +268,15 @@ router.post(
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForDemotionTo,
   controller.demote
+);
+
+router.get(
+  "/:courseId/:id/getRole",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  validator.isInCourseFromHeader,
+  validator.isCourseStaffOrInstructor,
+  controller.getRoleInCourseParams
 );
 
 export default router;
