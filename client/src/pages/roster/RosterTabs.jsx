@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import { useMemo } from "react";
 import DeleteButton from "./DeleteButton";
 import PromoteUser from "./PromoteUser";
+import DemoteUser from "./DemoteUser";
 
 function RosterTabs(props) {
   const isInstructor = true;
@@ -56,6 +57,7 @@ function RosterTabs(props) {
         type: "actions",
         flex: 1,
         getActions: (params) => [
+          <DemoteUser params={params} rows={rows} isStaff={true} />,
           <DeleteButton params={params} rows={rows} isStaff={true} />,
         ],
       },
