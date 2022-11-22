@@ -93,24 +93,18 @@ function CreateEventForm() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
-        : "",
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
       days: [],
-      timeInterval: timeInterval || 10,
+      //timeInterval: timeInterval || 10,
       feedback: true,
       registrationTypes: [0], // TODO: create event route should be altered
     },
@@ -122,26 +116,24 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
-    console.log(
-      moment(data.startDate).format("YYYY-MM-DD") +
-        "T" +
-        `${data.startTime}:00Z`
-    );
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
     mutate({
       courseId: course.id,
       startTime: `${data.startTime}:00`,
       endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate:
-        moment(data.startDate).format("yyyy-MM-dd") +
-        "T" +
-        `${data.startTime}:00Z`,
-      endDate:
-        (recurring
-          ? moment(data.endDate).format("yyyy-MM-dd")
-          : moment(data.startDate).format("yyyy-MM-dd")) +
-        "T" +
-        `${data.endTime}:00Z`,
+      startDate: start,
+      endDate: end,
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       hosts: [id], // TOOD: For now, there will be no additional hosts

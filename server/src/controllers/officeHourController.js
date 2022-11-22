@@ -83,6 +83,7 @@ export const create = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
+  console.log("here");
   const {
     recurringEvent,
     startDate,
@@ -498,13 +499,8 @@ export const editAll = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const {
-    startDate,
-    endDate,
-    location,
-    daysOfWeek,
-    endDateOldOfficeHour,
-  } = req.body;
+  const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
+    req.body;
   const update = await prisma.officeHour.update({
     where: {
       id: officeHourId,
