@@ -9,26 +9,38 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import useMutationPromoteUser from "../../hooks/useMutationPromoteUser";
-import { toast } from "react-toastify";
-function PromoteStudentPopup(props) {
-  const {params, open, setOpen} = props;
-  const handleClose = () => {
-   setOpen(false);
-  };
+import NiceModal from "@ebay/nice-modal-react";
+
+function PromoteUserForm(props) {
+  const { params, isStaff } = props;
   const [role, setRole] = useState("");
+
+  const handleClose = () => {
+    NiceModal.hide("promote-user");
+  };
+
   const handleRoleChange = (event) => setRole(event.target.value);
 
-  
-  const { mutate } = useMutationPromoteUser(params.id, role);
+  const { mutate } = useMutationPromoteUser(params, role);
 
   const onSubmit = () => {
     mutate();
     handleClose();
   };
-return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth >
+  console.log(params);
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <DialogTitle variant="h4">
-        <Typography variant="h4" align="center">Promote Student to Staff or Student?</Typography>
+        {!isStaff && (
+          <Typography variant="h4" align="center">
+            Promote to Staff or Instructor?
+          </Typography>
+        )}
+        {isStaff && (
+          <Typography variant="h4" align="center">
+            Promote to Instructor?
+          </Typography>
+        )}
       </DialogTitle>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
         <RadioGroup
@@ -37,7 +49,9 @@ return (
           value={role}
           onChange={handleRoleChange}
         >
-          <FormControlLabel value="Staff" control={<Radio />} label="Staff" />
+          {!isStaff && (
+            <FormControlLabel value="Staff" control={<Radio />} label="Staff" />
+          )}
           <FormControlLabel
             value="Instructor"
             control={<Radio />}
@@ -45,24 +59,24 @@ return (
           />
         </RadioGroup>
         <DialogActions>
-        <Button color="primary" variant="contained" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button
-          color="secondary"
-          variant="contained"
-          onClick={() => {
-            if (onSubmit) {
-              onSubmit();
-            }
-          }}
-        >
-          Promote
-        </Button>
-      </DialogActions>
+          <Button color="primary" variant="contained" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => {
+              if (onSubmit) {
+                onSubmit();
+              }
+            }}
+          >
+            Promote
+          </Button>
+        </DialogActions>
       </Stack>
     </Dialog>
   );
 }
 
-export default PromoteStudentPopup;
+export default PromoteUserForm;

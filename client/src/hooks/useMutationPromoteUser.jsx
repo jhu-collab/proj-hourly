@@ -7,7 +7,7 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 
-function useMutationPromoteUser(promoteId, role) {
+function useMutationPromoteUser(params, role) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
@@ -15,7 +15,7 @@ function useMutationPromoteUser(promoteId, role) {
 
   const promoteStudent = async () => {
     try {
-      const data = { studentId: promoteId, role: role };
+      const data = { studentId: params.id, role: role };
       const endpoint = `${BASE_URL}/api/course/${course.id}`;
       const res = await axios.post(endpoint, data, getConfig(token));
       return res.data;
@@ -27,7 +27,9 @@ function useMutationPromoteUser(promoteId, role) {
   const mutation = useMutation(promoteStudent, {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
-      toast.success("Successfully promoted the user!");
+      toast.success(
+        `Successfully promoted ${params.row.firstName} ${params.row.lastName}!`
+      );
     },
     onError: (err) => {
       errorToast(err);
