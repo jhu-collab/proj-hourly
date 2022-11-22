@@ -4,6 +4,7 @@ import Button from "./Button";
 import CardContent from "./CardContent";
 import Checkbox from "./Checkbox";
 import Chip from "./Chip";
+import DataGrid from "./DataGrid";
 import IconButton from "./IconButton";
 import InputLabel from "./InputLabel";
 import LinearProgress from "./LinearProgress";
@@ -24,6 +25,7 @@ export default function ComponentsOverrides(theme) {
     CardContent(),
     Checkbox(theme),
     Chip(theme),
+    DataGrid(theme),
     IconButton(theme),
     InputLabel(theme),
     LinearProgress(),
