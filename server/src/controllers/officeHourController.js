@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
-import { createTimeString } from "../util/helpers.js";
+import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
@@ -326,8 +326,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
       courseId: officeHour.courseId,
     },
   });
-  let start = createJustTimeObject(officeHour.startDate);
-  const end = createJustTimeObject(officeHour.endDate);
+  let start = createJustTimeObject(new Date(officeHour.startDate));
+  const end = createJustTimeObject(new Date(officeHour.endDate));
   //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
@@ -343,7 +343,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   //number of 5 minute intervals in the office hour
   let n =
-    (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
+    computeDiff(new Date(officeHour.startDate), new Date(officeHour.endDate)) /
     (5 * 60000);
   //an array of 5 minute intervals, marking if the interval is occupied
   let timeSlots = Array(n).fill(true);
@@ -366,7 +366,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let sessionStartTime;
   // loops over each time length
   timeLengths.forEach((timeLength) => {
-    sessionStartTime = new Date(officeHour.startTime);
+    sessionStartTime = new Date(officeHour.startDate.toISOString());
     let times = [];
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
