@@ -41,7 +41,6 @@ export const generateTitle = (officeHour) => {
 export const getDateStringArray = (arr) => {
   const dates = [];
   arr.forEach((date) => dates.push(date.toISOString()));
-  console.log(dates);
   return dates;
 };
 
@@ -143,7 +142,6 @@ export const generateRecurringEventJson = (officeHour) => {
       });
     }
     let diff = indexes[(i + 1) % indexes.length] - indexes[i % indexes.length];
-    console.log(diff);
     if (diff === 0) {
       diff = 7;
     } else if (diff < 0) {
