@@ -80,11 +80,11 @@ export const calcTimeString = (time) => {
   const diffMins = Math.floor((time.getTime() % 3600000) / 60000);
   let timeStr = "";
   if (diffHours < 10) {
-    timeStr = timeStr + "0";
+    timeStr += "0";
   }
   timeStr = timeStr + diffHours + ":";
   if (diffMins < 10) {
-    timeStr = timeStr + "0";
+    timeStr += "0";
   }
   timeStr = timeStr + diffMins;
   return timeStr;
@@ -112,7 +112,7 @@ export const generateRecurringEventJson = (officeHour) => {
     // daysOfWeek: indexes,
     // startRecur: getIsoDate(officeHour.startDate),
     // endRecur: getIsoDate(officeHour.endDate),
-    duration: calcDurationString(officeHour.startTime, officeHour.endTime),
+    duration: calcDurationString(officeHour.startDate, officeHour.endDate),
     rrule: generateRRule(officeHour).toString(),
 
     // exdate: [...officeHour.isCancelledOn],
@@ -125,7 +125,7 @@ export const generateRecurringEventJson = (officeHour) => {
     },
     exdate: convertToDateWithStartTime(
       officeHour.isCancelledOn,
-      officeHour.startTime
+      officeHour.startDate
     ),
   };
 };
@@ -285,13 +285,7 @@ const generateRRule = (officeHour) => {
     }
   });
   const start = new Date(officeHour.startDate);
-  start.setUTCHours(officeHour.startTime.getUTCHours());
-  start.setUTCMinutes(officeHour.startTime.getUTCMinutes());
-  start.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   const end = new Date(officeHour.endDate);
-  end.setUTCHours(officeHour.endTime.getUTCHours());
-  end.setUTCMinutes(officeHour.endTime.getUTCMinutes());
-  end.setUTCSeconds(officeHour.endTime.getUTCSeconds());
   const rruleSet = new RRuleSet();
   rruleSet.rrule(
     new RRule({
@@ -301,6 +295,15 @@ const generateRRule = (officeHour) => {
       dtstart: start,
       until: end,
     })
+  );
+  console.log(
+    new RRule({
+      freq: RRule.WEEKLY,
+      interval: 1,
+      byweekday: dow,
+      dtstart: start,
+      until: end,
+    }).all()
   );
   // officeHour.isCancelledOn.forEach((date) => {
   //   rruleSet.exdate(date);
