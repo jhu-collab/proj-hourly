@@ -96,11 +96,15 @@ function CreateEventForm() {
       startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
+        ? DateTime.fromJSDate(start, { zone: "UTC" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
+        ? DateTime.fromJSDate(end, { zone: "UTC" }).toLocaleString(
+            DateTime.TIME_24_SIMPLE
+          )
         : "",
       location: location || "",
       days: [],
@@ -118,15 +122,15 @@ function CreateEventForm() {
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
     const startTime = data.startTime.split(":");
-    start.setHours(startTime[0]);
-    start.setMinutes(startTime[1]);
+    start.setUTCHours(startTime[0]);
+    start.setUTCMinutes(startTime[1]);
     let end = new Date(data.startDate);
     if (data.endDate !== null) {
       end = new Date(data.endDate);
     }
     const endTime = data.endTime.split(":");
-    end.setHours(endTime[0]);
-    end.setMinutes(endTime[1]);
+    end.setUTCHours(endTime[0]);
+    end.setUTCMinutes(endTime[1]);
     mutate({
       courseId: course.id,
       startTime: `${data.startTime}:00`,
