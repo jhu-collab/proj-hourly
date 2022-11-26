@@ -34,14 +34,24 @@ enum Role {
   User
 }
 
-model Flag {
+model FlagType {
   id        Int            @id @default(autoincrement())
-  student   Account[]        @relation("isFlagged")
-  staff     Account[]        @relation("Flagged")
-  resolved  Boolean        @default(false)
-  reason    String?
+  title    String?
   course    Course         @relation(fields: [courseId], references: [id])
   courseId  Int
+  flags     Flag[]         @relation("givenFlags")
+}
+
+model Flag {
+  id        Int            @id @default(autoincrement())
+  type      FlagType       @relation(name: "givenFlags", fields: [typeId], references: [id])
+  typeId    Int
+  student   Account        @relation(name: "isFlagged", fields: [studentId], references: [id])
+  studentId Int
+  staff     Account        @relation(name: "Flagged" ,fields: [staffId], references: [id])
+  staffId   Int
+  resolved  Boolean        @default(false)
+  reason    String?
 }
 
 model Course {
@@ -57,7 +67,7 @@ model Course {
   officeHours  OfficeHour[]
   topics       Topic[]
   iCalJson     Json?
-  flags        Flag[]
+  flags        FlagType[]
 }
 
 model OfficeHour {
