@@ -554,3 +554,21 @@ export const isAccountInstructorForTopic = async (req, res, next) => {
     }
   }
 };
+
+export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
+  const id = parseInt(req.params.courseId, 10);
+  const times = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  if (times.length > 1) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({
+        msg: "ERROR: cannot delete the only time offering for the course",
+      });
+  }
+};

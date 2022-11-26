@@ -240,6 +240,7 @@ router.delete(
   accountValidator.isAccountInstructor,
   validator.doesTimeLengthExist,
   validator.isTimeLengthForCourse,
+  validator.isNotOnlyTimeLengthForCourse,
   controller.deleteTimeLength
 );
 
