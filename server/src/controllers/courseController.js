@@ -4,7 +4,6 @@ import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
-import { parse } from "path";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
