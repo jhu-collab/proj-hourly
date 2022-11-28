@@ -1,12 +1,8 @@
-import { useState } from "react";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import RosterTabs from "./RosterTabs";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
-import NiceModal from "@ebay/nice-modal-react";
-import Button from "@mui/material/Button";
 import useQueryUsers from "../../hooks/useQueryUsers";
 
 /**
@@ -15,8 +11,6 @@ import useQueryUsers from "../../hooks/useQueryUsers";
  * @returns The Roster component.
  */
 const Roster = () => {
-  //TODO: delete it and use currenCourse.id instead
-  const [value, setValue] = useState(0);
   const theme = useTheme();
 
   const { isLoading, error, data } = useQueryUsers();
@@ -40,17 +34,8 @@ const Roster = () => {
   
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4">Roster</Typography>
-        <Button
-          sx={{ margin: 0, fontSize: 17, justifyContent: "flex-end" }}
-          onClick={() => NiceModal.show("invite-user", { isInstructor: true })}
-          variant="contained"
-        >
-          Invite User
-        </Button>
-      </Stack>
-      <RosterTabs rows={data} value={value} setValue={setValue} />
+      <Typography variant="h4">Roster</Typography>
+      <RosterTabs rows={data} />
     </>
   );
 };

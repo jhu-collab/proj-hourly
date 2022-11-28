@@ -270,4 +270,13 @@ router.post(
   controller.demote
 );
 
+router.get(
+  "/:courseId/:id/getRole",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  validator.isInCourseFromHeader,
+  validator.isCourseStaffOrInstructor,
+  controller.getRoleInCourseParams
+);
+
 export default router;

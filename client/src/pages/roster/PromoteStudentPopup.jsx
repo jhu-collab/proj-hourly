@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import useMutationPromoteUser from "../../hooks/useMutationPromoteUser";
+import useMutationPromoteUser from "../../hooks/useMutationChangeRole";
 import { toast } from "react-toastify";
 function PromoteStudentPopup(props) {
   const {params, open, setOpen} = props;

@@ -4,7 +4,6 @@ import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
-import { parse } from "path";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -712,4 +711,47 @@ export const getTopics = async (req, res) => {
     },
   });
   return res.status(StatusCodes.ACCEPTED).json(topics);
+};
+
+export const getRoleInCourseParams = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = parseInt(req.params.id, 10);
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  if (role === "Student") {
+    delete course["code"];
+  }
+  return res.status(StatusCodes.ACCEPTED).json({
+    role,
+    course,
+  });
 };

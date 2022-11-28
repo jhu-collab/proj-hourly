@@ -19,8 +19,8 @@ function CoursesToggleGroup() {
 
   return (
     <ToggleButtonGroup value={courseType} exclusive onChange={handleChange}>
-      <ToggleButton value="student">Student</ToggleButton>
-      <ToggleButton value="staff">Staff</ToggleButton>
+      <ToggleButton value="student">STUDENT</ToggleButton>
+      <ToggleButton value="staff">STAFF</ToggleButton>
     </ToggleButtonGroup>
   );
 }
