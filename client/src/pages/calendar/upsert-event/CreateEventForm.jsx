@@ -108,7 +108,10 @@ function CreateEventForm() {
         : "",
       location: location || "",
       days: [],
+<<<<<<< HEAD
       //timeInterval: timeInterval || 10,
+=======
+>>>>>>> b255bfa196fcaf39d243b064efeb8ab1368da784
       feedback: true,
       registrationTypes: [0], // TODO: create event route should be altered
     },
