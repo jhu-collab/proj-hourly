@@ -132,7 +132,7 @@ router.post(
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
-  timeValidator.isTime,
+  //timeValidator.isTime,
   dateValidator.endIsAfterStart,
   controller.editAll
 );
