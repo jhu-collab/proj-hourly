@@ -17,7 +17,9 @@ function useMutationEditEvent(recurringEvent) {
   const queryClient = useQueryClient();
 
   const start = useStoreEvent((state) => state.start);
-  const date = DateTime.fromJSDate(start, {zone: "utc"}).toFormat("MM-dd-yyyy");
+  const date = DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+    "MM-dd-yyyy"
+  );
 
   const id = useStoreEvent((state) => state.id);
 

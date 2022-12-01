@@ -101,9 +101,9 @@ function EditEventForm() {
           endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate, {zone: "utc"}).toFormat(
-            "MM-dd-yyyy"
-          ),
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate, {
+            zone: "utc",
+          }).toFormat("MM-dd-yyyy"),
         })
       : mutate({
           startDate: start.toISOString(),
