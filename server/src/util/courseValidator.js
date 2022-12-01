@@ -565,10 +565,8 @@ export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
   if (times.length > 1) {
     next();
   } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: cannot delete the only time offering for the course",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: cannot delete the only time offering for the course",
+    });
   }
 };

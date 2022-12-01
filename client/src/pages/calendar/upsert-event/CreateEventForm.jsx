@@ -108,10 +108,6 @@ function CreateEventForm() {
         : "",
       location: location || "",
       days: [],
-<<<<<<< HEAD
-      //timeInterval: timeInterval || 10,
-=======
->>>>>>> b255bfa196fcaf39d243b064efeb8ab1368da784
       feedback: true,
       registrationTypes: [0], // TODO: create event route should be altered
     },
@@ -123,17 +119,26 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
-    const start = new Date(data.startDate);
-    const startTime = data.startTime.split(":");
-    start.setUTCHours(startTime[0]);
-    start.setUTCMinutes(startTime[1]);
-    let end = new Date(data.startDate);
+    const startTimeLocal = DateTime.fromISO(data.startTime, { zone: "UTC" })
+      .toLocal()
+      .toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+    const endTimeLocal = DateTime.fromISO(data.endTime, { zone: "UTC" })
+      .toLocal()
+      .toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+
+    const startDateISO = DateTime.fromJSDate(data.startDate).toISODate();
+
+    const start = DateTime.fromSQL(
+      startDateISO + " " + startTimeLocal
+    ).toUTC().toISO();
+
+    let end = DateTime.fromSQL(startDateISO + " " + endTimeLocal).toUTC().toISO();
     if (data.endDate !== null) {
-      end = new Date(data.endDate);
+      const endDateISO = DateTime.fromJSDate(data.endDate).toISODate();
+      console.log(endDateISO + " " + endTimeLocal);
+      end = DateTime.fromSQL(endDateISO + " " + endTimeLocal).toUTC().toISO();
     }
-    const endTime = data.endTime.split(":");
-    end.setUTCHours(endTime[0]);
-    end.setUTCMinutes(endTime[1]);
+
     mutate({
       courseId: course.id,
       startTime: `${data.startTime}:00`,
