@@ -83,21 +83,31 @@ function EditEventForm() {
   const { mutate, isLoading } = useMutationEditEvent(recurringEvent);
 
   const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
+
     recurringEvent
       ? mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
-          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
-          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
+          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate, {zone: "utc"}).toFormat(
             "MM-dd-yyyy"
           ),
         })
       : mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
         });
   };
@@ -129,15 +139,13 @@ function EditEventForm() {
               label="Recurring event"
             />
           )}
-          {recurringEvent && (
-            <FormInputText
-              name="startDate"
-              control={control}
-              label={recurringEvent ? "Start Date" : "Date"}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-          )}
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurringEvent ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
           {recurringEvent && (
             <FormInputText
               name="endDate"

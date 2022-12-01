@@ -113,11 +113,9 @@ function CreateEventForm() {
     end.setMinutes(endTime[1]);
     mutate({
       courseId: course.id,
-      startTime: `${data.startTime}:00`,
-      endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate: start,
-      endDate: end,
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       hosts: [id], // TOOD: For now, there will be no additional hosts
