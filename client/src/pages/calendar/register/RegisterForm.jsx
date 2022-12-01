@@ -26,12 +26,12 @@ const getTimeSlotOptions = (timeSlotsPerType, type) => {
     const options = [];
 
     for (let i = 0; i < found.times.length; i++) {
-      const localeStartTime = DateTime.fromISO(found.times[i].startTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-      const localeEndTime = DateTime.fromISO(found.times[i].endTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const localeStartTime = DateTime.fromISO(
+        found.times[i].startTime
+      ).toLocaleString(DateTime.TIME_SIMPLE);
+      const localeEndTime = DateTime.fromISO(
+        found.times[i].endTime
+      ).toLocaleString(DateTime.TIME_SIMPLE);
       options.push({
         id: i,
         label: `${localeStartTime} - ${localeEndTime}`,
@@ -91,12 +91,10 @@ function RegisterForm() {
   const id = useStoreEvent((state) => state.id);
 
   const date = start.toDateString();
-  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+  const startTime = DateTime.fromJSDate(start).toLocaleString(
     DateTime.TIME_SIMPLE
   );
-  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-    DateTime.TIME_SIMPLE
-  );
+  const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {

@@ -16,12 +16,10 @@ function EventDetails() {
   const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const date = start.toDateString();
-  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+  const startTime = DateTime.fromJSDate(start).toLocaleString(
     DateTime.TIME_SIMPLE
   );
-  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-    DateTime.TIME_SIMPLE
-  );
+  const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
   const minutes = " minutes";
 
   return (

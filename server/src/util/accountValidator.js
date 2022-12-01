@@ -12,8 +12,9 @@ export const isUniqueEmail = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "Email already in use" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const emailExists = async (req, res, next) => {
@@ -25,8 +26,9 @@ export const emailExists = async (req, res, next) => {
   });
   if (query === null) {
     return res.status(StatusCodes.FORBIDDEN).json({ msg: "Invalid Email" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isUniquePhone = async (req, res, next) => {
@@ -43,8 +45,9 @@ export const isUniquePhone = async (req, res, next) => {
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "phoneNumber already associated with an account" });
+    } else {
+      next();
     }
-    next();
   }
 };
 
@@ -59,8 +62,9 @@ export const isAccountIdValid = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountStudent = async (req, res, next) => {
@@ -136,6 +140,7 @@ export const isUrlStudent = async (req, res, next) => {
 };
 
 export const areAccountsIdsValid = async (req, res, next) => {
+  console.log(req.body);
   const { hosts } = req.body;
   let checkAllAccounts = [];
   hosts.forEach((element) => {
@@ -152,8 +157,9 @@ export const areAccountsIdsValid = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountValidHeader = async (req, res, next) => {
@@ -167,8 +173,9 @@ export const isAccountValidHeader = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: is not a valid account" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountInstructor = async (req, res, next) => {

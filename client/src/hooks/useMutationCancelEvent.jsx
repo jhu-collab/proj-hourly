@@ -49,15 +49,13 @@ function useMutationCancelEvent(deleteType) {
       onSuccess: (data) => {
         const officeHour = data.officeHourUpdate;
 
-        const date = DateTime.fromISO(officeHour.startDate, {
-          zone: "utc",
-        }).toLocaleString();
-        const startTime = DateTime.fromISO(officeHour.startTime, {
-          zone: "utc",
-        }).toLocaleString(DateTime.TIME_SIMPLE);
-        const endTime = DateTime.fromISO(officeHour.endTime, {
-          zone: "utc",
-        }).toLocaleString(DateTime.TIME_SIMPLE);
+        const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
+        const startTime = DateTime.fromISO(officeHour.startDate).toLocaleString(
+          DateTime.TIME_SIMPLE
+        );
+        const endTime = DateTime.fromISO(officeHour.endDate).toLocaleString(
+          DateTime.TIME_SIMPLE
+        );
 
         queryClient.invalidateQueries(["officeHours"]);
 
