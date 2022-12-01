@@ -96,13 +96,13 @@ function CreateEventForm() {
       startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "UTC" }).toLocaleString(
+        ? DateTime.fromJSDate(start).toLocaleString(
             DateTime.TIME_24_SIMPLE
           )
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "UTC" }).toLocaleString(
+        ? DateTime.fromJSDate(end).toLocaleString(
             DateTime.TIME_24_SIMPLE
           )
         : "",
@@ -119,26 +119,17 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
-    const startTimeLocal = DateTime.fromISO(data.startTime, { zone: "UTC" })
-      .toLocal()
-      .toLocaleString(DateTime.TIME_24_WITH_SECONDS);
-    const endTimeLocal = DateTime.fromISO(data.endTime, { zone: "UTC" })
-      .toLocal()
-      .toLocaleString(DateTime.TIME_24_WITH_SECONDS);
-
-    const startDateISO = DateTime.fromJSDate(data.startDate).toISODate();
-
-    const start = DateTime.fromSQL(
-      startDateISO + " " + startTimeLocal
-    ).toUTC().toISO();
-
-    let end = DateTime.fromSQL(startDateISO + " " + endTimeLocal).toUTC().toISO();
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
     if (data.endDate !== null) {
-      const endDateISO = DateTime.fromJSDate(data.endDate).toISODate();
-      console.log(endDateISO + " " + endTimeLocal);
-      end = DateTime.fromSQL(endDateISO + " " + endTimeLocal).toUTC().toISO();
+      end = new Date(data.endDate);
     }
-
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
     mutate({
       courseId: course.id,
       startTime: `${data.startTime}:00`,

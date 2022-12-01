@@ -63,18 +63,18 @@ function EditEventForm() {
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
+        ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd")
         : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+        ? DateTime.fromJSDate(start).toLocaleString(
             DateTime.TIME_24_SIMPLE
           )
         : "",
       recurringEvent: false,
       days: [],
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
+        ? DateTime.fromJSDate(end).toLocaleString(
             DateTime.TIME_24_SIMPLE
           )
         : "",
