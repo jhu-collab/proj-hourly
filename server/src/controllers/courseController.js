@@ -69,7 +69,7 @@ export const create = async (req, res) => {
       duration: 10,
       course: {
         connect: {
-          id,
+          id: course.id,
         },
       },
     },
