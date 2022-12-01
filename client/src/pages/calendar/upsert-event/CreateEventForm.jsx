@@ -63,20 +63,6 @@ const BUTTONS = [
   },
 ];
 
-// TODO: Need a route that retrieves registration types.
-const registrationTypes = [
-  {
-    id: 0,
-    label: "Regular",
-    value: 0,
-  },
-  {
-    id: 1,
-    label: "Debugging",
-    value: 1,
-  },
-];
-
 /**
  * Component that represents the form that is used to create an event.
  * @returns A component representing the Create Event form.
@@ -105,7 +91,6 @@ function CreateEventForm() {
       location: location || "",
       days: [],
       feedback: true,
-      registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
   });
