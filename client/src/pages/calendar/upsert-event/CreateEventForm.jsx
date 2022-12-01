@@ -96,15 +96,11 @@ function CreateEventForm() {
       startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
       days: [],
