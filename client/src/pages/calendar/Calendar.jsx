@@ -117,6 +117,7 @@ function Calendar() {
             unselectAuto={false}
             events={data?.calendar || []}
             select={handleSelect}
+            nowIndicator
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
