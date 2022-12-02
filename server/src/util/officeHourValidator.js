@@ -474,6 +474,41 @@ export const isStudentRegisteredBody = async (req, res, next) => {
   next();
 };
 
+export const isRegisteredOrIsStaffBody = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = req.id;
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      officeHour: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: registration.officeHour.courseId,
+    },
+    include: {
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const courseStaff = course.courseStaff.map((account) => account.id);
+  const instructors = course.instructors.map((account) => account.id);
+  if (
+    registration.accountId !== id &&
+    !courseStaff.includes(id) &&
+    !instructors.includes(id)
+  ) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not allowed to cancel registration" });
+  } else {
+    next();
+  }
+};
+
 export const doesRegistrationExistParams = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const registration = await prisma.registration.findFirst({
