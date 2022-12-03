@@ -120,12 +120,6 @@ export const createEventSchema = yup.object().shape({
       );
     }),
   location: yup.string().required("Location is required"),
-  timeInterval: yup
-    .number()
-    .typeError("Time limit is required")
-    .positive("Please enter a valid time limit")
-    .integer("Please enter a valid time limit")
-    .required(),
 });
 
 export const inviteUserSchema = yup.object().shape({
@@ -151,12 +145,15 @@ export const profileSchema = yup.object({
 });
 
 export const registrationTypeSchema = yup.object({
-  name: yup.string().required("Registration name is required"),
-  duration: yup
+  title: yup.string().required("Registration name is required"),
+  length: yup
     .number()
     .required("Duration is required")
-    .min(5, "Duration must be at least 5 minutes")
-    .typeError("Please enter a valid duration"),
+    .min(10, "Duration must be at least 10 minutes")
+    .typeError("Please enter a valid duration")
+    .test("multiple-5", "Duration must be a multiple of 5", function (value) {
+      return value % 5 == 0;
+    }),
 });
 
 export const topicSchema = yup.object({

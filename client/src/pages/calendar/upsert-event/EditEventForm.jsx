@@ -11,9 +11,6 @@ import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 
 const BUTTONS = [
   {
@@ -53,20 +50,6 @@ const BUTTONS = [
   },
 ];
 
-// TODO: Need a route that retrieves registration types.
-const registrationTypes = [
-  {
-    id: 0,
-    label: "Regular",
-    value: 0,
-  },
-  {
-    id: 1,
-    label: "Debugging",
-    value: 1,
-  },
-];
-
 /**
  * Component that represents the form that is used to edit an event.
  * @returns A component representing the Edit Event form.
@@ -75,29 +58,21 @@ function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
   const recurring = useStoreEvent((state) => state.recurring);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
-        : "",
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       days: [],
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
-      timeInterval: timeInterval || 10,
       registrationTypes: [0],
     },
     resolver: yupResolver(createEventSchema),
@@ -108,24 +83,32 @@ function EditEventForm() {
   const { mutate, isLoading } = useMutationEditEvent(recurringEvent);
 
   const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
+
     recurringEvent
       ? mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
-          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
-          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          timePerStudent: data.timeInterval,
-          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
-            "MM-dd-yyyy"
-          ),
+          endDateOldOfficeHour: DateTime.fromJSDate(start, {
+            zone: "utc",
+          }).toFormat("MM-dd-yyyy"),
         })
       : mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
-          timePerStudent: data.timeInterval,
         });
   };
 
@@ -156,15 +139,13 @@ function EditEventForm() {
               label="Recurring event"
             />
           )}
-          {recurringEvent && (
-            <FormInputText
-              name="startDate"
-              control={control}
-              label={recurringEvent ? "Start Date" : "Date"}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-          )}
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurringEvent ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
           {recurringEvent && (
             <FormInputText
               name="endDate"
@@ -183,38 +164,6 @@ function EditEventForm() {
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
-          <FormInputDropdown
-            name="registrationTypes"
-            control={control}
-            label="Registration Type(s)"
-            options={registrationTypes}
-            multiple
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => {
-                  const item = registrationTypes.find(
-                    ({ value: v }) => v === value
-                  );
-                  return (
-                    <Chip
-                      key={value}
-                      label={item.label}
-                      sx={{
-                        color: "text.primary",
-                        backgroundColor: "secondary.main",
-                        borderColor: "secondary.main",
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-            )}
-          />
           <Button
             type="submit"
             variant="contained"

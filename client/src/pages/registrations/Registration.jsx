@@ -41,18 +41,18 @@ function Registration({ registration, type }) {
           spacing={2}
         >
           <Typography fontWeight={600}>
-            {DateTime.fromISO(registration.date, {
-              zone: "utc",
-            }).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
+            {DateTime.fromISO(registration.date).toLocaleString(
+              DateTime.DATE_MED_WITH_WEEKDAY
+            )}
           </Typography>
           <Typography fontWeight={600}>
-            {DateTime.fromISO(registration.startTime, {
-              zone: "utc",
-            }).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
+            {DateTime.fromISO(registration.startTime).toLocaleString(
+              DateTime.TIME_SIMPLE
+            )}{" "}
             -{" "}
-            {DateTime.fromISO(registration.endTime, {
-              zone: "utc",
-            }).toLocaleString(DateTime.TIME_SIMPLE)}
+            {DateTime.fromISO(registration.endTime).toLocaleString(
+              DateTime.TIME_SIMPLE
+            )}
           </Typography>
           <Typography>
             Type: <strong>Office Hours</strong>

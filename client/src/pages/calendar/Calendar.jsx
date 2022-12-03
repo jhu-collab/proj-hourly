@@ -160,9 +160,6 @@ function Calendar() {
             unselectAuto={false}
             events={data?.calendar || []}
             select={handleSelect}
-            slotMinTime={"08:00:00"}
-            slotMaxTime={"32:00:00"}
-            timeZone="UTC"
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />

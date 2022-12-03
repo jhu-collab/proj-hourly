@@ -31,7 +31,7 @@ export const generateTitle = (officeHour) => {
   if (officeHour.hosts.length > 1) {
     summary = "Office Hours for " + course.title;
   } else if (officeHour.hosts.length === 1) {
-    summary = officeHour.hosts[0].userName + "'s Office Hours";
+    summary = officeHour.hosts[0].firstName + "'s Office Hours";
   } else {
     summary = "Office Hours";
   }
@@ -41,22 +41,24 @@ export const generateTitle = (officeHour) => {
 export const getDateStringArray = (arr) => {
   const dates = [];
   arr.forEach((date) => dates.push(date.toISOString()));
-  console.log(dates);
   return dates;
 };
 
 export const combineTimeAndDate = (time, date) => {
   const newDate = new Date();
   newDate.setFullYear(date.getFullYear());
-  newDate.setDate(date.getDate() + 1);
+  newDate.setDate(date.getDate());
   newDate.setMonth(date.getMonth());
-  newDate.setHours(time.getHours() + 1);
+  newDate.setHours(time.getHours());
   newDate.setMinutes(time.getMinutes());
   newDate.setSeconds(time.getSeconds());
   return newDate;
 };
 
 export const calcDurationString = (startTime, endTime) => {
+  if (startTime > endTime) {
+    endTime.setDate(endTime.getDate() + 1);
+  }
   const diffMilliSeconds = endTime - startTime;
   const diffHours = Math.floor(diffMilliSeconds / 3600000);
   const diffMins = Math.floor((diffMilliSeconds % 3600000) / 60000);
@@ -77,11 +79,11 @@ export const calcTimeString = (time) => {
   const diffMins = Math.floor((time.getTime() % 3600000) / 60000);
   let timeStr = "";
   if (diffHours < 10) {
-    timeStr = timeStr + "0";
+    timeStr += "0";
   }
   timeStr = timeStr + diffHours + ":";
   if (diffMins < 10) {
-    timeStr = timeStr + "0";
+    timeStr += "0";
   }
   timeStr = timeStr + diffMins;
   return timeStr;
@@ -95,50 +97,95 @@ export const convertToDateWithStartTime = (arr, startTime) => {
   return formatted;
 };
 
+export const equalDates = (date1, date2) => {
+  return (
+    date1.getUTCDate() === date2.getUTCDate() &&
+    date1.getUTCMonth() === date2.getUTCMonth() &&
+    date1.getFullYear() === date2.getFullYear()
+  );
+};
+
 export const generateRecurringEventJson = (officeHour) => {
   const indexes = [];
-  generateRRule(officeHour);
   officeHour.isOnDayOfWeek.forEach((dow) => {
     indexes.push(weekday.indexOf(dow.dayOfWeek));
   });
-  return {
-    //id: officeHour.id,
-    // startTime: createTimeString(officeHour.startTime),
-    // endTime: createTimeString(officeHour.endTime),
-    title: generateTitle(officeHour),
-    // daysOfWeek: indexes,
-    // startRecur: getIsoDate(officeHour.startDate),
-    // endRecur: getIsoDate(officeHour.endDate),
-    duration: calcDurationString(officeHour.startTime, officeHour.endTime),
-    rrule: generateRRule(officeHour).toString(),
+  indexes.sort();
+  const entries = [];
+  let i = indexes.indexOf(officeHour.startDate.getDay());
+  let start = new Date(officeHour.startDate);
+  const end = new Date(officeHour.endDate);
+  while (start < end) {
+    let notCancelled = true;
+    for (const date of officeHour.isCancelledOn) {
+      if (equalDates(date, start)) {
+        notCancelled = false;
+        break;
+      }
+    }
+    if (notCancelled) {
+      const currEnd = new Date(start);
+      currEnd.setUTCHours(end.getUTCHours());
+      currEnd.setUTCMinutes(end.getUTCMinutes());
+      currEnd.setUTCSeconds(end.getUTCSeconds());
+      entries.push({
+        title: generateTitle(officeHour),
+        start: start.toISOString(),
+        end: currEnd.toISOString(),
+        extendedProps: {
+          hosts: officeHour.hosts,
+          courseId: officeHour.course.id,
+          location: officeHour.location,
+          id: officeHour.id,
+          isRecurring: true,
+        },
+      });
+    }
+    let diff = indexes[(i + 1) % indexes.length] - indexes[i % indexes.length];
+    if (diff === 0) {
+      diff = 7;
+    } else if (diff < 0) {
+      diff += 7;
+    }
+    start.setDate(start.getDate() + diff);
+    i = (i + 1) % indexes.length;
+  }
+  return entries;
+  // return {
+  //   //id: officeHour.id,
+  //   // startTime: createTimeString(officeHour.startTime),
+  //   // endTime: createTimeString(officeHour.endTime),
+  //   title: generateTitle(officeHour),
+  //   // daysOfWeek: indexes,
+  //   // startRecur: getIsoDate(officeHour.startDate),
+  //   // endRecur: getIsoDate(officeHour.endDate),
+  //   duration: calcDurationString(officeHour.startDate, officeHour.endDate),
+  //   //startRecur: officeHour.startDate,
+  //   //endRecur: officeHour.endDate,
+  //   //rrule: generateRRule(officeHour).toString(),
 
-    // exdate: [...officeHour.isCancelledOn],
-    extendedProps: {
-      hosts: officeHour.hosts,
-      courseId: officeHour.course.id,
-      location: officeHour.location,
-      id: officeHour.id,
-      isRecurring: true,
-    },
-    exdate: convertToDateWithStartTime(
-      officeHour.isCancelledOn,
-      officeHour.startTime
-    ),
-  };
+  //   // exdate: [...officeHour.isCancelledOn],
+  //   extendedProps: {
+  //     hosts: officeHour.hosts,
+  //     courseId: officeHour.course.id,
+  //     location: officeHour.location,
+  //     id: officeHour.id,
+  //     isRecurring: true,
+  //   },
+  //   rrule: generateRRule(officeHour),
+  //   exdate: convertToDateWithStartTime(
+  //     officeHour.isCancelledOn,
+  //     officeHour.startDate
+  //   ),
+  // };
 };
 
 export const generateSingleEventJson = (officeHour) => {
   return {
     id: officeHour.id,
     title: generateTitle(officeHour),
-    start: combineTimeAndDate(
-      officeHour.startTime,
-      officeHour.startDate
-    ).toISOString(),
-    end: combineTimeAndDate(
-      officeHour.endTime,
-      officeHour.endDate
-    ).toISOString(),
+    start: officeHour.startDate.toISOString(),
+    end: officeHour.endDate.toISOString(),
     extendedProps: {
       hosts: officeHour.hosts,
       courseId: officeHour.course.id,
@@ -162,6 +209,7 @@ export const generateCalendar = async (courseId) => {
           id: true,
           userName: true,
           email: true,
+          firstName: true,
         },
       },
       isOnDayOfWeek: {
@@ -174,7 +222,7 @@ export const generateCalendar = async (courseId) => {
   });
   officeHours.forEach((officeHour) => {
     if (officeHour.isRecurring) {
-      events.push(generateRecurringEventJson(officeHour));
+      events.push(...generateRecurringEventJson(officeHour));
     } else {
       events.push(generateSingleEventJson(officeHour));
     }
@@ -288,26 +336,36 @@ const generateRRule = (officeHour) => {
     }
   });
   const start = new Date(officeHour.startDate);
-  start.setUTCHours(officeHour.startTime.getUTCHours());
-  start.setUTCMinutes(officeHour.startTime.getUTCMinutes());
-  start.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   const end = new Date(officeHour.endDate);
-  end.setUTCHours(officeHour.endTime.getUTCHours());
-  end.setUTCMinutes(officeHour.endTime.getUTCMinutes());
-  end.setUTCSeconds(officeHour.endTime.getUTCSeconds());
-  const rruleSet = new RRuleSet();
-  rruleSet.rrule(
-    new RRule({
-      freq: RRule.WEEKLY,
-      interval: 1,
-      byweekday: dow,
-      dtstart: start,
-      until: end,
-    })
-  );
+  return {
+    freq: RRule.WEEKLY,
+    interval: 1,
+    byweekday: dow,
+    dtstart: start,
+    until: end,
+  };
+  //const rruleSet = new RRuleSet();
+  // rruleSet.rrule(
+  //   new RRule({
+  //     freq: RRule.WEEKLY,
+  //     interval: 1,
+  //     byweekday: dow,
+  //     dtstart: start,
+  //     until: end,
+  //   })
+  // );
+  // console.log(
+  //   new RRule({
+  //     freq: RRule.WEEKLY,
+  //     interval: 1,
+  //     byweekday: dow,
+  //     dtstart: start,
+  //     until: end,
+  //   }).all()
+  // );
   // officeHour.isCancelledOn.forEach((date) => {
   //   rruleSet.exdate(date);
   // });
   // console.log(rruleSet.toString());
-  return rruleSet;
+  //return rruleSet;
 };
