@@ -17,6 +17,8 @@ import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
+import StyleWrapper from "./StyleWrapper";
+
 
 /**
  * A component that represents the Calendar page for a course.
@@ -83,6 +85,7 @@ function Calendar() {
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
         <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
+          <StyleWrapper>
           <FullCalendar
             plugins={[
               rrulePlugin,
@@ -120,7 +123,9 @@ function Calendar() {
             ref={calendarRef}
             {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
           />
+          </StyleWrapper>
         </Box>
+        
         {matchUpSm && (
           <Box
             variant="outlined"
