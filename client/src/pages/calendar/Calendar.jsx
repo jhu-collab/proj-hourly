@@ -17,8 +17,7 @@ import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
-import StyleWrapper from "./StyleWrapper";
-
+import StyleWrapper, { dayHeaderContent } from "./StyleWrapper";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -86,46 +85,48 @@ function Calendar() {
       >
         <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
           <StyleWrapper>
-          <FullCalendar
-            plugins={[
-              rrulePlugin,
-              dayGridPlugin,
-              timeGridPlugin,
-              interactionPlugin,
-            ]}
-            customButtons={{
-              mobileCalMenu: {
-                text: "menu",
-                click: function () {
-                  setMobileCalMenu(!mobileCalMenu);
+            <FullCalendar
+              plugins={[
+                rrulePlugin,
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin,
+              ]}
+              customButtons={{
+                mobileCalMenu: {
+                  text: "menu",
+                  click: function () {
+                    setMobileCalMenu(!mobileCalMenu);
+                  },
                 },
-              },
-            }}
-            headerToolbar={
-              matchUpSm
-                ? {
-                    start: "prev",
-                    center: "title",
-                    end: "next",
-                  }
-                : { start: "title", end: "prev,next" }
-            }
-            initialView="timeGridWeek"
-            height="100%"
-            eventClick={handleEventClick}
-            eventDrop={handleEventDrop}
-            editable={isStaff ? true : false}
-            selectable={isStaff ? true : false}
-            selectMirror={isStaff ? true : false}
-            unselectAuto={false}
-            events={data?.calendar || []}
-            select={handleSelect}
-            ref={calendarRef}
-            {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
-          />
+              }}
+              headerToolbar={
+                matchUpSm
+                  ? {
+                      start: "prev",
+                      center: "title",
+                      end: "next",
+                    }
+                  : { start: "title", end: "prev,next" }
+              }
+              initialView="timeGridWeek"
+              height="100%"
+              eventClick={handleEventClick}
+              eventDrop={handleEventDrop}
+              editable={isStaff ? true : false}
+              selectable={isStaff ? true : false}
+              selectMirror={isStaff ? true : false}
+              unselectAuto={false}
+              events={data?.calendar || []}
+              select={handleSelect}
+              ref={calendarRef}
+              dayHeaderContent={dayHeaderContent}
+              allDaySlot={false}
+              {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
+            />
           </StyleWrapper>
         </Box>
-        
+
         {matchUpSm && (
           <Box
             variant="outlined"
