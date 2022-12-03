@@ -33,15 +33,13 @@ function useMutationRegister() {
     onSuccess: (data) => {
       const registration = data.registration;
 
-      const date = DateTime.fromISO(registration.date, {
-        zone: "utc",
-      }).toLocaleString();
-      const startTime = DateTime.fromISO(registration.startTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-      const endTime = DateTime.fromISO(registration.endTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const date = DateTime.fromISO(registration.date).toLocaleString();
+      const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
+      const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
 
       NiceModal.hide("register-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");

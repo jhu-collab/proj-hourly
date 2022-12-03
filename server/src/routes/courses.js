@@ -188,6 +188,54 @@ router.delete(
 );
 
 router.post(
+  "/:courseId/officeHourTimeInterval",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
+  body("title", "Body must have a title").isString(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isLengthMultipleOf5,
+  accountValidator.isAccountInstructor,
+  controller.createTimeLength
+);
+
+router.get(
+  "/:courseId/officeHourTimeInterval",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  controller.getTimeLengths
+);
+
+router.post(
+  "/:courseId/officeHourTimeInterval/:id/update",
+  param("courseId", "Must provide a courseId").notEmpty(),
+  body("length", "Body must include time length").isInt({ min: 10 }),
+  body("title", "Body must have a title").isString(),
+  param("id", "Param must have id").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.doesTimeLengthExist,
+  validator.isLengthMultipleOf5,
+  validator.isTimeLengthForCourse,
+  controller.editTimeLength
+);
+
+router.delete(
+  "/:courseId/officeHourTimeInterval/:id",
+  param("id", "Param must have id").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.doesTimeLengthExist,
+  validator.isTimeLengthForCourse,
+  validator.isNotOnlyTimeLengthForCourse,
+  controller.deleteTimeLength
+);
+
+router.post(
   "/:courseId",
   param("courseId", "Must include course id").notEmpty().isInt(),
   body("studentId", "Must provide id of a student to promote")
@@ -221,6 +269,15 @@ router.post(
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForDemotionTo,
   controller.demote
+);
+
+router.get(
+  "/:courseId/:id/getRole",
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountValidParams,
+  validator.isInCourseFromHeader,
+  validator.isCourseStaffOrInstructor,
+  controller.getRoleInCourseParams
 );
 
 export default router;

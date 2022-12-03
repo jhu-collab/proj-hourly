@@ -12,7 +12,7 @@ import Registration from "./Registration";
  * @param {*} registrations list of user's registrations
  * @returns a registrations tab panel.
  */
-function RegistrationsPanel({ index, registrations }) {
+function RegistrationsPanel({ index, registrations, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
 
   const noRegistrations = () => {
@@ -38,6 +38,23 @@ function RegistrationsPanel({ index, registrations }) {
         );
     }
   };
+
+  if (isLoading && registrationTab === index) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        <AlertTitle>Loading registrations ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error && registrationTab === index) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   return (
     <>

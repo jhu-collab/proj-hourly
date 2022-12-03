@@ -12,15 +12,14 @@ function EventDetails() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
+  // TODO: need to be the time of the registration type!
   const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const date = start.toDateString();
-  const startTime = DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
+  const startTime = DateTime.fromJSDate(start).toLocaleString(
     DateTime.TIME_SIMPLE
   );
-  const endTime = DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-    DateTime.TIME_SIMPLE
-  );
+  const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
   const minutes = " minutes";
 
   return (

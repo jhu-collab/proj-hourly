@@ -1,36 +1,31 @@
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import { decodeToken } from "react-jwt";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import useMutationRemoveUser from "../../hooks/useMutationRemoveUser";
-import useStoreToken from "../../hooks/useStoreToken";
+import useQueryMyRole from "../../hooks/useQueryMyRole";
 
-function DeleteButton(props) {
-  const { rows, params, isStaff } = props;
-
+/**
+ * Delete button for each row of Roster grid
+ * @param {*} params list of params for the selected row
+ * @param {Boolean} isStaff whether or not the selected user is staff
+ * @returns Delete action button for each row of Roster grid
+ */
+function DeleteButton({ params, isStaff }) {
   const { mutate } = useMutationRemoveUser(params.id, isStaff);
-
-  const isButtonDisabled = () => {
-    // Return true if member is the current user
-    // Or if member is an instructor and user is not an instructor
-    const token = useStoreToken((state) => state.token);
-    const { id } = decodeToken(token);
-    const instructorIds = rows.instructors?.map((user) => user.id);
-    const isMemberInstructor = instructorIds?.indexOf(id) !== -1;
-    return !isMemberInstructor;
-  };
+  const { data } = useQueryMyRole();
 
   return (
     <>
       <GridActionsCellItem
-        icon={<DeleteOutlined />}
+        icon={<CloseOutlined />}
         onClick={() => {
           confirmDialog("Do you want to delete this user", () => {
             mutate();
           });
         }}
-        disabled={isButtonDisabled()}
+        disabled={data?.role !== "Instructor"}
         label="Delete"
+        size="large"
       />
       <ConfirmPopup />
     </>

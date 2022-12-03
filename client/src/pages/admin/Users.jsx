@@ -80,16 +80,15 @@ function Users() {
   }
 
   return (
-    <Stack spacing={1} sx={{ height: "90vh", width: "100%" }}>
+    <Stack spacing={1} sx={{ width: "100%" }}>
       <Typography variant="h4" sx={{ ml: 1 }}>
         Users
       </Typography>
       <DataGrid
         rows={data?.accounts || []}
         columns={columns}
-        autoPageSize
+        autoHeight
         getRowHeight={() => "auto"}
-        rowsPerPageOptions={[5, 10, 20]}
         checkboxSelection
         disableSelectionOnClick
         sortModel={sortModel}
@@ -97,9 +96,6 @@ function Users() {
         hideFooter
         components={{
           Toolbar: GridToolbar,
-        }}
-        sx={{
-          fontSize: "1rem",
         }}
       />
     </Stack>

@@ -109,7 +109,9 @@ export const noConflictsWithHosts = async (req, res, next) => {
       }
     });
   });
-  next();
+  if (!res.headersSent) {
+    next();
+  }
 };
 
 export const isOfficeHourOnDay = async (req, res, next) => {
@@ -139,8 +141,9 @@ export const isOfficeHourOnDay = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hours is not available on day" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isOfficeHourOnDayParam = async (req, res, next) => {
@@ -171,33 +174,38 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hours is not available on day" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isWithinTimeOffering = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
-  const officeHour = await prisma.officeHour.findFirst({
+  const officeHour = await prisma.officeHour.findUnique({
     where: {
-      AND: {
-        id: officeHourId,
-        startTime: {
-          lte: startTimeObj,
-        },
-        endTime: {
-          gte: endTimeObj,
-        },
-      },
+      id: officeHourId,
     },
   });
-  if (officeHour === null) {
+  if (
+    officeHour.startTime > officeHour.endTime &&
+    startTimeObj < officeHour.endTime &&
+    endTimeObj <= officeHour.endTime
+  ) {
+    next();
+  } else if (
+    officeHour.startTime > startTimeObj ||
+    officeHour.endTime <= startTimeObj ||
+    officeHour.startTime >= endTimeObj ||
+    officeHour.endTime < endTime
+  ) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: time is not within range of office hour" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isTimeCorrectInterval = async (req, res, next) => {
@@ -209,41 +217,78 @@ export const isTimeCorrectInterval = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const timeInterval = officeHour.timePerStudent * 1000 * 60;
-  const diff = endTimeObj - startTimeObj;
-  if (diff !== timeInterval) {
+  const timeOptions = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: officeHour.courseId,
+    },
+  });
+  let valid = false;
+  timeOptions.forEach((timeOption) => {
+    const timeInterval = timeOption.duration * 1000 * 60;
+    const diff = endTimeObj - startTimeObj;
+    if (diff === timeInterval) {
+      valid = true;
+    }
+  });
+
+  if (!valid) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: time interval is not the correct length" });
+  } else {
+    next();
   }
-  const diffFromStart = startTimeObj - officeHour.startTime;
-  if (diffFromStart % timeInterval !== 0) {
-    return res.status(StatusCodes.CONFLICT).json({
-      msg: "ERROR: time interval is not at one of the specified start times",
-    });
-  }
-  next();
 };
 
 export const isTimeAvailable = async (req, res, next) => {
-  const { startTime, officeHourId, date } = req.body;
+  const { startTime, officeHourId, date, endTime } = req.body;
   const registrationDate = new Date(date);
   const startTimeObj = stringToTimeObj(startTime);
-  const registration = await prisma.registration.findFirst({
+  const endTimeObj = stringToTimeObj(endTime);
+  const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
-      startTime: startTimeObj,
       date: registrationDate,
       isCancelled: false,
       isCancelledStaff: false,
     },
   });
-  if (registration !== null) {
+  let valid = true;
+  registrations.forEach((registration) => {
+    if (registration.startTimeObj == startTimeObj) {
+      valid = false;
+    } else if (registration.endTimeObj == endTimeObj) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.startTime < startTimeObj &&
+      registration.endTime > startTimeObj
+    ) {
+      valid = false;
+    } else if (
+      registration.endTime > endTimeObj &&
+      registration.startTime < endTimeObj
+    ) {
+      valid = false;
+    } else if (
+      startTimeObj < registration.startTime &&
+      endTimeObj > registration.startTimeObj
+    ) {
+      valid = false;
+    }
+  });
+
+  if (!valid) {
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: time interval is already taken",
     });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isOfficeHourHost = async (req, res, next) => {
@@ -265,8 +310,9 @@ export const isOfficeHourHost = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: must be host to cancel office hours" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isOfficeHourHostParams = async (req, res, next) => {
@@ -288,8 +334,9 @@ export const isOfficeHourHostParams = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: must be host to cancel office hours" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInFuture = async (req, res, next) => {
@@ -307,7 +354,7 @@ export const isInFuture = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const officehourstart = officeHour.startTime;
+  const officehourstart = officeHour.startDate;
   officehourstart.setMonth(dateObj.getMonth());
   officehourstart.setDate(dateObj.getDate());
   officehourstart.setFullYear(dateObj.getFullYear());
@@ -315,8 +362,9 @@ export const isInFuture = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hour has already started" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isUserNotRegistered = async (req, res, next) => {
@@ -339,8 +387,9 @@ export const isUserNotRegistered = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is already registered" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const doesOfficeHourExist = async (req, res, next) => {
@@ -355,8 +404,9 @@ export const doesOfficeHourExist = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: office hour does not exist" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const doesOfficeHourExistParams = async (req, res, next) => {
@@ -371,8 +421,25 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: office hour does not exist" });
+  } else {
+    next();
   }
-  next();
+};
+
+export const isDateInFuture = async (req, res, next) => {
+  const date = new Date(req.body.date);
+  const curr = new Date();
+  curr.setUTCHours(0);
+  curr.setUTCMinutes(0);
+  curr.setUTCSeconds(0);
+  curr.setUTCMilliseconds(0);
+  if (curr > date) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Date has already passed" });
+  } else {
+    next();
+  }
 };
 
 export const isStudentRegistered = async (req, res, next) => {
