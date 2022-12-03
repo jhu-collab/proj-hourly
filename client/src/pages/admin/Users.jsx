@@ -94,6 +94,7 @@ function Users() {
         disableSelectionOnClick
         sortModel={sortModel}
         onSortModelChange={(model) => setSortModel(model)}
+        hideFooter
         components={{
           Toolbar: GridToolbar,
         }}
