@@ -83,7 +83,6 @@ export const create = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  console.log("here");
   const {
     recurringEvent,
     startDate,

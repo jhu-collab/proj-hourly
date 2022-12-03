@@ -83,12 +83,13 @@ router.post(
 router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
-  body("date", "Date is required").notEmpty(),
+  body("date", "Date is required").optional().isDate(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
-  validator.isOfficeHourOnDay,
+  validator.checkOptionalDateBody,
+  //validator.isOfficeHourOnDay,
   controller.cancelAll
 );
 

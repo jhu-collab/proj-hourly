@@ -505,3 +505,41 @@ export const areValidDOW = (req, res, next) => {
   });
   next();
 };
+
+export const checkOptionalDateBody = async (req, res, next) => {
+  const { date } = req.body;
+  if (date === undefined || date === null) {
+    req.body.date = new Date().toISOString();
+    next();
+  } else {
+    const { officeHourId, date } = req.body;
+    const dateObj = new Date(date);
+    dateObj.setUTCHours(0);
+    const dow = weekday[dateObj.getUTCDay()];
+    const officeHour = await prisma.officeHour.findFirst({
+      where: {
+        id: officeHourId,
+        isOnDayOfWeek: {
+          some: {
+            dayOfWeek: dow,
+          },
+        },
+      },
+    });
+    let isCancelled = false;
+    if (officeHour !== null) {
+      officeHour.isCancelledOn.forEach((cancelledDate) => {
+        if (cancelledDate.toDateString() === dateObj.toDateString()) {
+          isCancelled = true;
+        }
+      });
+    }
+    if (officeHour === null || isCancelled) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "ERROR: office hours is not available on day" });
+    } else {
+      next();
+    }
+  }
+};
