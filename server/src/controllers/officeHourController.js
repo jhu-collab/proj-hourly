@@ -233,7 +233,7 @@ export const cancelAll = async (req, res) => {
   }
   const { officeHourId } = req.body;
   const dateToEnd = req.body.date;
-  const date = new Date();
+  const date = new Date(dateToEnd);
   date.setUTCHours(date.getHours());
   date.setUTCMinutes(date.getMinutes());
   const dateObj = new Date(dateToEnd);
