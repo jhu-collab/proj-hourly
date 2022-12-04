@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import NiceModal from "@ebay/nice-modal-react";
@@ -13,6 +13,8 @@ import useStoreLayout from "./useStoreLayout";
 
 function useMutationRegister() {
   const { token } = useStoreToken();
+
+  const queryClient = useQueryClient();
 
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -40,6 +42,8 @@ function useMutationRegister() {
       const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
+
+      queryClient.invalidateQueries(["studentRegistrationCounts"]);
 
       NiceModal.hide("register-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
