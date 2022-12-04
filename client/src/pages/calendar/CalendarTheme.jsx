@@ -74,7 +74,7 @@ export const nowIndicatorContent = (arg) => {
       height={10}
       width={10}
       marginTop={-0.75}
-      sx={{ backgroundColor: "#1976D2", borderRadius: "50%", }}
+      sx={{ backgroundColor: "#1976D2", borderRadius: "50%" }}
     />
   );
 };
@@ -191,7 +191,7 @@ const StyleWrapper = styled("div")({
     borderStyle: "none",
     width: "95%",
     marginLeft: "3px",
-    overflowY: "hidden"
+    overflowY: "hidden",
   },
 });
 
