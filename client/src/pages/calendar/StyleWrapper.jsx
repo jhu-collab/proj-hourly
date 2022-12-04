@@ -40,6 +40,14 @@ export const dayHeaderContent = (arg) => {
   );
 };
 
+export const slotLabelContent = (arg) => {
+  return (
+    <Typography fontWeight={400} color="#48768C">
+      {arg.text}
+    </Typography>
+  );
+};
+
 const StyleWrapper = styled("div")({
   height: "100%",
   ".fc-view-harness.fc-view-harness-active, .fc-scrollgrid.fc-scrollgrid-liquid, .fc-timegrid.fc-timeGridWeek-view.fc-view":
@@ -48,10 +56,9 @@ const StyleWrapper = styled("div")({
       overflow: "hidden",
       boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
     },
-  ".fc-scrollgrid-section.fc-scrollgrid-section-header, .fc-scroller-harness fc-scroller-harness-liquid":
-    {
-      background: "#64CFD9",
-    },
+  ".fc-scrollgrid-section.fc-scrollgrid-section-header": {
+    background: "#64CFD9",
+  },
   ".fc th": {
     borderStyle: "none !important",
   },
@@ -59,7 +66,14 @@ const StyleWrapper = styled("div")({
     backgroundColor: "#fff",
   },
   ".fc-scroller": {
-    overflow: "auto !important",
+    overflowY: "auto !important",
+  },
+  ".fc-timegrid-slot.fc-timegrid-slot-lane ": {
+    height: "69px",
+    borderBottom: "0 !important",
+  },
+  ".fc-theme-standard td, .fc-theme-standard th": {
+    border: "1px solid rgba(232, 243, 247, 1)",
   },
 });
 

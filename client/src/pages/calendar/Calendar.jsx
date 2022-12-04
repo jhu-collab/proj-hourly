@@ -17,7 +17,10 @@ import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
-import StyleWrapper, { dayHeaderContent } from "./StyleWrapper";
+import StyleWrapper, {
+  dayHeaderContent,
+  slotLabelContent,
+} from "./StyleWrapper";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -119,6 +122,13 @@ function Calendar() {
               unselectAuto={false}
               events={data?.calendar || []}
               select={handleSelect}
+              slotDuration="01:00:00"
+              slotLabelFormat={{
+                hour: "numeric",
+                minute: "2-digit",
+                omitZeroMinute: false,
+              }}
+              slotLabelContent={slotLabelContent}
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
               allDaySlot={false}
