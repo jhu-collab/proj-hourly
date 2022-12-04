@@ -100,6 +100,29 @@ const StyleWrapper = styled("div")({
   ".fc-timegrid-now-indicator-arrow": {
     display: "none",
   },
+  ".fc-toolbar-title": {
+    display: "inline",
+    fontSize: "30px",
+    fontWeight: "400",
+  },
+  ".fc-toolbar-chunk": {
+    display: "flex",
+    alignItems: "center",
+  },
+  ".fc .fc-button": {
+    color: "#48768C",
+    fontSize: "20px",
+    borderStyle: "none",
+    backgroundColor: "transparent",
+  },
+  ".fc .fc-button:not(:disabled):active, .fc .fc-button:hover": {
+    backgroundColor: "transparent",
+    color: "#64CFD9",
+  },
+  ".fc .fc-button:focus, .fc .fc-button:not(:disabled):active:focus, .fc .fc-button:not(:disabled).fc-button-active:focus":
+    {
+      boxShadow: "0px 0 0",
+    },
 });
 
 export default StyleWrapper;

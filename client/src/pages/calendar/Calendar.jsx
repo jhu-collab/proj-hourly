@@ -107,9 +107,9 @@ function Calendar() {
               headerToolbar={
                 matchUpSm
                   ? {
-                      start: "prev",
-                      center: "title",
-                      end: "next",
+                      start: "",
+                      center: "prev title next",
+                      end: "",
                     }
                   : { start: "title", end: "prev,next" }
               }
