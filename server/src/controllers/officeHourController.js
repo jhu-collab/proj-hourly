@@ -5,6 +5,7 @@ import validate from "../util/checkValidation.js";
 import { generateCalendar } from "../util/icalHelpers.js";
 import { createTimeString } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
+import sendEmail from "../util/notificationUtil.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
@@ -705,8 +706,13 @@ export const cancelRegistration = async (req, res) => {
     },
     data: {
       isCancelled: true,
-    },
+    }, include: {
+      account: true
+    }
   });
+  const userEmail = registration.account.email;
+  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
