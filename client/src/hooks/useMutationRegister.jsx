@@ -44,6 +44,7 @@ function useMutationRegister() {
       );
 
       queryClient.invalidateQueries(["studentRegistrationCounts"]);
+      queryClient.invalidateQueries(["topicCounts"]);
 
       NiceModal.hide("register-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");

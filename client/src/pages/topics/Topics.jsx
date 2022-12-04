@@ -40,11 +40,13 @@ function Topics() {
 
   return (
     <>
-      <Typography variant="h4">Topics</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Topics
+      </Typography>
       {data.length === 0 ? (
         noRegistrations()
       ) : (
-        <Grid container spacing={2} marginTop={1}>
+        <Grid container spacing={2}>
           {data.map((topic) => {
             return (
               <Grid item xs={12} key={topic.id}>

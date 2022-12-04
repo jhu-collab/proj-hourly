@@ -61,7 +61,7 @@ function RosterTabPanel({ index, rows }) {
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{ mt: 2, backgroundColor: "background.paper" }}>
       {rosterTab === index &&
         (rows.length === 0 ? (
           noRows()

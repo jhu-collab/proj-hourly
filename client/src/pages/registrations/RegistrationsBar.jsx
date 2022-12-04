@@ -25,7 +25,7 @@ function RegistrationsBar() {
       <AppBar
         position="static"
         elevation={1}
-        sx={{ borderRadius: 1, backgroundColor: "white" }}
+        sx={{ borderRadius: 1, backgroundColor: "background.paper" }}
       >
         <Toolbar>
           <RegistrationTabs />

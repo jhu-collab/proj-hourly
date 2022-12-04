@@ -34,6 +34,7 @@ export const Theme = (colors) => {
       main: "#356E73",
       contrastText,
     },
+    // TODO: We need to decide on colors for error, warning, info, and success
     error: {
       lighter: red[0],
       light: red[2],
