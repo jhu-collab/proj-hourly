@@ -19,6 +19,7 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
 import StyleWrapper, {
   dayHeaderContent,
+  nowIndicatorContent,
   slotLabelContent,
 } from "./StyleWrapper";
 
@@ -132,6 +133,8 @@ function Calendar() {
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
               allDaySlot={false}
+              nowIndicator
+              nowIndicatorContent={nowIndicatorContent}
               {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
             />
           </StyleWrapper>

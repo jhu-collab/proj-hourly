@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const dowConverter = (dow) => {
@@ -48,6 +48,17 @@ export const slotLabelContent = (arg) => {
   );
 };
 
+export const nowIndicatorContent = (arg) => {
+  return (
+    <Box
+      height={10}
+      width={10}
+      marginTop={-0.75}
+      sx={{ backgroundColor: "#1976D2", borderRadius: "50%" }}
+    />
+  );
+};
+
 const StyleWrapper = styled("div")({
   height: "100%",
   ".fc-view-harness.fc-view-harness-active, .fc-scrollgrid.fc-scrollgrid-liquid, .fc-timegrid.fc-timeGridWeek-view.fc-view":
@@ -74,6 +85,20 @@ const StyleWrapper = styled("div")({
   },
   ".fc-theme-standard td, .fc-theme-standard th": {
     border: "1px solid rgba(232, 243, 247, 1)",
+  },
+  ".fc .fc-timegrid-col.fc-day-today": {
+    backgroundColor: "rgba(174, 245, 233, 0.15)",
+  },
+  ".fc-day-today .fc-scrollgrid-sync-inner": {
+    backgroundColor: "#AEF5E9",
+  },
+  ".fc .fc-timegrid-now-indicator-line": {
+    borderColor: "#1976D2",
+    borderWidth: "1.5px 0 0",
+    marginRight: "12px",
+  },
+  ".fc-timegrid-now-indicator-arrow": {
+    display: "none",
   },
 });
 
