@@ -23,7 +23,7 @@ import StyleWrapper, {
   eventContent,
   nowIndicatorContent,
   slotLabelContent,
-} from "./StyleWrapper";
+} from "./CalendarTheme";
 
 /**
  * A component that represents the Calendar page for a course.
