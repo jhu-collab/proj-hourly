@@ -87,7 +87,7 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
+        <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
             <FullCalendar
               plugins={[

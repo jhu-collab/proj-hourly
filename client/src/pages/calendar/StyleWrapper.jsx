@@ -108,6 +108,7 @@ const StyleWrapper = styled("div")({
   ".fc-toolbar-chunk": {
     display: "flex",
     alignItems: "center",
+    marginBottom: -15
   },
   ".fc .fc-button": {
     color: "#48768C",
