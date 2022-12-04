@@ -27,37 +27,37 @@ const DAYS = [
 
 const BUTTONS = [
   {
-    id: "0",
+    id: 0,
     label: "Mon",
     value: "Monday",
   },
   {
-    id: "1",
+    id: 1,
     label: "Tue",
     value: "Tuesday",
   },
   {
-    id: "2",
+    id: 2,
     label: "Wed",
     value: "Wednesday",
   },
   {
-    id: "3",
+    id: 3,
     label: "Thu",
     value: "Thursday",
   },
   {
-    id: "4",
+    id: 4,
     label: "Fri",
     value: "Friday",
   },
   {
-    id: "5",
+    id: 5,
     label: "Sat",
     value: "Saturday",
   },
   {
-    id: "6",
+    id: 6,
     label: "Sun",
     value: "Sunday",
   },
@@ -76,28 +76,21 @@ function CreateEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
-        : "",
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
       days: [],
-      timeInterval: timeInterval || 10,
+      feedback: true,
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -107,18 +100,24 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
     mutate({
       courseId: course.id,
-      startTime: `${data.startTime}:00`,
-      endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
-      endDate: recurring
-        ? DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy")
-        : DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
-      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -176,15 +175,9 @@ function CreateEventForm() {
               name="days"
               control={control}
               buttons={BUTTONS}
-              color="primary"
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
           <Button
             type="submit"
             variant="contained"

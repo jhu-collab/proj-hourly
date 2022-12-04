@@ -12,8 +12,9 @@ export const isUniqueEmail = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "Email already in use" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const emailExists = async (req, res, next) => {
@@ -25,8 +26,9 @@ export const emailExists = async (req, res, next) => {
   });
   if (query === null) {
     return res.status(StatusCodes.FORBIDDEN).json({ msg: "Invalid Email" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isUniquePhone = async (req, res, next) => {
@@ -43,13 +45,14 @@ export const isUniquePhone = async (req, res, next) => {
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "phoneNumber already associated with an account" });
+    } else {
+      next();
     }
-    next();
   }
 };
 
 export const isAccountIdValid = async (req, res, next) => {
-  const { id } = req.body;
+  const id = req.id;
   const query = await prisma.Account.findUnique({
     where: {
       id,
@@ -59,8 +62,9 @@ export const isAccountIdValid = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountStudent = async (req, res, next) => {
@@ -78,12 +82,13 @@ export const isAccountStudent = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.students.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not a student in the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isUrlStaff = async (req, res, next) => {
@@ -101,12 +106,13 @@ export const isUrlStaff = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.courseStaff.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "staffId is not staff for the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isUrlStudent = async (req, res, next) => {
@@ -124,15 +130,17 @@ export const isUrlStudent = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.students.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "staffId is not staff for the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const areAccountsIdsValid = async (req, res, next) => {
+  console.log(req.body);
   const { hosts } = req.body;
   let checkAllAccounts = [];
   hosts.forEach((element) => {
@@ -149,8 +157,9 @@ export const areAccountsIdsValid = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountValidHeader = async (req, res, next) => {
@@ -164,8 +173,9 @@ export const isAccountValidHeader = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: is not a valid account" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountInstructor = async (req, res, next) => {
@@ -183,12 +193,13 @@ export const isAccountInstructor = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.instructors.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not an instructor in the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const accountIsNotInstructor = async (req, res, next) => {
@@ -229,12 +240,13 @@ export const isAccountStaff = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.courseStaff.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not a staff in the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountStaffOrInstructor = async (req, res, next) => {
@@ -264,12 +276,13 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
       },
     },
   });
-  if (staff === null && instructor === null) {
+  if (staff.courseStaff.length === 0 && instructor.instructors.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not a staff or instructor in the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountInstructorBody = async (req, res, next) => {
@@ -287,12 +300,13 @@ export const isAccountInstructorBody = async (req, res, next) => {
       },
     },
   });
-  if (query === null) {
+  if (query.instructors.length === 0) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Account is not an instructor in the course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isAccountValidParams = async (req, res, next) => {

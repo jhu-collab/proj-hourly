@@ -15,8 +15,9 @@ export const isUniqueCourse = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "course already exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseCode = async (req, res, next) => {
@@ -30,8 +31,9 @@ export const isCourseCode = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this code does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseIdUrlValid = async (req, res, next) => {
@@ -45,8 +47,9 @@ export const isCourseIdUrlValid = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course does not exist" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseId = async (req, res, next) => {
@@ -60,8 +63,9 @@ export const isCourseId = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this id does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseIdParams = async (req, res, next) => {
@@ -75,8 +79,9 @@ export const isCourseIdParams = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this id does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseStaffOrInstructor = async (req, res, next) => {
@@ -110,8 +115,9 @@ export const isCourseStaffOrInstructor = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not a member of course staff" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const areCourseStaffOrInstructor = async (req, res, next) => {
@@ -147,8 +153,9 @@ export const areCourseStaffOrInstructor = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not a member of course staff" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseFromHeader = async (req, res, next) => {
@@ -198,8 +205,9 @@ export const isInCourseFromHeader = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseForOfficeHour = async (req, res, next) => {
@@ -229,8 +237,9 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: student is not enrolled in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseForOfficeHourParam = async (req, res, next) => {
@@ -257,8 +266,9 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: student is not enrolled in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const areTopicsForCourse = async (req, res, next) => {
@@ -287,9 +297,12 @@ export const areTopicsForCourse = async (req, res, next) => {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ msg: "ERROR: topic is not for course" });
+    } else {
+      next();
     }
+  } else {
+    next();
   }
-  next();
 };
 
 export const isNotDuplicateTopic = async (req, res, next) => {
@@ -304,12 +317,14 @@ export const isNotDuplicateTopic = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: topic already exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isNotInCourse = async (req, res, next) => {
-  const { code, id } = req.body;
+  const { code } = req.body;
+  const id = req.id;
   const roster = await prisma.course.findUnique({
     where: {
       code,
@@ -328,6 +343,230 @@ export const isNotInCourse = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "User is already in course" });
+  } else {
+    next();
   }
-  next();
+};
+
+export const doesTimeLengthExist = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const time = await prisma.OfficeHourTimeOptions.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (time === null || time === undefined) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: time option does not exist" });
+  } else {
+    next();
+  }
+};
+
+export const isTimeLengthForCourse = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const time = await prisma.OfficeHourTimeOptions.findFirst({
+    where: {
+      id,
+      courseId,
+    },
+  });
+  if (time === null || time === undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: user does not have access to time length" });
+  } else {
+    next();
+  }
+};
+
+export const isLengthMultipleOf5 = async (req, res, next) => {
+  const { length } = req.body;
+  if (length % 5 !== 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: length must be a multiple of 5" });
+  } else {
+    next();
+  }
+};
+
+export const isInCourseBelowRoleForPromotionTo = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const studentId = req.body.studentId;
+  const role = req.body.role;
+  const roster = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const inCourse =
+    roster.students.some((student) => student.id === studentId) ||
+    roster.courseStaff.some((staff) => staff.id === studentId) ||
+    roster.instructors.some((instructor) => instructor.id === studentId);
+  if (!inCourse) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: account to be promoted not in course" });
+  } else if (roster.students.some((student) => student.id === studentId)) {
+    req.currentRole = "Student";
+    next();
+  } else if (
+    roster.courseStaff.some((staff) => staff.id === studentId) &&
+    role === "Instructor"
+  ) {
+    req.currentRole = "Staff";
+    next();
+  } else {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: account can not be promoted further" });
+  }
+};
+
+export const isInCourseBelowRoleForDemotionTo = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const studentId = req.body.studentId;
+  const role = req.body.role;
+  const roster = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: true,
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const inCourse =
+    roster.students.some((student) => student.id === studentId) ||
+    roster.courseStaff.some((staff) => staff.id === studentId) ||
+    roster.instructors.some((instructor) => instructor.id === studentId);
+  if (!inCourse) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: account to be demoted not in course" });
+  } else if (
+    roster.courseStaff.some((staff) => staff.id === studentId) &&
+    role === "Student"
+  ) {
+    req.currentRole = "Staff";
+    next();
+  } else {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: account can not be demoted further" });
+  }
+};
+
+export const checkPromoteRoles = (req, res, next) => {
+  const { role } = req.body;
+  if (role === "Staff" || role === "Instructor") {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: invalid promotion role" });
+  }
+};
+
+export const checkDemoteRoles = (req, res, next) => {
+  const { role } = req.body;
+  if (role === "Student") {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: invalid promotion role" });
+  }
+};
+
+export const doesTopicIdExist = async (req, res, next) => {
+  const { topicId, courseId } = req.body;
+  const topic = await prisma.topic.findUnique({
+    where: {
+      id: topicId,
+    },
+    include: {
+      course: true,
+    },
+  });
+  if (topic === null || topic === undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: topic does not exist" });
+  } else if (topic.course.id !== courseId) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: topic is not for specific course" });
+  } else {
+    next();
+  }
+};
+
+export const isAccountInstructorForTopic = async (req, res, next) => {
+  const topicId = parseInt(req.params.topicId, 10);
+  const id = req.id;
+  if (topicId === null || topicId === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: did not include a topic id" });
+  } else {
+    const topic = await prisma.topic.findUnique({
+      where: {
+        id: topicId,
+      },
+      include: {
+        course: true,
+      },
+    });
+    if (topic === null || topic === undefined) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: did not include a valid topic id" });
+    } else {
+      const query = await prisma.course.findUnique({
+        where: {
+          id: topic.course.id,
+        },
+        include: {
+          instructors: {
+            where: {
+              id,
+            },
+          },
+        },
+      });
+      if (query === null) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ msg: "Account is not an instructor in the course" });
+      } else {
+        next();
+      }
+    }
+  }
+};
+
+export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
+  const id = parseInt(req.params.courseId, 10);
+  const times = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  if (times.length > 1) {
+    next();
+  } else {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: cannot delete the only time offering for the course",
+    });
+  }
 };

@@ -1,5 +1,5 @@
 export const Theme = (colors) => {
-  const { blue, red, gold, cyan, green, grey } = colors;
+  const { red, gold, cyan, green, grey } = colors;
   const greyColors = {
     0: grey[0],
     50: grey[1],
@@ -23,33 +23,16 @@ export const Theme = (colors) => {
 
   return {
     primary: {
-      lighter: blue[0],
-      100: blue[1],
-      200: blue[2],
-      light: blue[3],
-      400: blue[4],
-      main: blue[5],
-      dark: blue[6],
-      700: blue[7],
-      darker: blue[8],
-      900: blue[9],
+      main: "#64CFD9",
       contrastText,
     },
     secondary: {
-      lighter: greyColors[100],
-      100: greyColors[100],
-      200: greyColors[200],
-      light: greyColors[300],
-      400: greyColors[400],
-      main: greyColors[500],
-      600: greyColors[600],
-      dark: greyColors[700],
-      800: greyColors[800],
-      darker: greyColors[900],
-      A100: greyColors[0],
-      A200: greyColors.A400,
-      A300: greyColors.A700,
+      main: "#AEF5E9",
       contrastText: greyColors[0],
+    },
+    tertiary: {
+      main: "#356E73",
+      contrastText,
     },
     error: {
       lighter: red[0],

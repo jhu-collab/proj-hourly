@@ -7,6 +7,7 @@ export default function Chip(theme) {
           "&:active": {
             boxShadow: "none",
           },
+          backgroundColor: theme.palette.primary.main,
         },
         sizeLarge: {
           fontSize: "1rem",
@@ -14,8 +15,8 @@ export default function Chip(theme) {
         },
         light: {
           color: theme.palette.primary.main,
-          backgroundColor: theme.palette.primary.lighter,
-          borderColor: theme.palette.primary.light,
+          backgroundColor: theme.palette.primary.main,
+          borderColor: theme.palette.primary.main,
           "&.MuiChip-lightError": {
             color: theme.palette.error.main,
             backgroundColor: theme.palette.error.lighter,

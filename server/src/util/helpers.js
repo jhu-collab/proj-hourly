@@ -59,3 +59,14 @@ export const createTimeString = (date) => {
   }
   return hours + ":" + minutes + ":" + seconds;
 };
+
+export const computeDiff = (start, end) => {
+  return (
+    ((end.getUTCHours() * 60 + end.getUTCMinutes()) * 60 +
+      end.getUTCSeconds()) *
+      1000 -
+    ((start.getUTCHours() * 60 + start.getUTCMinutes()) * 60 +
+      start.getUTCSeconds()) *
+      1000
+  );
+};

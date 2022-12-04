@@ -6,14 +6,14 @@ import Registration from "./Registration";
 
 /**
  * Represents a panel of registrations.
- * @param {int} index the index of the panel. Helps decide
+ * @param {Number} index the index of the panel. Helps decide
  *                    whether the panel handles upcoming,
  *                    ongoing, or past registrations
  * @param {*} registrations list of user's registrations
  * @returns a registrations tab panel.
  */
-function RegistrationsPanel({ index, registrations }) {
-  const timeTab = useStoreLayout((state) => state.timeTab);
+function RegistrationsPanel({ index, registrations, isLoading, error }) {
+  const registrationTab = useStoreLayout((state) => state.registrationTab);
 
   const noRegistrations = () => {
     switch (index) {
@@ -39,9 +39,26 @@ function RegistrationsPanel({ index, registrations }) {
     }
   };
 
+  if (isLoading && registrationTab === index) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        <AlertTitle>Loading registrations ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error && registrationTab === index) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
+
   return (
     <>
-      {timeTab === index &&
+      {registrationTab === index &&
         (registrations.length === 0 ? (
           noRegistrations()
         ) : (
