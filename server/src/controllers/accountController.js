@@ -170,3 +170,29 @@ export const deleteAccount = async (req, res) => {
   });
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
+
+export const getInfo = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const id =  req.id;
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({
+    preferredName: account.preferredName,
+    firstName: account.firstName,
+    lastName: account.lastName,
+    email: account.email,
+    role: account.role
+  });
+};
+
+// preferredName: account.preferredName,
+//     firstName     : account.firstName,
+//     lastName      : account.lastName,
+//     email         : account.email,
+//     role          : account.role,
+//     id

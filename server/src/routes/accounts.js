@@ -23,6 +23,13 @@ router.post(
   controller.login
 );
 
+router.get(
+  "/getInfo",
+  validator.isAccountValidHeader,
+  controller.getInfo
+);
+
+
 router.use(checkToken);
 
 router.delete("/:id", controller.deleteAccount);
