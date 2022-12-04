@@ -19,6 +19,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
 import StyleWrapper, {
   dayHeaderContent,
+  eventColorPalette,
+  eventContent,
   nowIndicatorContent,
   slotLabelContent,
 } from "./StyleWrapper";
@@ -50,6 +52,7 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
+    console.log(info.event);
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -116,6 +119,8 @@ function Calendar() {
               initialView="timeGridWeek"
               height="100%"
               eventClick={handleEventClick}
+              eventBackgroundColor={eventColorPalette[0].bottomColor}
+              eventContent={eventContent}
               eventDrop={handleEventDrop}
               editable={isStaff ? true : false}
               selectable={isStaff ? true : false}
@@ -143,6 +148,7 @@ function Calendar() {
         {matchUpSm && (
           <Box
             variant="outlined"
+            width="20%"
             sx={{
               height: "100%",
               boxShadow: theme.customShadows.z1,

@@ -1,5 +1,25 @@
-import { Box, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
+
+export const eventColorPalette = [
+  {
+    topColor:
+      "linear-gradient(to right, rgba(88, 183, 191, 1), rgba(100, 207, 217, 0))",
+    bottomColor: "rgba(88, 183, 191, 0.25)",
+  },
+  {
+    topColor:
+      "linear-gradient(to right, rgba(112, 135, 219, 1), rgba(100, 207, 217, 0))",
+    bottomColor: "rgba(112, 135, 219, 0.25)",
+  },
+  {
+    topColor:
+      "linear-gradient(to right, rgba(25, 118, 210, 0.9), rgba(100, 207, 217, 0))",
+    bottomColor: "rgba(25, 118, 210, 0.2)",
+  },
+];
 
 const dowConverter = (dow) => {
   switch (dow) {
@@ -59,6 +79,48 @@ export const nowIndicatorContent = (arg) => {
   );
 };
 
+export const eventContent = (arg) => {
+  let hostId = 0;
+  if (Boolean(arg.event.extendedProps.hosts)) {
+    hostId = arg.event.extendedProps.hosts[0].id;
+  }
+  arg.backgroundColor = eventColorPalette[hostId % 3].bottomColor;
+  return (
+    <Stack justifyContent="center" alignItems="center" spacing={1}>
+      <Box
+        height="25px"
+        width="101.5%"
+        padding="0"
+        marginTop="-1px"
+        marginLeft="-1px"
+        justifyContent="center"
+        alignItems="center"
+        display="flex"
+        sx={{
+          background: eventColorPalette[hostId % 3].topColor,
+          borderRadius: "0px 15px 0px 0px",
+        }}
+      >
+        <Typography fontWeight={400} color="white">
+          {arg.timeText}
+        </Typography>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        width="80%"
+      >
+        {Boolean(arg.event.title) && (
+          <Typography lineHeight="15.8px" color="text.primary">
+            {arg.event.title}
+          </Typography>
+        )}
+      </Box>
+    </Stack>
+  );
+};
+
 const StyleWrapper = styled("div")({
   height: "100%",
   ".fc-view-harness.fc-view-harness-active, .fc-scrollgrid.fc-scrollgrid-liquid, .fc-timegrid.fc-timeGridWeek-view.fc-view":
@@ -108,7 +170,7 @@ const StyleWrapper = styled("div")({
   ".fc-toolbar-chunk": {
     display: "flex",
     alignItems: "center",
-    marginBottom: -15
+    marginBottom: -15,
   },
   ".fc .fc-button": {
     color: "#48768C",
@@ -124,6 +186,12 @@ const StyleWrapper = styled("div")({
     {
       boxShadow: "0px 0 0",
     },
+  ".fc-event": {
+    borderRadius: "0px 15px 15px 15px",
+    borderStyle: "none",
+    width: "95%",
+    marginLeft: "5px",
+  },
 });
 
 export default StyleWrapper;
