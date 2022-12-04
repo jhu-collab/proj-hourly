@@ -142,9 +142,9 @@ router.post(
 
 router.post(
   "/cancelRegistration/:registrationId",
-  // accountValidator.isAccountValidHeader,
-  // validator.doesRegistrationExistParams,
-  // validator.isStudentRegisteredBody,
+  accountValidator.isAccountValidHeader,
+  validator.doesRegistrationExistParams,
+  validator.isStudentRegisteredBody,
   controller.cancelRegistration
 );
 
