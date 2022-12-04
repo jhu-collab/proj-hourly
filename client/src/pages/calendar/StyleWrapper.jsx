@@ -190,7 +190,7 @@ const StyleWrapper = styled("div")({
     borderRadius: "0px 15px 15px 15px",
     borderStyle: "none",
     width: "95%",
-    marginLeft: "5px",
+    marginLeft: "3px",
   },
 });
 
