@@ -19,6 +19,21 @@ export const eventColorPalette = [
       "linear-gradient(to right, rgba(25, 118, 210, 0.9), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(25, 118, 210, 0.2)",
   },
+  {
+    topColor:
+      "linear-gradient(to right, rgba(221, 139, 79, 1), rgba(217, 212, 100, 0))",
+    bottomColor: "rgba(245, 184, 64, 0.25)",
+  },
+  {
+    topColor:
+      "linear-gradient(to right, rgba(201, 81, 81, 1), rgba(217, 156, 100, 0))",
+    bottomColor: "rgba(227, 167, 167, 0.25)",
+  },
+  {
+    topColor:
+      "linear-gradient(to right, rgba(83, 150, 60, 1), rgba(100, 217, 161, 0))",
+    bottomColor: "rgba(137, 197, 115, 0.25)",
+  },
 ];
 
 const dowConverter = (dow) => {
@@ -84,7 +99,7 @@ export const eventContent = (arg) => {
   if (Boolean(arg.event.extendedProps.hosts)) {
     hostId = arg.event.extendedProps.hosts[0].id;
   }
-  arg.backgroundColor = eventColorPalette[hostId % 3].bottomColor;
+  arg.backgroundColor = eventColorPalette[hostId % 6].bottomColor;
   return (
     <Stack justifyContent="center" alignItems="center" spacing={1}>
       <Box
@@ -97,7 +112,7 @@ export const eventContent = (arg) => {
         alignItems="center"
         display="flex"
         sx={{
-          background: eventColorPalette[hostId % 3].topColor,
+          background: eventColorPalette[hostId % 6].topColor,
           borderRadius: "0px 15px 0px 0px",
         }}
       >
