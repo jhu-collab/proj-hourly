@@ -20,7 +20,7 @@ function CourseList() {
   if (isLoading) {
     return (
       <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
-        <AlertTitle>Loading courses ...</AlertTitle>
+        Loading courses ...
       </Alert>
     );
   }
@@ -47,9 +47,7 @@ function CourseList() {
       return (
         <Grid item xs={12}>
           <Alert severity="info" sx={{ mt: theme.spacing(2) }}>
-            <AlertTitle>
-              You are not enrolled in any courses in which you are a {type}.
-            </AlertTitle>
+            You are not enrolled in any courses in which you are a {type}.
           </Alert>
         </Grid>
       );
