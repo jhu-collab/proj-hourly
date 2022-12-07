@@ -44,11 +44,7 @@ export const Theme = (colors) => {
       contrastText,
     },
     warning: {
-      lighter: gold[0],
-      light: gold[3],
-      main: gold[5],
-      dark: gold[7],
-      darker: gold[9],
+      main: "#ED6C02",
       contrastText: greyColors[100],
     },
     info: {
