@@ -8,31 +8,37 @@ export const eventColorPalette = [
     topColor:
       "linear-gradient(to right, rgba(88, 183, 191, 1), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(88, 183, 191, 0.25)",
+    monthColor: "rgba(88, 183, 191, 1)",
   },
   {
     topColor:
       "linear-gradient(to right, rgba(112, 135, 219, 1), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(112, 135, 219, 0.25)",
+    monthColor: "rgba(112, 135, 219, 1)"
   },
   {
     topColor:
       "linear-gradient(to right, rgba(25, 118, 210, 0.9), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(25, 118, 210, 0.2)",
+    monthColor: "rgba(25, 118, 210, 0.9)"
   },
   {
     topColor:
       "linear-gradient(to right, rgba(221, 139, 79, 1), rgba(217, 212, 100, 0))",
     bottomColor: "rgba(245, 184, 64, 0.25)",
+    monthColor: "rgba(221, 139, 79, 1)"
   },
   {
     topColor:
       "linear-gradient(to right, rgba(201, 81, 81, 1), rgba(217, 156, 100, 0))",
     bottomColor: "rgba(227, 167, 167, 0.25)",
+    monthColor: "rgba(201, 81, 81, 1)"
   },
   {
     topColor:
       "linear-gradient(to right, rgba(83, 150, 60, 1), rgba(100, 217, 161, 0))",
     bottomColor: "rgba(137, 197, 115, 0.25)",
+    monthColor: "rgba(83, 150, 60, 1)"
   },
 ];
 
@@ -99,41 +105,45 @@ export const eventContent = (arg) => {
   if (Boolean(arg.event.extendedProps.hosts)) {
     hostId = arg.event.extendedProps.hosts[0].id;
   }
-  arg.backgroundColor = eventColorPalette[hostId % 6].bottomColor;
-  return (
-    <Stack justifyContent="center" alignItems="center" spacing={1}>
-      <Box
-        height="25px"
-        width="101.5%"
-        padding="0"
-        marginTop="-1px"
-        marginLeft="-1px"
-        justifyContent="center"
-        alignItems="center"
-        display="flex"
-        sx={{
-          background: eventColorPalette[hostId % 6].topColor,
-          borderRadius: "0px 15px 0px 0px",
-        }}
-      >
-        <Typography fontWeight={400} color="white">
-          {arg.timeText}
-        </Typography>
-      </Box>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        width="80%"
-      >
-        {Boolean(arg.event.title) && (
-          <Typography lineHeight="15.8px" color="text.primary">
-            {arg.event.title}
+  arg.backgroundColor = eventColorPalette[hostId % 6].monthColor;
+
+  if (arg.view.type === "timeGridWeek" || arg.view.type === "timeGridDay") {
+    arg.backgroundColor = eventColorPalette[hostId % 6].bottomColor;
+    return (
+      <Stack justifyContent="center" alignItems="center" spacing={1}>
+        <Box
+          height="25px"
+          width="101.5%"
+          padding="0"
+          marginTop="-1px"
+          marginLeft="-1px"
+          justifyContent="center"
+          alignItems="center"
+          display="flex"
+          sx={{
+            background: eventColorPalette[hostId % 6].topColor,
+            borderRadius: "0px 15px 0px 0px",
+          }}
+        >
+          <Typography fontWeight={400} color="white">
+            {arg.timeText}
           </Typography>
-        )}
-      </Box>
-    </Stack>
-  );
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="80%"
+        >
+          {Boolean(arg.event.title) && (
+            <Typography lineHeight="15.8px" color="text.primary">
+              {arg.event.title}
+            </Typography>
+          )}
+        </Box>
+      </Stack>
+    );
+  }
 };
 
 const StyleWrapper = styled("div")({
@@ -163,10 +173,13 @@ const StyleWrapper = styled("div")({
   ".fc-theme-standard td, .fc-theme-standard th": {
     border: "1px solid rgba(232, 243, 247, 1)",
   },
+  ".fc .fc-daygrid-day.fc-day-today": {
+    backgroundColor: "rgba(174, 245, 233, 0.15)",
+  },
   ".fc .fc-timegrid-col.fc-day-today": {
     backgroundColor: "rgba(174, 245, 233, 0.15)",
   },
-  ".fc-day-today .fc-scrollgrid-sync-inner": {
+  ".fc-col-header-cell.fc-day.fc-day-today ": {
     backgroundColor: "#AEF5E9",
   },
   ".fc .fc-timegrid-now-indicator-line": {
@@ -206,7 +219,7 @@ const StyleWrapper = styled("div")({
     borderStyle: "none",
     width: "95%",
     marginLeft: "3px",
-    overflowY: "hidden",
+    overflow: "hidden",
   },
 });
 
