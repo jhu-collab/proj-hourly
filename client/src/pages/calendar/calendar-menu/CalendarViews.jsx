@@ -29,7 +29,7 @@ function CalendarViews({ calendarRef }) {
   const sxToggleButton = {
     color: "white",
     border: 0,
-    fontWeight: 600,
+    fontWeight: 500,
     "&:hover": {
       bgcolor: "secondary.main",
       color: "text.primary",
