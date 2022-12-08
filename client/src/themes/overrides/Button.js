@@ -9,7 +9,7 @@ export default function Button(theme) {
     MuiButton: {
       styleOverrides: {
         root: {
-          fontWeight: 500,
+          fontWeight: 600,
           textTransform: "uppercase",
           backgroundColor: theme.palette.primary.main,
           color: theme.palette.text.primary,

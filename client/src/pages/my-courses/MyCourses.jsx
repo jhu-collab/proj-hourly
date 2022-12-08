@@ -24,14 +24,13 @@ function MyCourses() {
 
   return (
     <>
-      <Grid container>
-        <Grid item xs={12}>
-          <Stack direction="row" alignItems="center" spacing={theme.spacing(2)}>
-            <Typography variant="h4">My Courses</Typography>
-            <CoursesToggleGroup />
-          </Stack>
-        </Grid>
-        <CourseList />
+      <Typography fontWeight={500} fontSize="23px">Staff Courses</Typography>
+      <Grid container columnSpacing={6} rowSpacing={3} marginBottom={2} >
+        <CourseList courseType="staff"/>
+      </Grid>
+      <Typography fontWeight={500} fontSize="23px">Student Courses</Typography>
+      <Grid container columnSpacing={6} rowSpacing={3} marginBottom={2}  >
+        <CourseList courseType="student"/>
       </Grid>
       <CoursesSpeedDial />
     </>

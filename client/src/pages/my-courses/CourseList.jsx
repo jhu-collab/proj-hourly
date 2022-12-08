@@ -10,9 +10,7 @@ import useStoreLayout from "../../hooks/useStoreLayout";
  * Represents a list of courses that a user is associated with.
  * @returns A component in which a user can see their courses.
  */
-function CourseList() {
-  const courseType = useStoreLayout((state) => state.courseType);
-
+function CourseList({courseType}) {
   const theme = useTheme();
 
   const { isLoading, error, data } = useQueryCourses();
@@ -38,7 +36,7 @@ function CourseList() {
     if (courses.length > 0) {
       return courses.map((course, index) => {
         return (
-          <Grid item xs={12} key={index}>
+          <Grid item xs={12} md={4} key={index}>
             <CourseCard course={course} courseType={courseType} />
           </Grid>
         );

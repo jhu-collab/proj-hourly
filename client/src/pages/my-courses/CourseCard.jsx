@@ -2,13 +2,9 @@ import Box from "@mui/material/Box";
 import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
-import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import useMutationLeaveCourse from "../../hooks/useMutationLeaveCourse";
 import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
@@ -22,45 +18,37 @@ function CourseCard({ course, courseType }) {
 
   const setCourse = useStoreCourse((state) => state.setCourse);
 
-  const { mutate } = useMutationLeaveCourse(course.id);
-
   const onClick = () => {
     setCourse(course);
     navigate("/calendar");
   };
 
   return (
-    <MainCard sx={{ mt: theme.spacing(2) }} content={false}>
-      <Stack direction={"row"}>
+    <MainCard
+      border={false}
+      borderRadius="4px"
+      boxShadow
+      shadow={() =>
+        "0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)"
+      }
+      sx={{ mt: theme.spacing(2) }}
+      content={false}
+    >
         <CardActionArea onClick={onClick}>
-          <Box sx={{ p: theme.spacing(3) }}>
+          <Box sx={{ p: theme.spacing(2) }}>
             <Stack direction="column">
-              <Typography variant="h5">{course.title}</Typography>
-              <Typography variant="h6">{course.courseNumber}</Typography>
-              <Typography variant="h6">
-                {course.semester} {course.calendarYear}
-              </Typography>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography fontSize="20px" fontWeight={600}>
+                  {course.title}
+                </Typography>
+                <Typography fontSize="16px" fontWeight={600}>
+                  {course.semester} {course.calendarYear}
+                </Typography>
+              </Stack>
+              <Typography fontSize="16px" color="text.secondary">{course.courseNumber}</Typography>
             </Stack>
           </Box>
         </CardActionArea>
-        {courseType == "student" ? (
-          <>
-            <Button
-              sx={{ margin: 0, fontSize: 17 }}
-              onClick={() => {
-                confirmDialog("Do you want to leave this course?", () =>
-                  mutate()
-                );
-              }}
-            >
-              <DeleteOutlined />
-            </Button>
-            <ConfirmPopup />
-          </>
-        ) : (
-          <></>
-        )}
-      </Stack>
     </MainCard>
   );
 }
