@@ -508,8 +508,17 @@ export const areValidDOW = (req, res, next) => {
 
 export const checkOptionalDateBody = async (req, res, next) => {
   const { date } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: req.body.officeHourId,
+    },
+  });
   if (date === undefined || date === null) {
-    req.body.date = new Date().toISOString();
+    const newEnd = new Date();
+    newEnd.setUTCHours(officeHour.endDate.getUTCHours());
+    newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+    newEnd.setUTCSeconds(0);
+    req.body.date = newEnd.toISOString();
     next();
   } else {
     const { officeHourId, date } = req.body;
@@ -539,6 +548,11 @@ export const checkOptionalDateBody = async (req, res, next) => {
         .status(StatusCodes.CONFLICT)
         .json({ msg: "ERROR: office hours is not available on day" });
     } else {
+      const newEnd = new Date(date);
+      newEnd.setUTCHours(officeHour.endDate.getUTCHours());
+      newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+      newEnd.setUTCSeconds(0);
+      req.body.date = newEnd.toISOString();
       next();
     }
   }
