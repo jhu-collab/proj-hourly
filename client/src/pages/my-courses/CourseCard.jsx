@@ -2,17 +2,19 @@ import Box from "@mui/material/Box";
 import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import useStoreCourse from "../../hooks/useStoreCourse";
+import { eventColorPalette } from "../calendar/CalendarTheme";
 
 /**
  * Represents a Card component that displays information about a course.
  * @param {*} course: a course object
  * @returns A course card component.
  */
-function CourseCard({ course, courseType }) {
+function CourseCard({ course, courseType, index }) {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -34,21 +36,35 @@ function CourseCard({ course, courseType }) {
       sx={{ mt: theme.spacing(2) }}
       content={false}
     >
-        <CardActionArea onClick={onClick}>
-          <Box sx={{ p: theme.spacing(2) }}>
-            <Stack direction="column">
-              <Stack direction="row" justifyContent="space-between">
+      <CardActionArea onClick={onClick}>
+        <Box sx={{ p: theme.spacing(2) }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            <Stack direction="row" alignItems="center">
+              <Avatar
+                sx={{ bgcolor: eventColorPalette[index % 6].monthColor }}
+                variant="rounded"
+              >
+                {course.title[0]}
+              </Avatar>
+              <Stack direction="column" marginLeft={1} spacing={-1}>
                 <Typography fontSize="20px" fontWeight={600}>
                   {course.title}
                 </Typography>
-                <Typography fontSize="16px" fontWeight={600}>
-                  {course.semester} {course.calendarYear}
+                <Typography fontSize="16px" color="text.secondary">
+                  {course.courseNumber}
                 </Typography>
               </Stack>
-              <Typography fontSize="16px" color="text.secondary">{course.courseNumber}</Typography>
             </Stack>
-          </Box>
-        </CardActionArea>
+            <Typography fontSize="16px" fontWeight={600} marginTop={0.2}>
+              {course.semester} {course.calendarYear}
+            </Typography>
+          </Stack>
+        </Box>
+      </CardActionArea>
     </MainCard>
   );
 }
