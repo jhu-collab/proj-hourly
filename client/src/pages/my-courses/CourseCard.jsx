@@ -59,7 +59,12 @@ function CourseCard({ course, courseType, index }) {
                 </Typography>
               </Stack>
             </Stack>
-            <Typography fontSize="16px" fontWeight={600} marginTop={0.2}>
+            <Typography
+              fontSize="16px"
+              fontWeight={500}
+              marginTop={0.2}
+              color="rgba(30, 62, 102, 1)"
+            >
               {course.semester} {course.calendarYear}
             </Typography>
           </Stack>

@@ -61,14 +61,13 @@ function AuthLogin() {
         <SingleSignOn />
       )}
       <Divider
-        label="Or continue with"
         sx={{
           fontSize: "17px",
           "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
           "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
         }}
       >
-        Or continue with
+        OR
       </Divider>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} marginTop={-0.5} alignItems="center">
