@@ -405,10 +405,9 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const { startDate, endDate, location } = req.body;
-  const dateObj = createJustDateObject(new Date(date));
+  const dateObj = new Date(startDate);
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
     where: {
@@ -463,6 +462,11 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
           id: officehour.course.id,
         },
       },
+      isOnDayOfWeek: {
+        connect: {
+          dayOfWeek: dow,
+        },
+      },
       location: newLocation,
       isRecurring: false,
       isDeleted: false,
@@ -479,11 +483,6 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     data: {
       hosts: {
         connect: hostArr,
-      },
-      isOnDayOfWeek: {
-        connect: {
-          dayOfWeek: dow,
-        },
       },
     },
   });
@@ -696,12 +695,17 @@ export const cancelRegistration = async (req, res) => {
     },
     data: {
       isCancelled: true,
-    }, include: {
-      account: true
-    }
+    },
+    include: {
+      account: true,
+    },
   });
   const userEmail = registration.account.email;
-  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  let emailReq = {
+    email: userEmail,
+    subject: "Registration Cancelled",
+    text: "Your registration has been cancelled",
+  };
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
