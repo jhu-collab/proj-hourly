@@ -112,11 +112,8 @@ export const register = async (req, res) => {
         },
       },
     },
-    include: {
-      account: true,
-    },
   });
-  const userEmail = registration.account.email;
+  const userEmail = updateAccount.email;
   let emailReq = {
     email: userEmail,
     subject: "Successfully Registered for Course",
