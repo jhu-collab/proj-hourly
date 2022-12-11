@@ -7,7 +7,7 @@ import { Alert, AlertTitle } from "@mui/material";
 
 function AuthWrapper({ children }) {
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "background.paper" }}>
+    <Box sx={{ minHeight: "100vh" }}>
       <Grid
         container
         direction="column"
