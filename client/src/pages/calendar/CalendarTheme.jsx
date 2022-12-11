@@ -14,31 +14,31 @@ export const eventColorPalette = [
     topColor:
       "linear-gradient(to right, rgba(112, 135, 219, 1), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(112, 135, 219, 0.25)",
-    monthColor: "rgba(112, 135, 219, 1)"
+    monthColor: "rgba(112, 135, 219, 1)",
   },
   {
     topColor:
       "linear-gradient(to right, rgba(25, 118, 210, 0.9), rgba(100, 207, 217, 0))",
     bottomColor: "rgba(25, 118, 210, 0.2)",
-    monthColor: "rgba(25, 118, 210, 0.9)"
+    monthColor: "rgba(25, 118, 210, 0.9)",
   },
   {
     topColor:
       "linear-gradient(to right, rgba(221, 139, 79, 1), rgba(217, 212, 100, 0))",
     bottomColor: "rgba(245, 184, 64, 0.25)",
-    monthColor: "rgba(221, 139, 79, 1)"
+    monthColor: "rgba(221, 139, 79, 1)",
   },
   {
     topColor:
       "linear-gradient(to right, rgba(201, 81, 81, 1), rgba(217, 156, 100, 0))",
     bottomColor: "rgba(227, 167, 167, 0.25)",
-    monthColor: "rgba(201, 81, 81, 1)"
+    monthColor: "rgba(201, 81, 81, 1)",
   },
   {
     topColor:
       "linear-gradient(to right, rgba(83, 150, 60, 1), rgba(100, 217, 161, 0))",
     bottomColor: "rgba(137, 197, 115, 0.25)",
-    monthColor: "rgba(83, 150, 60, 1)"
+    monthColor: "rgba(83, 150, 60, 1)",
   },
 ];
 
