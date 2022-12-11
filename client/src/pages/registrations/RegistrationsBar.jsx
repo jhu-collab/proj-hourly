@@ -30,14 +30,14 @@ function RegistrationsBar() {
         <Toolbar>
           <RegistrationTabs />
           <Box sx={{ flexGrow: 1 }} />
-          {/* TODO: Need to create a filter panel for registrations */}
-          <IconButton onClick={onClick}>
+          {/* TODO: Need to create a filter panel for registrations - UNFINISHED FEATURE */}
+          {/* <IconButton onClick={onClick}>
             {filter ? (
               <FilterFilled style={{ color: theme.palette.primary.main }} />
             ) : (
               <FilterOutlined style={{ color: theme.palette.primary.main }} />
             )}
-          </IconButton>
+          </IconButton> */}
         </Toolbar>
       </AppBar>
     </Box>
