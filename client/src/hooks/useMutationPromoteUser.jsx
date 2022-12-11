@@ -6,6 +6,7 @@ import { getConfig } from "./helper";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
+import NiceModal from "@ebay/nice-modal-react";
 
 function useMutationPromoteUser(params, role) {
   const { token } = useStoreToken();
@@ -30,6 +31,7 @@ function useMutationPromoteUser(params, role) {
       toast.success(
         `Successfully promoted ${params.row.firstName} ${params.row.lastName}!`
       );
+      NiceModal.hide("promote-user");
     },
     onError: (err) => {
       errorToast(err);
