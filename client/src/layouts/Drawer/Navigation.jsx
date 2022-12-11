@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import { menuItems } from "../../menu-items";
 import NavGroup from "./NavGroup";
+import useAuth from "../../hooks/useAuth";
 
 function Navigation() {
   const course = useStoreCourse((state) => state.course);
+  const { isAdmin } = useAuth();
   const [menu, setMenu] = useState({ items: [] });
 
   useEffect(() => {
-    setMenu(menuItems(course));
-  }, [course]);
+    setMenu(menuItems(course, isAdmin()));
+  }, [course, isAdmin()]);
 
   const navGroups = menu.items.map((item) => {
     switch (item.type) {
