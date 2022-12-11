@@ -6,6 +6,7 @@ import { getConfig } from "./helper";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
+import NiceModal from "@ebay/nice-modal-react";
 
 function useMutationChangeRole(params, role) {
   const { token } = useStoreToken();
@@ -42,6 +43,7 @@ function useMutationChangeRole(params, role) {
       toast.success(
         `Successfully changed role of ${params.row.firstName} ${params.row.lastName} to ${role}!`
       );
+      NiceModal.hide("change-user-role");
     },
     onError: (err) => {
       errorToast(err);
