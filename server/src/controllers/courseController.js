@@ -100,7 +100,17 @@ export const register = async (req, res) => {
         },
       },
     },
+    include: {
+      account: true,
+    },
   });
+  const userEmail = registration.account.email;
+  let emailReq = {
+    email: userEmail,
+    subject: "Successfully Registered for Course",
+    text: "Your registration has been confirmed",
+  };
+  sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
