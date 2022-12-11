@@ -7,7 +7,7 @@ import CreateRegistrationType from "../pages/registrations/CreateRegistrationTyp
 import CreateTopic from "../pages/topics/CreateTopic";
 import CreateCourse from "../pages/my-courses/create-course/CreateCourse";
 import JoinCourse from "../pages/my-courses/join-course/JoinCourse";
-import PromoteUser from "../pages/roster/PromoteUser";
+import PromoteUser from "../pages/roster/ChangeRole";
 
 NiceModal.register("create-course", CreateCourse);
 NiceModal.register("join-course", JoinCourse);
@@ -15,6 +15,6 @@ NiceModal.register("mobile-event-popup", MobileEventPopup);
 NiceModal.register("upsert-event", UpsertEvent);
 NiceModal.register("register-event", Register);
 NiceModal.register("sign-out", SignOutPopup);
-NiceModal.register("promote-user", PromoteUser);
+NiceModal.register("change-user-role", PromoteUser);
 NiceModal.register("create-registration-type", CreateRegistrationType);
 NiceModal.register("create-topic", CreateTopic);
