@@ -20,7 +20,6 @@ function TopicRegistrations() {
   const [topicRegType, setTopicRegType] = useState("graph");
 
   const { isLoading, error, data } = useQueryTopicCounts();
-  console.log(data);
 
   const sxToggleButton = {
     color: "white",
