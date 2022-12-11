@@ -5,11 +5,15 @@ import { dashboard } from "./dashboard";
 export const menuItems = (currentCourse) => {
   if (currentCourse) {
     return {
-      items: [dashboard, course(currentCourse), admin],
+      items: [dashboard, course(currentCourse)],
+      // TODO: UNFINISHED FEATURE
+      // items: [dashboard, course(currentCourse), admin],
     };
   } else {
     return {
-      items: [dashboard, admin],
+      items: [dashboard]
+      // TODO: UNFINISHED FEATURE
+      // items: [dashboard, admin],
     };
   }
 };

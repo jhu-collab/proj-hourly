@@ -48,9 +48,10 @@ function App() {
                 <Route path="/topics" element={<Topics />} />
                 <Route path="/statistics" element={<Statistics />} />
               </Route>
-              <Route path="admin/" element={<AdminOnlyRoute />}>
+              {/* TODO: UNFINISHED FEATURE */}
+              {/* <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
-              </Route>
+              </Route> */}
             </Route>
           </Route>
           <Route path="/" element={<MinimalLayout />}>
