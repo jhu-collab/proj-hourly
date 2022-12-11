@@ -1,10 +1,11 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
-import validate from "../util/checkValidation.js";
-import { generateCalendar } from "../util/icalHelpers.js";
-import { createTimeString } from "../util/helpers.js";
+import checkValidation from "../util/checkValidation.js";
+import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
+import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
+import sendEmail from "../util/notificationUtil.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
@@ -41,8 +42,6 @@ const connectOfficeHourToHosts = async (officeHourId, hosts) => {
 };
 
 const createOfficeHour = async (
-  startTime,
-  endTime,
   startDate,
   endDate,
   courseId,
@@ -52,8 +51,6 @@ const createOfficeHour = async (
 ) => {
   return await prisma.officeHour.create({
     data: {
-      startTime,
-      endTime,
       startDate,
       endDate,
       course: {
@@ -84,12 +81,10 @@ const createJustDateObject = (date) => {
 };
 
 export const create = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const {
-    startTime,
-    endTime,
     recurringEvent,
     startDate,
     endDate,
@@ -98,13 +93,11 @@ export const create = async (req, res) => {
     hosts,
     daysOfWeek,
   } = req.body;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
   const officeHour = await createOfficeHour(
-    startTimeObject,
-    endTimeObject,
-    new Date(startDate),
-    new Date(endDate),
+    start,
+    end,
     courseId,
     location,
     recurringEvent,
@@ -136,7 +129,7 @@ export const create = async (req, res) => {
 };
 
 export const getForCourse = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
@@ -149,13 +142,24 @@ export const getForCourse = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
   const id = req.id;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const dateObj = new Date(date);
+  // if (
+  //   officeHour.startTime > officeHour.endTime &&
+  //   startTime < officeHour.startTime
+  // ) {
+  //   dateObj.setDate(dateObj.getDate() + 1);
+  // }
   const registration = await prisma.registration.create({
     data: {
       startTime: stringToTimeObj(startTime),
@@ -188,7 +192,7 @@ export const register = async (req, res) => {
 };
 
 export const cancelOnDate = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const { officeHourId, date } = req.body;
@@ -224,18 +228,15 @@ export const cancelOnDate = async (req, res) => {
 };
 
 export const cancelAll = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const { officeHourId } = req.body;
-  const date = new Date();
+  const dateToEnd = req.body.date;
+  const date = new Date(dateToEnd);
   date.setUTCHours(date.getHours());
   date.setUTCMinutes(date.getMinutes());
-  const dateObj = new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate()
-  );
+  const dateObj = new Date(dateToEnd);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -245,9 +246,6 @@ export const cancelAll = async (req, res) => {
     },
   });
   const startObj = officeHour.startDate;
-  startObj.setUTCHours(officeHour.startTime.getUTCHours() - 2);
-  startObj.setUTCMinutes(officeHour.startTime.getUTCMinutes());
-  startObj.setUTCSeconds(officeHour.startTime.getUTCSeconds());
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
     await prisma.registration.updateMany({
@@ -308,7 +306,7 @@ export const cancelAll = async (req, res) => {
  * @returns res
  */
 export const getTimeSlotsRemaining = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const date = new Date(req.params.date);
@@ -325,8 +323,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
       courseId: officeHour.courseId,
     },
   });
-  let start = officeHour.startTime;
-  const end = officeHour.endTime;
+  let start = createJustTimeObject(new Date(officeHour.startDate));
+  const end = createJustTimeObject(new Date(officeHour.endDate));
   //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
@@ -342,7 +340,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   //number of 5 minute intervals in the office hour
   let n =
-    (officeHour.endTime.getTime() - officeHour.startTime.getTime()) /
+    computeDiff(new Date(officeHour.startDate), new Date(officeHour.endDate)) /
     (5 * 60000);
   //an array of 5 minute intervals, marking if the interval is occupied
   let timeSlots = Array(n).fill(true);
@@ -365,7 +363,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let sessionStartTime;
   // loops over each time length
   timeLengths.forEach((timeLength) => {
-    sessionStartTime = new Date(officeHour.startTime);
+    sessionStartTime = new Date(officeHour.startDate.toISOString());
     let times = [];
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
@@ -404,12 +402,12 @@ export const getTimeSlotsRemaining = async (req, res) => {
 };
 
 export const rescheduleSingleOfficeHour = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const { startTime, endTime, location } = req.body;
+  const { startDate, endDate, location } = req.body;
   const dateObj = createJustDateObject(new Date(date));
   const dow = weekday[dateObj.getUTCDay()];
   const officehour = await prisma.officeHour.findUnique({
@@ -456,14 +454,10 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     location === null || location === undefined
       ? officehour.location
       : location;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
   const newOfficeHour = await prisma.officeHour.create({
     data: {
-      startTime: startTimeObject,
-      endTime: endTimeObject,
-      startDate: new Date(date),
-      endDate: new Date(date),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
       course: {
         connect: {
           id: officehour.course.id,
@@ -498,35 +492,32 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
 };
 
 export const editAll = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const {
-    startDate,
-    endDate,
-    startTime,
-    endTime,
-    location,
-    daysOfWeek,
-    endDateOldOfficeHour,
-  } = req.body;
-  const startTimeObject = stringToTimeObj(startTime);
-  const endTimeObject = stringToTimeObj(endTime);
+  const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
+    req.body;
+  const oldOH = await prisma.officeHour.findUnique({
+    where: { id: officeHourId },
+  });
+  const endOldOH = new Date(endDateOldOfficeHour);
+  endOldOH.setUTCHours(oldOH.endDate.getUTCHours());
+  endOldOH.setUTCMinutes(oldOH.endDate.getUTCMinutes());
+  endOldOH.setUTCSeconds(oldOH.endDate.getUTCSeconds());
+  endOldOH.setDate(endOldOH.getDate() - 1);
   const update = await prisma.officeHour.update({
     where: {
       id: officeHourId,
     },
     data: {
-      endDate: new Date(endDateOldOfficeHour),
+      endDate: endOldOH,
     },
     include: {
       hosts: true,
     },
   });
   const newOfficeHour = await createOfficeHour(
-    startTimeObject,
-    endTimeObject,
     new Date(startDate),
     new Date(endDate),
     update.courseId,
@@ -588,7 +579,7 @@ export const editAll = async (req, res) => {
 };
 
 export const getRegistrationStatus = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
@@ -655,7 +646,7 @@ export const getForCourseWithFilter = async (req, res) => {
 };
 
 export const getOfficeHourById = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
@@ -676,7 +667,7 @@ export const getOfficeHourById = async (req, res) => {
 };
 
 export const getAllRegistrationsOnDate = async (req, res) => {
-  if (validate(req, res)) {
+  if (checkValidation(req, res)) {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
@@ -705,8 +696,13 @@ export const cancelRegistration = async (req, res) => {
     },
     data: {
       isCancelled: true,
-    },
+    }, include: {
+      account: true
+    }
   });
+  const userEmail = registration.account.email;
+  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 

@@ -18,7 +18,7 @@ const Roster = () => {
   if (isLoading) {
     return (
       <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
-        <AlertTitle>Loading roster ...</AlertTitle>
+        Loading roster ...
       </Alert>
     );
   }
@@ -34,7 +34,9 @@ const Roster = () => {
   
   return (
     <>
-      <Typography variant="h4">Roster</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Roster
+      </Typography>
       <RosterTabs rows={data} />
     </>
   );

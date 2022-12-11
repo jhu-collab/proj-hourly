@@ -15,8 +15,9 @@ export const isUniqueCourse = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "course already exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseCode = async (req, res, next) => {
@@ -30,8 +31,9 @@ export const isCourseCode = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this code does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseIdUrlValid = async (req, res, next) => {
@@ -45,8 +47,9 @@ export const isCourseIdUrlValid = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course does not exist" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseId = async (req, res, next) => {
@@ -60,8 +63,9 @@ export const isCourseId = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this id does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseIdParams = async (req, res, next) => {
@@ -75,8 +79,9 @@ export const isCourseIdParams = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Course with this id does not exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isCourseStaffOrInstructor = async (req, res, next) => {
@@ -110,8 +115,9 @@ export const isCourseStaffOrInstructor = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not a member of course staff" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const areCourseStaffOrInstructor = async (req, res, next) => {
@@ -147,8 +153,9 @@ export const areCourseStaffOrInstructor = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not a member of course staff" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseFromHeader = async (req, res, next) => {
@@ -198,8 +205,9 @@ export const isInCourseFromHeader = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "User is not in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseForOfficeHour = async (req, res, next) => {
@@ -229,8 +237,9 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: student is not enrolled in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isInCourseForOfficeHourParam = async (req, res, next) => {
@@ -257,8 +266,9 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: student is not enrolled in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const areTopicsForCourse = async (req, res, next) => {
@@ -287,9 +297,12 @@ export const areTopicsForCourse = async (req, res, next) => {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ msg: "ERROR: topic is not for course" });
+    } else {
+      next();
     }
+  } else {
+    next();
   }
-  next();
 };
 
 export const isNotDuplicateTopic = async (req, res, next) => {
@@ -304,8 +317,9 @@ export const isNotDuplicateTopic = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: topic already exists" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const isNotInCourse = async (req, res, next) => {
@@ -329,8 +343,9 @@ export const isNotInCourse = async (req, res, next) => {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "User is already in course" });
+  } else {
+    next();
   }
-  next();
 };
 
 export const doesTimeLengthExist = async (req, res, next) => {
@@ -537,5 +552,21 @@ export const isAccountInstructorForTopic = async (req, res, next) => {
         next();
       }
     }
+  }
+};
+
+export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
+  const id = parseInt(req.params.courseId, 10);
+  const times = await prisma.OfficeHourTimeOptions.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  if (times.length > 1) {
+    next();
+  } else {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: cannot delete the only time offering for the course",
+    });
   }
 };

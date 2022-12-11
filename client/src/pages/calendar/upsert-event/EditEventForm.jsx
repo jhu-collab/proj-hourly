@@ -62,21 +62,15 @@ function EditEventForm() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
-        : "",
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       days: [],
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
       registrationTypes: [0],
@@ -89,21 +83,31 @@ function EditEventForm() {
   const { mutate, isLoading } = useMutationEditEvent(recurringEvent);
 
   const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
+
     recurringEvent
       ? mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
-          startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
-          endDate: DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy"),
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate(data.startDate).toFormat(
-            "MM-dd-yyyy"
-          ),
+          endDateOldOfficeHour: DateTime.fromJSDate(start, {
+            zone: "utc",
+          }).toFormat("MM-dd-yyyy"),
         })
       : mutate({
-          startTime: `${data.startTime}:00`,
-          endTime: `${data.endTime}:00`,
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
           location: data.location,
         });
   };
@@ -135,15 +139,13 @@ function EditEventForm() {
               label="Recurring event"
             />
           )}
-          {recurringEvent && (
-            <FormInputText
-              name="startDate"
-              control={control}
-              label={recurringEvent ? "Start Date" : "Date"}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-          )}
+          <FormInputText
+            name="startDate"
+            control={control}
+            label={recurringEvent ? "Start Date" : "Date"}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
           {recurringEvent && (
             <FormInputText
               name="endDate"

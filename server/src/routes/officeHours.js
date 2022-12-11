@@ -16,8 +16,6 @@ router.use(checkToken);
 router.post(
   "/create",
   body("courseId", "Course is required").isInt(),
-  body("startTime", "Please specify what time this event starts").notEmpty(),
-  body("endTime", "Please specify what time this event ends").notEmpty(),
   body(
     "recurringEvent",
     "Please specify if this is a recurring event"
@@ -40,9 +38,9 @@ router.post(
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
-  timeValidator.isTime,
-  validator.areValidDOW,
-  dateValidator.officeHourDateCheck,
+  //timeValidator.isTime,
+  //validator.areValidDOW,
+  //dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
 );
@@ -60,6 +58,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
+  validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
   validator.isTimeCorrectInterval,
@@ -84,10 +83,13 @@ router.post(
 router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
+  body("date", "Date is required").optional(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
+  validator.checkOptionalDateBody,
+  //validator.isOfficeHourOnDay,
   controller.cancelAll
 );
 
@@ -102,8 +104,8 @@ router.get(
 
 router.post(
   "/:officeHourId/editForDate/:date",
-  body("startTime", "start time is required").notEmpty(),
-  body("endTime", "end time is required").notEmpty(),
+  body("startDate", "start date is required").notEmpty(),
+  body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
@@ -116,8 +118,6 @@ router.post(
 
 router.post(
   "/:officeHourId/editAll",
-  body("startTime", "Please specify what time this event starts").notEmpty(),
-  body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body("location", "Please specify a location for your office hours")
@@ -135,7 +135,7 @@ router.post(
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
-  timeValidator.isTime,
+  //timeValidator.isTime,
   dateValidator.endIsAfterStart,
   controller.editAll
 );

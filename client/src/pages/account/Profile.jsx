@@ -64,26 +64,54 @@ function Profile() {
             name="username"
             control={control}
             label="Username"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{
+              backgroundColor: "background.paper",
+              "& label": { color: "transparent" },
+            }}
           />
           <FormInputText
             disabled
             name="firstName"
             control={control}
             label="First Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
           <FormInputText
             disabled={!edit}
             name="preferredName"
             control={control}
             label="Preferred Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
           <FormInputText
             disabled
             name="lastName"
             control={control}
             label="Last Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
-          <FormInputText disabled name="role" control={control} label="Role" />
+          <FormInputText
+            disabled
+            name="role"
+            control={control}
+            label="Role"
+            sx={{ backgroundColor: "background.paper" }}
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+          />
           <Stack direction="row" justifyContent="flex-end">
             {edit ? (
               <Stack direction="row" spacing={1}>
