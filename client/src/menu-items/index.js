@@ -11,7 +11,7 @@ export const menuItems = (currentCourse) => {
     };
   } else {
     return {
-      items: [dashboard]
+      items: [dashboard],
       // TODO: UNFINISHED FEATURE
       // items: [dashboard, admin],
     };

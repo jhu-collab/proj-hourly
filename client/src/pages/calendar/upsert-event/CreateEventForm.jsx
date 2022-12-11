@@ -142,13 +142,13 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-            <FormCheckbox
-              name="recurringEvent"
-              control={control}
-              label="Recurring event"
-            />
-            {/* TODO: UNFINISHED FEATURE */}
-            {/* <FormCheckbox
+          <FormCheckbox
+            name="recurringEvent"
+            control={control}
+            label="Recurring event"
+          />
+          {/* TODO: UNFINISHED FEATURE */}
+          {/* <FormCheckbox
               name="feedback"
               control={control}
               label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
