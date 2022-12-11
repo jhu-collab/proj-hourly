@@ -116,9 +116,6 @@ function Profile() {
                           >
                             <Stack>
                               <Typography variant="h6">{name}</Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                UI/UX Designer
-                              </Typography>
                             </Stack>
                           </Stack>
                         </Grid>
