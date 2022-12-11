@@ -5,6 +5,7 @@ import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
 import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
+import sendEmail from "../util/notificationUtil.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
@@ -83,7 +84,6 @@ export const create = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  console.log("here");
   const {
     recurringEvent,
     startDate,
@@ -232,14 +232,11 @@ export const cancelAll = async (req, res) => {
     return res;
   }
   const { officeHourId } = req.body;
-  const date = new Date();
+  const dateToEnd = req.body.date;
+  const date = new Date(dateToEnd);
   date.setUTCHours(date.getHours());
   date.setUTCMinutes(date.getMinutes());
-  const dateObj = new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate()
-  );
+  const dateObj = new Date(dateToEnd);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -699,8 +696,13 @@ export const cancelRegistration = async (req, res) => {
     },
     data: {
       isCancelled: true,
-    },
+    }, include: {
+      account: true
+    }
   });
+  const userEmail = registration.account.email;
+  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
