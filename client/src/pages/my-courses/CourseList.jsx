@@ -16,18 +16,22 @@ function CourseList({ courseType }) {
 
   if (isLoading) {
     return (
-      <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
-        Loading courses ...
-      </Alert>
+      <Grid item xs={12}>
+        <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
+          Loading courses ...
+        </Alert>
+      </Grid>
     );
   }
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mt: theme.spacing(2) }}>
-        <AlertTitle>Error</AlertTitle>
-        {"An error has occurred: " + error.message}
-      </Alert>
+      <Grid item>
+        <Alert severity="error" sx={{ mt: theme.spacing(2) }}>
+          <AlertTitle>Error</AlertTitle>
+          {"An error has occurred: " + error.message}
+        </Alert>
+      </Grid>
     );
   }
 

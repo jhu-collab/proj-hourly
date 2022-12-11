@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import MainCard from "../../components/MainCard";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import { eventColorPalette } from "../calendar/CalendarTheme";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents a Card component that displays information about a course.
@@ -19,9 +20,11 @@ function CourseCard({ course, courseType, index }) {
   const navigate = useNavigate();
 
   const setCourse = useStoreCourse((state) => state.setCourse);
+  const toggleCourseType = useStoreLayout((state) => state.toggleCourseType);
 
   const onClick = () => {
     setCourse(course);
+    toggleCourseType(courseType);
     navigate("/calendar");
   };
 
@@ -50,7 +53,7 @@ function CourseCard({ course, courseType, index }) {
               >
                 {course.title[0]}
               </Avatar>
-              <Stack direction="column" marginLeft={1} spacing={-1}>
+              <Stack direction="column" marginLeft={2} spacing={-1}>
                 <Typography fontSize="20px" fontWeight={600}>
                   {course.title}
                 </Typography>
