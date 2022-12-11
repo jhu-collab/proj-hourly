@@ -171,7 +171,17 @@ export const register = async (req, res) => {
       question,
       isCancelledStaff: false,
     },
+    include: {
+      account: true,
+    },
   });
+  const userEmail = registration.account.email;
+  let emailReq = {
+    email: userEmail,
+    subject: "Successfully Registered",
+    text: "Your registration has been confirmed",
+  };
+  sendEmail(emailReq);
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
     TopicIds.forEach(async (topicId) => {
@@ -696,12 +706,17 @@ export const cancelRegistration = async (req, res) => {
     },
     data: {
       isCancelled: true,
-    }, include: {
-      account: true
-    }
+    },
+    include: {
+      account: true,
+    },
   });
   const userEmail = registration.account.email;
-  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  let emailReq = {
+    email: userEmail,
+    subject: "Registration Cancelled",
+    text: "Your registration has been cancelled",
+  };
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
