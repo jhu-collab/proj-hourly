@@ -109,6 +109,7 @@ function Users() {
         checkboxSelection
         disableSelectionOnClick
         hideFooter
+        sx={{ backgroundColor: "background.paper" }}
         components={{
           Toolbar: GridToolbar,
         }}

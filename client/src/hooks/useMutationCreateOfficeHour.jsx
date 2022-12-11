@@ -34,19 +34,15 @@ function useMutationCreateOfficeHour() {
     onSuccess: (data) => {
       const officeHour = data.officeHour;
 
-      const startTime = DateTime.fromISO(officeHour.startTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-      const endTime = DateTime.fromISO(officeHour.endTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const startTime = DateTime.fromISO(officeHour.startDate).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
+      const endTime = DateTime.fromISO(officeHour.endDate).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
 
-      const startDate = DateTime.fromISO(officeHour.startDate, {
-        zone: "utc",
-      }).toFormat("D");
-      const endDate = DateTime.fromISO(officeHour.endDate, {
-        zone: "utc",
-      }).toFormat("D");
+      const startDate = DateTime.fromISO(officeHour.startDate).toFormat("D");
+      const endDate = DateTime.fromISO(officeHour.endDate).toFormat("D");
 
       queryClient.invalidateQueries(["officeHours"]);
       NiceModal.hide("upsert-event");

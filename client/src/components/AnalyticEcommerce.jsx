@@ -41,26 +41,32 @@ function AnalyticEcommerce({ color, title, count, percentage, isLoss, extra }) {
                   </>
                 }
                 label={`${percentage}%`}
-                sx={{ ml: 1.25, pl: 1 }}
+                sx={{
+                  ml: 1.25,
+                  pl: 1,
+                  backgroundColor: `${color || "primary"}.main`,
+                }}
                 size="small"
               />
             </Grid>
           )}
         </Grid>
       </Stack>
-      <Box sx={{ pt: 2.25 }}>
-        <Typography variant="caption" color="textSecondary">
-          You made an extra{" "}
-          <Typography
-            component="span"
-            variant="caption"
-            sx={{ color: `${color || "primary"}.main` }}
-          >
-            {extra}
-          </Typography>{" "}
-          this year
-        </Typography>
-      </Box>
+      {extra && (
+        <Box sx={{ pt: 2.25 }}>
+          <Typography variant="caption" color="textSecondary">
+            You made an extra{" "}
+            <Typography
+              component="span"
+              variant="caption"
+              sx={{ color: `${color || "primary"}.main` }}
+            >
+              {extra}
+            </Typography>{" "}
+            this year
+          </Typography>
+        </Box>
+      )}
     </MainCard>
   );
 }
