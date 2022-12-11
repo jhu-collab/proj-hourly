@@ -61,19 +61,6 @@ function Profile() {
         <Stack spacing={4}>
           <FormInputText
             disabled
-            name="username"
-            control={control}
-            label="Username"
-            InputLabelProps={{
-              style: { backgroundColor: "rgba(255,255,255,0)" },
-            }}
-            sx={{
-              backgroundColor: "background.paper",
-              "& label": { color: "transparent" },
-            }}
-          />
-          <FormInputText
-            disabled
             name="firstName"
             control={control}
             label="First Name"
@@ -112,7 +99,8 @@ function Profile() {
               style: { backgroundColor: "rgba(255,255,255,0)" },
             }}
           />
-          <Stack direction="row" justifyContent="flex-end">
+          {/* TODO: UNFINISHED FEATURE */}
+          {/* <Stack direction="row" justifyContent="flex-end">
             {edit ? (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
@@ -142,7 +130,7 @@ function Profile() {
                 </Button>
               </AnimateButton>
             )}
-          </Stack>
+          </Stack> */}
         </Stack>
       </Form>
       <DeleteAccountAction userid={id} />
