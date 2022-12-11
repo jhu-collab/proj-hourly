@@ -21,7 +21,7 @@ function Topics() {
   const noRegistrations = () => {
     return (
       <Alert severity="info" sx={{ mt: 2 }}>
-        <AlertTitle>No Topics</AlertTitle>
+        No Topics
       </Alert>
     );
   };

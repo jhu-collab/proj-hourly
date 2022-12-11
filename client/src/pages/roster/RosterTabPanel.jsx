@@ -1,5 +1,4 @@
 import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
 import Box from "@mui/material/Box";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -49,13 +48,11 @@ function RosterTabPanel({ index, rows }) {
   const noRows = () => {
     return (
       <Alert severity="info">
-        <AlertTitle>
-          {index === 0
-            ? "No Students"
-            : index === 1
-            ? "No Staff"
-            : "No Instructors"}
-        </AlertTitle>
+        {index === 0
+          ? "No Students"
+          : index === 1
+          ? "No Staff"
+          : "No Instructors"}
       </Alert>
     );
   };

@@ -71,9 +71,7 @@ function StudentRegistrations() {
       </Grid>
       <MainCard content={false} sx={{ mt: 1.5 }}>
         {isLoading ? (
-          <Alert severity="warning">
-            <AlertTitle>Loading data ...</AlertTitle>
-          </Alert>
+          <Alert severity="warning">Loading data ...</Alert>
         ) : Boolean(error) ? (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
