@@ -53,11 +53,7 @@ function ChangeRoleForm(props) {
           <Button
             color="secondary"
             variant="contained"
-            onClick={() => {
-                if(onSubmit) {
-                  onSubmit();
-                }
-            }}
+            type="submit"
           >
             Change
           </Button>

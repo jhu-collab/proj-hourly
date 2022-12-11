@@ -11,6 +11,7 @@ function ChangeRoleIcon(props) {
           NiceModal.show("change-user-role", { params: params, isStaff: isStaff });
         }}
         label="Change Role"
+        size="large"
       />
     </>
   );
