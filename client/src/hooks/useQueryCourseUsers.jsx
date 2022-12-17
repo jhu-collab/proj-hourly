@@ -6,9 +6,9 @@ import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
 
 function useQueryCourseUsers() {
-  const queryKey = ["courseUsers"];
   const token = useStoreToken((state) => state.token);
   const course = useStoreCourse((state) => state.course);
+  const queryKey = ["courseUsers", course.id];
 
   const getCourseUsers = async () => {
     try {
