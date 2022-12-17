@@ -8,7 +8,6 @@ export const useStoreEvent = create((set) => ({
   end: null,
   location: "",
   id: null,
-  timeInterval: 10,
   recurring: false,
   setEvent: (event) =>
     set({
@@ -17,7 +16,6 @@ export const useStoreEvent = create((set) => ({
       end: event.end || null,
       location: event.location || "",
       id: event.id || null,
-      timeInterval: event.timeInterval || 10,
       recurring: event.recurring || false,
     }),
 
