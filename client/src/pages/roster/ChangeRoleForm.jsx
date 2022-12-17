@@ -23,7 +23,7 @@ function ChangeRoleForm(props) {
   return (
     <Form onSubmit={onSubmit}>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
-      {!isStaff && (
+        {!isStaff && (
           <Typography variant="h4" align="center">
             Change Role to Staff or Instructor?
           </Typography>
