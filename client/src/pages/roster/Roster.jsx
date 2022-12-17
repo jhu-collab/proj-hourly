@@ -31,7 +31,7 @@ const Roster = () => {
       </Alert>
     );
   }
-  
+
   return (
     <>
       <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
