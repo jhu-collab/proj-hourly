@@ -23,6 +23,7 @@ function useMutationEditTopic() {
   const mutation = useMutation(editTopic, {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["topics"]);
+      queryClient.invalidateQueries(["topicCounts"]);
       toast.success(`Successfully updated the topic!`);
     },
     onError: (err) => {

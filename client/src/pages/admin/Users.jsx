@@ -94,6 +94,7 @@ function Users() {
         sortModel={sortModel}
         onSortModelChange={(model) => setSortModel(model)}
         hideFooter
+        sx={{ backgroundColor: "background.paper" }}
         components={{
           Toolbar: GridToolbar,
         }}

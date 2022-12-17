@@ -24,7 +24,7 @@ function Popup({ modal, title, children }) {
         </DialogTitle>
       )}
       <Box position="absolute" top={2} right={2}>
-        <IconButton sx={{ fontSize: "22px" }} onClick={modal.hide}>
+        <IconButton sx={{ fontSize: "16px" }} onClick={modal.hide}>
           <CloseOutlined />
         </IconButton>
       </Box>

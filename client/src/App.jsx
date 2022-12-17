@@ -40,13 +40,13 @@ function App() {
             <Route path="/" element={<MainLayout />}>
               <Route path="" element={<MyCourses />} />
               <Route path="/calendar" element={<Calendar />} />
-              <Route path="/statistics" element={<Statistics />} />
               <Route path="/registrations" element={<Registrations />} />
               <Route path="/courseinformation" element={<CourseInfoPage />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="" element={<StaffOnlyRoute />}>
                 <Route path="/roster" element={<Roster />} />
                 <Route path="/topics" element={<Topics />} />
+                <Route path="/statistics" element={<Statistics />} />
               </Route>
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
