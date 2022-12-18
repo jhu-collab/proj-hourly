@@ -309,6 +309,22 @@ export const isAccountInstructorBody = async (req, res, next) => {
   }
 };
 
+export const isAdmin = async (req, res, next) => {
+  const id = req.id;
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (account.role !== "Admin") {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account must be admin to retrieve all accounts" });
+  } else {
+    next();
+  }
+};
+
 export const isAccountValidParams = async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   const query = await prisma.Account.findUnique({
@@ -322,4 +338,20 @@ export const isAccountValidParams = async (req, res, next) => {
       .json({ msg: "ERROR: is not a valid account" });
   }
   next();
+};
+
+export const isAccountUserParams = async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query.role === "Admin") {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERORR: account is already admin" });
+  } else {
+    next();
+  }
 };

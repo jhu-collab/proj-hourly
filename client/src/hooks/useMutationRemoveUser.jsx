@@ -35,7 +35,7 @@ function useMutationRemoveUser(removeId, isStaff) {
 
   const mutation = useMutation(isStaff ? removeStaff : removeStudent, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["courseUsers"]);
       toast.success(`Successfully removed the user`);
     },
     onError: (err) => {
