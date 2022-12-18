@@ -50,7 +50,7 @@ function App() {
               </Route>
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
-              </Route> 
+              </Route>
             </Route>
           </Route>
           <Route path="/" element={<MinimalLayout />}>
