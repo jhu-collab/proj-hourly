@@ -22,7 +22,7 @@ function PromoteUserForm(props) {
   return (
     <Form onSubmit={onSubmit}>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
-      {!isStaff && (
+        {!isStaff && (
           <Typography variant="h4" align="center">
             Promote to Staff or Instructor?
           </Typography>
@@ -47,21 +47,20 @@ function PromoteUserForm(props) {
             label="Instructor"
           />
         </RadioGroup>
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={() => {
-              if (onSubmit) {
-                onSubmit();
-              }
-            }}
-          >
-            Promote
-          </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => {
+            if (onSubmit) {
+              onSubmit();
+            }
+          }}
+        >
+          Promote
+        </Button>
       </Stack>
-      </Form>
+    </Form>
   );
-
 }
 
 export default PromoteUserForm;

@@ -1,9 +1,19 @@
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import useQueryUsers from "../../hooks/useQueryUsers";
+import { useState } from "react";
 
 const columns = [
-  { field: "id", headerName: "ID", description: "User's id", flex: 0.5 },
+  {
+    field: "id",
+    headerName: "ID",
+    description: "User's id",
+    sort: "asc",
+    flex: 0.5,
+  },
   {
     field: "firstName",
     headerName: "First name",
@@ -38,76 +48,51 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    lastName: "Snow",
-    firstName: "Jon",
-    email: "jonsnow@jhu.edu",
-    role: "User",
-  },
-  {
-    id: 2,
-    lastName: "Lannister",
-    firstName: "Cersei",
-    email: "cerseilannister@jhu.edu",
-  },
-  {
-    id: 3,
-    lastName: "Lannister",
-    firstName: "Jaime",
-    emal: "jaimelanniser@jhu.edu",
-  },
-  { id: 4, lastName: "Stark", firstName: "Arya", email: "aryastark@jhu.edu" },
-  {
-    id: 5,
-    lastName: "Targaryen",
-    firstName: "Daenerys",
-    email: "aryastark@jhu.edu",
-  },
-  {
-    id: 6,
-    lastName: "Melisandre",
-    firstName: null,
-    email: "melisandre@jhu.edu",
-  },
-  {
-    id: 7,
-    lastName: "Clifford",
-    firstName: "Ferrara",
-    email: "ferraraclifford@jhu.edu",
-  },
-  {
-    id: 8,
-    lastName: "Frances",
-    firstName: "Rossini",
-    email: "rossinifrances@jhu.edu",
-  },
-  {
-    id: 9,
-    lastName: "Roxie",
-    firstName: "Harvey",
-    email: "harveyroxie@jhu.edu",
-  },
-];
-
 /**
  * Admin view of all users of the app.
  * @returns A grid of all the users of the app
  */
 function Users() {
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "id",
+      sort: "asc",
+    },
+  ]);
+
+  const { isLoading, error, data } = useQueryUsers();
+
+  if (isLoading) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        <AlertTitle>Loading roster ...</AlertTitle>
+      </Alert>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
+
   return (
     <Stack spacing={1} sx={{ width: "100%" }}>
       <Typography variant="h4" sx={{ ml: 1 }}>
         Users
       </Typography>
       <DataGrid
-        rows={rows}
+        rows={data?.accounts || []}
         columns={columns}
         autoHeight
         getRowHeight={() => "auto"}
         checkboxSelection
         disableSelectionOnClick
+        sortModel={sortModel}
+        onSortModelChange={(model) => setSortModel(model)}
         hideFooter
         sx={{ backgroundColor: "background.paper" }}
         components={{
