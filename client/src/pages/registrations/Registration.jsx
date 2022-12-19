@@ -10,6 +10,25 @@ import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import useMutationCancelRegistration from "../../hooks/useMutationCancelRegistration";
+import useQueryRegistrationTypes from "../../hooks/useQueryRegistrationTypes";
+import { useEffect, useState } from "react";
+
+const findRegistrationType = (startISO, endISO, registrationTypes) => {
+  let registrationType = "Unknown";
+
+  const end = DateTime.fromISO(endISO);
+  const start = DateTime.fromISO(startISO);
+
+  const diffInMinutes = end.diff(start, "minutes").toObject().minutes;
+
+  for (let i = 0; i < registrationTypes.length; i++) {
+    if (diffInMinutes == registrationTypes[i].duration) {
+      return registrationTypes[i].title;
+    }
+  }
+
+  return registrationType;
+};
 
 /**
  * Represents a single Registration card.
@@ -23,6 +42,21 @@ function Registration({ registration, type }) {
   const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
     registration.id || -1
   );
+
+  const [registrationType, setRegistrationType] = useState("Unknown");
+
+  const { data } = useQueryRegistrationTypes();
+
+  useEffect(() => {
+    Boolean(data) &&
+      setRegistrationType(
+        findRegistrationType(
+          registration.startTime,
+          registration.endTime,
+          data.times
+        )
+      );
+  }, [data]);
 
   const onClick = () => {
     confirmDialog("Do you really want to cancel this registration?", () =>
@@ -55,7 +89,7 @@ function Registration({ registration, type }) {
             )}
           </Typography>
           <Typography>
-            Type: <strong>Office Hours</strong>
+            Type: <strong>{registrationType}</strong>
           </Typography>
         </Stack>
       </AccordionSummary>

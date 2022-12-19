@@ -20,7 +20,6 @@ function TopicRegistrations() {
   const [topicRegType, setTopicRegType] = useState("graph");
 
   const { isLoading, error, data } = useQueryTopicCounts();
-  console.log(data);
 
   const sxToggleButton = {
     color: "white",
@@ -70,9 +69,7 @@ function TopicRegistrations() {
       </Grid>
       <MainCard sx={{ mt: 1.5 }} content={false}>
         {isLoading ? (
-          <Alert severity="warning">
-            <AlertTitle>Loading data ...</AlertTitle>
-          </Alert>
+          <Alert severity="warning">Loading data ...</Alert>
         ) : Boolean(error) ? (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>

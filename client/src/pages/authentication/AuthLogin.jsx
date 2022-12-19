@@ -46,7 +46,8 @@ function AuthLogin() {
               Sign in as User
             </Button>
           </AnimateButton>
-          <AnimateButton>
+          {/* TODO: UNFINISHED FEATURE */}
+          {/* <AnimateButton>
             <Button
               variant="contained"
               fullWidth
@@ -55,39 +56,47 @@ function AuthLogin() {
             >
               Sign in as Admin
             </Button>
-          </AnimateButton>
+          </AnimateButton> */}
         </Stack>
       ) : (
         <SingleSignOn />
       )}
-
-      <Divider label="Or continue with">Or continue with</Divider>
+      <Divider
+        sx={{
+          fontSize: "17px",
+          "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+          "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+        }}
+      >
+        OR
+      </Divider>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={3}>
+        <Stack spacing={2} marginTop={-0.5} alignItems="center">
           <FormInputText
             name="username"
             control={control}
+            variant="standard"
             label="Username"
-            placeholder="Enter your username"
+            InputLabelProps={{ shrink: true }}
           />
           <FormInputText
             name="password"
             control={control}
+            variant="standard"
             label="Password"
-            placeholder="Enter your password"
             type="password"
+            InputLabelProps={{ shrink: true }}
           />
-          <Stack direction="row" spacing={1}>
-            <Typography color="error">
-              Unless admin required you to use this option, you should use JHU
-              SSO to sign in.
-            </Typography>
-            <AnimateButton>
-              <Button type="submit" variant="contained" fullWidth size="large">
-                Login
-              </Button>
-            </AnimateButton>
-          </Stack>
+          <AnimateButton>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              sx={{ fontSize: "17px", width: "107px" }}
+            >
+              Login
+            </Button>
+          </AnimateButton>
         </Stack>
       </Form>
     </Stack>

@@ -31,7 +31,7 @@ export const generateTitle = (officeHour) => {
   if (officeHour.hosts.length > 1) {
     summary = "Office Hours for " + course.title;
   } else if (officeHour.hosts.length === 1) {
-    summary = officeHour.hosts[0].userName + "'s Office Hours";
+    summary = officeHour.hosts[0].firstName + "'s Office Hours";
   } else {
     summary = "Office Hours";
   }
@@ -209,6 +209,7 @@ export const generateCalendar = async (courseId) => {
           id: true,
           userName: true,
           email: true,
+          firstName: true,
         },
       },
       isOnDayOfWeek: {
