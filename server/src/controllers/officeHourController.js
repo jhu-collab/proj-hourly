@@ -84,7 +84,6 @@ export const create = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  console.log("here");
   const {
     recurringEvent,
     startDate,
@@ -501,7 +500,9 @@ export const editAll = async (req, res) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
     req.body;
-  const editAfterDate = req.body.editAfterDate == "True" ? true : false;
+  const editAfterDate = req.body.editAfterDate ? true : false;
+  console.log(editAfterDate);
+  console.log(req.body);
   if (editAfterDate) {
     const oldOH = await prisma.officeHour.findUnique({
       where: { id: officeHourId },
@@ -596,13 +597,16 @@ export const editAll = async (req, res) => {
         isOnDayOfWeek: true,
       },
     });
+    console.log(officeHour.isOnDayOfWeek);
     await prisma.officeHour.update({
       where: {
         id: officeHourId,
       },
       data: {
         isOnDayOfWeek: {
-          disconnect: officeHour.isOnDayOfWeek,
+          disconnect: officeHour.isOnDayOfWeek.map((element) => {
+            return { dayNumber: element.dayNumber };
+          }),
         },
       },
     });

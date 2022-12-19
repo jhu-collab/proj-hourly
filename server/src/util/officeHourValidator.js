@@ -505,3 +505,16 @@ export const areValidDOW = (req, res, next) => {
   });
   next();
 };
+
+export const startDateIsValidDOW = (req, res, next) => {
+  const { daysOfWeek, startDate } = req.body;
+  const start = new Date(startDate);
+  const startDOW = weekday[start.getUTCDay()];
+  if (daysOfWeek.includes(startDOW)) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: startDate must be one of the selected DOWs" });
+  }
+};
