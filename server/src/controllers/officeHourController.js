@@ -498,8 +498,6 @@ export const editAll = async (req, res) => {
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
     req.body;
   const editAfterDate = req.body.editAfterDate ? true : false;
-  console.log(editAfterDate);
-  console.log(req.body);
   if (editAfterDate) {
     const oldOH = await prisma.officeHour.findUnique({
       where: { id: officeHourId },
@@ -594,7 +592,6 @@ export const editAll = async (req, res) => {
         isOnDayOfWeek: true,
       },
     });
-    console.log(officeHour.isOnDayOfWeek);
     await prisma.officeHour.update({
       where: {
         id: officeHourId,
