@@ -3,7 +3,7 @@ import RosterTabs from "./RosterTabs";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
-import useQueryUsers from "../../hooks/useQueryUsers";
+import useQueryCourseUsers from "../../hooks/useQueryCourseUsers";
 
 /**
  * A component that represents the roster page that the user visits
@@ -13,12 +13,12 @@ import useQueryUsers from "../../hooks/useQueryUsers";
 const Roster = () => {
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQueryUsers();
+  const { isLoading, error, data } = useQueryCourseUsers();
 
   if (isLoading) {
     return (
       <Alert severity="warning" sx={{ mt: theme.spacing(2) }}>
-        <AlertTitle>Loading roster ...</AlertTitle>
+        Loading roster ...
       </Alert>
     );
   }
@@ -34,7 +34,9 @@ const Roster = () => {
 
   return (
     <>
-      <Typography variant="h4">Roster</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Roster
+      </Typography>
       <RosterTabs rows={data} />
     </>
   );

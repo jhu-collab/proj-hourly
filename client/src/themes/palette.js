@@ -44,7 +44,7 @@ export const Palette = (mode) => {
       divider: paletteColor.grey[200],
       background: {
         paper: paletteColor.grey[0],
-        default: "#fff",
+        default: "#E8F3F7",
       },
     },
   });

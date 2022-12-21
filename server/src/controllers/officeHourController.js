@@ -232,14 +232,11 @@ export const cancelAll = async (req, res) => {
     return res;
   }
   const { officeHourId } = req.body;
-  const date = new Date();
+  const dateToEnd = req.body.date;
+  const date = new Date(dateToEnd);
   date.setUTCHours(date.getHours());
   date.setUTCMinutes(date.getMinutes());
-  const dateObj = new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate()
-  );
+  const dateObj = new Date(dateToEnd);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,

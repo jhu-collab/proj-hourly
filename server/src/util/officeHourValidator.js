@@ -474,6 +474,41 @@ export const isStudentRegisteredBody = async (req, res, next) => {
   next();
 };
 
+export const isRegisteredOrIsStaffBody = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const id = req.id;
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      officeHour: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: registration.officeHour.courseId,
+    },
+    include: {
+      courseStaff: true,
+      instructors: true,
+    },
+  });
+  const courseStaff = course.courseStaff.map((account) => account.id);
+  const instructors = course.instructors.map((account) => account.id);
+  if (
+    registration.accountId !== id &&
+    !courseStaff.includes(id) &&
+    !instructors.includes(id)
+  ) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not allowed to cancel registration" });
+  } else {
+    next();
+  }
+};
+
 export const doesRegistrationExistParams = async (req, res, next) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const registration = await prisma.registration.findFirst({
@@ -516,5 +551,57 @@ export const startDateIsValidDOW = (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: startDate must be one of the selected DOWs" });
+  }
+};
+
+export const checkOptionalDateBody = async (req, res, next) => {
+  const { date } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: req.body.officeHourId,
+    },
+  });
+  if (date === undefined || date === null) {
+    const newEnd = new Date();
+    newEnd.setUTCHours(officeHour.endDate.getUTCHours());
+    newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+    newEnd.setUTCSeconds(0);
+    req.body.date = newEnd.toISOString();
+    next();
+  } else {
+    const { officeHourId, date } = req.body;
+    const dateObj = new Date(date);
+    dateObj.setUTCHours(0);
+    const dow = weekday[dateObj.getUTCDay()];
+    const officeHour = await prisma.officeHour.findFirst({
+      where: {
+        id: officeHourId,
+        isOnDayOfWeek: {
+          some: {
+            dayOfWeek: dow,
+          },
+        },
+      },
+    });
+    let isCancelled = false;
+    if (officeHour !== null) {
+      officeHour.isCancelledOn.forEach((cancelledDate) => {
+        if (cancelledDate.toDateString() === dateObj.toDateString()) {
+          isCancelled = true;
+        }
+      });
+    }
+    if (officeHour === null || isCancelled) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "ERROR: office hours is not available on day" });
+    } else {
+      const newEnd = new Date(date);
+      newEnd.setUTCHours(officeHour.endDate.getUTCHours());
+      newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+      newEnd.setUTCSeconds(0);
+      req.body.date = newEnd.toISOString();
+      next();
+    }
   }
 };

@@ -173,7 +173,8 @@ function RegisterForm() {
                       const item = topicOptions.find(
                         ({ value: v }) => v === value
                       );
-                      return <Chip key={value} label={item.label} />;
+                      if (Boolean(item))
+                        return <Chip key={value} label={item.label} />;
                     })}
                   </Box>
                 )}
