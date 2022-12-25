@@ -176,10 +176,23 @@ export const register = async (req, res) => {
     },
   });
   const userEmail = registration.account.email;
+  const userName = registration.account.userName;
+  const subject =
+    "Succesfully registered for office hours from " +
+    startTime +
+    " to " +
+    endTime +
+    "!";
+  const emailBody = userName + "\n";
+  ", you have been successfully registered for office hours from " +
+    startTime +
+    " to " +
+    endTime +
+    "!";
   let emailReq = {
     email: userEmail,
-    subject: "Successfully Registered",
-    text: "Your registration has been confirmed",
+    subject: subject,
+    text: emailBody,
   };
   sendEmail(emailReq);
   if (TopicIds !== null && TopicIds !== undefined) {
