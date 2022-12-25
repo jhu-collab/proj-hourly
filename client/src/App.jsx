@@ -46,7 +46,8 @@ function App() {
               <Route path="" element={<StaffOnlyRoute />}>
                 <Route path="/roster" element={<Roster />} />
                 <Route path="/topics" element={<Topics />} />
-                <Route path="/statistics" element={<Statistics />} />
+                {/* TODO: UNFINISHED FEATURE */}
+                {/* <Route path="/statistics" element={<Statistics />} /> */}
               </Route>
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />

@@ -46,7 +46,8 @@ function AuthLogin() {
               Sign in as User
             </Button>
           </AnimateButton>
-          <AnimateButton>
+          {/* TODO: UNFINISHED FEATURE */}
+          {/* <AnimateButton>
             <Button
               variant="contained"
               fullWidth
@@ -55,7 +56,7 @@ function AuthLogin() {
             >
               Sign in as Admin
             </Button>
-          </AnimateButton>
+          </AnimateButton> */}
         </Stack>
       ) : (
         <SingleSignOn />

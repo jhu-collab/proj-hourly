@@ -131,12 +131,15 @@ router.post(
     "endDateOldOfficeHour",
     "Please specify when the new edited office hours should take effect"
   ).notEmpty(),
+  body("editAfterDate", "Please include boolean field editAfterDate")
+    .notEmpty()
+    .isBoolean(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
-  //timeValidator.isTime,
   dateValidator.endIsAfterStart,
+  validator.startDateIsValidDOW,
   controller.editAll
 );
 
@@ -144,7 +147,7 @@ router.post(
   "/cancelRegistration/:registrationId",
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
-  validator.isStudentRegisteredBody,
+  validator.isRegisteredOrIsStaffBody,
   controller.cancelRegistration
 );
 
