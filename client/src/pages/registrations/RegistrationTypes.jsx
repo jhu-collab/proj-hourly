@@ -23,7 +23,7 @@ function RegistrationTypes({ index, types, isLoading, error }) {
   const noRegistrations = () => {
     return (
       <Alert severity="info" sx={{ mt: 4 }}>
-        <AlertTitle>No Registration Types</AlertTitle>
+        No Registration Types
       </Alert>
     );
   };
@@ -31,7 +31,7 @@ function RegistrationTypes({ index, types, isLoading, error }) {
   if (isLoading && registrationTab === index) {
     return (
       <Alert severity="warning" sx={{ mt: 2 }}>
-        <AlertTitle>Loading registrations types ...</AlertTitle>
+        Loading registrations types ...
       </Alert>
     );
   }
