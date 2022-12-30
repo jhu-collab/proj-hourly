@@ -6,6 +6,10 @@ import useQueryMyRole from "../../hooks/useQueryMyRole";
 function ChangeRoleIcon(props) {
   const { params, isStaff } = props;
   const { data } = useQueryMyRole();
+<<<<<<< HEAD:client/src/pages/roster/ChangeRoleIcon.jsx
+=======
+
+>>>>>>> 2ee2c5125 (merge):client/src/pages/roster/PromoteIcon.jsx
   return (
     <>
       <GridActionsCellItem
