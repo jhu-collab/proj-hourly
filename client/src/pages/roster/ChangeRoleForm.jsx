@@ -5,17 +5,18 @@ import Button from "@mui/material/Button";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import useMutationPromoteUser from "../../hooks/useMutationPromoteUser";
+import useMutationChangeRole from "../../hooks/useMutationChangeRole";
 import Form from "../../components/form-ui/Form";
-function PromoteUserForm(props) {
+
+function ChangeRoleForm(props) {
   const { params, isStaff } = props;
   const [role, setRole] = useState("");
 
   const handleRoleChange = (event) => setRole(event.target.value);
 
-  const { mutate } = useMutationPromoteUser(params, role);
-
-  const onSubmit = () => {
+  const { mutate } = useMutationChangeRole(params, role);
+  const onSubmit = (e) => {
+    e.preventDefault();
     mutate();
   };
 
@@ -24,12 +25,12 @@ function PromoteUserForm(props) {
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
         {!isStaff && (
           <Typography variant="h4" align="center">
-            Promote to Staff or Instructor?
+            Change Role to Staff or Instructor?
           </Typography>
         )}
         {isStaff && (
           <Typography variant="h4" align="center">
-            Promote to Instructor?
+            Change Role to Student or Instructor?
           </Typography>
         )}
         <RadioGroup
@@ -41,26 +42,25 @@ function PromoteUserForm(props) {
           {!isStaff && (
             <FormControlLabel value="Staff" control={<Radio />} label="Staff" />
           )}
+           {isStaff && (
+            <FormControlLabel value="Student" control={<Radio />} label="Student" />
+          )}
           <FormControlLabel
             value="Instructor"
             control={<Radio />}
             label="Instructor"
           />
         </RadioGroup>
-        <Button
-          color="secondary"
-          variant="contained"
-          onClick={() => {
-            if (onSubmit) {
-              onSubmit();
-            }
-          }}
-        >
-          Promote
-        </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            type="submit"
+          >
+            Change
+          </Button>
       </Stack>
     </Form>
   );
 }
 
-export default PromoteUserForm;
+export default ChangeRoleForm;
