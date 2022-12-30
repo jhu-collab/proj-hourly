@@ -15,7 +15,8 @@ function ChangeRoleForm(props) {
   const handleRoleChange = (event) => setRole(event.target.value);
 
   const { mutate } = useMutationChangeRole(params, role);
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     mutate();
   };
 
