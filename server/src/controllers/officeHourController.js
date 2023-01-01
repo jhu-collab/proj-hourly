@@ -5,7 +5,7 @@ import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
 import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
-import { sendEmailForEachRegistration } from "../util/notificationUtil.js";
+import { sendEmailForEachRegistrationWhenCancelled, sendEmailForEachRegistrationWhenChanged } from "../util/notificationUtil.js";
 import e from "express";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
@@ -231,7 +231,7 @@ export const cancelOnDate = async (req, res) => {
       isCancelledOn: [...officehour.isCancelledOn, dateObj],
     },
   });
-  sendEmailForEachRegistration(registrations);
+  sendEmailForEachRegistrationWhenCancelled(registrations);
   const calendar = await generateCalendar(officehour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
@@ -280,7 +280,7 @@ export const cancelAll = async (req, res) => {
         isDeleted: true,
       },
     });
-    sendEmailForEachRegistration(registrations);
+    sendEmailForEachRegistrationWhenCancelled(registrations);
   } else if (officeHour.endDate > date) {
     await prisma.registration.updateMany({
       where: {
@@ -302,7 +302,7 @@ export const cancelAll = async (req, res) => {
         endDate: dateObj,
       },
     });
-    sendEmailForEachRegistration(registrations);
+    sendEmailForEachRegistrationWhenCancelled(registrations);
   } else if (date > startObj) {
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: office hours already over or too close to start time",
@@ -423,6 +423,12 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+      isCancelled: false,
+    },
+  });
   const { startDate, endDate, location } = req.body;
   const dateObj = new Date(startDate);
   const dow = weekday[dateObj.getUTCDay()];
@@ -503,6 +509,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       },
     },
   });
+  sendEmailForEachRegistrationWhenChanged(registrations, newOfficeHour);
   const calendar = await generateCalendar(officehour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
@@ -512,6 +519,12 @@ export const editAll = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+      isCancelled: false,
+    },
+  });
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
     req.body;
   const editAfterDate = req.body.editAfterDate ? true : false;
@@ -591,6 +604,7 @@ export const editAll = async (req, res) => {
       },
     });
     const calendar = await generateCalendar(officeHourWithData.course.id);
+    sendEmailForEachRegistrationWhenChanged(registrations, newOfficeHour);
     return res.status(StatusCodes.ACCEPTED).json({
       oldOfficeHour: officeHourWithData,
       newOfficeHour: newOfficeHour,
