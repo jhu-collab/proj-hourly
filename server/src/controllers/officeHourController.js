@@ -6,6 +6,8 @@ import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
 import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 import sendEmail from "../util/notificationUtil.js";
+import { useResetStates } from "../../../client/src/hooks/helper.js";
+import e from "express";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
@@ -197,6 +199,14 @@ export const cancelOnDate = async (req, res) => {
   }
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+      date: dateObj,
+      isCancelled: false,
+    },
+  });
+
   dateObj.setUTCHours(0);
   const officehour = await prisma.officeHour.findUnique({
     where: {
@@ -222,6 +232,22 @@ export const cancelOnDate = async (req, res) => {
     data: {
       isCancelledOn: [...officehour.isCancelledOn, dateObj],
     },
+  });
+  // get registered users
+ 
+  registrations.forEach(async (registration) => {
+    const account = await prisma.account.findFirst({
+      accountId: registration.accountId
+    });
+    const cancellationNotification = (email, date) => {
+      return {
+        email: email,
+        subject: `Office Hour Cancelled!`,
+        text: `The office hours that you have registered for on ${date} has been cancelled`,
+        html
+      }};
+    sendEmail(cancellationNotification(account.email, registration.date.toDateString));
+    console.log("cancellation notification sent");
   });
   const calendar = await generateCalendar(officehour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
