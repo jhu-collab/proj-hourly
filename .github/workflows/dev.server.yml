@@ -1,4 +1,4 @@
-name: Deploy the server (backend) app
+name: (dev) Deploy the server (backend) app
 
 on:
   push:
@@ -8,14 +8,33 @@ on:
       - "server/**"
       - ".github/workflows/dev.server.yml"
       
+env:
+  DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          heroku_api_key: ${{secrets.HEROKU_AUTH_TOKEN}}
-          heroku_app_name: ${{secrets.DEV_HEROKU_APP_NAME}}
-          heroku_email: ${{secrets.HEROKU_AUTH_EMAIL}}
-          appdir: "server"
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the docker image
+        run: |
+          docker build --build-arg DATABASE_URL=$DATABASE_URL ./server --tag ghcr.io/${{ github.repository }}-api-dev:latest
+          docker push ghcr.io/${{ github.repository }}-api-dev:latest
+      
+      - name: Deploy to Caprover
+        uses: caprover/deploy-from-github@v1.1.2
+        with:
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app: ${{ secrets.DEV_API_APP_NAME }}
+          token: ${{ secrets.DEV_API_APP_TOKEN }}
+          image: ghcr.io/${{ github.repository }}-api-dev:latest
