@@ -13,9 +13,9 @@ export const checkApiKey = async (req, res, next) => {
     debug(`Read the stored API key from ENV variable...`);
     const sourceKey = process.env.HOURLY_API_KEY;
     debug(`Read the request header to extract the provided API key...`);
-    const givenKey = req.headers["api_key"];
+    const givenKey = req.headers["api-key"];
 
-    debug("print headers for debugging");
+    debug("print headers for debugging"); // TODO: remove this and next line!
     debug(req.headers);
 
     if (!givenKey) {
