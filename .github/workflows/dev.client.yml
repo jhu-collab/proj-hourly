@@ -38,6 +38,6 @@ jobs:
         uses: caprover/deploy-from-github@v1.1.2
         with:
           server: ${{ secrets.CAPROVER_SERVER }}
-          app: ${{ secrets.PROD_UI_APP_NAME }}
-          token: ${{ secrets.PROD_UI_APP_TOKEN }}
+          app: ${{ secrets.DEV_UI_APP_NAME }}
+          token: ${{ secrets.DEV_UI_APP_TOKEN }}
           image: ghcr.io/${{ github.repository }}-ui-dev:latest
