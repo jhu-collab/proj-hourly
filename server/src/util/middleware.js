@@ -15,9 +15,6 @@ export const checkApiKey = async (req, res, next) => {
     debug(`Read the request header to extract the provided API key...`);
     const givenKey = req.headers["api-key"];
 
-    debug("print headers for debugging"); // TODO: remove this and next line!
-    debug(req.headers);
-
     if (!givenKey) {
       debug(`No API key was provided!..`);
       throw new ApiError(401, "No API key was provided!");
