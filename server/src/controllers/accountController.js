@@ -171,7 +171,7 @@ export const deleteAccount = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
 
-export const getInfo = async (req, res) => {
+export const retreiveUserInfo = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
@@ -189,10 +189,3 @@ export const getInfo = async (req, res) => {
     role: account.role
   });
 };
-
-// preferredName: account.preferredName,
-//     firstName     : account.firstName,
-//     lastName      : account.lastName,
-//     email         : account.email,
-//     role          : account.role,
-//     id

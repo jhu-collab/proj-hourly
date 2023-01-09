@@ -24,9 +24,9 @@ router.post(
 );
 
 router.get(
-  "/getInfo",
+  "/retreiveUserInfo",
   validator.isAccountValidHeader,
-  controller.getInfo
+  controller.retreiveUserInfo
 );
 
 
