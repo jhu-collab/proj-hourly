@@ -711,7 +711,15 @@ export const cancelRegistration = async (req, res) => {
     }
   });
   const userEmail = registration.account.email;
-  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:"Your registration has been cancelled"};
+  const date = registration.date;
+  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  dateStr = date.toLocaleDateString("en-US", options);
+  const startTime = registration.startTime;
+  const startTimeStr = startTime.getHours() + ":" + startTime.getMinutes();
+  const endTime = registration.endTime;
+  const endTimeStr = endTime.getHours() + ":" + endTime.getMinutes();
+  emailStr = "Your registration on " + dateStr + "from " + startTimeStr + " to " + endTimeStr + " has been cancelled";
+  let emailReq = {email:userEmail, subject:"Registration Cancelled", text:emailStr};
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
