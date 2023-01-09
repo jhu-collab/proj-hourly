@@ -13,7 +13,7 @@ export const checkApiKey = async (req, res, next) => {
     debug(`Read the stored API key from ENV variable...`);
     const sourceKey = process.env.HOURLY_API_KEY;
     debug(`Read the request header to extract the provided API key...`);
-    const givenKey = req.headers["api_key"];
+    const givenKey = req.headers["api-key"];
 
     if (!givenKey) {
       debug(`No API key was provided!..`);
