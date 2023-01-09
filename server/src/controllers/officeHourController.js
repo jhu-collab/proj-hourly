@@ -720,7 +720,6 @@ export const cancelRegistration = async (req, res) => {
   const endTimeStr = endTime.toTimeString().split(' ')[0];
   const emailStr = "Your registration on " + dateStr + " from " + startTimeStr + " to " + endTimeStr + " has been cancelled";
   let emailReq = {email:userEmail, subject:"Registration Cancelled", text: emailStr};
-  console.log(emailStr);
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
