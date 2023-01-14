@@ -39,7 +39,7 @@ function useMutationChangeRole(params, role) {
 
   const mutation = useMutation(role ==="Student" ? demoteStudent : promoteStudent, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["courseUsers", course.id]);
       toast.success(
         `Successfully changed role of ${params.row.firstName} ${params.row.lastName} to ${role}!`
       );
