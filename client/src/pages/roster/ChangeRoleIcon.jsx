@@ -12,7 +12,10 @@ function ChangeRoleIcon(props) {
       <GridActionsCellItem
         icon={<UserSwitchOutlined />}
         onClick={() => {
-          NiceModal.show("change-user-role", { params: params, isStaff: isStaff });
+          NiceModal.show("change-user-role", {
+            params: params,
+            isStaff: isStaff,
+          });
         }}
         disabled={data?.role !== "Instructor"}
         label="Change Role"

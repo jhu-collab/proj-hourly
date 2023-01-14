@@ -42,8 +42,12 @@ function ChangeRoleForm(props) {
           {!isStaff && (
             <FormControlLabel value="Staff" control={<Radio />} label="Staff" />
           )}
-           {isStaff && (
-            <FormControlLabel value="Student" control={<Radio />} label="Student" />
+          {isStaff && (
+            <FormControlLabel
+              value="Student"
+              control={<Radio />}
+              label="Student"
+            />
           )}
           <FormControlLabel
             value="Instructor"
@@ -51,13 +55,9 @@ function ChangeRoleForm(props) {
             label="Instructor"
           />
         </RadioGroup>
-          <Button
-            color="secondary"
-            variant="contained"
-            type="submit"
-          >
-            Change
-          </Button>
+        <Button color="secondary" variant="contained" type="submit">
+          Change
+        </Button>
       </Stack>
     </Form>
   );
