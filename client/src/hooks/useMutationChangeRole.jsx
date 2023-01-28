@@ -8,7 +8,7 @@ import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 import NiceModal from "@ebay/nice-modal-react";
 
-function useMutationPromoteUser(params, role) {
+function useMutationChangeRole(params, role) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
@@ -25,22 +25,36 @@ function useMutationPromoteUser(params, role) {
     }
   };
 
-  const mutation = useMutation(promoteStudent, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["users"]);
-      toast.success(
-        `Successfully promoted ${params.row.firstName} ${params.row.lastName}!`
-      );
-      NiceModal.hide("promote-user");
-    },
-    onError: (err) => {
-      errorToast(err);
-    },
-  });
+  const demoteStudent = async () => {
+    try {
+      const data = { studentId: params.id, role: role };
+      const endpoint = `${BASE_URL}/api/course/${course.id}/demote`;
+      const res = await axios.post(endpoint, data, getConfig(token));
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const mutation = useMutation(
+    role === "Student" ? demoteStudent : promoteStudent,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["courseUsers", course.id]);
+        toast.success(
+          `Successfully changed role of ${params.row.firstName} ${params.row.lastName} to ${role}!`
+        );
+        NiceModal.hide("change-user-role");
+      },
+      onError: (err) => {
+        errorToast(err);
+      },
+    }
+  );
 
   return {
     ...mutation,
   };
 }
 
-export default useMutationPromoteUser;
+export default useMutationChangeRole;

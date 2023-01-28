@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import DeleteButton from "./DeleteButton";
-import PromoteIcon from "./PromoteIcon";
+import ChangeRoleIcon from "./ChangeRoleIcon";
 const columns = [
   {
     field: "firstName",
@@ -25,7 +25,7 @@ const columns = [
     type: "actions",
     flex: 1,
     getActions: (params) => [
-      <PromoteIcon params={params} isStaff={false} />,
+      <ChangeRoleIcon params={params} isStaff={false} />,
       <DeleteButton params={params} isStaff={false} />,
     ],
   },
@@ -34,7 +34,7 @@ const columns = [
     type: "actions",
     flex: 1,
     getActions: (params) => [
-      <PromoteIcon params={params} isStaff={true} />,
+      <ChangeRoleIcon params={params} isStaff={true} />,
       <DeleteButton params={params} isStaff={true} />,
     ],
   },
