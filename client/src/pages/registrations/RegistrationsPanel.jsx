@@ -19,21 +19,21 @@ function RegistrationsPanel({ index, registrations, isLoading, error }) {
     switch (index) {
       case 0:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Upcoming Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Upcoming Registrations
           </Alert>
         );
 
       case 1:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Ongoing Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Ongoing Registrations
           </Alert>
         );
       case 2:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Past Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Past Registrations
           </Alert>
         );
     }
@@ -42,7 +42,7 @@ function RegistrationsPanel({ index, registrations, isLoading, error }) {
   if (isLoading && registrationTab === index) {
     return (
       <Alert severity="warning" sx={{ mt: 2 }}>
-        <AlertTitle>Loading registrations ...</AlertTitle>
+        Loading registrations ...
       </Alert>
     );
   }

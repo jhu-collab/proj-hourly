@@ -61,7 +61,6 @@ export const checkToken = async (req, res, next) => {
       expiresIn: exp,
       issuedAt: iat,
     };
-
     debug(`checkToken is done!`);
     next();
   } catch (err) {

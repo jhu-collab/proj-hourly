@@ -37,6 +37,9 @@ function FormInputDropdown({ name, control, label, options, ...other }) {
         >
           <InputLabel>{label}</InputLabel>
           <Select {...field} label={label} {...other}>
+            <MenuItem value="" disabled>
+              <em>None</em>
+            </MenuItem>
             {generateSingleOptions()}
           </Select>
           {error && <FormHelperText>{error.message}</FormHelperText>}

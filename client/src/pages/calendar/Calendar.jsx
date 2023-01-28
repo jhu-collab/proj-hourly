@@ -17,6 +17,13 @@ import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
+import StyleWrapper, {
+  dayHeaderContent,
+  eventColorPalette,
+  eventContent,
+  nowIndicatorContent,
+  slotLabelContent,
+} from "./CalendarTheme";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -82,54 +89,70 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
-          <FullCalendar
-            plugins={[
-              rrulePlugin,
-              dayGridPlugin,
-              timeGridPlugin,
-              interactionPlugin,
-            ]}
-            customButtons={{
-              mobileCalMenu: {
-                text: "menu",
-                click: function () {
-                  setMobileCalMenu(!mobileCalMenu);
+        <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
+          <StyleWrapper>
+            <FullCalendar
+              plugins={[
+                rrulePlugin,
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin,
+              ]}
+              customButtons={{
+                mobileCalMenu: {
+                  text: "menu",
+                  click: function () {
+                    setMobileCalMenu(!mobileCalMenu);
+                  },
                 },
-              },
-            }}
-            headerToolbar={
-              matchUpSm
-                ? {
-                    start: "prev",
-                    center: "title",
-                    end: "next",
-                  }
-                : { start: "title", end: "prev,next" }
-            }
-            initialView="timeGridWeek"
-            height="100%"
-            eventClick={handleEventClick}
-            eventDrop={handleEventDrop}
-            editable={isStaff ? true : false}
-            selectable={isStaff ? true : false}
-            selectMirror={isStaff ? true : false}
-            unselectAuto={false}
-            events={data?.calendar || []}
-            select={handleSelect}
-            slotMinTime={"08:00:00"}
-            slotMaxTime={"32:00:00"}
-            timeZone="UTC"
-            ref={calendarRef}
-            {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
-          />
+              }}
+              headerToolbar={
+                matchUpSm
+                  ? {
+                      start: "",
+                      center: "prev title next",
+                      end: "",
+                    }
+                  : { start: "title", end: "prev,next" }
+              }
+              initialView="timeGridWeek"
+              height="100%"
+              eventClick={handleEventClick}
+              eventBackgroundColor={eventColorPalette[0].bottomColor}
+              eventContent={eventContent}
+              eventDrop={handleEventDrop}
+              editable={isStaff ? true : false}
+              selectable={isStaff ? true : false}
+              selectMirror={isStaff ? true : false}
+              unselectAuto={false}
+              events={data?.calendar || []}
+              select={handleSelect}
+              slotDuration="01:00:00"
+              slotLabelFormat={{
+                hour: "numeric",
+                minute: "2-digit",
+                omitZeroMinute: false,
+              }}
+              slotLabelContent={slotLabelContent}
+              ref={calendarRef}
+              dayHeaderContent={dayHeaderContent}
+              allDaySlot={false}
+              nowIndicator
+              nowIndicatorContent={nowIndicatorContent}
+              {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
+            />
+          </StyleWrapper>
         </Box>
+
         {matchUpSm && (
           <Box
             variant="outlined"
+            width="20%"
             sx={{
-              height: "100%",
-              boxShadow: theme.customShadows.z1,
+              height: "101%",
+              backgroundColor: "background.paper",
+              boxShadow:
+                "0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12)",
               borderLeft: `2px solid ${theme.palette.divider}`,
             }}
           >

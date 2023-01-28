@@ -14,7 +14,8 @@ function CalendarMenu({ calendarRef }) {
   return (
     <Stack padding={2} spacing={6}>
       <CalendarViews calendarRef={calendarRef} />
-      <CalendarFilters />
+      {/* TODO: UNFINISHED FEATURE */}
+      {/* <CalendarFilters /> */}
       {courseType === "staff" && <CalendarAdd calendarRef={calendarRef} />}
     </Stack>
   );
