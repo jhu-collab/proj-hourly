@@ -152,6 +152,9 @@ export const register = async (req, res) => {
     where: {
       id: officeHourId,
     },
+    include: {
+      course: true,
+    },
   });
   const dateObj = new Date(date);
   // if (
@@ -173,10 +176,15 @@ export const register = async (req, res) => {
     },
     include: {
       account: true,
+      officeHour: true,
     },
   });
   const userEmail = registration.account.email;
   const userName = registration.account.userName;
+  const course = officeHour.course.title;
+  const topic = registration.officeHour.topic;
+  const location = registration.officeHour.location;
+
   const subject =
     "Succesfully registered for office hours from " +
     startTime +
@@ -184,10 +192,16 @@ export const register = async (req, res) => {
     endTime +
     "!";
   const emailBody = userName + "\n";
-  ", you have been successfully registered for office hours from " +
+  ", you have been successfully registered for " +
+    course +
+    " office hours from " +
     startTime +
     " to " +
     endTime +
+    " on the topic of " +
+    topic +
+    " at " +
+    location +
     "!";
   let emailReq = {
     email: userEmail,
