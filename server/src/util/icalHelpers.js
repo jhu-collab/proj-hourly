@@ -113,8 +113,16 @@ export const generateRecurringEventJson = (officeHour) => {
   indexes.sort();
   const entries = [];
   let i = indexes.indexOf(officeHour.startDate.getDay());
-  let start = new Date(officeHour.startDate);
-  const end = new Date(officeHour.endDate);
+  let start = new Date(
+    new Date(officeHour.startDate).toLocaleString("en-US", {
+      timezone: "America/New_York",
+    })
+  );
+  const end = new Date(
+    new Date(officeHour.endDate).toLocaleString("en-US", {
+      timezone: "America/New_York",
+    })
+  );
   while (start < end) {
     let notCancelled = true;
     for (const date of officeHour.isCancelledOn) {
