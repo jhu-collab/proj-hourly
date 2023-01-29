@@ -4,6 +4,10 @@ FROM node:current-bullseye-slim
 # ^ Build this docker image from the above base image
 # Prefer lts-bullseye-slim but right now it does not have the latest npm
 
+# Set Time Zone 
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Read arguments passed to docker build command through --build-arg
 ARG TARGET=${TARGET}
 ARG DATABASE_URL=${DATABASE_URL}
