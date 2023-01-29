@@ -136,12 +136,6 @@ export const generateRecurringEventJson = (officeHour) => {
       currEnd.setUTCHours(end.getUTCHours());
       currEnd.setUTCMinutes(end.getUTCMinutes());
       currEnd.setUTCSeconds(end.getUTCSeconds());
-      if (end.getTimezoneOffset() !== start.getTimezoneOffset()) {
-        currEnd.setUTCHours(
-          currEnd.getUTCHours() +
-            (-end.getTimezoneOffset() + start.getTimezoneOffset()) / 60 //handles daylight savings
-        );
-      }
       entries.push({
         title: generateTitle(officeHour),
         start: start.toISOString(),
