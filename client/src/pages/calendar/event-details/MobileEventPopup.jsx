@@ -35,11 +35,12 @@ const MobileEventPopup = NiceModal.create(() => {
               <IconButton sx={{ fontSize: "20px" }} onClick={modal.hide}>
                 <CloseOutlined />
               </IconButton>
-              {courseType === "staff" && (
+              {/* TODO: UNFINISHED FEATURE */}
+              {/* {courseType === "staff" && (
                 <IconButton sx={{ fontSize: "20px" }}>
                   <InfoCircleOutlined />
                 </IconButton>
-              )}
+              )} */}
               {courseType === "staff" && <EditAction />}
               {courseType === "staff" && <DeleteAction />}
             </Stack>

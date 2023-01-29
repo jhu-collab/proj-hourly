@@ -10,12 +10,12 @@ import useStoreToken from "./useStoreToken";
 function useQueryTimeSlots() {
   const queryKey = ["timeSlots"];
   const token = useStoreToken((state) => state.token);
+  const start = useStoreEvent((state) => state.start);
 
   const id = useStoreEvent((state) => state.id);
-  const date = DateTime.fromJSDate(
-    useStoreEvent((state) => state.start),
-    { zone: "utc" }
-  ).toFormat("MM-dd-yyyy");
+  const date = DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+    "MM-dd-yyyy"
+  );
 
   const getTimeSlots = async () => {
     try {

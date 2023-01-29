@@ -29,7 +29,7 @@ function CalendarViews({ calendarRef }) {
   const sxToggleButton = {
     color: "white",
     border: 0,
-    fontWeight: 600,
+    fontWeight: 500,
     "&:hover": {
       bgcolor: "secondary.main",
       color: "text.primary",
@@ -51,7 +51,11 @@ function CalendarViews({ calendarRef }) {
         view by
       </Typography>
       <ToggleButtonGroup
-        sx={{ bgcolor: "tertiary.main" }}
+        sx={{
+          bgcolor: "tertiary.main",
+          boxShadow:
+            "0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+        }}
         value={alignment}
         exclusive
         fullWidth

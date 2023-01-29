@@ -31,6 +31,11 @@ function RegistrationTabs() {
       variant="scrollable"
       scrollButtons="auto"
       allowScrollButtonsMobile
+      sx={{
+        "& .MuiTabScrollButton-root": {
+          color: "primary.main",
+        },
+      }}
     >
       <Tab label="Upcoming" />
       <Tab label="Ongoing" />

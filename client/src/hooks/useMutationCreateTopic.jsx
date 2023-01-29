@@ -26,6 +26,7 @@ function useMutationCreateTopic() {
       const topic = data.topic;
 
       queryClient.invalidateQueries(["topics"]);
+      queryClient.invalidateQueries(["topicCounts"]);
       NiceModal.hide("create-topic");
       toast.success(`Successfully created the "${topic.value}" topic!`);
     },

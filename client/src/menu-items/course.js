@@ -54,14 +54,15 @@ export const course = (currentCourse) => {
       icon: icons.BulbOutlined,
       breadcrumbs: false,
     });
-    children.push({
-      id: "statistics",
-      title: "statistics",
-      type: "item",
-      url: "/statistics",
-      icon: icons.BarChartOutlined,
-      breadcrumbs: false,
-    });
+    // TODO: UNFINISHED FEATURE
+    // children.push({
+    //   id: "statistics",
+    //   title: "statistics",
+    //   type: "item",
+    //   url: "/statistics",
+    //   icon: icons.BarChartOutlined,
+    //   breadcrumbs: false,
+    // });
   }
 
   children.push({

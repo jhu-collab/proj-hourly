@@ -63,6 +63,17 @@ export const create = async (req, res) => {
       id,
     },
   });
+  await prisma.OfficeHourTimeOptions.create({
+    data: {
+      title: "Default",
+      duration: 10,
+      course: {
+        connect: {
+          id: course.id,
+        },
+      },
+    },
+  });
   const text =
     account.userName +
     " your course " +
