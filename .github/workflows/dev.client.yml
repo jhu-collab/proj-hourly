@@ -1,4 +1,4 @@
-name: Deploy the client (frontend) app
+name: (dev) Deploy the client (frontend) app
 
 on:
   push:
@@ -14,28 +14,30 @@ env:
   VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
   VITE_ROSTER_SSO_JHU_URL: ${{ secrets.ROSTER_SSO_JHU_URL }}
   
-defaults:
-  run:
-    working-directory: client
-
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
-      - name: Build the React App
-        uses: actions/setup-node@v2
+    steps:
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          node-version: '14'
-      - run: yarn
-      - run: yarn run build
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the docker image
+        run: |
+          docker build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --tag ghcr.io/${{ github.repository }}-ui-dev:latest ./client
+          docker push ghcr.io/${{ github.repository }}-ui-dev:latest
       
-      - name: Deploy to netlify
-        uses: netlify/actions/cli@master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.DEV_NETLIFY_SITE_ID }}
+      - name: Deploy to Caprover
+        uses: caprover/deploy-from-github@v1.1.2
         with:
-          args: deploy --dir=client/dist --prod
-          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app: ${{ secrets.DEV_UI_APP_NAME }}
+          token: ${{ secrets.DEV_UI_APP_TOKEN }}
+          image: ghcr.io/${{ github.repository }}-ui-dev:latest
