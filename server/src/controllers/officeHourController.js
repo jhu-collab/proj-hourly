@@ -394,7 +394,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let sessionStartTime;
   // loops over each time length
   timeLengths.forEach((timeLength) => {
-    sessionStartTime = startDate;
+    sessionStartTime = new Date(startDate);
     let times = [];
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
