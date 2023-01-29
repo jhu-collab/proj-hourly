@@ -123,8 +123,6 @@ export const generateRecurringEventJson = (officeHour) => {
       timezone: "America/New_York",
     })
   );
-  console.log(start);
-  console.log(end);
   while (start < end) {
     let notCancelled = true;
     for (const date of officeHour.isCancelledOn) {
@@ -138,9 +136,6 @@ export const generateRecurringEventJson = (officeHour) => {
       currEnd.setUTCHours(end.getUTCHours());
       currEnd.setUTCMinutes(end.getUTCMinutes());
       currEnd.setUTCSeconds(end.getUTCSeconds());
-      console.log("offset");
-      console.log(end.getTimezoneOffset());
-      console.log(start.getTimezoneOffset());
       if (end.getTimezoneOffset() !== start.getTimezoneOffset()) {
         currEnd.setUTCHours(
           currEnd.getUTCHours() +
