@@ -91,8 +91,9 @@ const generateFakeData = async () => {
   for (let index = 0; index < 5; index++) {
     await generateFakeUser(Role.User, `user-${index + 1}`);
   }
-  defaultUsers.forEach(async (user) => {
-    const account = await prisma.Account.create({
+
+  for (let user of defaultUsers) {
+    await prisma.Account.create({
       data: {
         userName: user.userName.toLowerCase(),
         hashedPassword: user.hashedPassword,
@@ -103,23 +104,28 @@ const generateFakeData = async () => {
         role: user.role,
       },
     });
-  });
+  }
+
   const cal = ical({ name: "Avengers" });
+
   const ironMan = await prisma.Account.findUnique({
     where: {
       userName: "iron man",
     },
   });
+
   const thor = await prisma.Account.findUnique({
     where: {
       userName: "thor",
     },
   });
+
   const cap = await prisma.Account.findUnique({
     where: {
       userName: "captain america",
     },
   });
+
   const course = await prisma.Course.create({
     data: {
       title: "Avengers",
@@ -135,6 +141,7 @@ const generateFakeData = async () => {
       iCalJson: cal.toJSON(),
     },
   });
+
   await prisma.account.update({
     where: {
       id: cap.id,
@@ -147,6 +154,7 @@ const generateFakeData = async () => {
       },
     },
   });
+
   await prisma.account.update({
     where: {
       id: thor.id,
@@ -159,6 +167,7 @@ const generateFakeData = async () => {
       },
     },
   });
+
   await generateFakeUser(Role.Admin, `admin-1`);
 };
 

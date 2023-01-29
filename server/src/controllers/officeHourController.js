@@ -377,8 +377,16 @@ export const getTimeSlotsRemaining = async (req, res) => {
       courseId: officeHour.courseId,
     },
   });
-  let start = createJustTimeObject(new Date(officeHour.startDate));
-  const end = createJustTimeObject(new Date(officeHour.endDate));
+  const startDate = new Date(officeHour.startDate);
+  const endDate = new Date(officeHour.endDate);
+  if (endDate.getTimezoneOffset() !== startDate.getTimezoneOffset()) {
+    endDate.setUTCHours(
+      endDate.getUTCHours() +
+        (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
+    );
+  }
+  let start = new Date(startDate);
+  const end = new Date(endDate);
   //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
@@ -393,9 +401,12 @@ export const getTimeSlotsRemaining = async (req, res) => {
     registrationTimes.set(registration.startTime.getTime(), registration);
   });
   //number of 5 minute intervals in the office hour
-  let n =
-    computeDiff(new Date(officeHour.startDate), new Date(officeHour.endDate)) /
-    (5 * 60000);
+  const timeStart = createJustTimeObject(startDate);
+  const timeEnd = createJustTimeObject(endDate);
+  while (timeEnd <= timeStart) {
+    timeEnd.setDate(timeEnd.getDate() + 1);
+  }
+  let n = Math.abs((timeEnd - timeStart) / (5 * 60000));
   //an array of 5 minute intervals, marking if the interval is occupied
   let timeSlots = Array(n).fill(true);
   let count = 0;
@@ -417,7 +428,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let sessionStartTime;
   // loops over each time length
   timeLengths.forEach((timeLength) => {
-    sessionStartTime = new Date(officeHour.startDate.toISOString());
+    sessionStartTime = new Date(startDate);
     let times = [];
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
