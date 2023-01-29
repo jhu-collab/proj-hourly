@@ -5,7 +5,10 @@ import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
 import { computeDiff } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
-import { sendEmailForEachRegistrationWhenCancelled, sendEmailForEachRegistrationWhenChanged } from "../util/notificationUtil.js";
+import {
+  sendEmailForEachRegistrationWhenCancelled,
+  sendEmailForEachRegistrationWhenChanged,
+} from "../util/notificationUtil.js";
 import e from "express";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
@@ -183,7 +186,6 @@ export const register = async (req, res) => {
   const userEmail = registration.account.email;
   const userName = registration.account.userName;
   const course = officeHour.course.title;
-  const topic = registration.officeHour.topic;
   const location = registration.officeHour.location;
 
   const subject =
@@ -199,8 +201,6 @@ export const register = async (req, res) => {
     startTime +
     " to " +
     endTime +
-    " on the topic of " +
-    topic +
     " at " +
     location +
     "!";
