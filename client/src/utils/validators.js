@@ -29,6 +29,32 @@ const getLastDaySemester = (semester, year) => {
   return new Date(`${year}-04-30`);
 };
 
+/**
+ * Converts string to a number from 0-6 to represent the day of the week.
+ * @param {String} dayStr String representing the day of the week
+ * @return A number from 0-6 representing the day of the week
+ */
+const getDayNum = (dayStr) => {
+  switch (dayStr) {
+    case "Sunday":
+      return 0;
+    case "Monday":
+      return 1;
+    case "Tuesday":
+      return 2;
+    case "Wednesday":
+      return 3;
+    case "Thursday":
+      return 4;
+    case "Friday":
+      return 5;
+    case "Saturday":
+      return 6;
+    default:
+      return -1;
+  }
+};
+
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
   number: yup
@@ -107,7 +133,23 @@ export const createEventSchema = yup.object().shape({
       then: yup
         .array()
         .typeError("Please select at least one recurring day")
-        .min(1, "Please select at least one recurring day"),
+        .min(1, "Please select at least one recurring day")
+        .test(
+          "start-date-matches-recurring-day",
+          "One of the recurring days must match the start date",
+          function (value) {
+            const { startDate } = this.parent;
+            const startDay = startDate.getDay();
+
+            for (let i = 0; i < value.length; i++) {
+              if (startDay === getDayNum(value[i])) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        ),
     }),
   startTime: yup
     .string()
