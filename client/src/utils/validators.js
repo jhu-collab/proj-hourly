@@ -158,8 +158,12 @@ export const createEventSchema = yup.object().shape({
       "future-event",
       "Start time must be after the current time",
       function (value) {
+        const { startDate } = this.parent;
         const now = DateTime.now();
-        return DateTime.fromFormat(value, "T") > now;
+        return (
+          DateTime.fromJSDate(startDate) > DateTime.fromJSDate(today) ||
+          DateTime.fromFormat(value, "T") > now
+        );
       }
     ),
   endTime: yup
