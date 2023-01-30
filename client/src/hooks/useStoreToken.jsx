@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 export const useStoreToken = create(
   persist(
     (set) => ({
-      token: "",
+      token: null,
       updateToken: (value) => {
         set({ token: value });
       },

@@ -51,7 +51,7 @@ export function useResetStates() {
   };
 
   const resetStoreToken = () => {
-    updateToken("");
+    updateToken(null);
   };
 
   const resetAll = () => {
