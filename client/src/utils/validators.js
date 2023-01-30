@@ -109,7 +109,17 @@ export const createEventSchema = yup.object().shape({
         .typeError("Please select at least one recurring day")
         .min(1, "Please select at least one recurring day"),
     }),
-  startTime: yup.string().required("Start time is required"),
+  startTime: yup
+    .string()
+    .required("Start time is required")
+    .test(
+      "future-event",
+      "Start time must be after the current time",
+      function (value) {
+        const now = DateTime.now();
+        return DateTime.fromFormat(value, "T") > now;
+      }
+    ),
   endTime: yup
     .string()
     .required("End time is required")
