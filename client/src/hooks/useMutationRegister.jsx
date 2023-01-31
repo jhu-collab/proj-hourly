@@ -35,7 +35,10 @@ function useMutationRegister() {
     onSuccess: (data) => {
       const registration = data.registration;
 
-      const date = DateTime.fromISO(registration.date).toLocaleString();
+      const date = DateTime.fromISO(
+        registration.date.substring(0, 10) +
+          registration.startTime.substring(10)
+      ).toLocaleString();
       const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
