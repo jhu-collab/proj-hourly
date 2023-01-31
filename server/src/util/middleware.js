@@ -49,7 +49,6 @@ export const checkToken = async (req, res, next) => {
 
     debug(`Decoding the token ...`);
     const { iat, exp, ...userInfo } = decodeToken(token);
-    console.log(userInfo);
     const account = await prisma.account.findUnique({
       where: {
         id: userInfo.id,
