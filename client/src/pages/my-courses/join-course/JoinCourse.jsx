@@ -8,7 +8,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 const JoinCourse = NiceModal.create(() => {
   const modal = useModal();
   return (
-    <Popup modal={modal} title="Join Course">
+    <Popup modal={modal}>
       <JoinCourseForm onClose={modal.hide} />
     </Popup>
   );

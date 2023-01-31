@@ -11,8 +11,8 @@ export const SignOutPopup = NiceModal.create(({ onClose }) => {
   return (
     <Popup modal={modal}>
       <>
-        <Typography>Please sign in again!</Typography>
-        <Button fullWidth onClick={onClose} mt="md">
+        <Typography variant="h5">Please sign in again!</Typography>
+        <Button fullWidth onClick={onClose} sx={{ marginTop: 2 }}>
           Okay!
         </Button>
       </>
@@ -32,6 +32,7 @@ function WindowFocusHandler() {
 
   const onCloseHandler = () => {
     signOut();
+    NiceModal.hide("sign-out");
   };
 
   const onFocus = () => {

@@ -1,5 +1,4 @@
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import Typography from "@mui/material/Typography";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import useQueryRegistrations from "../../hooks/useQueryRegistrations";
@@ -8,22 +7,6 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
-
-// TODO: Need route to retrieve registration types
-const types = [
-  {
-    name: "Regular",
-    nameDisabled: true,
-    duration: 10,
-    deletionDisabled: true,
-  },
-  {
-    name: "Debugging",
-    nameDisabled: false,
-    duration: 30,
-    deletionDisabled: false,
-  },
-];
 
 function latestEventsFirst(a, b) {
   return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
@@ -87,6 +70,9 @@ function Registrations() {
 
   return (
     <>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Registrations
+      </Typography>
       <RegistrationsBar />
       <RegistrationsPanel
         value={registrationTab}

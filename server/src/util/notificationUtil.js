@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import prisma from "../../prisma/client.js";
 
 export const sendEmail = async (req) => {
   // Create the transporter with the required configuration for Outlook
@@ -37,3 +38,48 @@ export const sendEmail = async (req) => {
 };
 
 export default sendEmail;
+
+export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
+  registrations.forEach(async (registration) => {
+    const account = await prisma.Account.findFirst({
+      where: {
+        id: registration.accountId,
+      },
+    });
+    const text = `The office hours that you have registered for on ${registration.date} has been cancelled`;
+    const cancellationNotification = (email) => {
+      return {
+        email: email,
+        subject: `Office Hour Cancelled!`,
+        text,
+        html: "<p> " + text + " </p>",
+      };
+    };
+    await sendEmail(cancellationNotification(account.email));
+  });
+};
+
+export const sendEmailForEachRegistrationWhenChanged = (
+  registrations,
+  editedOfficeHour
+) => {
+  registrations.forEach(async (registration) => {
+    const account = await prisma.Account.findFirst({
+      where: {
+        id: registration.accountId,
+      },
+    });
+    const text = `The office hours starting on ${editedOfficeHour.startDate.toISOString()} to ${editedOfficeHour.endDate.toISOString()} will now take place from ${editedOfficeHour.startTime.toISOString()} to ${editedOfficeHour.endTime.toISOString()} at ${
+      editedOfficeHour.location
+    }`;
+    const changeNotification = (email) => {
+      return {
+        email: email,
+        subject: `Office Hour Changed!`,
+        text,
+        html: "<p> " + text + " </p>",
+      };
+    };
+    await sendEmail(changeNotification(account.email));
+  });
+};

@@ -15,7 +15,6 @@ router.post(`${endpoint}`, checkApiKey, async (req, res, next) => {
   try {
     let status = 200;
     const { jhed, role, email, firstName, lastName, preferredName } = req.body;
-
     debug(`Looking up username=${jhed} in the database...`);
     let user = await prisma.account.findUnique({
       where: { userName: jhed },
@@ -30,7 +29,14 @@ router.post(`${endpoint}`, checkApiKey, async (req, res, next) => {
         `User role on SIS is ${role}; their role in our database will be ${Role.User}`
       );
       user = await prisma.account.create({
-        data: { userName: jhed, email, firstName, lastName, preferredName },
+        data: {
+          userName: jhed,
+          email,
+          firstName,
+          lastName,
+          preferredName,
+          role: Role.User,
+        },
       });
       status = 201;
     }
