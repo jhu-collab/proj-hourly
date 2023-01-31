@@ -46,6 +46,7 @@ function Registration({ registration, type }) {
   const [registrationType, setRegistrationType] = useState("Unknown");
 
   const { data } = useQueryRegistrationTypes();
+  console.log(registration);
 
   useEffect(() => {
     Boolean(data) &&
@@ -75,9 +76,10 @@ function Registration({ registration, type }) {
           spacing={2}
         >
           <Typography fontWeight={600}>
-            {DateTime.fromISO(registration.date).toLocaleString(
-              DateTime.DATE_MED_WITH_WEEKDAY
-            )}
+            {DateTime.fromISO(
+              registration.date.substring(0, 10) +
+                registration.startTime.substring(10)
+            ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
           </Typography>
           <Typography fontWeight={600}>
             {DateTime.fromISO(registration.startTime).toLocaleString(
