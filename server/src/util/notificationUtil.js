@@ -42,8 +42,8 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
   registrations.forEach(async (registration) => {
     const account = await prisma.Account.findFirst({
       where: {
-      id: registration.accountId
-      }
+        id: registration.accountId,
+      },
     });
     const text = `The office hours that you have registered for on ${registration.date} has been cancelled`;
     const cancellationNotification = (email) => {
@@ -51,28 +51,34 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
         email: email,
         subject: `Office Hour Cancelled!`,
         text,
-        html:  "<p> " + text + " </p>"
-      }};
+        html: "<p> " + text + " </p>",
+      };
+    };
     await sendEmail(cancellationNotification(account.email));
   });
 };
 
-export const sendEmailForEachRegistrationWhenChanged = (registrations, editedOfficeHour) => {
+export const sendEmailForEachRegistrationWhenChanged = (
+  registrations,
+  editedOfficeHour
+) => {
   registrations.forEach(async (registration) => {
     const account = await prisma.Account.findFirst({
       where: {
-      id: registration.accountId
-      }
+        id: registration.accountId,
+      },
     });
-    const text = `The office hours starting on ${editedOfficeHour.startDate.toISOString()} to ${editedOfficeHour.endDate.toISOString()} will now take place from ${editedOfficeHour.startTime.toISOString()} to ${editedOfficeHour.endTime.toISOString()} at ${editedOfficeHour.location}`;
+    const text = `The office hours starting on ${editedOfficeHour.startDate.toISOString()} to ${editedOfficeHour.endDate.toISOString()} will now take place from ${editedOfficeHour.startTime.toISOString()} to ${editedOfficeHour.endTime.toISOString()} at ${
+      editedOfficeHour.location
+    }`;
     const changeNotification = (email) => {
       return {
         email: email,
         subject: `Office Hour Changed!`,
         text,
-        html:  "<p> " + text + " </p>"
-      }};
+        html: "<p> " + text + " </p>",
+      };
+    };
     await sendEmail(changeNotification(account.email));
   });
 };
-
