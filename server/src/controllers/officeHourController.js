@@ -161,6 +161,9 @@ export const register = async (req, res) => {
     where: {
       id: officeHourId,
     },
+    include: {
+      course: true,
+    },
   });
   const dateObj = new Date(date);
   // if (
@@ -180,7 +183,49 @@ export const register = async (req, res) => {
       question,
       isCancelledStaff: false,
     },
+    include: {
+      account: true,
+      officeHour: true,
+    },
   });
+  const userEmail = registration.account.email;
+  const fullName =
+    registration.account.firstName + " " + registration.account.lastName;
+  const courseTitle = officeHour.course.title;
+  const courseNumber = officeHour.course.courseNumber;
+  const location = registration.officeHour.location;
+  const hostFullName =
+    registration.officeHour.hosts[0].firstName +
+    " " +
+    registration.officeHour.hosts[0].lastName;
+
+  const subject =
+    "[" +
+    courseNumber +
+    "] Successfully registered for " +
+    hostFullName +
+    "'s" +
+    " office hours from " +
+    startTime +
+    " to " +
+    endTime +
+    "!";
+  const emailBody = fullName + "," + "\n";
+  "You have successfully registered for " +
+    courseTitle +
+    " office hours from " +
+    startTime +
+    " to " +
+    endTime +
+    " at " +
+    location +
+    "!";
+  let emailReq = {
+    email: userEmail,
+    subject: subject,
+    text: emailBody,
+  };
+  sendEmail(emailReq);
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
     TopicIds.forEach(async (topicId) => {
