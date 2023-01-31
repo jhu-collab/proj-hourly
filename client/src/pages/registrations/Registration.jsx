@@ -46,7 +46,6 @@ function Registration({ registration, type }) {
   const [registrationType, setRegistrationType] = useState("Unknown");
 
   const { data } = useQueryRegistrationTypes();
-  console.log(registration);
 
   useEffect(() => {
     Boolean(data) &&
