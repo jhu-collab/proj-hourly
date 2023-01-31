@@ -302,8 +302,6 @@ export const cancelAll = async (req, res) => {
   });
   const dateToEnd = req.body.date;
   const date = new Date(dateToEnd);
-  date.setUTCHours(date.getHours());
-  date.setUTCMinutes(date.getMinutes());
   const dateObj = new Date(dateToEnd);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -313,6 +311,8 @@ export const cancelAll = async (req, res) => {
       course: true,
     },
   });
+  date.setUTCHours(new Date(officeHour.startDate).getUTCHours());
+  date.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
   const startObj = officeHour.startDate;
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
