@@ -59,6 +59,7 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
+      hosts: info.event.extendedProps.hosts,
     });
   };
 
