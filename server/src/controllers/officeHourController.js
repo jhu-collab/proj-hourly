@@ -194,7 +194,7 @@ export const register = async (req, res) => {
   const fullName =
     registration.account.firstName + " " + registration.account.lastName;
   const courseTitle = officeHour.course.title;
-  const courseNumber= officeHour.course.number;
+  const courseNumber = officeHour.course.courseNumber;
   const location = registration.officeHour.location;
   const hostFullName =
     registration.officeHour.hosts[0].firstName +
@@ -202,7 +202,9 @@ export const register = async (req, res) => {
     registration.officeHour.hosts[0].lastName;
 
   const subject =
-    "[" + courseNumber + "] Successfully registered for " +
+    "[" +
+    courseNumber +
+    "] Successfully registered for " +
     hostFullName +
     "'s" +
     " office hours from " +
