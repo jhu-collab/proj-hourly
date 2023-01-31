@@ -65,7 +65,7 @@ const createDataStructures = async () => {
     },
   });
   const topics = ["HW1", "HW2", "HW3", "HW4", "HW5", "HW6", "HW7", "HW8"];
-  for (let topic in topics) {
+  for (let topic of topics) {
     await prisma.topic.create({
       data: {
         courseId: dataStructures.id,
