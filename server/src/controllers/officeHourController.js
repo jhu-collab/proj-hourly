@@ -707,7 +707,12 @@ export const cancelRegistration = async (req, res) => {
     data: {
       isCancelled: true,
     }, include: {
-      account: true
+      account: true,
+      officeHour: {
+        include: {
+          hosts: true
+        }
+      }
     }
   });
   const userEmail = registration.account.email;
@@ -718,7 +723,7 @@ export const cancelRegistration = async (req, res) => {
   const startTimeStr = startTime.toTimeString().split(' ')[0];
   const endTime = registration.endTime;
   const endTimeStr = endTime.toTimeString().split(' ')[0];
-  const emailStr = "Your registration on " + dateStr + " from " + startTimeStr + " to " + endTimeStr + " has been cancelled";
+  const emailStr = "Your registration on " + dateStr + " from " + startTimeStr + " to " + endTimeStr + ", with "+ registration.officeHour.hosts[0] + " at " + registration.officeHour.location + " has been cancelled";
   let emailReq = {email:userEmail, subject:"Registration Cancelled", text: emailStr};
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
