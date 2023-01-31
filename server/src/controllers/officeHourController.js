@@ -184,18 +184,26 @@ export const register = async (req, res) => {
     },
   });
   const userEmail = registration.account.email;
-  const userName = registration.account.userName;
+  const fullName =
+    registration.account.firstName + " " + registration.account.lastName;
   const course = officeHour.course.title;
   const location = registration.officeHour.location;
+  const hostFullName =
+    registration.officeHour.hosts[0].firstName +
+    " " +
+    registration.officeHour.hosts[0].lastName;
 
   const subject =
-    "Succesfully registered for office hours from " +
+    "Succesfully registered for " +
+    hostFullName +
+    "'s" +
+    " office hours from " +
     startTime +
     " to " +
     endTime +
     "!";
-  const emailBody = userName + "\n";
-  ", you have been successfully registered for " +
+  const emailBody = fullName + "," + "\n";
+  "You have been successfully registered for " +
     course +
     " office hours from " +
     startTime +
