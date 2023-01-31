@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import prisma from "../../prisma/client.js";
 
 export const sendEmail = async (req) => {
   // Create the transporter with the required configuration for Outlook
