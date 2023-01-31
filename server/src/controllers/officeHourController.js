@@ -8,6 +8,7 @@ import { weekday } from "../util/officeHourValidator.js";
 import {
   sendEmailForEachRegistrationWhenCancelled,
   sendEmailForEachRegistrationWhenChanged,
+  sendEmail,
 } from "../util/notificationUtil.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
@@ -163,6 +164,7 @@ export const register = async (req, res) => {
     },
     include: {
       course: true,
+      hosts: true,
     },
   });
   const dateObj = new Date(date);
@@ -195,9 +197,7 @@ export const register = async (req, res) => {
   const courseNumber = officeHour.course.courseNumber;
   const location = registration.officeHour.location;
   const hostFullName =
-    registration.officeHour.hosts[0].firstName +
-    " " +
-    registration.officeHour.hosts[0].lastName;
+    officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
 
   const subject =
     "[" +
