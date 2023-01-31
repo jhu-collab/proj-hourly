@@ -121,7 +121,7 @@ export const register = async (req, res) => {
     updateAccount.lastName +
     ",\n" +
     "You have successfully  registered for " +
-    course.number +
+    course.courseNumber +
     ": " +
     course.title +
     "!" +
