@@ -201,7 +201,7 @@ export const register = async (req, res) => {
     registration.officeHour.hosts[0].lastName;
 
   const subject =
-    "Succesfully registered for " +
+    "Successfully registered for " +
     hostFullName +
     "'s" +
     " office hours from " +
@@ -210,7 +210,7 @@ export const register = async (req, res) => {
     endTime +
     "!";
   const emailBody = fullName + "," + "\n";
-  "You have been successfully registered for " +
+  "You have successfully registered for " +
     course +
     " office hours from " +
     startTime +
