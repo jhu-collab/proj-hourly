@@ -117,9 +117,18 @@ export const noConflictsWithHosts = async (req, res, next) => {
 export const isOfficeHourOnDay = async (req, res, next) => {
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
-  dateObj.setUTCHours(0);
+  let officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+  });
+
+  dateObj.setUTCHours(
+    new Date(officeHour.startDate).getUTCHours() -
+      dateObj.getTimezoneOffset() / 60
+  );
   const dow = weekday[dateObj.getUTCDay()];
-  const officeHour = await prisma.officeHour.findFirst({
+  officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
       isOnDayOfWeek: {
@@ -150,9 +159,18 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = req.params.date;
   const dateObj = new Date(date);
+  let officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+  });
   dateObj.setUTCHours(0);
+  dateObj.setUTCHours(
+    new Date(officeHour.startDate).getUTCHours() -
+      dateObj.getTimezoneOffset() / 60
+  );
   const dow = weekday[dateObj.getUTCDay()];
-  const officeHour = await prisma.officeHour.findFirst({
+  officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
       isOnDayOfWeek: {
