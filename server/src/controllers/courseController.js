@@ -120,7 +120,7 @@ export const register = async (req, res) => {
     " " +
     updateAccount.lastName +
     ",\n" +
-    "You have been successfully  registered for " +
+    "You have successfully  registered for " +
     course.number +
     ": " +
     course.title +
