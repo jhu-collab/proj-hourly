@@ -9,6 +9,7 @@ export const useStoreEvent = create((set) => ({
   location: "",
   id: null,
   recurring: false,
+  hosts: [],
   setEvent: (event) =>
     set({
       title: event.title || "",
@@ -17,6 +18,7 @@ export const useStoreEvent = create((set) => ({
       location: event.location || "",
       id: event.id || null,
       recurring: event.recurring || false,
+      hosts: event.hosts || [],
     }),
 
   days: "",
