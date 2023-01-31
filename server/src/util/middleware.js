@@ -49,6 +49,23 @@ export const checkToken = async (req, res, next) => {
 
     debug(`Decoding the token ...`);
     const { iat, exp, ...userInfo } = decodeToken(token);
+    console.log(userInfo);
+    const account = await prisma.account.findUnique({
+      where: {
+        id: userInfo.id,
+      },
+    });
+    if (account == null || account == undefined) {
+      throw new ApiError(404, "Authorization token not found!");
+    } else if (
+      account.userName != userInfo.userName ||
+      account.firstName != userInfo.firstName ||
+      account.lastName != userInfo.lastName ||
+      account.email != userInfo.email ||
+      account.role != userInfo.role
+    ) {
+      throw new ApiError(401, "Invalid Authorization token was provided!");
+    }
     debug(`Token belongs to ${userInfo.username}`);
 
     debug(
