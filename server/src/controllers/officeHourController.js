@@ -9,7 +9,6 @@ import {
   sendEmailForEachRegistrationWhenCancelled,
   sendEmailForEachRegistrationWhenChanged,
 } from "../util/notificationUtil.js";
-import e from "express";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
@@ -99,6 +98,12 @@ export const create = async (req, res) => {
   } = req.body;
   const start = new Date(startDate);
   const end = new Date(endDate);
+  const numOfWeek = daysOfWeek.map((dow) => weekday.indexOf(dow));
+  if (recurringEvent) {
+    while (!numOfWeek.includes(start.getDay())) {
+      start.setUTCDate(start.getUTCDate() + 1);
+    }
+  }
   const officeHour = await createOfficeHour(
     start,
     end,
@@ -167,6 +172,8 @@ export const register = async (req, res) => {
   // ) {
   //   dateObj.setDate(dateObj.getDate() + 1);
   // }
+  dateObj.setUTCHours(new Date(startTime).getUTCHours());
+  dateObj.setUTCMinutes(new Date(startTime).getUTCMinutes());
   const registration = await prisma.registration.create({
     data: {
       startTime: stringToTimeObj(startTime),
