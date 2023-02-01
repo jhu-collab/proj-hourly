@@ -849,6 +849,7 @@ export const cancelRegistration = async (req, res) => {
       officeHour: {
         include: {
           hosts: true,
+          course: true,
         },
       },
     },
@@ -878,12 +879,18 @@ export const cancelRegistration = async (req, res) => {
     " at " +
     registration.officeHour.location +
     " has been cancelled";
+  const subject =
+    "[" +
+    registration.officeHour.course.courseNumber +
+    "]" +
+    " Registration Cancelled";
   let emailReq = {
     email: userEmail,
-    subject: "Registration Cancelled",
+    subject: subject,
     text: emailStr,
   };
   sendEmail(emailReq);
+  console.log(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
