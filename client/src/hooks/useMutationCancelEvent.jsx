@@ -36,7 +36,11 @@ function useMutationCancelEvent(deleteType) {
   const cancelAll = async (event) => {
     try {
       const endpoint = `${BASE_URL}/api/officeHour/cancelAll`;
-      const res = await axios.post(endpoint, event, getConfig(token));
+      const res = await axios.post(
+        endpoint,
+        { officeHourId: event.officeHourId },
+        getConfig(token)
+      );
       return res.data;
     } catch (err) {
       throw err;
