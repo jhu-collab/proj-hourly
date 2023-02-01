@@ -581,7 +581,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
   });
   if (date === undefined || date === null) {
     const newEnd = new Date();
-    newEnd.setUTCHours(0 - dateObj.getTimezoneOffset() / 60);
+    newEnd.setUTCHours(0 - newEnd.getTimezoneOffset() / 60);
     newEnd.setUTCHours(officeHour.endDate.getUTCHours());
     newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
     newEnd.setUTCSeconds(0);
