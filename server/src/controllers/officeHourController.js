@@ -311,8 +311,11 @@ export const cancelAll = async (req, res) => {
       course: true,
     },
   });
-  date.setUTCHours(new Date(officeHour.startDate).getUTCHours());
-  date.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
+  // dateObj.setUTCHours(
+  //   new Date(officeHour.startDate).getUTCHours() -
+  //     dateObj.getTimezoneOffset() / 60
+  // );
+  // date.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
   const startObj = officeHour.startDate;
   let officeHourUpdate;
   if (officeHour.startDate >= date) {

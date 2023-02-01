@@ -581,6 +581,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
   });
   if (date === undefined || date === null) {
     const newEnd = new Date();
+    newEnd.setUTCHours(0 - dateObj.getTimezoneOffset() / 60);
     newEnd.setUTCHours(officeHour.endDate.getUTCHours());
     newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
     newEnd.setUTCSeconds(0);
@@ -589,9 +590,17 @@ export const checkOptionalDateBody = async (req, res, next) => {
   } else {
     const { officeHourId, date } = req.body;
     const dateObj = new Date(date);
-    dateObj.setUTCHours(0);
+    let officeHour = await prisma.officeHour.findFirst({
+      where: {
+        id: officeHourId,
+      },
+    });
+    dateObj.setUTCHours(
+      new Date(officeHour.startDate).getUTCHours() -
+        dateObj.getTimezoneOffset() / 60
+    );
     const dow = weekday[dateObj.getUTCDay()];
-    const officeHour = await prisma.officeHour.findFirst({
+    officeHour = await prisma.officeHour.findFirst({
       where: {
         id: officeHourId,
         isOnDayOfWeek: {
@@ -615,6 +624,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
         .json({ msg: "ERROR: office hours is not available on day" });
     } else {
       const newEnd = new Date(date);
+      newEnd.setUTCHours(0 - dateObj.getTimezoneOffset() / 60);
       newEnd.setUTCHours(officeHour.endDate.getUTCHours());
       newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
       newEnd.setUTCSeconds(0);
