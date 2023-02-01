@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
 import { Role } from "@prisma/client";
+import { generateCalendar } from "../util/icalHelpers.js";
 
 export const create = async (req, res) => {
   if (validate(req, res)) {
@@ -114,12 +115,25 @@ export const deleteAccount = async (req, res) => {
         },
       },
     },
+    include: {
+      hosts: true,
+      course: true,
+    },
   });
   let deleteOH = [];
+  let courseDeletedOH = [];
   officeHours.forEach(async (officeHour) => {
     if (officeHour.hosts.length === 1) {
       deleteOH.push(officeHour.id);
+      courseDeletedOH.push(officeHour.course.id);
     }
+  });
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: deleteOH,
+      },
+    },
   });
   await prisma.officeHour.deleteMany({
     where: {
@@ -127,6 +141,9 @@ export const deleteAccount = async (req, res) => {
         in: deleteOH,
       },
     },
+  });
+  courseDeletedOH.forEach(async (id) => {
+    await generateCalendar(id);
   });
   const courses = await prisma.course.findMany({
     where: {
@@ -136,12 +153,36 @@ export const deleteAccount = async (req, res) => {
         },
       },
     },
+    include: {
+      instructors: true,
+    },
   });
   let deleteCourse = [];
   courses.forEach(async (course) => {
     if (course.instructors.length === 1) {
       deleteCourse.push(course.id);
     }
+  });
+  await prisma.topic.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
+  });
+  await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
   });
   await prisma.course.deleteMany({
     where: {
