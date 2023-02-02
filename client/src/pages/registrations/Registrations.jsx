@@ -46,6 +46,26 @@ const filterByTime = (array, registrationTab) => {
   });
 };
 
+const addRegistrationTypes = (registrations, registrationTypes) => {
+  const durationToRegTypes = new Map();
+
+  for (let i = 0; i < registrationTypes.length; i++) {
+    durationToRegTypes.set(
+      registrationTypes[i].duration,
+      registrationTypes[i].title
+    );
+  }
+
+  for (let j = 0; j < registrations.length; j++) {
+    const end = DateTime.fromISO(registrations[j].endTime);
+    const start = DateTime.fromISO(registrations[j].startTime);
+
+    const diffInMinutes = end.diff(start, "minutes").toObject().minutes;
+
+    registrations[j].type = durationToRegTypes.get(diffInMinutes) || "Unknown";
+  }
+};
+
 /**
  * Represents the Registrations page.
  * @returns Registrations page
@@ -64,9 +84,11 @@ function Registrations() {
 
   useEffect(() => {
     let result = data?.registrations || [];
+    let registrationTypes = dataTypes?.times || [];
+    addRegistrationTypes(result, registrationTypes);
     result = filterByTime(result, registrationTab);
     setRegistrations(result);
-  }, [data, registrationTab]);
+  }, [data, dataTypes, registrationTab]);
 
   return (
     <>
