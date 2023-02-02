@@ -104,6 +104,7 @@ function EditEventForm() {
           endDateOldOfficeHour: DateTime.fromJSDate(start, {
             zone: "utc",
           }).toFormat("MM-dd-yyyy"),
+          editAfterDate: true,
         })
       : mutate({
           startDate: start.toISOString(),
