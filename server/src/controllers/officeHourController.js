@@ -199,6 +199,10 @@ export const register = async (req, res) => {
   const hostFullName =
     officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
 
+  let startTimeStr = stringToTimeObj(startTime).toTimeString().split(" ")[0];
+  startTimeStr = startTimeStr.substring(0, startTimeStr.length - 3);
+  let endTimeStr = stringToTimeObj(endTime).toTimeString().split(" ")[0];
+  endTimeStr = endTimeStr.substring(0, endTimeStr.length - 3);
   const subject =
     "[" +
     courseNumber +
@@ -208,7 +212,7 @@ export const register = async (req, res) => {
     " office hours from " +
     startTime +
     " to " +
-    endTime +
+    endTimeStr +
     "!";
   const emailBody =
     fullName +
@@ -217,9 +221,9 @@ export const register = async (req, res) => {
     "You have successfully registered for " +
     courseTitle +
     " office hours from " +
-    startTime +
+    startTimeStr +
     " to " +
-    endTime +
+    endTimeStr +
     " at " +
     location +
     "!";
@@ -228,6 +232,7 @@ export const register = async (req, res) => {
     subject: subject,
     text: emailBody,
   };
+  console.log(emailBody);
   sendEmail(emailReq);
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
@@ -870,9 +875,12 @@ export const cancelRegistration = async (req, res) => {
   };
   const dateStr = date.toLocaleDateString("en-US", options);
   const startTime = registration.startTime;
-  const startTimeStr = startTime.toTimeString().split(" ")[0];
+  let startTimeStr = startTime.toTimeString().split(" ")[0];
   const endTime = registration.endTime;
-  const endTimeStr = endTime.toTimeString().split(" ")[0];
+  let endTimeStr = endTime.toTimeString().split(" ")[0];
+  startTimeStr = startTimeStr.substring(0, startTimeStr.length - 3);
+  endTimeStr = endTimeStr.substring(0, endTimeStr.length - 3);
+
   const emailStr =
     "Your registration on " +
     dateStr +
@@ -881,9 +889,9 @@ export const cancelRegistration = async (req, res) => {
     " to " +
     endTimeStr +
     ", with " +
-    registration.officeHour.hosts.firstName +
+    registration.officeHour.hosts[0].firstName +
     " " +
-    registration.officeHour.hosts.lastName +
+    registration.officeHour.hosts[0].lastName +
     " at " +
     registration.officeHour.location +
     " has been cancelled";
@@ -898,6 +906,7 @@ export const cancelRegistration = async (req, res) => {
     text: emailStr,
   };
   sendEmail(emailReq);
+  console.log(emailStr);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
