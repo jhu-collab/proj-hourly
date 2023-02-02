@@ -890,7 +890,6 @@ export const cancelRegistration = async (req, res) => {
     text: emailStr,
   };
   sendEmail(emailReq);
-  console.log(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
