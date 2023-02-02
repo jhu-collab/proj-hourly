@@ -223,7 +223,6 @@ export const register = async (req, res) => {
     " at " +
     location +
     "!";
-  console.log(emailBody);
   let emailReq = {
     email: userEmail,
     subject: subject,
