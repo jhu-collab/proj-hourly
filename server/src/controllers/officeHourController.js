@@ -174,10 +174,15 @@ export const register = async (req, res) => {
   // ) {
   //   dateObj.setDate(dateObj.getDate() + 1);
   // }
+  const startTimeObj = stringToTimeObj(startTime);
+  const endTimeObj = stringToTimeObj(endTime);
+  if (endTimeObj < startTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const registration = await prisma.registration.create({
     data: {
-      startTime: stringToTimeObj(startTime),
-      endTime: stringToTimeObj(endTime),
+      startTime: startTimeObj,
+      endTime: endTimeObj,
       date: dateObj,
       isCancelled: false,
       officeHourId,
@@ -479,7 +484,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
       // if available, adds to times array
       if (
         available &&
-        createJustTimeObject(new Date()) <= new Date(sessionStartTime)
+        (new Date() < date ||
+          createJustTimeObject(new Date()) <= new Date(sessionStartTime))
       ) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);

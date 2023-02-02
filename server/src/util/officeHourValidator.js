@@ -230,6 +230,9 @@ export const isTimeCorrectInterval = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  if (startTimeObj > endTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -263,6 +266,9 @@ export const isTimeAvailable = async (req, res, next) => {
   const registrationDate = new Date(date);
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  if (startTimeObj > endTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -272,30 +278,44 @@ export const isTimeAvailable = async (req, res, next) => {
     },
   });
   let valid = true;
+  console.log(startTimeObj);
+  console.log(endTimeObj);
   registrations.forEach((registration) => {
+    console.log(registration);
     if (registration.startTimeObj == startTimeObj) {
+      console.log("1");
       valid = false;
     } else if (registration.endTimeObj == endTimeObj) {
+      console.log("2");
+
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > endTimeObj
     ) {
+      console.log("3");
+
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > startTimeObj
     ) {
+      console.log("4");
+
       valid = false;
     } else if (
       registration.endTime > endTimeObj &&
       registration.startTime < endTimeObj
     ) {
+      console.log("5");
+
       valid = false;
     } else if (
       startTimeObj < registration.startTime &&
       endTimeObj > registration.startTimeObj
     ) {
+      console.log("6");
+
       valid = false;
     }
   });
