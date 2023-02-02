@@ -849,13 +849,48 @@ export const cancelRegistration = async (req, res) => {
     },
     include: {
       account: true,
+      officeHour: {
+        include: {
+          hosts: true,
+          course: true,
+        },
+      },
     },
   });
   const userEmail = registration.account.email;
+  const date = registration.date;
+  var options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const dateStr = date.toLocaleDateString("en-US", options);
+  const startTime = registration.startTime;
+  const startTimeStr = startTime.toTimeString().split(" ")[0];
+  const endTime = registration.endTime;
+  const endTimeStr = endTime.toTimeString().split(" ")[0];
+  const emailStr =
+    "Your registration on " +
+    dateStr +
+    " from " +
+    startTimeStr +
+    " to " +
+    endTimeStr +
+    ", with " +
+    registration.officeHour.hosts[0] +
+    " at " +
+    registration.officeHour.location +
+    " has been cancelled";
+  const subject =
+    "[" +
+    registration.officeHour.course.courseNumber +
+    "]" +
+    " Registration Cancelled";
   let emailReq = {
     email: userEmail,
-    subject: "Registration Cancelled",
-    text: "Your registration has been cancelled",
+    subject: subject,
+    text: emailStr,
   };
   sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
