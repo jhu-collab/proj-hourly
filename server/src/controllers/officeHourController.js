@@ -210,8 +210,11 @@ export const register = async (req, res) => {
     " to " +
     endTime +
     "!";
-  const emailBody = fullName + "," + "\n";
-  "You have successfully registered for " +
+  const emailBody =
+    fullName +
+    "," +
+    "\n" +
+    "You have successfully registered for " +
     courseTitle +
     " office hours from " +
     startTime +
@@ -220,6 +223,7 @@ export const register = async (req, res) => {
     " at " +
     location +
     "!";
+  console.log(emailBody);
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -878,7 +882,9 @@ export const cancelRegistration = async (req, res) => {
     " to " +
     endTimeStr +
     ", with " +
-    registration.officeHour.hosts[0] +
+    registration.officeHour.hosts.firstName +
+    " " +
+    registration.officeHour.hosts.lastName +
     " at " +
     registration.officeHour.location +
     " has been cancelled";
