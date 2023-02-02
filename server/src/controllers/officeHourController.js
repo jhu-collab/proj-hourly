@@ -198,11 +198,17 @@ export const register = async (req, res) => {
   const location = registration.officeHour.location;
   const hostFullName =
     officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
-
-  let startTimeStr = stringToTimeObj(startTime).toTimeString().split(" ")[0];
-  startTimeStr = startTimeStr.substring(0, startTimeStr.length - 3);
-  let endTimeStr = stringToTimeObj(endTime).toTimeString().split(" ")[0];
-  endTimeStr = endTimeStr.substring(0, endTimeStr.length - 3);
+  const today = new Date();
+  const emailStartTime =
+    ((parseInt(startTime.split(":")[0], 10) - today.getTimezoneOffset() / 60) %
+      12) +
+    ":" +
+    parseInt(startTime.split(":")[1], 10).toString().padStart(2, "0");
+  const emailEndTime =
+    ((parseInt(endTime.split(":")[0], 10) - today.getTimezoneOffset() / 60) %
+      12) +
+    ":" +
+    parseInt(endTime.split(":")[1], 10).toString().padStart(2, "0");
   const subject =
     "[" +
     courseNumber +
@@ -210,9 +216,9 @@ export const register = async (req, res) => {
     hostFullName +
     "'s" +
     " office hours from " +
-    startTime +
+    emailStartTime +
     " to " +
-    endTimeStr +
+    emailEndTime +
     "!";
   const emailBody =
     fullName +
@@ -221,9 +227,9 @@ export const register = async (req, res) => {
     "You have successfully registered for " +
     courseTitle +
     " office hours from " +
-    startTimeStr +
+    emailStartTime +
     " to " +
-    endTimeStr +
+    emailEndTime +
     " at " +
     location +
     "!";
@@ -460,7 +466,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
     // that could be used as the start of the session
-    for (let i = 0; i <= n - length / 5; i++) {
+    for (let i = 0; i < (n * 5) / length; i++) {
       let available = true;
       // loops over all 5 minute intervals from the
       // start time till the length has been reached
@@ -472,7 +478,10 @@ export const getTimeSlotsRemaining = async (req, res) => {
         }
       }
       // if available, adds to times array
-      if (available) {
+      if (
+        available &&
+        createJustTimeObject(new Date()) <= new Date(sessionStartTime)
+      ) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);
         endTime.setMinutes(endTime.getMinutes() + length);
@@ -481,7 +490,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
           endTime,
         });
       }
-      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + 5);
+      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + length);
     }
     // adds times array and type to the timeSlotsPerType array
     timeSlotsPerType.push({
