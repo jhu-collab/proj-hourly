@@ -60,7 +60,8 @@ export const checkToken = async (req, res, next) => {
       account.userName != userInfo.userName ||
       account.firstName != userInfo.firstName ||
       account.lastName != userInfo.lastName ||
-      account.email != userInfo.email
+      account.email != userInfo.email ||
+      account.role != userInfo.role
     ) {
       throw new ApiError(401, "Invalid Authorization token was provided!");
     }
