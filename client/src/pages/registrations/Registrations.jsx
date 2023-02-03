@@ -18,7 +18,6 @@ function earliestEventsFirst(a, b) {
 
 const filterByTime = (array, registrationTab) => {
   const today = new Date();
-  today.setUTCHours(today.getHours());
 
   return array.filter(function (item) {
     const startObj = new Date(item.date);
@@ -26,7 +25,7 @@ const filterByTime = (array, registrationTab) => {
     const startTimeObj = new Date(item.startTime);
     const endTimeObj = new Date(item.endTime);
     startObj.setUTCHours(startTimeObj.getUTCHours());
-    startObj.setUTCHours(startTimeObj.getUTCHours());
+    startObj.setUTCMinutes(startTimeObj.getUTCMinutes());
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
 

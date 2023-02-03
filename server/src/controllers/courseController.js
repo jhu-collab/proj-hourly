@@ -458,6 +458,67 @@ export const getAllRegistrations = async (req, res) => {
       },
       include: {
         topics: true,
+        account: {
+          select: {
+            id: true,
+            userName: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            preferredName: true,
+          },
+        },
+        officeHour: {
+          select: {
+            hosts: {
+              select: {
+                id: true,
+                userName: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                preferredName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } else if (role === "Instructor") {
+    registrations = await prisma.registration.findMany({
+      where: {
+        officeHour: {
+          courseId,
+        },
+        isCancelled: false,
+        isCancelledStaff: false,
+      },
+      include: {
+        topics: true,
+        account: {
+          select: {
+            id: true,
+            userName: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            preferredName: true,
+          },
+        },
+        officeHour: {
+          select: {
+            hosts: {
+              select: {
+                id: true,
+                userName: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                preferredName: true,
+              },
+            },
+          },
+        },
       },
     });
   } else {
@@ -476,6 +537,30 @@ export const getAllRegistrations = async (req, res) => {
       },
       include: {
         topics: true,
+        account: {
+          select: {
+            id: true,
+            userName: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            preferredName: true,
+          },
+        },
+        officeHour: {
+          select: {
+            hosts: {
+              select: {
+                id: true,
+                userName: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                preferredName: true,
+              },
+            },
+          },
+        },
       },
     });
   }

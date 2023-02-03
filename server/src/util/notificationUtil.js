@@ -69,9 +69,17 @@ export const sendEmailForEachRegistrationWhenChanged = (
         id: registration.accountId,
       },
     });
-    const text = `The office hours starting on ${editedOfficeHour.startDate.toISOString()} to ${editedOfficeHour.endDate.toISOString()} will now take place from ${editedOfficeHour.startTime.toISOString()} to ${editedOfficeHour.endTime.toISOString()} at ${
-      editedOfficeHour.location
-    }`;
+
+    const text = `The office hours starting on ${new Date(
+      editedOfficeHour.startDate
+    ).toLocaleString()} to ${new Date(
+      editedOfficeHour.endDate
+    ).toLocaleString()} will now take place from ${new Date(
+      editedOfficeHour.startDate
+    ).toLocaleString()} to ${new Date(
+      editedOfficeHour.endDate
+    ).toLocaleString()} at ${editedOfficeHour.location}`;
+    console.log(text);
     const changeNotification = (email) => {
       return {
         email: email,

@@ -174,10 +174,15 @@ export const register = async (req, res) => {
   // ) {
   //   dateObj.setDate(dateObj.getDate() + 1);
   // }
+  const startTimeObj = stringToTimeObj(startTime);
+  const endTimeObj = stringToTimeObj(endTime);
+  if (endTimeObj < startTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const registration = await prisma.registration.create({
     data: {
-      startTime: stringToTimeObj(startTime),
-      endTime: stringToTimeObj(endTime),
+      startTime: startTimeObj,
+      endTime: endTimeObj,
       date: dateObj,
       isCancelled: false,
       officeHourId,
@@ -418,8 +423,11 @@ export const getTimeSlotsRemaining = async (req, res) => {
         (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
     );
   }
-  let start = new Date(startDate);
-  const end = new Date(endDate);
+  let start = createJustTimeObject(new Date(startDate));
+  const end = createJustTimeObject(new Date(endDate));
+  if (start > end) {
+    end.setUTCDate(end.getUTCDate() + 1);
+  }
   //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
@@ -466,7 +474,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
     // that could be used as the start of the session
-    for (let i = 0; i < (n * 5) / length; i++) {
+    for (let i = 0; i < n; i += length / 5) {
       let available = true;
       // loops over all 5 minute intervals from the
       // start time till the length has been reached
@@ -480,7 +488,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
       // if available, adds to times array
       if (
         available &&
-        createJustTimeObject(new Date()) <= new Date(sessionStartTime)
+        (new Date() < date ||
+          createJustTimeObject(new Date()) <= new Date(sessionStartTime))
       ) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);

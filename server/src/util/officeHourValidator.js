@@ -230,6 +230,9 @@ export const isTimeCorrectInterval = async (req, res, next) => {
   const { startTime, endTime, officeHourId } = req.body;
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  if (startTimeObj > endTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -263,6 +266,9 @@ export const isTimeAvailable = async (req, res, next) => {
   const registrationDate = new Date(date);
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  if (startTimeObj > endTimeObj) {
+    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -273,29 +279,41 @@ export const isTimeAvailable = async (req, res, next) => {
   });
   let valid = true;
   registrations.forEach((registration) => {
+    console.log(registration);
     if (registration.startTimeObj == startTimeObj) {
+      console.log("1");
       valid = false;
     } else if (registration.endTimeObj == endTimeObj) {
+      console.log("2");
+
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > endTimeObj
     ) {
+      console.log("3");
+
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > startTimeObj
     ) {
+      console.log("4");
+
       valid = false;
     } else if (
       registration.endTime > endTimeObj &&
       registration.startTime < endTimeObj
     ) {
+      console.log("5");
+
       valid = false;
     } else if (
       startTimeObj < registration.startTime &&
       endTimeObj > registration.startTimeObj
     ) {
+      console.log("6");
+
       valid = false;
     }
   });
@@ -631,5 +649,40 @@ export const checkOptionalDateBody = async (req, res, next) => {
       req.body.date = newEnd.toISOString();
       next();
     }
+  }
+};
+
+export const isRegistrationInFutureByIdParams = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  const startTimeObj = new Date(registration.startTime);
+  const dateObj = new Date(registration.date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (dateObj > new Date()) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: office hours has already passed" });
+  }
+};
+
+export const isRegistrationInFuture = async (req, res, next) => {
+  const { startTime, date } = req.body;
+  const startTimeObj = stringToTimeObj(startTime);
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (dateObj > new Date()) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: office hours has already passed" });
   }
 };
