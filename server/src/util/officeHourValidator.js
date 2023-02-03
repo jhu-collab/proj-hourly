@@ -278,8 +278,6 @@ export const isTimeAvailable = async (req, res, next) => {
     },
   });
   let valid = true;
-  console.log(startTimeObj);
-  console.log(endTimeObj);
   registrations.forEach((registration) => {
     console.log(registration);
     if (registration.startTimeObj == startTimeObj) {

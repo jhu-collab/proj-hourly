@@ -422,8 +422,11 @@ export const getTimeSlotsRemaining = async (req, res) => {
         (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
     );
   }
-  let start = new Date(startDate);
-  const end = new Date(endDate);
+  let start = createJustTimeObject(new Date(startDate));
+  const end = createJustTimeObject(new Date(endDate));
+  if (start > end) {
+    end.setUTCDate(end.getUTCDate() + 1);
+  }
   //gets all registrations for an office hour on a given day
   const registrations = await prisma.registration.findMany({
     where: {
@@ -470,7 +473,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
     // that could be used as the start of the session
-    for (let i = 0; i < (n * 5) / length; i++) {
+    for (let i = 0; i < n; i += length / 5) {
       let available = true;
       // loops over all 5 minute intervals from the
       // start time till the length has been reached
