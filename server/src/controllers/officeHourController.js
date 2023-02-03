@@ -195,6 +195,12 @@ export const register = async (req, res) => {
       officeHour: true,
     },
   });
+  var options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
   const userEmail = registration.account.email;
   const fullName =
     registration.account.firstName + " " + registration.account.lastName;
@@ -204,16 +210,17 @@ export const register = async (req, res) => {
   const hostFullName =
     officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
   const today = new Date();
-  const emailStartTime =
-    ((parseInt(startTime.split(":")[0], 10) - today.getTimezoneOffset() / 60) %
-      12) +
-    ":" +
-    parseInt(startTime.split(":")[1], 10).toString().padStart(2, "0");
-  const emailEndTime =
-    ((parseInt(endTime.split(":")[0], 10) - today.getTimezoneOffset() / 60) %
-      12) +
-    ":" +
-    parseInt(endTime.split(":")[1], 10).toString().padStart(2, "0");
+  const emailStartTime = startTimeObj.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  const emailEndTime = endTimeObj.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  const dateStr = dateObj.toLocaleDateString("en-US", options);
   const subject =
     "[" +
     courseNumber +
@@ -235,6 +242,8 @@ export const register = async (req, res) => {
     emailStartTime +
     " to " +
     emailEndTime +
+    " on " +
+    dateStr +
     " at " +
     location +
     "!";
@@ -243,7 +252,6 @@ export const register = async (req, res) => {
     subject: subject,
     text: emailBody,
   };
-  console.log(emailBody);
   sendEmail(emailReq);
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
@@ -893,11 +901,17 @@ export const cancelRegistration = async (req, res) => {
   };
   const dateStr = date.toLocaleDateString("en-US", options);
   const startTime = registration.startTime;
-  let startTimeStr = startTime.toTimeString().split(" ")[0];
+  let startTimeStr = startTime.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
   const endTime = registration.endTime;
-  let endTimeStr = endTime.toTimeString().split(" ")[0];
-  startTimeStr = startTimeStr.substring(0, startTimeStr.length - 3);
-  endTimeStr = endTimeStr.substring(0, endTimeStr.length - 3);
+  let endTimeStr = endTime.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
 
   const emailStr =
     "Your registration on " +
@@ -912,7 +926,7 @@ export const cancelRegistration = async (req, res) => {
     registration.officeHour.hosts[0].lastName +
     " at " +
     registration.officeHour.location +
-    " has been cancelled";
+    " has been cancelled.";
   const subject =
     "[" +
     registration.officeHour.course.courseNumber +
@@ -924,7 +938,6 @@ export const cancelRegistration = async (req, res) => {
     text: emailStr,
   };
   sendEmail(emailReq);
-  console.log(emailStr);
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
