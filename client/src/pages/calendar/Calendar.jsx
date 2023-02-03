@@ -140,7 +140,7 @@ function Calendar() {
               unselectAuto={false}
               events={data?.calendar || []}
               select={handleSelect}
-              slotDuration="01:00:00"
+              slotDuration="0:30:00"
               slotLabelFormat={{
                 hour: "numeric",
                 minute: "2-digit",
