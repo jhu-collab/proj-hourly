@@ -651,3 +651,38 @@ export const checkOptionalDateBody = async (req, res, next) => {
     }
   }
 };
+
+export const isRegistrationInFutureByIdParams = async (req, res, next) => {
+  const registrationId = parseInt(req.params.registrationId, 10);
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  const startTimeObj = new Date(registration.startTime);
+  const dateObj = new Date(registration.date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (dateObj > new Date()) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: office hours has already passed" });
+  }
+};
+
+export const isRegistrationInFuture = async (req, res, next) => {
+  const { startTime, date } = req.body;
+  const startTimeObj = stringToTimeObj(startTime);
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (dateObj > new Date()) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: office hours has already passed" });
+  }
+};

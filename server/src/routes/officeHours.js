@@ -64,6 +64,7 @@ router.post(
   validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   validator.isUserNotRegistered,
+  validator.isRegistrationInFuture,
   courseValidator.areTopicsForCourse,
   controller.register
 );
@@ -148,6 +149,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
   validator.isRegisteredOrIsStaffBody,
+  validator.isRegistrationInFutureByIdParams,
   controller.cancelRegistration
 );
 
