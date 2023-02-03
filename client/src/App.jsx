@@ -5,6 +5,7 @@ import ScrollTop from "./components/ScrollTop";
 import Loadable from "./components/Loadable";
 import MainLayout from "./layouts/MainLayout";
 import MinimalLayout from "./layouts/MinimalLayout";
+import CourseWrapper from "./layouts/CourseWrapper";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import StaffOnlyRoute from "./layouts/StaffOnlyRoute";
@@ -39,15 +40,17 @@ function App() {
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<MainLayout />}>
               <Route path="" element={<MyCourses />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/registrations" element={<Registrations />} />
-              <Route path="/courseinformation" element={<CourseInfoPage />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="" element={<StaffOnlyRoute />}>
-                <Route path="/roster" element={<Roster />} />
-                <Route path="/topics" element={<Topics />} />
-                {/* TODO: UNFINISHED FEATURE */}
-                {/* <Route path="/statistics" element={<Statistics />} /> */}
+              <Route path="/" element={<CourseWrapper />}>
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/registrations" element={<Registrations />} />
+                <Route path="/courseinformation" element={<CourseInfoPage />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="" element={<StaffOnlyRoute />}>
+                  <Route path="/roster" element={<Roster />} />
+                  <Route path="/topics" element={<Topics />} />
+                  {/* TODO: UNFINISHED FEATURE */}
+                  {/* <Route path="/statistics" element={<Statistics />} /> */}
+                </Route>
               </Route>
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />

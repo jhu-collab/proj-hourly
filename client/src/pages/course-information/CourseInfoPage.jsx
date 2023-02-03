@@ -23,13 +23,13 @@ function CourseInfoPage() {
         <Typography variant="h5" fontWeight={400}>
           Year: <strong>{course.calendarYear}</strong>
         </Typography>
-        {courseType === "staff" && (
+        {(courseType === "Staff" || courseType === "Instructor") && (
           <Typography variant="h5" fontWeight={400}>
             Code: <strong>{course.code}</strong>
           </Typography>
         )}
       </Stack>
-      {courseType === "student" && <RemoveCourseAction courseId={course.id} />}
+      {courseType === "Student" && <RemoveCourseAction courseId={course.id} />}
     </MainCard>
   );
 }

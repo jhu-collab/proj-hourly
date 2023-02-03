@@ -10,7 +10,6 @@ import StudentDetails from "./StudentDetails";
 import useStoreLayout from "../../../hooks/useStoreLayout";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreToken from "../../../hooks/useStoreToken";
-import useQueryMyRole from "../../../hooks/useQueryMyRole";
 import { decodeToken } from "react-jwt";
 
 /**
@@ -26,8 +25,7 @@ function EventPopover() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
-  const { data } = useQueryMyRole();
-  const isInstructor = data?.role === "Instructor";
+  const isInstructor = courseType === "Instructor";
   const isHost = hosts.some((host) => host.id === id);
 
   return (
@@ -72,7 +70,7 @@ function EventPopover() {
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "student" && <StudentDetails />}
+      {courseType === "Student" && <StudentDetails />}
     </Popover>
   );
 }

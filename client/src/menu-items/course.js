@@ -4,7 +4,6 @@ import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlin
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
 import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
-import useStoreLayout from "../hooks/useStoreLayout";
 const icons = {
   CalendarOutlined,
   TeamOutlined,
@@ -14,9 +13,7 @@ const icons = {
   BarChartOutlined,
 };
 
-export const course = (currentCourse) => {
-  const courseType = useStoreLayout.getState().courseType;
-
+export const course = (currentCourse, courseType) => {
   const children = [];
 
   children.push({
@@ -37,7 +34,7 @@ export const course = (currentCourse) => {
     breadcrumbs: false,
   });
 
-  if (courseType === "staff") {
+  if (courseType === "Staff" || courseType === "Instructor") {
     children.push({
       id: "roster",
       title: "roster",

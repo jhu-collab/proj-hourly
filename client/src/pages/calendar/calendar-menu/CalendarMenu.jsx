@@ -16,7 +16,9 @@ function CalendarMenu({ calendarRef }) {
       <CalendarViews calendarRef={calendarRef} />
       {/* TODO: UNFINISHED FEATURE */}
       {/* <CalendarFilters /> */}
-      {courseType === "staff" && <CalendarAdd calendarRef={calendarRef} />}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <CalendarAdd calendarRef={calendarRef} />
+      )}
     </Stack>
   );
 }

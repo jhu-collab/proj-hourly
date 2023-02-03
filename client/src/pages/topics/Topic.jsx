@@ -11,8 +11,8 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import useMutationDeleteTopic from "../../hooks/useMutationDeleteTopic";
 import useMutationEditTopic from "../../hooks/useMutationEditTopic";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
 import useStoreCourse from "../../hooks/useStoreCourse";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import { topicSchema } from "../../utils/validators";
 
 /**
@@ -23,11 +23,11 @@ import { topicSchema } from "../../utils/validators";
 function Topic({ topic }) {
   const [edit, setEdit] = useState(false);
 
-  const { isLoading, data } = useQueryMyRole();
   const { mutate } = useMutationEditTopic();
   const { mutate: mutateDelete } = useMutationDeleteTopic();
 
   const course = useStoreCourse((state) => state.course);
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -65,7 +65,7 @@ function Topic({ topic }) {
             alignItems="center"
             spacing={2}
           >
-            {edit && data.role === "Instructor" ? (
+            {edit && courseType === "Instructor" ? (
               <FormInputText
                 name="name"
                 control={control}
@@ -74,7 +74,7 @@ function Topic({ topic }) {
             ) : (
               <Typography variant="h5">{topic.value}</Typography>
             )}
-            {edit && data.role === "Instructor" && (
+            {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" type="submit">
@@ -92,7 +92,7 @@ function Topic({ topic }) {
                 </AnimateButton>
               </Stack>
             )}
-            {!edit && data.role === "Instructor" && (
+            {!edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>

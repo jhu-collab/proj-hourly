@@ -11,7 +11,7 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import useMutationDeleteRegType from "../../hooks/useMutationDeleteRegType";
 import useMutationEditRegType from "../../hooks/useMutationEditRegType";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import { registrationTypeSchema } from "../../utils/validators";
 
 /**
@@ -22,7 +22,7 @@ import { registrationTypeSchema } from "../../utils/validators";
 function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
 
-  const { isLoading, data } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const { mutate } = useMutationEditRegType(type.id);
   const { mutate: mutateDelete } = useMutationDeleteRegType();
@@ -60,7 +60,7 @@ function RegistrationType({ type }) {
             alignItems="center"
             spacing={2}
           >
-            {edit && data?.role === "Instructor" ? (
+            {edit && courseType === "Instructor" ? (
               <>
                 <FormInputText
                   name="title"
@@ -83,7 +83,7 @@ function RegistrationType({ type }) {
                 <Typography variant="h5">{type.duration} minutes</Typography>
               </Stack>
             )}
-            {edit && data?.role === "Instructor" && (
+            {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" type="submit">
@@ -101,7 +101,7 @@ function RegistrationType({ type }) {
                 </AnimateButton>
               </Stack>
             )}
-            {!edit && data?.role === "Instructor" && (
+            {!edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>

@@ -15,11 +15,10 @@ export const useStoreLayout = create(
         set(() => ({
           selectedSidebarItem: value,
         })),
-      courseType: "student",
+      courseType: "Student",
       toggleCourseType: (value) =>
         set((state) => ({
-          courseType:
-            value || (state.courseType === "staff" ? "student" : "staff"),
+          courseType: value || "Student",
         })),
       eventAnchorEl: null,
       setEventAnchorEl: (value) =>

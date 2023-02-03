@@ -1,14 +1,12 @@
 import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import NiceModal from "@ebay/nice-modal-react";
 import Topic from "./Topic";
 import Typography from "@mui/material/Typography";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
-import Loader from "../../components/Loader";
 import useQueryTopics from "../../hooks/useQueryTopics";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents the Topics page.
@@ -16,7 +14,7 @@ import useQueryTopics from "../../hooks/useQueryTopics";
  */
 function Topics() {
   const { isLoading, error, data } = useQueryTopics();
-  const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const noRegistrations = () => {
     return (
@@ -28,10 +26,6 @@ function Topics() {
 
   if (isLoading) {
     return <Alert severity="warning">Retrieving topics ...</Alert>;
-  }
-
-  if (isLoadingRole) {
-    return <Loader />;
   }
 
   if (error) {
@@ -56,7 +50,7 @@ function Topics() {
           })}
         </Grid>
       )}
-      {dataRole.role === "Instructor" && (
+      {courseType === "Instructor" && (
         <Fab
           color="primary"
           onClick={() => NiceModal.show("create-topic")}

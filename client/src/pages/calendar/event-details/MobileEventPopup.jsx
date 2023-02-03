@@ -41,13 +41,17 @@ const MobileEventPopup = NiceModal.create(() => {
                   <InfoCircleOutlined />
                 </IconButton>
               )} */}
-              {courseType === "staff" && <EditAction />}
-              {courseType === "staff" && <DeleteAction />}
+              {(courseType === "Staff" || courseType === "Instructor") && (
+                <EditAction />
+              )}
+              {(courseType === "Staff" || courseType === "Instructor") && (
+                <DeleteAction />
+              )}
             </Stack>
           </Grid>
         </Grid>
       </DialogContent>
-      {courseType === "student" && <StudentDetails />}
+      {courseType === "Student" && <StudentDetails />}
     </Dialog>
   );
 });
