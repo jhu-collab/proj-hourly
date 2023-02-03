@@ -78,6 +78,7 @@ router.post(
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   validator.isOfficeHourOnDay,
+  //validator.officeHoursHasNotBegun,
   controller.cancelOnDate
 );
 
@@ -91,6 +92,7 @@ router.post(
   validator.isOfficeHourHost,
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
+  //validator.officeHoursHasNotBegun,
   controller.cancelAll
 );
 

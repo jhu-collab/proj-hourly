@@ -163,6 +163,8 @@ export const getRegistrationStudentCounts = async (req, res) => {
       officeHour: {
         courseId: id,
       },
+      isCancelled: false,
+      isCancelledStaff: false,
     },
     _count: {
       id: true,

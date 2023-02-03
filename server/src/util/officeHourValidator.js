@@ -691,3 +691,22 @@ export const isRegistrationInFuture = async (req, res, next) => {
       .json({ msg: "ERROR: office hours has already passed" });
   }
 };
+
+export const officeHoursHasNotBegun = async (req, res, next) => {
+  const { date, officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(officeHour.startDate.getUTCHours());
+  dateObj.setUTCMinutes(officeHour.startDate.getUTCMinutes());
+  if (dateObj <= new Date()) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: office hours cannot be cancelled after their start date",
+    });
+  } else {
+    next();
+  }
+};

@@ -519,6 +519,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   const { startDate, endDate, location } = req.body;
@@ -559,6 +560,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       officeHourId,
       date: dateObj,
       isCancelled: false,
+      isCancelledStaff: false,
     },
     data: {
       isCancelledStaff: true,
@@ -615,6 +617,7 @@ export const editAll = async (req, res) => {
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
+      isCancelledStaff: false,
     },
   });
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
@@ -659,6 +662,7 @@ export const editAll = async (req, res) => {
       where: {
         officeHourId,
         isCancelled: false,
+        isCancelledStaff: false,
         OR: [
           {
             date: {
@@ -851,6 +855,8 @@ export const getAllRegistrationsOnDate = async (req, res) => {
     where: {
       officeHourId,
       date: date,
+      isCancelled: false,
+      isCancelledStaff: false,
     },
     include: {
       account: true,
