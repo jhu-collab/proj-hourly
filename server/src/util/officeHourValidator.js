@@ -279,41 +279,29 @@ export const isTimeAvailable = async (req, res, next) => {
   });
   let valid = true;
   registrations.forEach((registration) => {
-    console.log(registration);
     if (registration.startTimeObj == startTimeObj) {
-      console.log("1");
       valid = false;
     } else if (registration.endTimeObj == endTimeObj) {
-      console.log("2");
-
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > endTimeObj
     ) {
-      console.log("3");
-
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
       registration.endTime > startTimeObj
     ) {
-      console.log("4");
-
       valid = false;
     } else if (
       registration.endTime > endTimeObj &&
       registration.startTime < endTimeObj
     ) {
-      console.log("5");
-
       valid = false;
     } else if (
       startTimeObj < registration.startTime &&
       endTimeObj > registration.startTimeObj
     ) {
-      console.log("6");
-
       valid = false;
     }
   });
@@ -658,11 +646,20 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
     where: {
       id: registrationId,
     },
+    include: {
+      officeHour: true,
+    },
   });
   const startTimeObj = new Date(registration.startTime);
   const dateObj = new Date(registration.date);
   dateObj.setUTCHours(startTimeObj.getUTCHours());
   dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (
+    registration.officeHour.startDate.getUTCHours() >=
+    registration.officeHour.endDate.getUTCHours()
+  ) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
   if (dateObj > new Date()) {
     next();
   } else {
@@ -673,11 +670,19 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
 };
 
 export const isRegistrationInFuture = async (req, res, next) => {
-  const { startTime, date } = req.body;
+  const { startTime, date, officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const startTimeObj = stringToTimeObj(startTime);
   const dateObj = new Date(date);
   dateObj.setUTCHours(startTimeObj.getUTCHours());
   dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (officeHour.startDate.getUTCHours() >= officeHour.endDate.getUTCHours()) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
   if (dateObj > new Date()) {
     next();
   } else {
