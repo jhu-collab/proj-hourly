@@ -128,7 +128,9 @@ export const register = async (req, res) => {
     "\n" +
     "See you in class!" +
     "\n" +
-    course.instructors[0].userName;
+    course.instructors[0].firstName +
+    " " +
+    course.instructors[0].lastName;
   let emailReq = {
     email: userEmail,
     subject: subject,
