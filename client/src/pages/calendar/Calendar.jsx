@@ -71,6 +71,17 @@ function Calendar() {
     NiceModal.show("upsert-event", { type: "create" });
   };
 
+  const handleSelectAllow = (event) => {
+    const startDate = event.start;
+    const endDate = event.end;
+    endDate.setSeconds(endDate.getSeconds() - 1);
+    if (startDate.getDate() === endDate.getDate()) {
+      return true;
+    }
+
+    return false;
+  };
+
   const handleEventDrop = (info) => {
     setEvent({
       title: info.event.title,
@@ -124,11 +135,12 @@ function Calendar() {
               eventDrop={handleEventDrop}
               editable={isStaff ? true : false}
               selectable={isStaff ? true : false}
+              selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={false}
               events={data?.calendar || []}
               select={handleSelect}
-              slotDuration="01:00:00"
+              slotDuration="0:30:00"
               slotLabelFormat={{
                 hour: "numeric",
                 minute: "2-digit",

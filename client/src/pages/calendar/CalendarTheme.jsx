@@ -167,7 +167,7 @@ const StyleWrapper = styled("div")({
     overflowY: "auto !important",
   },
   ".fc-timegrid-slot.fc-timegrid-slot-lane ": {
-    height: "69px",
+    height: "36px",
     borderBottom: "0 !important",
   },
   ".fc-theme-standard td, .fc-theme-standard th": {
