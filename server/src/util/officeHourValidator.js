@@ -584,15 +584,62 @@ export const checkOptionalDateBody = async (req, res, next) => {
     where: {
       id: req.body.officeHourId,
     },
+    include: {
+      isOnDayOfWeek: true,
+    },
   });
   if (date === undefined || date === null) {
-    const newEnd = new Date();
-    newEnd.setUTCHours(0 - newEnd.getTimezoneOffset() / 60);
-    newEnd.setUTCHours(officeHour.endDate.getUTCHours());
-    newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
-    newEnd.setUTCSeconds(0);
-    req.body.date = newEnd.toISOString();
-    next();
+    if (officeHour.isRecurring) {
+      const today = new Date();
+      //TODO: increment office hour dates until it reaches a date past today
+      const indexes = [];
+      officeHour.isOnDayOfWeek.forEach((dow) => {
+        indexes.push(weekday.indexOf(dow.dayOfWeek));
+      });
+      indexes.sort();
+      let i = indexes.indexOf(officeHour.startDate.getDay());
+      let start = new Date(
+        new Date(officeHour.startDate).toLocaleString("en-US", {
+          timezone: "America/New_York",
+        })
+      );
+      const end = new Date(
+        new Date(officeHour.endDate).toLocaleString("en-US", {
+          timezone: "America/New_York",
+        })
+      );
+      const now = new Date();
+      while (start < end && now > start) {
+        let diff =
+          indexes[(i + 1) % indexes.length] - indexes[i % indexes.length];
+        if (diff === 0) {
+          diff = 7;
+        } else if (diff < 0) {
+          diff += 7;
+        }
+        start.setDate(start.getDate() + diff);
+        i = (i + 1) % indexes.length;
+      }
+      if (now > start) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: "ERROR: cannot cancel office hours that have already occured",
+        });
+      } else {
+        start.setUTCHours(officeHour.endDate.getUTCHours());
+        start.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+        start.setUTCDate(start.getUTCDate() - 1);
+        req.body.date = start.toISOString();
+        next();
+      }
+    } else {
+      const newEnd = new Date();
+      //newEnd.setUTCHours(newEnd.getUTCHours() - newEnd.getTimezoneOffset() / 60);
+      newEnd.setUTCHours(officeHour.endDate.getUTCHours());
+      newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+      newEnd.setUTCSeconds(0);
+      req.body.date = newEnd.toISOString();
+      next();
+    }
   } else {
     const { officeHourId, date } = req.body;
     const dateObj = new Date(date);
@@ -699,13 +746,43 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const dateObj = new Date(date);
-  dateObj.setUTCHours(officeHour.startDate.getUTCHours());
-  dateObj.setUTCMinutes(officeHour.startDate.getUTCMinutes());
-  if (dateObj <= new Date()) {
-    return res.status(StatusCodes.FORBIDDEN).json({
-      msg: "ERROR: office hours cannot be cancelled after their start date",
-    });
+  if (!officeHour.isRecurring) {
+    if (new Date() < officeHour.startDate) {
+      next();
+    } else {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        msg: "ERROR: office hours cannot be cancelled after their start date",
+      });
+    }
+  } else {
+    const dateObj = new Date(date);
+    dateObj.setUTCHours(officeHour.startDate.getUTCHours());
+    dateObj.setUTCMinutes(officeHour.startDate.getUTCMinutes());
+    if (dateObj <= new Date()) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        msg: "ERROR: office hours cannot be cancelled after their start date",
+      });
+    } else {
+      next();
+    }
+  }
+};
+
+export const officeHoursHasNotBegunCancelAll = async (req, res, next) => {
+  const { date, officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  if (!officeHour.isRecurring) {
+    if (new Date() < officeHour.startDate) {
+      next();
+    } else {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        msg: "ERROR: office hours cannot be cancelled after their start date",
+      });
+    }
   } else {
     next();
   }

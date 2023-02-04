@@ -312,13 +312,17 @@ export const cancelAll = async (req, res) => {
     return res;
   }
   const { officeHourId } = req.body;
+  const dateToEnd = req.body.date;
+
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
+      date: {
+        gte: dateToEnd,
+      },
     },
   });
-  const dateToEnd = req.body.date;
   const date = new Date(dateToEnd);
   const dateObj = new Date(dateToEnd);
   const officeHour = await prisma.officeHour.findUnique({
@@ -337,35 +341,26 @@ export const cancelAll = async (req, res) => {
   const startObj = officeHour.startDate;
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
-    await prisma.registration.updateMany({
+    await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
         isCancelled: false,
       },
-      data: {
-        isCancelledStaff: true,
-      },
     });
-    officeHourUpdate = await prisma.officeHour.update({
+    officeHourUpdate = await prisma.officeHour.delete({
       where: {
         id: officeHourId,
-      },
-      data: {
-        isDeleted: true,
       },
     });
     sendEmailForEachRegistrationWhenCancelled(registrations);
   } else if (officeHour.endDate > date) {
-    await prisma.registration.updateMany({
+    await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
         date: {
           gte: dateObj,
         },
         isCancelled: false,
-      },
-      data: {
-        isCancelledStaff: true,
       },
     });
     officeHourUpdate = await prisma.officeHour.update({
