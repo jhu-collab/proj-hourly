@@ -81,7 +81,6 @@ export const sendEmailForEachRegistrationWhenChanged = (
     ).toLocaleString()} at ${
       editedOfficeHour.location
     }. Please reschedule your registration!`;
-    console.log(text);
     const changeNotification = (email) => {
       return {
         email: email,
