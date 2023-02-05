@@ -98,40 +98,42 @@ function Registration({ registration, type }) {
       <AccordionDetails sx={{ pr: 5 }}>
         {/* TODO: Depending on what type of booking this event has been made for,
          details about the event will be provided here */}
-        {type === 0 && (
-          <>
-            <Stack direction="row" justifyContent="space-between">
-              <Box>
-                <Typography fontWeight={600}>Selected Topics:</Typography>
-                {registration.topics.length === 0 ? (
-                  <Typography marginBottom={4}>None</Typography>
-                ) : (
-                  <Grid container spacing={1} marginBottom={4}>
-                    {registration.topics.map((topic) => {
-                      return (
-                        <Grid item key={topic.id}>
-                          <Chip label={topic.value} />
-                        </Grid>
-                      );
-                    })}
-                  </Grid>
-                )}
-              </Box>
-              <Typography>
-                Type: <strong>{registration.type}</strong>
-              </Typography>
-            </Stack>
-            <Button
-              variant="contained"
-              size="large"
-              fullWidth
-              onClick={onClick}
-            >
-              Cancel
-            </Button>
-            <ConfirmPopup />
-          </>
-        )}
+        <>
+          <Stack direction="row" justifyContent="space-between">
+            <Box>
+              <Typography fontWeight={600}>Selected Topics:</Typography>
+              {registration.topics.length === 0 ? (
+                <Typography marginBottom={4}>None</Typography>
+              ) : (
+                <Grid container spacing={1} marginBottom={4}>
+                  {registration.topics.map((topic) => {
+                    return (
+                      <Grid item key={topic.id}>
+                        <Chip label={topic.value} />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              )}
+            </Box>
+            <Typography>
+              Type: <strong>{registration.type}</strong>
+            </Typography>
+          </Stack>
+          {type === 0 && (isHost || courseType === "Student") && (
+            <>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={onClick}
+              >
+                Cancel
+              </Button>
+              <ConfirmPopup />
+            </>
+          )}
+        </>
       </AccordionDetails>
     </Accordion>
   );
