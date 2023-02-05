@@ -116,7 +116,7 @@ function Registrations() {
         isLoading={isLoading}
         error={error}
       />
-      {courseType === "staff" && (
+      {(courseType === "Staff" || courseType === "Instructor") && (
         <RegistrationTypes
           index={4}
           types={dataTypes?.times || []}

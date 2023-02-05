@@ -44,7 +44,7 @@ export function useResetStates() {
   const resetStoreLayout = () => {
     toggleOpenSidebar(false);
     selectSidebarItem("your-courses");
-    toggleCourseType("student");
+    toggleCourseType("Student");
     setEventAnchorEl();
     setRegistrationTab();
     setMobileCalMenu(false);

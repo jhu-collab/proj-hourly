@@ -1,11 +1,11 @@
 import NiceModal from "@ebay/nice-modal-react";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import UserSwitchOutlined from "@ant-design/icons/UserSwitchOutlined";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 function ChangeRoleIcon(props) {
   const { params, isStaff } = props;
-  const { data } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   return (
     <>
@@ -17,7 +17,7 @@ function ChangeRoleIcon(props) {
             isStaff: isStaff,
           });
         }}
-        disabled={data?.role !== "Instructor"}
+        disabled={courseType !== "Instructor"}
         label="Change Role"
         size="large"
       />
