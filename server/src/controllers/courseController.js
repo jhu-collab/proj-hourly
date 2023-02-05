@@ -115,6 +115,30 @@ export const register = async (req, res) => {
       },
     },
   });
+  const userEmail = updateAccount.email;
+  const subject = "Successfully registered for " + course.title;
+  const emailBody =
+    updateAccount.firstName +
+    " " +
+    updateAccount.lastName +
+    ",\n" +
+    "You have successfully  registered for " +
+    course.courseNumber +
+    ": " +
+    course.title +
+    "!" +
+    "\n" +
+    "See you in class!" +
+    "\n" +
+    course.instructors[0].firstName +
+    " " +
+    course.instructors[0].lastName;
+  let emailReq = {
+    email: userEmail,
+    subject: subject,
+    text: emailBody,
+  };
+  sendEmail(emailReq);
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
 
