@@ -9,11 +9,33 @@ import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
 
 function latestEventsFirst(a, b) {
-  return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
+  const endObjectA = new Date(a.date);
+  const startObjectB = new Date(b.date);
+
+  const endTimeObjA = new Date(a.endTime);
+  const startTimeObjB = new Date(b.startTime);
+
+  startObjectB.setUTCHours(startTimeObjB.getUTCHours());
+  startObjectB.setUTCMinutes(startTimeObjB.getUTCMinutes());
+  endObjectA.setUTCHours(endTimeObjA.getUTCHours());
+  endObjectA.setUTCMinutes(endTimeObjA.getUTCMinutes());
+
+  return startObjectB > endObjectA ? 1 : startObjectB < endObjectA ? -1 : 0;
 }
 
 function earliestEventsFirst(a, b) {
-  return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
+  const endObjectA = new Date(a.date);
+  const startObjectB = new Date(b.date);
+
+  const endTimeObjA = new Date(a.endTime);
+  const startTimeObjB = new Date(b.startTime);
+
+  startObjectB.setUTCHours(startTimeObjB.getUTCHours());
+  startObjectB.setUTCMinutes(startTimeObjB.getUTCMinutes());
+  endObjectA.setUTCHours(endTimeObjA.getUTCHours());
+  endObjectA.setUTCMinutes(endTimeObjA.getUTCMinutes());
+
+  return startObjectB < endObjectA ? 1 : startObjectB > endObjectA ? -1 : 0;
 }
 
 const filterByTime = (array, registrationTab) => {
@@ -86,6 +108,9 @@ function Registrations() {
     let registrationTypes = dataTypes?.times || [];
     addRegistrationTypes(result, registrationTypes);
     result = filterByTime(result, registrationTab);
+    registrationTab === 2
+      ? result.sort(latestEventsFirst)
+      : result.sort(earliestEventsFirst);
     setRegistrations(result);
   }, [data, dataTypes, registrationTab]);
 
@@ -98,21 +123,21 @@ function Registrations() {
       <RegistrationsPanel
         value={registrationTab}
         index={0}
-        registrations={registrations.sort(earliestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
       <RegistrationsPanel
         value={registrationTab}
         index={1}
-        registrations={registrations.sort(earliestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
       <RegistrationsPanel
         value={registrationTab}
         index={2}
-        registrations={registrations.sort(latestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
