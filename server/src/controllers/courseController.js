@@ -102,6 +102,9 @@ export const register = async (req, res) => {
     where: {
       code,
     },
+    include: {
+      instructors: true,
+    },
   });
   const updateAccount = await prisma.account.update({
     where: {
