@@ -12,7 +12,11 @@ import { globalErrorHandler } from "./util/middleware.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev", { skip: () => process.env.NODE_ENV === "test" }));
