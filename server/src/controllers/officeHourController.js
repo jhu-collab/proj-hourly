@@ -489,9 +489,11 @@ export const getTimeSlotsRemaining = async (req, res) => {
         }
       }
       // if available, adds to times array
+      const justDate = new Date(date);
+      justDate.setUTCHours(0);
       if (
         available &&
-        (new Date() < date ||
+        (new Date() < justDate ||
           createJustTimeObject(new Date()) <= new Date(sessionStartTime))
       ) {
         const startTime = new Date(sessionStartTime);
