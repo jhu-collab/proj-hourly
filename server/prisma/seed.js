@@ -9,7 +9,7 @@ const createDataStructures = async () => {
     data: {
       userName: "aliTheStudent".toLocaleLowerCase(),
       hashedPassword: hashPassword("alithestudent"),
-      email: "alithestudent@gmail.com".toLowerCase(),
+      email: "ali-the-student@jhu.edu".toLowerCase(),
       firstName: "Ali-Student",
       lastName: "Student",
       preferredName: "Student",
@@ -20,7 +20,7 @@ const createDataStructures = async () => {
     data: {
       userName: "aliTheTA".toLocaleLowerCase(),
       hashedPassword: hashPassword("alitheta"),
-      email: "alitheta@gmail.com".toLowerCase(),
+      email: "alimadooei@gmail.com".toLowerCase(),
       firstName: "Ali-TA",
       lastName: "TA",
       preferredName: "TA",
@@ -31,7 +31,7 @@ const createDataStructures = async () => {
     data: {
       userName: "aliTheProfessor".toLocaleLowerCase(),
       hashedPassword: hashPassword("alitheprofessor"),
-      email: "alitheprofessor@gmail.com".toLowerCase(),
+      email: "madooei@jhu.edu".toLowerCase(),
       firstName: "Ali-Professor",
       lastName: "Professor",
       preferredName: "Professor",
@@ -64,7 +64,18 @@ const createDataStructures = async () => {
       iCalJson: cal.toJSON(),
     },
   });
-  const topics = ["HW1", "HW2", "HW3", "HW4", "HW5", "HW6", "HW7", "HW8"];
+  const topics = [
+    "HW1",
+    "HW2",
+    "HW3",
+    "HW4",
+    "HW5",
+    "HW6",
+    "HW7",
+    "HW8",
+    "General",
+    "Exam",
+  ];
   for (let topic of topics) {
     await prisma.topic.create({
       data: {
