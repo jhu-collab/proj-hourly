@@ -8,7 +8,13 @@ export const getMessage = (error) => {
   const axiosErrorMessage = error && error.message;
   const apiErrorMessage =
     error && error.response && error.response.data && error.response.data.msg;
-  const message = apiErrorMessage || axiosErrorMessage || genericMessage;
+  const apiErrorMessage2 =
+    error &&
+    error.response &&
+    error.response.data &&
+    error.response.data.message;
+  const message =
+    apiErrorMessage || apiErrorMessage2 || axiosErrorMessage || genericMessage;
   return message;
 };
 
@@ -44,7 +50,7 @@ export function useResetStates() {
   const resetStoreLayout = () => {
     toggleOpenSidebar(false);
     selectSidebarItem("your-courses");
-    toggleCourseType("student");
+    toggleCourseType("Student");
     setEventAnchorEl();
     setRegistrationTab();
     setMobileCalMenu(false);

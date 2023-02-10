@@ -9,6 +9,9 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
+import useMutationDeleteRegType from "../../hooks/useMutationDeleteRegType";
+import useMutationEditRegType from "../../hooks/useMutationEditRegType";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import { registrationTypeSchema } from "../../utils/validators";
 
 /**
@@ -19,17 +22,21 @@ import { registrationTypeSchema } from "../../utils/validators";
 function RegistrationType({ type }) {
   const [edit, setEdit] = useState(false);
 
+  const courseType = useStoreLayout((state) => state.courseType);
+
+  const { mutate } = useMutationEditRegType(type.id);
+  const { mutate: mutateDelete } = useMutationDeleteRegType();
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: type.name,
-      duration: type.duration,
+      title: type.title,
+      length: type.duration,
     },
     resolver: yupResolver(registrationTypeSchema),
   });
 
-  // TODO: Need a route that allows for the editing of
-  // registration types
   const onSubmit = (data) => {
+    mutate(data);
     setEdit(false);
   };
 
@@ -47,24 +54,22 @@ function RegistrationType({ type }) {
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          {/*TODO: Change Stack into a box to better handle spacing between children */}
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             alignItems="center"
             spacing={2}
           >
-            {edit ? (
+            {edit && courseType === "Instructor" ? (
               <>
                 <FormInputText
-                  name="name"
+                  name="title"
                   control={control}
-                  disabled={type.nameDisabled}
                   sx={{ width: 230 }}
                 />
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <FormInputText
-                    name="duration"
+                    name="length"
                     control={control}
                     type="number"
                     sx={{ width: 230 }}
@@ -74,59 +79,53 @@ function RegistrationType({ type }) {
               </>
             ) : (
               <Stack>
-                <Typography variant="h5">{type.name}</Typography>
+                <Typography variant="h5">{type.title}</Typography>
                 <Typography variant="h5">{type.duration} minutes</Typography>
               </Stack>
             )}
-            <Stack direction="row" spacing={1}>
-              {edit ? (
-                <Stack direction="row" spacing={1}>
-                  <AnimateButton>
-                    <Button variant="contained" type="submit">
-                      Submit
-                    </Button>
-                  </AnimateButton>
-                  <AnimateButton>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={handleOnClickCancelBtn}
-                    >
-                      Cancel
-                    </Button>
-                  </AnimateButton>
-                </Stack>
-              ) : (
-                <Stack direction="row" spacing={1}>
-                  <AnimateButton>
-                    <Button variant="contained" onClick={handleOnClickEditBtn}>
-                      Edit
-                    </Button>
-                  </AnimateButton>
-                  {!type.deletionDisabled && (
-                    <AnimateButton>
-                      {/* TODO: Need a route that allows for the deletion of registration types */}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                          confirmDialog(
-                            `Do you really want to delete the ${type.name} registration type?`,
-                            () => {
-                              window.alert(
-                                `Deleted the ${type.name} registration type!`
-                              );
-                            }
-                          );
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </AnimateButton>
-                  )}
-                </Stack>
-              )}
-            </Stack>
+            {edit && courseType === "Instructor" && (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button variant="contained" type="submit">
+                    Submit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleOnClickCancelBtn}
+                  >
+                    Cancel
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            )}
+            {!edit && courseType === "Instructor" && (
+              <Stack direction="row" spacing={1}>
+                <AnimateButton>
+                  <Button variant="contained" onClick={handleOnClickEditBtn}>
+                    Edit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      confirmDialog(
+                        `Do you really want to delete the ${type.title} registration type?`,
+                        () => {
+                          mutateDelete(type.id);
+                        }
+                      );
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </AnimateButton>
+              </Stack>
+            )}
           </Stack>
         </Form>
       </MainCard>

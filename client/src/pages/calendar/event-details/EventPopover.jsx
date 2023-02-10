@@ -1,5 +1,4 @@
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
-import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
@@ -9,6 +8,9 @@ import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import StudentDetails from "./StudentDetails";
 import useStoreLayout from "../../../hooks/useStoreLayout";
+import useStoreEvent from "../../../hooks/useStoreEvent";
+import useStoreToken from "../../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -18,6 +20,13 @@ function EventPopover() {
   const courseType = useStoreLayout((state) => state.courseType);
   const anchorEl = useStoreLayout((state) => state.eventAnchorEl);
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
+
+  const hosts = useStoreEvent((state) => state.hosts);
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+
+  const isInstructor = courseType === "Instructor";
+  const isHost = hosts.some((host) => host.id === id);
 
   return (
     <Popover
@@ -44,13 +53,14 @@ function EventPopover() {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            {courseType === "staff" && (
+            {/* TODO: UNFINISHED FEATURE */}
+            {/* {courseType === "staff" && (
               <IconButton sx={{ fontSize: "20px" }}>
                 <InfoCircleOutlined />
               </IconButton>
-            )}
-            {courseType === "staff" && <EditAction />}
-            {courseType === "staff" && <DeleteAction />}
+            )} */}
+            {(isHost || isInstructor) && <EditAction />}
+            {(isHost || isInstructor) && <DeleteAction />}
             <IconButton
               sx={{ fontSize: "20px" }}
               onClick={() => setAnchorEl(null)}
@@ -60,7 +70,7 @@ function EventPopover() {
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "student" && <StudentDetails />}
+      {courseType === "Student" && <StudentDetails />}
     </Popover>
   );
 }

@@ -4,6 +4,110 @@ import prisma from "./client.js";
 import { hashPassword } from "../src/util/password.js";
 import ical from "ical-generator";
 
+const createDataStructures = async () => {
+  const aliTheStudent = await prisma.Account.create({
+    data: {
+      userName: "aliTheStudent".toLocaleLowerCase(),
+      hashedPassword: hashPassword("alithestudent"),
+      email: "ali-the-student@jhu.edu".toLowerCase(),
+      firstName: "Ali-Student",
+      lastName: "Student",
+      preferredName: "Student",
+      role: Role.User,
+    },
+  });
+  const aliTheTA = await prisma.Account.create({
+    data: {
+      userName: "aliTheTA".toLocaleLowerCase(),
+      hashedPassword: hashPassword("alitheta"),
+      email: "alimadooei@gmail.com".toLowerCase(),
+      firstName: "Ali-TA",
+      lastName: "TA",
+      preferredName: "TA",
+      role: Role.User,
+    },
+  });
+  const aliTheProfessor = await prisma.Account.create({
+    data: {
+      userName: "aliTheProfessor".toLocaleLowerCase(),
+      hashedPassword: hashPassword("alitheprofessor"),
+      email: "madooei@jhu.edu".toLowerCase(),
+      firstName: "Ali-Professor",
+      lastName: "Professor",
+      preferredName: "Professor",
+      role: Role.Admin,
+    },
+  });
+  const cal = ical({ name: "Data Structures" });
+  const dataStructures = await prisma.Course.create({
+    data: {
+      title: "Data Structures",
+      courseNumber: "601.226",
+      semester: "Spring",
+      calendarYear: 2023,
+      code: "ABCDEF",
+      instructors: {
+        connect: {
+          id: aliTheProfessor.id,
+        },
+      },
+      courseStaff: {
+        connect: {
+          id: aliTheTA.id,
+        },
+      },
+      students: {
+        connect: {
+          id: aliTheStudent.id,
+        },
+      },
+      iCalJson: cal.toJSON(),
+    },
+  });
+  const topics = [
+    "HW1",
+    "HW2",
+    "HW3",
+    "HW4",
+    "HW5",
+    "HW6",
+    "HW7",
+    "HW8",
+    "General",
+    "Exam",
+  ];
+  for (let topic of topics) {
+    await prisma.topic.create({
+      data: {
+        courseId: dataStructures.id,
+        value: topic,
+      },
+    });
+  }
+  await prisma.OfficeHourTimeOptions.create({
+    data: {
+      title: "Regular",
+      duration: 10,
+      course: {
+        connect: {
+          id: dataStructures.id,
+        },
+      },
+    },
+  });
+  await prisma.OfficeHourTimeOptions.create({
+    data: {
+      title: "Debugging",
+      duration: 30,
+      course: {
+        connect: {
+          id: dataStructures.id,
+        },
+      },
+    },
+  });
+};
+
 // Simulate rolling a loaded die
 // (it is more likly to roll a smaller number!)
 export function loadedDie() {
@@ -91,8 +195,9 @@ const generateFakeData = async () => {
   for (let index = 0; index < 5; index++) {
     await generateFakeUser(Role.User, `user-${index + 1}`);
   }
-  defaultUsers.forEach(async (user) => {
-    const account = await prisma.Account.create({
+
+  for (let user of defaultUsers) {
+    await prisma.Account.create({
       data: {
         userName: user.userName.toLowerCase(),
         hashedPassword: user.hashedPassword,
@@ -103,23 +208,28 @@ const generateFakeData = async () => {
         role: user.role,
       },
     });
-  });
+  }
+
   const cal = ical({ name: "Avengers" });
+
   const ironMan = await prisma.Account.findUnique({
     where: {
       userName: "iron man",
     },
   });
+
   const thor = await prisma.Account.findUnique({
     where: {
       userName: "thor",
     },
   });
+
   const cap = await prisma.Account.findUnique({
     where: {
       userName: "captain america",
     },
   });
+
   const course = await prisma.Course.create({
     data: {
       title: "Avengers",
@@ -135,6 +245,7 @@ const generateFakeData = async () => {
       iCalJson: cal.toJSON(),
     },
   });
+
   await prisma.account.update({
     where: {
       id: cap.id,
@@ -147,6 +258,7 @@ const generateFakeData = async () => {
       },
     },
   });
+
   await prisma.account.update({
     where: {
       id: thor.id,
@@ -159,7 +271,9 @@ const generateFakeData = async () => {
       },
     },
   });
+
   await generateFakeUser(Role.Admin, `admin-1`);
+  await createDataStructures();
 };
 
 try {

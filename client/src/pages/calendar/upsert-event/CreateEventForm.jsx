@@ -14,9 +14,6 @@ import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeH
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
-import FormInputDropdown from "../../../components/form-ui/FormInputDropdown";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 
 const DAYS = [
   "Sunday",
@@ -66,20 +63,6 @@ const BUTTONS = [
   },
 ];
 
-// TODO: Need a route that retrieves registration types.
-const registrationTypes = [
-  {
-    id: 0,
-    label: "Regular",
-    value: 0,
-  },
-  {
-    id: 1,
-    label: "Debugging",
-    value: 1,
-  },
-];
-
 /**
  * Component that represents the form that is used to create an event.
  * @returns A component representing the Create Event form.
@@ -93,30 +76,21 @@ function CreateEventForm() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      startDate: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toFormat("yyyy-MM-dd")
-        : "",
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: null,
       startTime: start
-        ? DateTime.fromJSDate(start, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
       endTime: end
-        ? DateTime.fromJSDate(end, { zone: "utc" }).toLocaleString(
-            DateTime.TIME_24_SIMPLE
-          )
+        ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       location: location || "",
       days: [],
-      timeInterval: timeInterval || 10,
       feedback: true,
-      registrationTypes: [0], // TODO: create event route should be altered
     },
     resolver: yupResolver(createEventSchema),
   });
@@ -126,18 +100,24 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    const startTime = data.startTime.split(":");
+    start.setHours(startTime[0]);
+    start.setMinutes(startTime[1]);
+    let end = new Date(data.startDate);
+    if (data.endDate !== null) {
+      end = new Date(data.endDate);
+    }
+    const endTime = data.endTime.split(":");
+    end.setHours(endTime[0]);
+    end.setMinutes(endTime[1]);
     mutate({
       courseId: course.id,
-      startTime: `${data.startTime}:00`,
-      endTime: `${data.endTime}:00`,
       recurringEvent: data.recurringEvent,
-      startDate: DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
-      endDate: recurring
-        ? DateTime.fromJSDate(data.endDate).toFormat("MM-dd-yyyy")
-        : DateTime.fromJSDate(data.startDate).toFormat("MM-dd-yyyy"),
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
-      timeInterval: data.timeInterval,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -162,18 +142,17 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
-            <FormCheckbox
-              name="recurringEvent"
-              control={control}
-              label="Recurring event"
-            />
-            <FormCheckbox
+          <FormCheckbox
+            name="recurringEvent"
+            control={control}
+            label="Recurring event"
+          />
+          {/* TODO: UNFINISHED FEATURE */}
+          {/* <FormCheckbox
               name="feedback"
               control={control}
               label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
-            />
-          </Stack>
+            /> */}
           <FormInputText
             name="startDate"
             control={control}
@@ -198,28 +177,6 @@ function CreateEventForm() {
             />
           )}
           <FormInputText name="location" control={control} label="Location" />
-          <FormInputText
-            name="timeInterval"
-            label="Time Limit Per Student in Minutes"
-            control={control}
-          />
-          <FormInputDropdown
-            name="registrationTypes"
-            control={control}
-            label="Registration Type(s)"
-            options={registrationTypes}
-            multiple
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => {
-                  const item = registrationTypes.find(
-                    ({ value: v }) => v === value
-                  );
-                  return <Chip key={value} label={item.label} />;
-                })}
-              </Box>
-            )}
-          />
           <Button
             type="submit"
             variant="contained"

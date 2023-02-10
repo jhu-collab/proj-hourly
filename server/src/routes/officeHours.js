@@ -16,8 +16,6 @@ router.use(checkToken);
 router.post(
   "/create",
   body("courseId", "Course is required").isInt(),
-  body("startTime", "Please specify what time this event starts").notEmpty(),
-  body("endTime", "Please specify what time this event ends").notEmpty(),
   body(
     "recurringEvent",
     "Please specify if this is a recurring event"
@@ -34,19 +32,15 @@ router.post(
   )
     .isArray()
     .notEmpty(),
-  body(
-    "timeInterval",
-    "Please include a positive integer for time interval"
-  ).isInt({ min: 1 }),
   body("hosts", "Please include the staff ID(s) hosting the office hours")
     .isArray()
     .notEmpty(),
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
-  timeValidator.isTime,
-  validator.areValidDOW,
-  dateValidator.officeHourDateCheck,
+  //timeValidator.isTime,
+  //validator.areValidDOW,
+  //dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
 );
@@ -64,11 +58,13 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
+  validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
   validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   validator.isUserNotRegistered,
+  validator.isRegistrationInFuture,
   courseValidator.areTopicsForCourse,
   controller.register
 );
@@ -82,16 +78,21 @@ router.post(
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
   validator.isOfficeHourOnDay,
+  validator.officeHoursHasNotBegun,
   controller.cancelOnDate
 );
 
 router.post(
   "/cancelAll",
   body("officeHourId", "Office Hour is required").isInt(),
+  body("date", "Date is required").optional(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
+  validator.checkOptionalDateBody,
+  //validator.isOfficeHourOnDay,
+  validator.officeHoursHasNotBegunCancelAll,
   controller.cancelAll
 );
 
@@ -106,9 +107,8 @@ router.get(
 
 router.post(
   "/:officeHourId/editForDate/:date",
-  body("startTime", "start time is required").notEmpty(),
-  body("endTime", "end time is required").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
+  body("startDate", "start date is required").notEmpty(),
+  body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
@@ -121,11 +121,8 @@ router.post(
 
 router.post(
   "/:officeHourId/editAll",
-  body("startTime", "Please specify what time this event starts").notEmpty(),
-  body("endTime", "Please specify what time this event ends").notEmpty(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body("timePerStudent", "timePerStudent must be an int").optional().isInt(),
   body("location", "Please specify a location for your office hours")
     .optional()
     .notEmpty(),
@@ -137,12 +134,15 @@ router.post(
     "endDateOldOfficeHour",
     "Please specify when the new edited office hours should take effect"
   ).notEmpty(),
+  body("editAfterDate", "Please include boolean field editAfterDate")
+    .notEmpty()
+    .isBoolean(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
-  timeValidator.isTime,
   dateValidator.endIsAfterStart,
+  validator.startDateIsValidDOW,
   controller.editAll
 );
 
@@ -150,7 +150,8 @@ router.post(
   "/cancelRegistration/:registrationId",
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
-  validator.isStudentRegisteredBody,
+  validator.isRegisteredOrIsStaffBody,
+  validator.isRegistrationInFutureByIdParams,
   controller.cancelRegistration
 );
 

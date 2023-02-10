@@ -31,9 +31,10 @@ export const Theme = (colors) => {
       contrastText: greyColors[0],
     },
     tertiary: {
-      main: "#1976D2",
+      main: "#356E73",
       contrastText,
     },
+    // TODO: We need to decide on colors for error, warning, info, and success
     error: {
       lighter: red[0],
       light: red[2],
@@ -43,11 +44,7 @@ export const Theme = (colors) => {
       contrastText,
     },
     warning: {
-      lighter: gold[0],
-      light: gold[3],
-      main: gold[5],
-      dark: gold[7],
-      darker: gold[9],
+      main: "#ED6C02",
       contrastText: greyColors[100],
     },
     info: {

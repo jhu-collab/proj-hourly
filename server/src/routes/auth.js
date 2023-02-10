@@ -14,7 +14,6 @@ router.post(`${endpoint}`, async (req, res, next) => {
 
   try {
     const { username, password } = req.body;
-
     if (!username || !password) {
       debug(`Request is missing username or password or both!`);
       throw new ApiError(400, "You must provide both username and password.");

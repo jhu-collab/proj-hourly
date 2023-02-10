@@ -3,18 +3,17 @@ import TeamOutlined from "@ant-design/icons/TeamOutlined";
 import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlined";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
-import useStoreLayout from "../hooks/useStoreLayout";
+import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
 const icons = {
   CalendarOutlined,
   TeamOutlined,
   SafetyCertificateOutlined,
   InfoCircleOutlined,
   BulbOutlined,
+  BarChartOutlined,
 };
 
-export const course = (currentCourse) => {
-  const courseType = useStoreLayout.getState().courseType;
-
+export const course = (currentCourse, courseType) => {
   const children = [];
 
   children.push({
@@ -35,7 +34,7 @@ export const course = (currentCourse) => {
     breadcrumbs: false,
   });
 
-  if (courseType === "staff") {
+  if (courseType === "Staff" || courseType === "Instructor") {
     children.push({
       id: "roster",
       title: "roster",
@@ -52,6 +51,15 @@ export const course = (currentCourse) => {
       icon: icons.BulbOutlined,
       breadcrumbs: false,
     });
+    // TODO: UNFINISHED FEATURE
+    // children.push({
+    //   id: "statistics",
+    //   title: "statistics",
+    //   type: "item",
+    //   url: "/statistics",
+    //   icon: icons.BarChartOutlined,
+    //   breadcrumbs: false,
+    // });
   }
 
   children.push({

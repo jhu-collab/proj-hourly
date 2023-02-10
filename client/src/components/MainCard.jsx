@@ -17,6 +17,7 @@ const MainCard = forwardRef(
   (
     {
       border = true,
+      borderRadius,
       boxShadow,
       children,
       content = true,
@@ -44,7 +45,7 @@ const MainCard = forwardRef(
         sx={{
           ...sx,
           border: border ? "1px solid" : "none",
-          borderRadius: 2,
+          borderRadius: Boolean(borderRadius) ? borderRadius : 2,
           borderColor:
             theme.palette.mode === "dark"
               ? theme.palette.divider

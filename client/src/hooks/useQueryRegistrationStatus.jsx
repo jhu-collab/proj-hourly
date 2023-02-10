@@ -10,9 +10,11 @@ function useQueryRegistrationStatus() {
   const queryKey = ["registrationStatus"];
   const token = useStoreToken((state) => state.token);
   const id = useStoreEvent((state) => state.id);
-  const date = DateTime.fromJSDate(
-    useStoreEvent((state) => state.start)
-  ).toFormat("MM-dd-yyyy");
+  const start = useStoreEvent((state) => state.start);
+
+  const date = DateTime.fromJSDate(start, {
+    zone: "utc",
+  }).toFormat("MM-dd-yyyy");
 
   const getRegistrationStatus = async () => {
     try {

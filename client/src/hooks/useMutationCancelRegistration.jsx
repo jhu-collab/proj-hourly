@@ -33,14 +33,15 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-      const startTime = DateTime.fromISO(registration.startTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
-      const endTime = DateTime.fromISO(registration.endTime, {
-        zone: "utc",
-      }).toLocaleString(DateTime.TIME_SIMPLE);
+      const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
+      const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
+        DateTime.TIME_SIMPLE
+      );
 
       queryClient.invalidateQueries(["registrationStatus"]);
+      queryClient.invalidateQueries(["allRegistrations"]);
 
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 

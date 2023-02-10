@@ -1,4 +1,3 @@
-import NiceModal from "@ebay/nice-modal-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -6,6 +5,7 @@ import { useForm } from "react-hook-form";
 import AnimateButton from "../../components/AnimateButton";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
+import useMutationCreateRegType from "../../hooks/useMutationCreateRegType";
 import { registrationTypeSchema } from "../../utils/validators";
 
 /**
@@ -14,27 +14,26 @@ import { registrationTypeSchema } from "../../utils/validators";
  * @returns A component representing the Create Registration Type form.
  */
 function CreateRegistrationTypeForm() {
+  const { mutate } = useMutationCreateRegType();
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: "",
-      duration: "",
+      title: "",
+      length: "",
     },
     resolver: yupResolver(registrationTypeSchema),
   });
 
-  // TODO: Need a route that allows for the creation of a registration
-  // type
   const onSubmit = (data) => {
-    window.alert("Successfully created new registration type!");
-    NiceModal.hide("create-registration-type");
+    mutate({ title: data.title, length: data.length });
   };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} alignItems="center">
-        <FormInputText name="name" control={control} label="Name" />
+        <FormInputText name="title" control={control} label="Name" />
         <FormInputText
-          name="duration"
+          name="length"
           control={control}
           label="Duration (minutes)"
           type="number"

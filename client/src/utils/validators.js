@@ -29,6 +29,32 @@ const getLastDaySemester = (semester, year) => {
   return new Date(`${year}-04-30`);
 };
 
+/**
+ * Converts string to a number from 0-6 to represent the day of the week.
+ * @param {String} dayStr String representing the day of the week
+ * @return A number from 0-6 representing the day of the week
+ */
+const getDayNum = (dayStr) => {
+  switch (dayStr) {
+    case "Sunday":
+      return 0;
+    case "Monday":
+      return 1;
+    case "Tuesday":
+      return 2;
+    case "Wednesday":
+      return 3;
+    case "Thursday":
+      return 4;
+    case "Friday":
+      return 5;
+    case "Saturday":
+      return 6;
+    default:
+      return -1;
+  }
+};
+
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
   number: yup
@@ -107,9 +133,39 @@ export const createEventSchema = yup.object().shape({
       then: yup
         .array()
         .typeError("Please select at least one recurring day")
-        .min(1, "Please select at least one recurring day"),
+        .min(1, "Please select at least one recurring day")
+        .test(
+          "start-date-matches-recurring-day",
+          "One of the recurring days must match the start date",
+          function (value) {
+            const { startDate } = this.parent;
+            const startDay = startDate.getDay();
+
+            for (let i = 0; i < value.length; i++) {
+              if (startDay === getDayNum(value[i])) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        ),
     }),
-  startTime: yup.string().required("Start time is required"),
+  startTime: yup
+    .string()
+    .required("Start time is required")
+    .test(
+      "future-event",
+      "Start time must be after the current time",
+      function (value) {
+        const { startDate } = this.parent;
+        const now = DateTime.now();
+        return (
+          DateTime.fromJSDate(startDate) > DateTime.fromJSDate(today) ||
+          DateTime.fromFormat(value, "T") > now
+        );
+      }
+    ),
   endTime: yup
     .string()
     .required("End time is required")
@@ -120,12 +176,6 @@ export const createEventSchema = yup.object().shape({
       );
     }),
   location: yup.string().required("Location is required"),
-  timeInterval: yup
-    .number()
-    .typeError("Time limit is required")
-    .positive("Please enter a valid time limit")
-    .integer("Please enter a valid time limit")
-    .required(),
 });
 
 export const inviteUserSchema = yup.object().shape({
@@ -151,12 +201,15 @@ export const profileSchema = yup.object({
 });
 
 export const registrationTypeSchema = yup.object({
-  name: yup.string().required("Registration name is required"),
-  duration: yup
+  title: yup.string().required("Registration name is required"),
+  length: yup
     .number()
     .required("Duration is required")
-    .min(5, "Duration must be at least 5 minutes")
-    .typeError("Please enter a valid duration"),
+    .min(10, "Duration must be at least 10 minutes")
+    .typeError("Please enter a valid duration")
+    .test("multiple-5", "Duration must be a multiple of 5", function (value) {
+      return value % 5 == 0;
+    }),
 });
 
 export const topicSchema = yup.object({

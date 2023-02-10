@@ -13,7 +13,7 @@ export const checkApiKey = async (req, res, next) => {
     debug(`Read the stored API key from ENV variable...`);
     const sourceKey = process.env.HOURLY_API_KEY;
     debug(`Read the request header to extract the provided API key...`);
-    const givenKey = req.headers["api_key"];
+    const givenKey = req.headers["api-key"];
 
     if (!givenKey) {
       debug(`No API key was provided!..`);
@@ -49,6 +49,22 @@ export const checkToken = async (req, res, next) => {
 
     debug(`Decoding the token ...`);
     const { iat, exp, ...userInfo } = decodeToken(token);
+    const account = await prisma.account.findUnique({
+      where: {
+        id: userInfo.id,
+      },
+    });
+    if (account == null || account == undefined) {
+      throw new ApiError(404, "Authorization token not found!");
+    } else if (
+      account.userName != userInfo.userName ||
+      account.firstName != userInfo.firstName ||
+      account.lastName != userInfo.lastName ||
+      account.email != userInfo.email ||
+      account.role != userInfo.role
+    ) {
+      throw new ApiError(401, "Invalid Authorization token was provided!");
+    }
     debug(`Token belongs to ${userInfo.username}`);
 
     debug(
@@ -61,7 +77,6 @@ export const checkToken = async (req, res, next) => {
       expiresIn: exp,
       issuedAt: iat,
     };
-
     debug(`checkToken is done!`);
     next();
   } catch (err) {

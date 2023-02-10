@@ -14,16 +14,34 @@ import NiceModal from "@ebay/nice-modal-react";
  * @param {*} types list of user's registration types
  * @returns RegistrationTypes page
  */
-function RegistrationTypes({ index, types }) {
+function RegistrationTypes({ index, types, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const noRegistrations = () => {
     return (
       <Alert severity="info" sx={{ mt: 4 }}>
-        <AlertTitle>No Registration Types</AlertTitle>
+        No Registration Types
       </Alert>
     );
   };
+
+  if (isLoading && registrationTab === index) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        Loading registrations types ...
+      </Alert>
+    );
+  }
+
+  if (error && registrationTab === index) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   return (
     <>
@@ -42,17 +60,19 @@ function RegistrationTypes({ index, types }) {
               })}
             </Grid>
           )}
-          <Fab
-            color="primary"
-            onClick={() => NiceModal.show("create-registration-type")}
-            sx={{
-              position: "fixed",
-              bottom: (theme) => theme.spacing(3),
-              right: (theme) => theme.spacing(3),
-            }}
-          >
-            <SpeedDialIcon />
-          </Fab>
+          {courseType === "Instructor" && (
+            <Fab
+              color="primary"
+              onClick={() => NiceModal.show("create-registration-type")}
+              sx={{
+                position: "fixed",
+                bottom: (theme) => theme.spacing(3),
+                right: (theme) => theme.spacing(3),
+              }}
+            >
+              <SpeedDialIcon />
+            </Fab>
+          )}
         </>
       )}
     </>

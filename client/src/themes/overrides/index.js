@@ -1,9 +1,12 @@
 import { merge } from "lodash";
+import Alert from "./Alert";
+import AlertTitle from "./AlertTitle";
 import Badge from "./Badge";
 import Button from "./Button";
 import CardContent from "./CardContent";
 import Checkbox from "./Checkbox";
 import Chip from "./Chip";
+import DataGrid from "./DataGrid";
 import IconButton from "./IconButton";
 import InputLabel from "./InputLabel";
 import LinearProgress from "./LinearProgress";
@@ -19,11 +22,14 @@ import Typography from "./Typography";
 
 export default function ComponentsOverrides(theme) {
   return merge(
+    Alert(),
+    AlertTitle(),
     Button(theme),
     Badge(theme),
     CardContent(),
     Checkbox(theme),
     Chip(theme),
+    DataGrid(theme),
     IconButton(theme),
     InputLabel(theme),
     LinearProgress(),

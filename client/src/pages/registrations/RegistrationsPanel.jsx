@@ -12,32 +12,49 @@ import Registration from "./Registration";
  * @param {*} registrations list of user's registrations
  * @returns a registrations tab panel.
  */
-function RegistrationsPanel({ index, registrations }) {
+function RegistrationsPanel({ index, registrations, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
 
   const noRegistrations = () => {
     switch (index) {
       case 0:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Upcoming Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Upcoming Registrations
           </Alert>
         );
 
       case 1:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Ongoing Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Ongoing Registrations
           </Alert>
         );
       case 2:
         return (
-          <Alert severity="info" sx={{ mt: 4 }}>
-            <AlertTitle>No Past Registrations</AlertTitle>
+          <Alert severity="info" sx={{ mt: 2 }}>
+            No Past Registrations
           </Alert>
         );
     }
   };
+
+  if (isLoading && registrationTab === index) {
+    return (
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        Loading registrations ...
+      </Alert>
+    );
+  }
+
+  if (error && registrationTab === index) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        {"An error has occurred: " + error.message}
+      </Alert>
+    );
+  }
 
   return (
     <>

@@ -6,10 +6,14 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { DateTime } from "luxon";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import useMutationCancelRegistration from "../../hooks/useMutationCancelRegistration";
+import useStoreLayout from "../../hooks/useStoreLayout";
+import { decodeToken } from "react-jwt";
+import useStoreToken from "../../hooks/useStoreToken";
 
 /**
  * Represents a single Registration card.
@@ -23,6 +27,16 @@ function Registration({ registration, type }) {
   const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
     registration.id || -1
   );
+
+  const courseType = useStoreLayout((state) => state.courseType);
+  const token = useStoreToken((state) => state.token);
+  let isHost = false;
+
+  const { id } = decodeToken(token);
+
+  if (registration.officeHour.hosts.some((e) => e.id === id)) {
+    isHost = true;
+  }
 
   const onClick = () => {
     confirmDialog("Do you really want to cancel this registration?", () =>
@@ -40,55 +54,86 @@ function Registration({ registration, type }) {
           justifyContent="space-between"
           spacing={2}
         >
-          <Typography fontWeight={600}>
-            {DateTime.fromISO(registration.date, {
-              zone: "utc",
-            }).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
-          </Typography>
-          <Typography fontWeight={600}>
-            {DateTime.fromISO(registration.startTime, {
-              zone: "utc",
-            }).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
-            -{" "}
-            {DateTime.fromISO(registration.endTime, {
-              zone: "utc",
-            }).toLocaleString(DateTime.TIME_SIMPLE)}
-          </Typography>
-          <Typography>
-            Type: <strong>Office Hours</strong>
-          </Typography>
+          {/* Date and Time */}
+          <Stack direction="row" spacing={5}>
+            <Typography fontWeight={600}>
+              {DateTime.fromISO(
+                registration.date.substring(0, 10) +
+                  registration.startTime.substring(10)
+              ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
+            </Typography>
+            <Typography fontWeight={600}>
+              {DateTime.fromISO(registration.startTime).toLocaleString(
+                DateTime.TIME_SIMPLE
+              )}{" "}
+              -{" "}
+              {DateTime.fromISO(registration.endTime).toLocaleString(
+                DateTime.TIME_SIMPLE
+              )}
+            </Typography>
+          </Stack>
+          {/* Host (display only for instructors and students) and Student (display only for staff) */}
+          <Stack direction="row" spacing={5}>
+            {(courseType === "Instructor" || courseType === "Student") && (
+              <Typography color={isHost ? "info.main" : "text.primary"}>
+                Host:{" "}
+                <strong>
+                  {registration.officeHour.hosts[0].firstName}{" "}
+                  {registration.officeHour.hosts[0].lastName}
+                </strong>
+              </Typography>
+            )}
+            {(courseType === "Instructor" || courseType === "Staff") && (
+              <Typography>
+                Student:{" "}
+                <strong>
+                  {registration.account.firstName}{" "}
+                  {registration.account.lastName}
+                </strong>
+              </Typography>
+            )}
+          </Stack>
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ pr: 5 }}>
         {/* TODO: Depending on what type of booking this event has been made for,
          details about the event will be provided here */}
-        {type === 0 && (
-          <>
-            <Typography fontWeight={600}>Selected Topics:</Typography>
-            {registration.topics.length === 0 ? (
-              <Typography marginBottom={4}>None</Typography>
-            ) : (
-              <Grid container spacing={1} marginBottom={4}>
-                {registration.topics.map((topic) => {
-                  return (
-                    <Grid item key={topic.id}>
-                      <Chip label={topic.value} />
-                    </Grid>
-                  );
-                })}
-              </Grid>
-            )}
-            <Button
-              variant="contained"
-              size="large"
-              fullWidth
-              onClick={onClick}
-            >
-              Cancel
-            </Button>
-            <ConfirmPopup />
-          </>
-        )}
+        <>
+          <Stack direction="row" justifyContent="space-between">
+            <Box>
+              <Typography fontWeight={600}>Selected Topics:</Typography>
+              {registration.topics.length === 0 ? (
+                <Typography marginBottom={4}>None</Typography>
+              ) : (
+                <Grid container spacing={1} marginBottom={4}>
+                  {registration.topics.map((topic) => {
+                    return (
+                      <Grid item key={topic.id}>
+                        <Chip label={topic.value} />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              )}
+            </Box>
+            <Typography>
+              Type: <strong>{registration.type}</strong>
+            </Typography>
+          </Stack>
+          {type === 0 && (isHost || courseType === "Student") && (
+            <>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={onClick}
+              >
+                Cancel
+              </Button>
+              <ConfirmPopup />
+            </>
+          )}
+        </>
       </AccordionDetails>
     </Accordion>
   );
