@@ -44,7 +44,6 @@ function App() {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/registrations" element={<Registrations />} />
                 <Route path="/courseinformation" element={<CourseInfoPage />} />
-                <Route path="/profile" element={<Profile />} />
                 <Route path="" element={<StaffOnlyRoute />}>
                   <Route path="/roster" element={<Roster />} />
                   <Route path="/topics" element={<Topics />} />
@@ -52,6 +51,7 @@ function App() {
                   {/* <Route path="/statistics" element={<Statistics />} /> */}
                 </Route>
               </Route>
+              <Route path="/profile" element={<Profile />} />
               <Route path="admin/" element={<AdminOnlyRoute />}>
                 <Route path="users" element={<Users />} />
               </Route>
