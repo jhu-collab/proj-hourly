@@ -221,7 +221,7 @@ export const register = async (req, res) => {
     hour12: true,
   });
   const dateStr = dateObj.toLocaleDateString("en-US", options);
-  const subject =
+  let subject =
     "[" +
     courseNumber +
     "] Successfully registered for " +
@@ -232,7 +232,7 @@ export const register = async (req, res) => {
     " to " +
     emailEndTime +
     "!";
-  const emailBody =
+  let emailBody =
     fullName +
     "," +
     "\n" +
@@ -253,6 +253,38 @@ export const register = async (req, res) => {
     text: emailBody,
   };
   sendEmail(emailReq);
+  officeHour.hosts.forEach((acc) => {
+    subject =
+      "[" +
+      courseNumber +
+      "] New Registration for office hours from " +
+      emailStartTime +
+      " to " +
+      emailEndTime +
+      "!";
+    emailBody =
+      hostFullName +
+      "," +
+      "\n" +
+      "You have a new registration for your " +
+      courseTitle +
+      " office hours from " +
+      emailStartTime +
+      " to " +
+      emailEndTime +
+      " on " +
+      dateStr +
+      " at " +
+      location +
+      "!";
+    emailReq = {
+      email: acc.email,
+      subject: subject,
+      text: emailBody,
+    };
+    console.log(emailReq);
+    sendEmail(emailReq);
+  });
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
     TopicIds.forEach(async (topicId) => {
@@ -916,7 +948,7 @@ export const cancelRegistration = async (req, res) => {
     hour12: true,
   });
 
-  const emailStr =
+  let emailStr =
     "Your registration on " +
     dateStr +
     " from " +
@@ -930,7 +962,7 @@ export const cancelRegistration = async (req, res) => {
     " at " +
     registration.officeHour.location +
     " has been cancelled.";
-  const subject =
+  let subject =
     "[" +
     registration.officeHour.course.courseNumber +
     "]" +
@@ -941,6 +973,33 @@ export const cancelRegistration = async (req, res) => {
     text: emailStr,
   };
   sendEmail(emailReq);
+  officeHour.hosts.forEach((acc) => {
+    emailStr =
+      "Your registration on " +
+      dateStr +
+      " from " +
+      startTimeStr +
+      " to " +
+      endTimeStr +
+      ", with " +
+      registration.account.firstName +
+      " " +
+      registration.account.lastName +
+      " at " +
+      registration.officeHour.location +
+      " has been cancelled.";
+    subject =
+      "[" +
+      registration.officeHour.course.courseNumber +
+      "]" +
+      " Registration Cancelled";
+    emailReq = {
+      email: acc.email,
+      subject: subject,
+      text: emailStr,
+    };
+    sendEmail(emailReq);
+  });
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
