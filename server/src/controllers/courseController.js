@@ -593,6 +593,24 @@ export const getAllRegistrations = async (req, res) => {
       },
     });
   }
+  const OfficeHourTimeOptions = await prisma.officeHourTimeOptions.findMany({
+    where: {
+      courseId,
+    },
+  });
+  registrations.forEach((registration) => {
+    let endTime = registration.endTime;
+    if (registration.endTime < registration.startTime) {
+      endTime.setUTCDate(endTime.getUTCDate() + 1);
+    }
+    const duration =
+      (endTime.getTime() - registration.startTime.getTime()) / (1000 * 60);
+    OfficeHourTimeOptions.forEach((option) => {
+      if (duration == option.duration) {
+        registration.type = option.title;
+      }
+    });
+  });
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 

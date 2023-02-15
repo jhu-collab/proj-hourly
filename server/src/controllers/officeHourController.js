@@ -973,7 +973,7 @@ export const cancelRegistration = async (req, res) => {
     text: emailStr,
   };
   sendEmail(emailReq);
-  officeHour.hosts.forEach((acc) => {
+  registration.officeHour.hosts.forEach((acc) => {
     emailStr =
       "Your registration on " +
       dateStr +
