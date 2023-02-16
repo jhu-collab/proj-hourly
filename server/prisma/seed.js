@@ -7,8 +7,8 @@ import ical from "ical-generator";
 const createDataStructures = async () => {
   const aliTheStudent = await prisma.Account.create({
     data: {
-      userName: "aliTheStudent".toLocaleLowerCase(),
-      hashedPassword: hashPassword("alithestudent"),
+      userName: "ali-the-student".toLocaleLowerCase(),
+      hashedPassword: hashPassword("ali-the-student"),
       email: "ali-the-student@jhu.edu".toLowerCase(),
       firstName: "Ali-Student",
       lastName: "Student",
@@ -18,8 +18,8 @@ const createDataStructures = async () => {
   });
   const aliTheTA = await prisma.Account.create({
     data: {
-      userName: "aliTheTA".toLocaleLowerCase(),
-      hashedPassword: hashPassword("alitheta"),
+      userName: "ali-the-ta".toLocaleLowerCase(),
+      hashedPassword: hashPassword("ali-the-ta"),
       email: "alimadooei@gmail.com".toLowerCase(),
       firstName: "Ali-TA",
       lastName: "TA",
@@ -29,9 +29,9 @@ const createDataStructures = async () => {
   });
   const aliTheProfessor = await prisma.Account.create({
     data: {
-      userName: "aliTheProfessor".toLocaleLowerCase(),
-      hashedPassword: hashPassword("alitheprofessor"),
-      email: "madooei@jhu.edu".toLowerCase(),
+      userName: "ali-the-professor".toLocaleLowerCase(),
+      hashedPassword: hashPassword("ali-the-professor"),
+      email: "amadooe1@jhu.edu".toLowerCase(),
       firstName: "Ali-Professor",
       lastName: "Professor",
       preferredName: "Professor",
