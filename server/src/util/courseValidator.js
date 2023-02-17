@@ -280,7 +280,7 @@ export const areTopicsForCourse = async (req, res, next) => {
   });
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicQuery = [];
-    TopicIds.forEach(async (topicId) => {
+    TopicIds.forEach((topicId) => {
       topicQuery.push({
         AND: {
           id: topicId,

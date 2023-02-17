@@ -217,7 +217,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
-  validator.doesTimeLengthExist,
+  //validator.doesTimeLengthExist,
   validator.isLengthMultipleOf5,
   validator.isTimeLengthForCourse,
   controller.editTimeLength

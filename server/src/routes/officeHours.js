@@ -55,17 +55,19 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
+  body("timeOptionId", "Please include a time option id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   validator.isUserNotRegistered,
   validator.isRegistrationInFuture,
   courseValidator.areTopicsForCourse,
+  validator.isTimeLengthForCourse,
+  validator.isTimeCorrectInterval,
   controller.register
 );
 
@@ -192,14 +194,16 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
+  body("timeOptionId", "Please include a time option id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isOfficeHourOnDay,
   validator.doesRegistrationExistParams,
   validator.isStudentRegistered,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   courseValidator.areTopicsForCourse,
+  validator.isTimeLengthForCourse,
+  validator.isTimeCorrectInterval,
   controller.editRegistration
 );
 

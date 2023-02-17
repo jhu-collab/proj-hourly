@@ -13,7 +13,7 @@ import {
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
-  daysOfWeek.forEach(async (dayOfWeek) => {
+  daysOfWeek.forEach((dayOfWeek) => {
     dowArr.push({ dayOfWeek: dayOfWeek });
   });
   await prisma.officeHour.update({
@@ -30,7 +30,7 @@ const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
 
 const connectOfficeHourToHosts = async (officeHourId, hosts) => {
   let hostIds = [];
-  hosts.forEach(async (id) => {
+  hosts.forEach((id) => {
     hostIds.push({ id: id });
   });
   await prisma.officeHour.update({
@@ -155,8 +155,15 @@ export const register = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { officeHourId, startTime, endTime, date, question, TopicIds } =
-    req.body;
+  const {
+    officeHourId,
+    startTime,
+    endTime,
+    date,
+    question,
+    TopicIds,
+    timeOptionId,
+  } = req.body;
   const id = req.id;
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -189,6 +196,7 @@ export const register = async (req, res) => {
       accountId: id,
       question,
       isCancelledStaff: false,
+      registrationTypeId: timeOptionId,
     },
     include: {
       account: true,
@@ -282,12 +290,11 @@ export const register = async (req, res) => {
       subject: subject,
       text: emailBody,
     };
-    console.log(emailReq);
     sendEmail(emailReq);
   });
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
-    TopicIds.forEach(async (topicId) => {
+    TopicIds.forEach( (topicId) => {
       topicIdArr.push({ id: topicId });
     });
     await prisma.registration.update({

@@ -122,7 +122,7 @@ export const deleteAccount = async (req, res) => {
   });
   let deleteOH = [];
   let courseDeletedOH = [];
-  officeHours.forEach(async (officeHour) => {
+  officeHours.forEach((officeHour) => {
     if (officeHour.hosts.length === 1) {
       deleteOH.push(officeHour.id);
       courseDeletedOH.push(officeHour.course.id);
@@ -158,7 +158,7 @@ export const deleteAccount = async (req, res) => {
     },
   });
   let deleteCourse = [];
-  courses.forEach(async (course) => {
+  courses.forEach((course) => {
     if (course.instructors.length === 1) {
       deleteCourse.push(course.id);
     }

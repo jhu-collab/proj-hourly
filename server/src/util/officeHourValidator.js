@@ -787,3 +787,29 @@ export const officeHoursHasNotBegunCancelAll = async (req, res, next) => {
     next();
   }
 };
+
+export const isTimeLengthForCourse = async (req, res, next) => {
+  const { officeHourId, timeOptionId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      course: true,
+    },
+  });
+  const courseId = officeHour.course.id;
+  const time = await prisma.OfficeHourTimeOptions.findFirst({
+    where: {
+      id: timeOptionId,
+      courseId,
+    },
+  });
+  if (time === null || time === undefined) {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: timelength is not for specified course" });
+  } else {
+    next();
+  }
+};
