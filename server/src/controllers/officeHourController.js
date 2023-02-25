@@ -168,11 +168,11 @@ export const register = async (req, res) => {
     },
   });
   var topicArr = [];
-  TopicIds.map((id) => {
-    var obj = {};
-    obj.id = id;
-    topicArr.push(obj);
-  });
+  if (TopicIds !== null && TopicIds !== undefined) {
+    TopicIds.map(async (topicId) => {
+      topicArr.push({id: topicId});
+    });
+  }
   const dateObj = new Date(date);
   // if (
   //   officeHour.startTime > officeHour.endTime &&
@@ -304,22 +304,6 @@ export const register = async (req, res) => {
     };
     sendEmail(emailReq);
   });
-  if (TopicIds !== null && TopicIds !== undefined) {
-    let topicIdArr = [];
-    TopicIds.forEach(async (topicId) => {
-      topicIdArr.push({ id: topicId });
-    });
-    await prisma.registration.update({
-      where: {
-        id: registration.id,
-      },
-      data: {
-        topics: {
-          connect: topicIdArr,
-        },
-      },
-    });
-  }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
