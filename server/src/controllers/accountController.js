@@ -32,11 +32,25 @@ export const create = async (req, res) => {
       email,
     },
   });
-  const text = account.userName + " congrats on creating your Hourly account!";
+  const donotreply = "--- Do not reply to this email ---";
+  const text = "Congrats on creating your Hourly account!";
+  const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    account.userName +
+    ",\n\n" +
+    text +
+    "\n\n" +
+    "Sincerely,\n" +
+    "Hourly Team" +
+    "\n\n" +
+    donotreply;
+
   await sendEmail({
     email,
     subject: "Hourly Account Creation",
-    text,
+    emailBody,
     html: "<p> " + text + " </p>",
   });
   return res.status(StatusCodes.CREATED).json({ account });
