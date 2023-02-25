@@ -128,7 +128,11 @@ export const register = async (req, res) => {
   });
   const userEmail = updateAccount.email;
   const subject = "Successfully registered for " + course.title;
+  const donotreply = "--- Do not reply to this email ---";
   const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     updateAccount.firstName +
     " " +
     updateAccount.lastName +
@@ -143,7 +147,9 @@ export const register = async (req, res) => {
     "\n" +
     course.instructors[0].firstName +
     " " +
-    course.instructors[0].lastName;
+    course.instructors[0].lastName +
+    "\n\n" +
+    donotreply;
   let emailReq = {
     email: userEmail,
     subject: subject,
