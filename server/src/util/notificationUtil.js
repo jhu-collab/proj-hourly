@@ -59,17 +59,16 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
   });
 };
 
+//pre: registration must include account, which can be achieved by select: {account: true} when fetching registrations
 export const sendEmailForEachRegistrationWhenChanged = (
   registrations,
   editedOfficeHour
 ) => {
+  const accounts = [];
   registrations.forEach(async (registration) => {
-    const account = await prisma.Account.findFirst({
-      where: {
-        id: registration.accountId,
-      },
-    });
-
+    accounts.push[registration.account];
+  });
+  accounts.forEach(async (account) => {
     const text = `The office hours starting on ${new Date(
       editedOfficeHour.startDate
     ).toLocaleString()} to ${new Date(
