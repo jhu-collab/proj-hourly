@@ -170,7 +170,7 @@ export const register = async (req, res) => {
   var topicArr = [];
   if (TopicIds !== null && TopicIds !== undefined) {
     TopicIds.map(async (topicId) => {
-      topicArr.push({id: topicId});
+      topicArr.push({ id: topicId });
     });
   }
   const dateObj = new Date(date);
