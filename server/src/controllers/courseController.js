@@ -74,7 +74,11 @@ export const create = async (req, res) => {
       },
     },
   });
+  const donotreply = "--- Do not reply to this email ---";
   const text =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     account.firstName +
     " " +
     account.lastName +
@@ -82,7 +86,11 @@ export const create = async (req, res) => {
     title +
     " was created. Give this code, " +
     code +
-    ", to your students to join the course with.";
+    ", to your students to join the course with.\n\n" +
+    "Sincerely,\n" +
+    "Hourly Team" +
+    "\n\n" +
+    donotreply;
   await sendEmail({
     email: account.email,
     subject: title + " Created!",
