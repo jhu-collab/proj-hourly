@@ -167,12 +167,12 @@ export const register = async (req, res) => {
       hosts: true,
     },
   });
-  var topicArr = []
+  var topicArr = [];
   TopicIds.map((id) => {
-    var obj = {}
-    obj.id = id
-    topicArr.push(obj)
-  })
+    var obj = {};
+    obj.id = id;
+    topicArr.push(obj);
+  });
   const dateObj = new Date(date);
   // if (
   //   officeHour.startTime > officeHour.endTime &&
@@ -196,13 +196,13 @@ export const register = async (req, res) => {
       question,
       isCancelledStaff: false,
       topics: {
-        connect: topicArr
-      }
+        connect: topicArr,
+      },
     },
     include: {
       account: true,
       officeHour: true,
-      topics: true
+      topics: true,
     },
   });
   var options = {
@@ -211,8 +211,10 @@ export const register = async (req, res) => {
     month: "long",
     day: "numeric",
   };
-  var topics = registration.topics.length > 0 ? registration.topics.map((topic) => topic.value) : "No topics selected.";
-  console.log(topics);
+  var topics =
+    registration.topics.length > 0
+      ? registration.topics.map((topic) => topic.value)
+      : "No topics selected.";
   const userEmail = registration.account.email;
   const fullName =
     registration.account.firstName + " " + registration.account.lastName;
@@ -294,13 +296,12 @@ export const register = async (req, res) => {
       fullName +
       "!" +
       "\ntopics: " +
-      topics
+      topics;
     emailReq = {
       email: acc.email,
       subject: subject,
       text: emailBody,
     };
-    console.log(emailReq);
     sendEmail(emailReq);
   });
   if (TopicIds !== null && TopicIds !== undefined) {
