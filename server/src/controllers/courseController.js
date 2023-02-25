@@ -132,8 +132,19 @@ export const register = async (req, res) => {
   });
 
   const userEmail = updateAccount.email;
-  const subject = "Successfully registered for " + course.title;
+  const subject =
+    "Successfully registered for " +
+    course.title +
+    "(" +
+    course.semester +
+    " " +
+    course.calendarYear +
+    ")!";
+  const donotreply = "--- Do not reply to this email ---";
   const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     updateAccount.firstName +
     " " +
     updateAccount.lastName +
@@ -151,7 +162,10 @@ export const register = async (req, res) => {
     "See you in class!" +
     "\n\n" +
     "Your instructors, \n" +
-    instructors;
+    instructors +
+    "\n\n" +
+    donotreply;
+
   let emailReq = {
     email: userEmail,
     subject: subject,
