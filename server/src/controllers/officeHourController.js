@@ -167,6 +167,12 @@ export const register = async (req, res) => {
       hosts: true,
     },
   });
+  var topicArr = [];
+  if (TopicIds !== null && TopicIds !== undefined) {
+    TopicIds.map(async (topicId) => {
+      topicArr.push({ id: topicId });
+    });
+  }
   const dateObj = new Date(date);
   // if (
   //   officeHour.startTime > officeHour.endTime &&
@@ -189,10 +195,14 @@ export const register = async (req, res) => {
       accountId: id,
       question,
       isCancelledStaff: false,
+      topics: {
+        connect: topicArr,
+      },
     },
     include: {
       account: true,
       officeHour: true,
+      topics: true,
     },
   });
   var options = {
@@ -201,6 +211,10 @@ export const register = async (req, res) => {
     month: "long",
     day: "numeric",
   };
+  var topics =
+    registration.topics.length > 0
+      ? registration.topics.map((topic) => topic.value)
+      : "No topics selected.";
   const userEmail = registration.account.email;
   const fullName =
     registration.account.firstName + " " + registration.account.lastName;
@@ -246,7 +260,9 @@ export const register = async (req, res) => {
     dateStr +
     " at " +
     location +
-    "!";
+    "!" +
+    "\ntopics: " +
+    topics;
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -276,31 +292,18 @@ export const register = async (req, res) => {
       dateStr +
       " at " +
       location +
-      "!";
+      " with student " +
+      fullName +
+      "!" +
+      "\ntopics: " +
+      topics;
     emailReq = {
       email: acc.email,
       subject: subject,
       text: emailBody,
     };
-    console.log(emailReq);
     sendEmail(emailReq);
   });
-  if (TopicIds !== null && TopicIds !== undefined) {
-    let topicIdArr = [];
-    TopicIds.forEach(async (topicId) => {
-      topicIdArr.push({ id: topicId });
-    });
-    await prisma.registration.update({
-      where: {
-        id: registration.id,
-      },
-      data: {
-        topics: {
-          connect: topicIdArr,
-        },
-      },
-    });
-  }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
