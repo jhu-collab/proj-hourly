@@ -59,7 +59,8 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
   });
 };
 
-//pre: registration must include account, which can be achieved by select: {account: true} when fetching registrations
+//TODO: make sure to find a way to not depend on the prereq
+//PREREQ: registration must include account, which can be achieved by select: {account: true} when fetching registrations
 export const sendEmailForEachRegistrationWhenChanged = (
   registrations,
   editedOfficeHour
