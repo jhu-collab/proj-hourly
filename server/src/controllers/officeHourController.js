@@ -182,6 +182,8 @@ export const register = async (req, res) => {
   // }
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
@@ -234,6 +236,7 @@ export const register = async (req, res) => {
     minute: "numeric",
     hour12: true,
   });
+  dateObj.setUTCMinutes(dateObj.getUTCMinutes() - dateObj.getTimezoneOffset());
   const dateStr = dateObj.toLocaleDateString("en-US", options);
   let subject =
     "[" +
