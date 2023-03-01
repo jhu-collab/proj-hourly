@@ -1,6 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { combineTimeAndDate } from "./icalHelpers.js";
+import { stringToTimeObj } from "./officeHourValidator.js";
 
 export const isUniqueCourse = async (req, res, next) => {
   const { title, number, semester, year } = req.body;
@@ -573,7 +574,7 @@ export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
 };
 
 export const isWithinRegisterConstraint = async (req, res, next) => {
-  const { officeHourId, date } = req.body;
+  const { officeHourId, date, startTime } = req.body;
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -586,7 +587,7 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
   });
   const currDate = new Date();
   const combined = combineTimeAndDate(
-    new Date(officeHour.startDate),
+    stringToTimeObj(startTime),
     new Date(date)
   );
   const before = new Date(combined);

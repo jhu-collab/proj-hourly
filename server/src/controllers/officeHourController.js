@@ -456,6 +456,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
       courseId: officeHour.courseId,
     },
   });
+  const course = await prisma.course.findUnique({
+    where: { id: officeHour.courseId },
+  });
   const startDate = new Date(officeHour.startDate);
   const endDate = new Date(officeHour.endDate);
   if (endDate.getTimezoneOffset() !== startDate.getTimezoneOffset()) {
@@ -509,6 +512,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let timeSlotsPerType = [];
   let sessionStartTime;
   // loops over each time length
+  const now = new Date();
   timeLengths.forEach((timeLength) => {
     sessionStartTime = new Date(startDate);
     let times = [];
@@ -529,10 +533,24 @@ export const getTimeSlotsRemaining = async (req, res) => {
       // if available, adds to times array
       const justDate = new Date(date);
       justDate.setUTCHours(0);
+      const beforeConstraint = new Date(justDate);
+      beforeConstraint.setUTCHours(sessionStartTime.getUTCHours());
+      beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
+      beforeConstraint.setUTCHours(
+        beforeConstraint.getUTCHours() - course.startRegConstraint
+      );
+      const endConstraint = new Date(justDate);
+      endConstraint.setUTCHours(sessionStartTime.getUTCHours());
+      endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
+      endConstraint.setUTCHours(
+        endConstraint.getUTCHours() - course.endRegConstraint
+      );
       if (
         available &&
         (new Date() < justDate ||
-          createJustTimeObject(new Date()) <= new Date(sessionStartTime))
+          createJustTimeObject(new Date()) <= new Date(sessionStartTime)) &&
+        beforeConstraint < now &&
+        endConstraint >= now
       ) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);
