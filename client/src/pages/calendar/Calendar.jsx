@@ -13,7 +13,10 @@ import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
+
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useQueryOfficeHoursFiltered from "../../hooks/useQueryOfficeHoursFiltered";
+
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import Box from "@mui/material/Box";
@@ -44,7 +47,9 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
-  const { isLoading, error, data } = useQueryOfficeHours();
+  //const { isLoading, error, data } = useQueryOfficeHours();
+
+  const { isLoading, error, data } = useQueryOfficeHoursFiltered();
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");

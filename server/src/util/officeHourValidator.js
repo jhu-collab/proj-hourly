@@ -1,6 +1,6 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import { STATUS_CODES } from "http";
+// import { STATUS_CODES } from "http";
 import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 
