@@ -74,7 +74,11 @@ export const create = async (req, res) => {
       },
     },
   });
+  const donotreply = "--- Do not reply to this email ---";
   const text =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     account.firstName +
     " " +
     account.lastName +
@@ -82,7 +86,11 @@ export const create = async (req, res) => {
     title +
     " was created. Give this code, " +
     code +
-    ", to your students to join the course with.";
+    ", to your students to join the course with.\n\n" +
+    "Sincerely,\n" +
+    "Hourly Team" +
+    "\n\n" +
+    donotreply;
   await sendEmail({
     email: account.email,
     subject: title + " Created!",
@@ -118,24 +126,54 @@ export const register = async (req, res) => {
       },
     },
   });
+  let instructors = "";
+  let counter = 0;
+
+  course.instructors.forEach((instructor) => {
+    instructors += instructor.firstName + " " + instructor.lastName;
+    if (course.instructors.length === 1) {
+      return;
+    } else if (counter !== course.instructors.length - 1) {
+      instructors += ", ";
+    }
+    counter += 1;
+  });
+
   const userEmail = updateAccount.email;
-  const subject = "Successfully registered for " + course.title;
+  const subject =
+    "Successfully registered for " +
+    course.title +
+    " in " +
+    course.semester +
+    " " +
+    course.calendarYear +
+    "!";
+  const donotreply = "--- Do not reply to this email ---";
   const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     updateAccount.firstName +
     " " +
     updateAccount.lastName +
-    ",\n" +
+    ",\n\n" +
     "You have successfully  registered for " +
     course.courseNumber +
     ": " +
     course.title +
-    "!" +
-    "\n" +
-    "See you in class!" +
-    "\n" +
-    course.instructors[0].firstName +
+    " in " +
+    course.semester +
     " " +
-    course.instructors[0].lastName;
+    course.calendarYear +
+    "!" +
+    "\n\n" +
+    "See you in class!" +
+    "\n\n" +
+    "Your instructors, \n" +
+    instructors +
+    "\n\n" +
+    donotreply;
+
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -902,4 +940,19 @@ export const getRoleInCourseParams = async (req, res) => {
     role,
     course,
   });
+};
+
+export const updateRegistrationConstraints = async (req, res) => {
+  const { start, end } = req.body;
+  const id = parseInt(req.params.courseId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id,
+    },
+    data: {
+      startRegConstraint: start,
+      endRegConstraint: end,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
 };

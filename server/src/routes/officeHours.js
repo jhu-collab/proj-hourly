@@ -68,6 +68,7 @@ router.post(
   courseValidator.areTopicsForCourse,
   validator.isTimeLengthForCourse,
   validator.isTimeCorrectInterval,
+  courseValidator.isWithinRegisterConstraint,
   controller.register
 );
 
@@ -118,6 +119,7 @@ router.post(
   validator.isOfficeHourHostParams,
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
+  dateValidator.endIsAfterStart,
   controller.rescheduleSingleOfficeHour
 );
 
@@ -204,6 +206,7 @@ router.post(
   courseValidator.areTopicsForCourse,
   validator.isTimeLengthForCourse,
   validator.isTimeCorrectInterval,
+  courseValidator.isWithinRegisterConstraint,
   controller.editRegistration
 );
 

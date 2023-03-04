@@ -280,4 +280,18 @@ router.get(
   controller.getRoleInCourseParams
 );
 
+router.post(
+  "/:courseId/registrationConstraints",
+  body("start", "Please include a start constraint in hoyrs")
+    .notEmpty()
+    .isInt(),
+  body("end", "Please include an end constraint in hours").notEmpty().isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  validator.startAndEndArePositive,
+  validator.startIsGreaterThanEnd,
+  controller.updateRegistrationConstraints
+);
+
 export default router;
