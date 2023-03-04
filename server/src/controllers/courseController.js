@@ -930,3 +930,18 @@ export const getRoleInCourseParams = async (req, res) => {
     course,
   });
 };
+
+export const updateRegistrationConstraints = async (req, res) => {
+  const { start, end } = req.body;
+  const id = parseInt(req.params.courseId, 10);
+  const course = await prisma.course.update({
+    where: {
+      id,
+    },
+    data: {
+      startRegConstraint: start,
+      endRegConstraint: end,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ course });
+};
