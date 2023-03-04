@@ -149,15 +149,6 @@ export const register = async (req, res) => {
     course.calendarYear +
     ")!";
   const donotreply = "--- Do not reply to this email ---";
-  const subject =
-    "Successfully registered for " +
-    course.title +
-    "(" +
-    course.semester +
-    " " +
-    course.calendarYear +
-    ")!";
-  const donotreply = "--- Do not reply to this email ---";
   const emailBody =
     donotreply +
     "\n\n" +
