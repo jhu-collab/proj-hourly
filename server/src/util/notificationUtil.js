@@ -1,3 +1,4 @@
+import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
 
@@ -66,8 +67,8 @@ export const sendEmailForEachRegistrationWhenChanged = (
   editedOfficeHour
 ) => {
   const accounts = [];
-  registrations.forEach(async (registration) => {
-    accounts.push[registration.account];
+  registrations.forEach((registration) => {
+    accounts.push(registration.account);
   });
   accounts.forEach(async (account) => {
     const text = `The office hours starting on ${new Date(
