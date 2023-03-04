@@ -119,6 +119,7 @@ router.post(
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
   dateValidator.endIsAfterStart,
+  validator.durationIsMultipleof5,
   controller.rescheduleSingleOfficeHour
 );
 
@@ -146,6 +147,7 @@ router.post(
   validator.isOfficeHourHostParams,
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
+  validator.durationIsMultipleof5,
   controller.editAll
 );
 
