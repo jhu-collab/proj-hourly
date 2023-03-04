@@ -39,7 +39,9 @@ export const create = async (req, res) => {
     donotreply +
     "\n\n" +
     "Dear " +
-    account.userName +
+    account.firstName +
+    " " +
+    account.lastName +
     ",\n\n" +
     text +
     "\n\n" +
@@ -223,7 +225,9 @@ export const deleteAccount = async (req, res) => {
     donotreply +
     "\n\n" +
     "Dear " +
-    account.userName +
+    account.firstName +
+    " " +
+    account.lastName +
     ",\n\n" +
     text +
     "\n\n" +
