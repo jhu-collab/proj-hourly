@@ -38,6 +38,7 @@ router.post(
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
+  validator.durationIsMultipleof5,
   //timeValidator.isTime,
   //validator.areValidDOW,
   //dateValidator.officeHourDateCheck,
