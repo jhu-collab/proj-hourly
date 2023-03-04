@@ -43,8 +43,8 @@ export const create = async (req, res) => {
     ",\n\n" +
     text +
     "\n\n" +
-    "Sincerely,\n" +
-    "Hourly Team" +
+    "Thanks,\n" +
+    "The Hourly Team" +
     "\n\n" +
     donotreply;
 
@@ -227,8 +227,8 @@ export const deleteAccount = async (req, res) => {
     ",\n\n" +
     text +
     "\n\n" +
-    "Sincerely,\n" +
-    "Hourly Team" +
+    "Thanks,\n" +
+    "The Hourly Team" +
     "\n\n" +
     donotreply;
   await sendEmail({

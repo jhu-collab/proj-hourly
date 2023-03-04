@@ -238,6 +238,8 @@ export const register = async (req, res) => {
   });
   dateObj.setUTCMinutes(dateObj.getUTCMinutes() - dateObj.getTimezoneOffset());
   const dateStr = dateObj.toLocaleDateString("en-US", options);
+
+  const donotreply = "--- Do not reply to this email ---";
   let subject =
     "[" +
     courseNumber +
@@ -250,9 +252,12 @@ export const register = async (req, res) => {
     emailEndTime +
     "!";
   let emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     fullName +
     "," +
-    "\n" +
+    "\n\n" +
     "You have successfully registered for " +
     courseTitle +
     " office hours from " +
@@ -264,8 +269,13 @@ export const register = async (req, res) => {
     " at " +
     location +
     "!" +
-    "\ntopics: " +
-    topics;
+    "\n\nTopics: " +
+    topics +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team\n\n" +
+    donotreply;
+
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -954,7 +964,16 @@ export const cancelRegistration = async (req, res) => {
     hour12: true,
   });
 
+  const donotreply = "--- Do not reply to this email ---";
+
   let emailStr =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    registration.account.firstName +
+    " " +
+    registration.account.lastName +
+    ",\n\n" +
     "Your registration on " +
     dateStr +
     " from " +
@@ -967,12 +986,17 @@ export const cancelRegistration = async (req, res) => {
     registration.officeHour.hosts[0].lastName +
     " at " +
     registration.officeHour.location +
-    " has been cancelled.";
+    " has been cancelled.\n\n" +
+    +"Thanks,\n" +
+    "The Hourly Team, \n" +
+    "\n\n" +
+    donotreply;
   let subject =
     "[" +
     registration.officeHour.course.courseNumber +
-    "]" +
-    " Registration Cancelled";
+    "] " +
+    registration.officeHour.course.title +
+    ": Registration Cancelled";
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -981,6 +1005,13 @@ export const cancelRegistration = async (req, res) => {
   sendEmail(emailReq);
   registration.officeHour.hosts.forEach((acc) => {
     emailStr =
+      donotreply +
+      "\n\n" +
+      "Dear " +
+      registration.account.firstName +
+      " " +
+      registration.account.lastName +
+      ",\n\n" +
       "Your registration on " +
       dateStr +
       " from " +
@@ -997,8 +1028,9 @@ export const cancelRegistration = async (req, res) => {
     subject =
       "[" +
       registration.officeHour.course.courseNumber +
-      "]" +
-      " Registration Cancelled";
+      "] " +
+      registration.officeHour.course.title +
+      ": Registration Cancelled";
     emailReq = {
       email: acc.email,
       subject: subject,

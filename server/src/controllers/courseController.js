@@ -143,11 +143,11 @@ export const register = async (req, res) => {
   const subject =
     "Successfully registered for " +
     course.title +
-    "(" +
+    " in " +
     course.semester +
     " " +
     course.calendarYear +
-    ")!";
+    "!";
   const donotreply = "--- Do not reply to this email ---";
   const emailBody =
     donotreply +
@@ -161,11 +161,11 @@ export const register = async (req, res) => {
     course.courseNumber +
     ": " +
     course.title +
-    "(" +
+    " in " +
     course.semester +
     " " +
     course.calendarYear +
-    ")!" +
+    "!" +
     "\n\n" +
     "See you in class!" +
     "\n\n" +
