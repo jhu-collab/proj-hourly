@@ -32,12 +32,29 @@ export const create = async (req, res) => {
       email,
     },
   });
-  const text = account.userName + " congrats on creating your Hourly account!";
+
+  const donotreply = "--- Do not reply to this email ---";
+  const text = "Congrats on creating your Hourly account!";
+  const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    account.firstName +
+    " " +
+    account.lastName +
+    ",\n\n" +
+    text +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team" +
+    "\n\n" +
+    donotreply;
+
   await sendEmail({
-    email,
+    email: email,
     subject: "Hourly Account Creation",
-    text,
-    html: "<p> " + text + " </p>",
+    text: emailBody,
+    html: "<p> " + emailBody + " </p>",
   });
   return res.status(StatusCodes.CREATED).json({ account });
 };
@@ -201,14 +218,28 @@ export const deleteAccount = async (req, res) => {
       id,
     },
   });
+  const donotreply = "--- Do not reply to this email ---";
   const text =
-    account.userName +
-    " your Hourly account has been succeesfully deleted. All of your associated data has been removed";
+    "Your Hourly account has been succeesfully deleted. All of your associated data has been removed";
+  const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    account.firstName +
+    " " +
+    account.lastName +
+    ",\n\n" +
+    text +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team" +
+    "\n\n" +
+    donotreply;
   await sendEmail({
     email: account.email,
     subject: "Hourly Account Deletion",
-    text: text,
-    html: "<p> " + text + " </p>",
+    text: emailBody,
+    html: "<p> " + emailBody + " </p>",
   });
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
