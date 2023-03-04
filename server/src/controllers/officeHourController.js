@@ -196,7 +196,7 @@ export const register = async (req, res) => {
       accountId: id,
       question,
       isCancelledStaff: false,
-      registrationTypeId: timeOptionId,
+      officeHourTimeOptionId: timeOptionId,
     },
     include: {
       account: true,
@@ -294,7 +294,7 @@ export const register = async (req, res) => {
   });
   if (TopicIds !== null && TopicIds !== undefined) {
     let topicIdArr = [];
-    TopicIds.forEach( (topicId) => {
+    TopicIds.forEach((topicId) => {
       topicIdArr.push({ id: topicId });
     });
     await prisma.registration.update({
@@ -816,6 +816,9 @@ export const getRegistrationStatus = async (req, res) => {
       date: date,
       isCancelled: false,
       isCancelledStaff: false,
+    },
+    include: {
+      officeHourTimeOptions: true,
     },
   });
   if (status === null || status === undefined) {

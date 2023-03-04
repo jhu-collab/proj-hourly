@@ -122,12 +122,17 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
+    let timeOptionId = -1;
+    registrationTypeOptions.forEach((option) => {
+      if (option.label === data.type) timeOptionId = option.id;
+    });
     mutate({
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
       TopicIds: data.topicIds,
+      timeOptionId: timeOptionId,
     });
   };
 

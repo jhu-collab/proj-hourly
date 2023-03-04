@@ -55,7 +55,7 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
-  body("timeOptionId", "Please include a time option id").isInt(),
+  body("timeOptionId", "Please include a time option id").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
@@ -194,7 +194,7 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
-  body("timeOptionId", "Please include a time option id").isInt(),
+  body("timeOptionId", "Please include a time option id").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.isOfficeHourOnDay,
   validator.doesRegistrationExistParams,
