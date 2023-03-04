@@ -126,7 +126,29 @@ export const register = async (req, res) => {
       },
     },
   });
+  let instructors = "";
+  let counter = 0;
+
+  course.instructors.forEach((instructor) => {
+    instructors += instructor.firstName + " " + instructor.lastName;
+    if (course.instructors.length === 1) {
+      return;
+    } else if (counter !== course.instructors.length - 1) {
+      instructors += ", ";
+    }
+    counter += 1;
+  });
+
   const userEmail = updateAccount.email;
+  const subject =
+    "Successfully registered for " +
+    course.title +
+    "(" +
+    course.semester +
+    " " +
+    course.calendarYear +
+    ")!";
+  const donotreply = "--- Do not reply to this email ---";
   const subject =
     "Successfully registered for " +
     course.title +
@@ -155,12 +177,12 @@ export const register = async (req, res) => {
     ")!" +
     "\n\n" +
     "See you in class!" +
-    "\n" +
-    course.instructors[0].firstName +
-    " " +
-    course.instructors[0].lastName +
+    "\n\n" +
+    "Your instructors, \n" +
+    instructors +
     "\n\n" +
     donotreply;
+
   let emailReq = {
     email: userEmail,
     subject: subject,
