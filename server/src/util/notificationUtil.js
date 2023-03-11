@@ -190,7 +190,6 @@ export const sendReminderEmailRegistration = async (registrationId) => {
     "Thanks,\n" +
     "The Hourly Team\n\n" +
     donotreply;
-  console.log(emailBody);
   let emailReq = {
     email: userEmail,
     subject: subject,
