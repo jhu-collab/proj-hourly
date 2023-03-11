@@ -48,6 +48,8 @@ model Course {
   iCalJson           Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
+  emailReminders     Boolean                 @default(true)
+  reminderInterval   Int?                    @default(30)
 }
 
 model OfficeHourTimeOptions {

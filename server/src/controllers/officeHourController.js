@@ -9,6 +9,7 @@ import {
   sendEmailForEachRegistrationWhenCancelled,
   sendEmailForEachRegistrationWhenChanged,
   sendEmail,
+  scheduleReminderEmailRegistration,
 } from "../util/notificationUtil.js";
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
@@ -282,6 +283,7 @@ export const register = async (req, res) => {
     text: emailBody,
   };
   sendEmail(emailReq);
+  scheduleReminderEmailRegistration(registration.id);
   officeHour.hosts.forEach((acc) => {
     subject =
       "[" +
