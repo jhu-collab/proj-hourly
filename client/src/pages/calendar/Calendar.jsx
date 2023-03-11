@@ -15,7 +15,6 @@ import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
-import useQueryOfficeHoursFiltered from "../../hooks/useQueryOfficeHoursFiltered";
 
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
@@ -57,8 +56,6 @@ function Calendar() {
   const [menuOpen, setMenuOpen] = useState(true);
 
   const { isLoading, error, data } = useQueryOfficeHours();
-
-  //const { isLoading, error, data } = useQueryOfficeHoursFiltered();
 
 
   useEffect(() => {
@@ -133,12 +130,8 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
-          {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} />
-          )}
             <FullCalendar
               plugins={[
                 rrulePlugin,
@@ -191,8 +184,23 @@ function Calendar() {
               {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
             />
           </StyleWrapper>
-          
         </Box>
+
+        {matchUpSm && (
+          <Box
+            variant="outlined"
+            width="20%"
+            sx={{
+              height: "101%",
+              backgroundColor: "background.paper",
+              boxShadow:
+                "0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12)",
+              borderLeft: `2px solid ${theme.palette.divider}`,
+            }}
+          >
+            <CalendarMenu calendarRef={calendarRef} />
+          </Box>
+        )}
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
