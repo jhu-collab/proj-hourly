@@ -78,7 +78,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
-  validator.isOfficeHourHost,
+  validator.isOfficeHourHostOrInstructor,
   validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegun,
   controller.cancelOnDate
@@ -91,7 +91,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
-  validator.isOfficeHourHost,
+  validator.isOfficeHourHostOrInstructor,
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegunCancelAll,

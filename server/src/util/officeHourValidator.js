@@ -338,6 +338,43 @@ export const isOfficeHourHost = async (req, res, next) => {
   }
 };
 
+export const isOfficeHourHostOrInstructor = async (req, res, next) => {
+  const { officeHourId } = req.body;
+  const id = req.id;
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      hosts: {
+        where: {
+          id,
+        },
+      },
+      course: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.course.id,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (officeHour.hosts.length === 0 && course.instructors.length === 0) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: must be host or instructor to cancel office hours",
+    });
+  } else {
+    next();
+  }
+};
+
 export const isOfficeHourHostParams = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const id = req.id;
