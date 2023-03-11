@@ -13,9 +13,7 @@ import Loader from "../../components/Loader";
 import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
-
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
-
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 
@@ -50,34 +48,15 @@ function Calendar() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
-
-  const [filtered, setFiltered] = useState(false);
+  const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
   const { isLoading, error, data } = useQueryOfficeHours();
 
-
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
-
-  const filter = (data) => {
-    console.log(data.calendar);
-    const filtered = data.calendar.filter(function (officeHour) {
-      const hosts = officeHour.extendedProps.hosts;
-      for (let i = 0; i < hosts.length; i++) {
-        if (hosts[i].id == id) {
-          return true;
-        }
-      }
-      return false;
-    });
-    console.log("filtered");
-    console.log(filtered);
-    return filtered;
-  }
-
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
@@ -124,14 +103,45 @@ function Calendar() {
     info.revert();
   };
 
+  const filter = (data) => {
+    console.log(data.calendar);
+    const filtered = data.calendar.filter(function (officeHour) {
+      const hosts = officeHour.extendedProps.hosts;
+      for (let i = 0; i < hosts.length; i++) {
+        if (hosts[i].id == id) {
+          return true;
+        }
+      }
+      return false;
+    });
+    console.log("filtered");
+    console.log(filtered);
+    return filtered;
+  }
+  
+  const chosenData = (data) => {
+    if (filtered === "all") {
+      return data.calendar;
+    } else if (filtered === "mine") {
+      return filter(data);
+    } else {
+      console.log("oops");
+      return [];
+    }
+  }
+
   return (
     <>
       <Stack
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
+        
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
+          {matchUpSm && (
+            <CalendarMenu calendarRef={calendarRef} filtered =  {filtered} setFiltered = {setFiltered} />
+          )}
             <FullCalendar
               plugins={[
                 rrulePlugin,
@@ -167,7 +177,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={false}
-              events={data ? filter(data) : []}
+              events={data ? chosenData(data) : []}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{
@@ -184,23 +194,8 @@ function Calendar() {
               {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
             />
           </StyleWrapper>
+          
         </Box>
-
-        {matchUpSm && (
-          <Box
-            variant="outlined"
-            width="20%"
-            sx={{
-              height: "101%",
-              backgroundColor: "background.paper",
-              boxShadow:
-                "0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12)",
-              borderLeft: `2px solid ${theme.palette.divider}`,
-            }}
-          >
-            <CalendarMenu calendarRef={calendarRef} />
-          </Box>
-        )}
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
