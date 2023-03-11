@@ -19,6 +19,10 @@ import useQueryOfficeHoursFiltered from "../../hooks/useQueryOfficeHoursFiltered
 
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
+
+import useStoreToken from "../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
+
 import Box from "@mui/material/Box";
 import StyleWrapper, {
   dayHeaderContent,
@@ -44,16 +48,39 @@ function Calendar() {
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
 
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+
+
+  const [filtered, setFiltered] = useState(false);
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
-  //const { isLoading, error, data } = useQueryOfficeHours();
+  const { isLoading, error, data } = useQueryOfficeHours();
 
-  const { isLoading, error, data } = useQueryOfficeHoursFiltered();
+  //const { isLoading, error, data } = useQueryOfficeHoursFiltered();
+
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
+
+  const filter = (data) => {
+    console.log(data.calendar);
+    const filtered = data.calendar.filter(function (officeHour) {
+      const hosts = officeHour.extendedProps.hosts;
+      for (let i = 0; i < hosts.length; i++) {
+        if (hosts[i].id == id) {
+          return true;
+        }
+      }
+      return false;
+    });
+    console.log("filtered");
+    console.log(filtered);
+    return filtered;
+  }
+
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
@@ -143,7 +170,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={false}
-              events={data?.calendar || []}
+              events={data ? filter(data) : []}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{

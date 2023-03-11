@@ -16,6 +16,7 @@ function useQueryOfficeHours() {
         `${BASE_URL}/api/course/${course.id}/officeHours`,
         getConfig(token)
       );
+      console.log(res.data);
       return res.data;
     } catch (err) {
       throw err;

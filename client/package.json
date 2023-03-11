@@ -24,7 +24,6 @@
     "ical-generator": "^3.4.3",
     "lodash": "^4.17.21",
     "luxon": "^3.2.1",
-    "pkg": "^5.8.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.3.9",
