@@ -37,7 +37,6 @@
     "react-query": "^3.39.1",
     "react-router-dom": "6",
     "react-toastify": "^9.0.5",
-    "rrule": "^2.7.2",
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.4.1",
     "yup": "^0.32.11",
