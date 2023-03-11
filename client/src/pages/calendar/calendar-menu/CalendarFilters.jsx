@@ -1,9 +1,12 @@
 import Stack from "@mui/material/Stack";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import NativeSelect from "@mui/material/NativeSelect";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 /**
  * Represents calendar filter menu.
@@ -16,29 +19,44 @@ function CalendarFilters(props) {
     setFiltered(event.target.value);
   };
 
+  const sxToggleButton = {
+    color: "white",
+    border: 0,
+    fontWeight: 500,
+    "&:hover": {
+      bgcolor: "secondary.main",
+      color: "text.primary",
+    },
+    "&.Mui-selected": {
+      bgcolor: "secondary.main",
+      borderRadius: 1,
+      color: "text.primary",
+      "&:hover": {
+        color: "text.primary",
+        bgcolor: "secondary.main",
+      },
+    },
+  };
+
   return (
     <Stack direction="column" spacing={.25}>
-      <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
-        filters
-      </Typography>
-      <RadioGroup row value={filtered} onChange={handleFilterChange}>
-        <FormControlLabel
-          value="mine"
-          control={<Radio color="tertiary" />}
-          label="my events"
-        />
-        <FormControlLabel
-          value="all"
-          control={<Radio />}
-          label="all events"
-          defaultChecked
-        />
-      </RadioGroup>
+        <Typography variant="subtile1" fontWeight={600} color="text.secondary">
+          filter
+        </Typography>
+      <FormControl fullWidth>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          defaultValue={'all'}
+          onChange={handleFilterChange}
+        >
+        <MenuItem value={'all'}>All Events</MenuItem>
+        <MenuItem value={'mine'}>My Events Only</MenuItem>
+      </Select>
+    </FormControl>
     </Stack>
   );
 }
-
-
 
 
 export default CalendarFilters;

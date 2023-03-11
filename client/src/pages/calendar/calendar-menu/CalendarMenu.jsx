@@ -9,19 +9,27 @@ import CalendarViews from "./CalendarViews";
  * Represents the calendar menu.
  * @returns calendar menu
  */
-function CalendarMenu({ calendarRef, filtered, setFiltered }) {
+function CalendarMenu({ calendarRef, isStaff, filtered, setFiltered}) {
 
 
   const courseType = useStoreLayout((state) => state.courseType);
 
-  return (
-    <Stack padding={2} spacing={6}>
-      <CalendarViews calendarRef={calendarRef} />
-      <CalendarFilters filtered={filtered} setFiltered = {setFiltered}/>
-      {/* TODO: UNFINISHED FEATURE */}
-      {/* <CalendarFilters /> */}
-    </Stack>
-  );
+  if (isStaff) {
+    return (
+      <Stack padding={2} spacing={3}>
+        <CalendarViews calendarRef={calendarRef} />
+        <CalendarFilters filtered={filtered} setFiltered = {setFiltered}/>
+      </Stack>
+    );
+  } else {
+    return (
+      <Stack padding={2} spacing={6}>
+        <CalendarViews calendarRef={calendarRef} />
+      </Stack>
+    );
+
+  }
+  
 }
 
 export default CalendarMenu;

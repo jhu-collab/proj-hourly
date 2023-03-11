@@ -104,7 +104,6 @@ function Calendar() {
   };
 
   const filter = (data) => {
-    console.log(data.calendar);
     const filtered = data.calendar.filter(function (officeHour) {
       const hosts = officeHour.extendedProps.hosts;
       for (let i = 0; i < hosts.length; i++) {
@@ -114,8 +113,6 @@ function Calendar() {
       }
       return false;
     });
-    console.log("filtered");
-    console.log(filtered);
     return filtered;
   }
   
@@ -125,7 +122,6 @@ function Calendar() {
     } else if (filtered === "mine") {
       return filter(data);
     } else {
-      console.log("oops");
       return [];
     }
   }
@@ -140,7 +136,7 @@ function Calendar() {
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
           {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} filtered =  {filtered} setFiltered = {setFiltered} />
+            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} filtered =  {filtered} setFiltered = {setFiltered} />
           )}
             <FullCalendar
               plugins={[
