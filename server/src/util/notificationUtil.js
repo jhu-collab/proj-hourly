@@ -105,97 +105,108 @@ export const sendReminderEmailRegistration = async (registrationId) => {
       topics: true,
     },
   });
-  const dateObj = new Date(registration.date);
-  const startTimeObj = new Date(registration.startTime);
-  const endTimeObj = new Date(registration.endTime);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (endTimeObj < startTimeObj) {
-    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
-  }
-  const officeHour = await prisma.officeHour.findUnique({
-    where: {
-      id: registration.officeHour.id,
-    },
-    include: {
-      course: true,
-      hosts: true,
-    },
-  });
-  var options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  var topics =
-    registration.topics.length > 0
-      ? registration.topics.map((topic) => topic.value)
-      : "No topics selected.";
-  const userEmail = registration.account.email;
-  const fullName =
-    registration.account.firstName + " " + registration.account.lastName;
-  const courseTitle = officeHour.course.title;
-  const courseNumber = officeHour.course.courseNumber;
-  const location = registration.officeHour.location;
-  const hostFullName =
-    officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
-  const today = new Date();
-  const emailStartTime = startTimeObj.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  const emailEndTime = endTimeObj.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  dateObj.setUTCMinutes(dateObj.getUTCMinutes() - dateObj.getTimezoneOffset());
-  const dateStr = dateObj.toLocaleDateString("en-US", options);
+  if (
+    registration === null ||
+    registration === undefined ||
+    registration.isCancelled ||
+    registration.isCancelledStaff
+  ) {
+    return;
+  } else {
+    const dateObj = new Date(registration.date);
+    const startTimeObj = new Date(registration.startTime);
+    const endTimeObj = new Date(registration.endTime);
+    dateObj.setUTCHours(startTimeObj.getUTCHours());
+    dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+    if (endTimeObj < startTimeObj) {
+      endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+    }
+    const officeHour = await prisma.officeHour.findUnique({
+      where: {
+        id: registration.officeHour.id,
+      },
+      include: {
+        course: true,
+        hosts: true,
+      },
+    });
+    var options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    var topics =
+      registration.topics.length > 0
+        ? registration.topics.map((topic) => topic.value)
+        : "No topics selected.";
+    const userEmail = registration.account.email;
+    const fullName =
+      registration.account.firstName + " " + registration.account.lastName;
+    const courseTitle = officeHour.course.title;
+    const courseNumber = officeHour.course.courseNumber;
+    const location = registration.officeHour.location;
+    const hostFullName =
+      officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
+    const today = new Date();
+    const emailStartTime = startTimeObj.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    const emailEndTime = endTimeObj.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    dateObj.setUTCMinutes(
+      dateObj.getUTCMinutes() - dateObj.getTimezoneOffset()
+    );
+    const dateStr = dateObj.toLocaleDateString("en-US", options);
 
-  const donotreply = "--- Do not reply to this email ---";
-  let subject =
-    "[" +
-    courseNumber +
-    "] Reminder: Registration for " +
-    hostFullName +
-    "'s" +
-    " office hours from " +
-    emailStartTime +
-    " to " +
-    emailEndTime +
-    "!";
-  let emailBody =
-    donotreply +
-    "\n\n" +
-    "Dear " +
-    fullName +
-    "," +
-    "\n\n" +
-    "You have an upcoming office hour registration for " +
-    courseTitle +
-    " office hours from " +
-    emailStartTime +
-    " to " +
-    emailEndTime +
-    " on " +
-    dateStr +
-    " at " +
-    location +
-    "!" +
-    "\n\nTopics: " +
-    topics +
-    "\n\n" +
-    "Thanks,\n" +
-    "The Hourly Team\n\n" +
-    donotreply;
-  let emailReq = {
-    email: userEmail,
-    subject: subject,
-    text: emailBody,
-  };
-  sendEmail(emailReq);
+    const donotreply = "--- Do not reply to this email ---";
+    let subject =
+      "[" +
+      courseNumber +
+      "] Reminder: Registration for " +
+      hostFullName +
+      "'s" +
+      " office hours from " +
+      emailStartTime +
+      " to " +
+      emailEndTime +
+      "!";
+    let emailBody =
+      donotreply +
+      "\n\n" +
+      "Dear " +
+      fullName +
+      "," +
+      "\n\n" +
+      "You have an upcoming office hour registration for " +
+      courseTitle +
+      " office hours from " +
+      emailStartTime +
+      " to " +
+      emailEndTime +
+      " on " +
+      dateStr +
+      " at " +
+      location +
+      "!" +
+      "\n\nTopics: " +
+      topics +
+      "\n\n" +
+      "Thanks,\n" +
+      "The Hourly Team\n\n" +
+      donotreply;
+    let emailReq = {
+      email: userEmail,
+      subject: subject,
+      text: emailBody,
+    };
+    sendEmail(emailReq);
+  }
 };
 
 export const scheduleReminderEmailRegistration = async (registrationId) => {
