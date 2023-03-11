@@ -6,6 +6,7 @@ import Alert from "@mui/material/Alert";
 import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import useQueryRegistrationStatus from "../../../hooks/useQueryRegistrationStatus";
 import useMutationCancelRegistration from "../../../hooks/useMutationCancelRegistration";
+import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
  * Child component that displays information about an office hour
@@ -18,6 +19,10 @@ function StudentDetails() {
   const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
     data?.registration?.id || -1
   );
+
+  const start = useStoreEvent((state) => state.start);
+  const curDate = new Date();
+  const isPastBookingWindow = curDate.getTime() >= start.getTime();
 
   if (isLoading) {
     return <Alert severity="warning">Retrieving registration status ...</Alert>;
@@ -45,13 +50,14 @@ function StudentDetails() {
         <Typography color={isRegistered ? "green" : "red"} paddingX={2}>
           {isRegistered
             ? `You are currently registered for this session`
-            : `You are not registered for this session`}
+            : (isPastBookingWindow ? `This session is not within the booking window` : `You are not registered for this session`)}
         </Typography>
         <Button
           variant="contained"
           fullWidth
           sx={{ borderRadius: 0 }}
           color={isRegistered ? "error" : "primary"}
+          disabled={isPastBookingWindow}
           onClick={onClick}
         >
           {isRegistered ? `Cancel` : `Sign Up`}

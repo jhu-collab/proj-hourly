@@ -787,3 +787,20 @@ export const officeHoursHasNotBegunCancelAll = async (req, res, next) => {
     next();
   }
 };
+
+export const durationIsMultipleof5 = async (req, res, next) => {
+  const { startDate, endDate } = req.body;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  end.setFullYear(start.getFullYear());
+  end.setMonth(start.getMonth());
+  end.setDate(start.getDate());
+  const duration = Math.floor((end - start) / 60000);
+  if (duration % 5 !== 0) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour duration is not a multiple of 5" });
+  } else {
+    next();
+  }
+};
