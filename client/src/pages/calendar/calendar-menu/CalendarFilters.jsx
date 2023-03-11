@@ -13,30 +13,12 @@ import MenuItem from "@mui/material/MenuItem";
  * @returns calendar filter menu
  */
 function CalendarFilters(props) {
-  const {filtered, setFiltered} = props;
+  const {setFiltered} = props;
 
   const handleFilterChange = (event) => {
     setFiltered(event.target.value);
   };
 
-  const sxToggleButton = {
-    color: "white",
-    border: 0,
-    fontWeight: 500,
-    "&:hover": {
-      bgcolor: "secondary.main",
-      color: "text.primary",
-    },
-    "&.Mui-selected": {
-      bgcolor: "secondary.main",
-      borderRadius: 1,
-      color: "text.primary",
-      "&:hover": {
-        color: "text.primary",
-        bgcolor: "secondary.main",
-      },
-    },
-  };
 
   return (
     <Stack direction="column" spacing={.25}>

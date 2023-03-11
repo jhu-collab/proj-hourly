@@ -136,7 +136,7 @@ function Calendar() {
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
           {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} filtered =  {filtered} setFiltered = {setFiltered} />
+            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} />
           )}
             <FullCalendar
               plugins={[
@@ -194,7 +194,7 @@ function Calendar() {
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
+      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
       {isLoading && <Loader />}
     </>
   );
