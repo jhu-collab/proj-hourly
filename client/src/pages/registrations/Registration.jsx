@@ -120,7 +120,7 @@ function Registration({ registration, type }) {
               Type: <strong>{registration.type}</strong>
             </Typography>
           </Stack>
-          {type === 0 && (isHost || courseType === "Student") && (
+          {type === 0 && (isHost || courseType === "Student" || courseType === "Instructor") && (
             <>
               <Button
                 variant="contained"
