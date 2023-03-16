@@ -330,6 +330,7 @@ export const cancelOnDate = async (req, res) => {
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
+      date: dateObj,
     },
   });
 
