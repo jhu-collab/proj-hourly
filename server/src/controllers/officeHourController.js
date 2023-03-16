@@ -454,6 +454,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     return res;
   }
   const date = new Date(req.params.date);
+  const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
   const officeHour = await prisma.officeHour.findUnique({
@@ -472,11 +473,13 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   const startDate = new Date(officeHour.startDate);
   const endDate = new Date(officeHour.endDate);
+  let crossesDaylightSavings = false;
   if (endDate.getTimezoneOffset() !== startDate.getTimezoneOffset()) {
     endDate.setUTCHours(
       endDate.getUTCHours() +
         (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
     );
+    crossesDaylightSavings = true;
   }
   let start = createJustTimeObject(new Date(startDate));
   const end = createJustTimeObject(new Date(endDate));
@@ -524,6 +527,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let sessionStartTime;
   // loops over each time length
   const now = new Date();
+  start = createJustTimeObject(new Date(startDate));
   timeLengths.forEach((timeLength) => {
     sessionStartTime = new Date(startDate);
     let times = [];
@@ -574,6 +578,12 @@ export const getTimeSlotsRemaining = async (req, res) => {
       sessionStartTime.setMinutes(sessionStartTime.getMinutes() + length);
     }
     // adds times array and type to the timeSlotsPerType array
+    if (start.getTimezoneOffset() !== offset && !crossesDaylightSavings) {
+      times.forEach((time) => {
+        time.startTime.setUTCMonth(6);
+        time.endTime.setUTCMonth(6);
+      });
+    }
     timeSlotsPerType.push({
       type: timeLength.title,
       duration: timeLength.duration,
