@@ -121,7 +121,10 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       id: officeHourId,
     },
   });
-
+  const start = new Date(officeHour.startDate);
+  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   dateObj.setUTCHours(
     new Date(officeHour.startDate).getUTCHours() -
       dateObj.getTimezoneOffset() / 60
@@ -164,6 +167,9 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
     },
   });
   dateObj.setUTCHours(0);
+  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   dateObj.setUTCHours(
     new Date(officeHour.startDate).getUTCHours() -
       dateObj.getTimezoneOffset() / 60
@@ -647,6 +653,9 @@ export const checkOptionalDateBody = async (req, res, next) => {
         id: officeHourId,
       },
     });
+    if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+      dateObj.setDate(dateObj.getDate() + 1);
+    }
     dateObj.setUTCHours(
       new Date(officeHour.startDate).getUTCHours() -
         dateObj.getTimezoneOffset() / 60
