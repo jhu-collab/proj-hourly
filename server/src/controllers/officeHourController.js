@@ -604,6 +604,9 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       isCancelled: false,
       isCancelledStaff: false,
     },
+    select: {
+      account: true,
+    },
   });
   const { startDate, endDate, location } = req.body;
   const dateObj = new Date(startDate);
@@ -701,6 +704,9 @@ export const editAll = async (req, res) => {
       officeHourId: officeHourId,
       isCancelled: false,
       isCancelledStaff: false,
+    },
+    select: {
+      account: true,
     },
   });
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
