@@ -1,16 +1,18 @@
-version: "3.9"
+version: '3.9'
 services:
-  # In Docker
-  # - DATABASE_URL=postgres://prisma:prisma@postgres/
-  # Outside Docker
-  # - DATABASE_URL=postgres://prisma:prisma@localhost:5432/
+  # Add a DB_PORT to your .env file
+  #
+  # To access the db in the docker
+  # - DATABASE_URL=postgres://postgres:password@postgres/
+  # To access the db in outside the docker
+  # - DATABASE_URL=postgres://postgres:password@localhost:${DB_PORT}/
 
   db:
-    image: postgres:13
+    image: postgres:15-alpine
     restart: always
-    container_name: postgres-with-prisma
+    container_name: postgres-for-hourly
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432" # HOST_PORT:CONTAINER_PORT
     environment:
-      POSTGRES_USER: prisma
-      POSTGRES_PASSWORD: prisma
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
