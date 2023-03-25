@@ -167,6 +167,12 @@ export const register = async (req, res) => {
       hosts: true,
     },
   });
+  var topicArr = [];
+  if (TopicIds !== null && TopicIds !== undefined) {
+    TopicIds.map(async (topicId) => {
+      topicArr.push({ id: topicId });
+    });
+  }
   const dateObj = new Date(date);
   // if (
   //   officeHour.startTime > officeHour.endTime &&
@@ -176,6 +182,8 @@ export const register = async (req, res) => {
   // }
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
@@ -189,10 +197,14 @@ export const register = async (req, res) => {
       accountId: id,
       question,
       isCancelledStaff: false,
+      topics: {
+        connect: topicArr,
+      },
     },
     include: {
       account: true,
       officeHour: true,
+      topics: true,
     },
   });
   var options = {
@@ -201,6 +213,10 @@ export const register = async (req, res) => {
     month: "long",
     day: "numeric",
   };
+  var topics =
+    registration.topics.length > 0
+      ? registration.topics.map((topic) => topic.value)
+      : "No topics selected.";
   const userEmail = registration.account.email;
   const fullName =
     registration.account.firstName + " " + registration.account.lastName;
@@ -220,7 +236,10 @@ export const register = async (req, res) => {
     minute: "numeric",
     hour12: true,
   });
+  dateObj.setUTCMinutes(dateObj.getUTCMinutes() - dateObj.getTimezoneOffset());
   const dateStr = dateObj.toLocaleDateString("en-US", options);
+
+  const donotreply = "--- Do not reply to this email ---";
   let subject =
     "[" +
     courseNumber +
@@ -233,9 +252,12 @@ export const register = async (req, res) => {
     emailEndTime +
     "!";
   let emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
     fullName +
     "," +
-    "\n" +
+    "\n\n" +
     "You have successfully registered for " +
     courseTitle +
     " office hours from " +
@@ -246,7 +268,14 @@ export const register = async (req, res) => {
     dateStr +
     " at " +
     location +
-    "!";
+    "!" +
+    "\n\nTopics: " +
+    topics +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team\n\n" +
+    donotreply;
+
   let emailReq = {
     email: userEmail,
     subject: subject,
@@ -276,31 +305,18 @@ export const register = async (req, res) => {
       dateStr +
       " at " +
       location +
-      "!";
+      " with student " +
+      fullName +
+      "!" +
+      "\ntopics: " +
+      topics;
     emailReq = {
       email: acc.email,
       subject: subject,
       text: emailBody,
     };
-    console.log(emailReq);
     sendEmail(emailReq);
   });
-  if (TopicIds !== null && TopicIds !== undefined) {
-    let topicIdArr = [];
-    TopicIds.forEach(async (topicId) => {
-      topicIdArr.push({ id: topicId });
-    });
-    await prisma.registration.update({
-      where: {
-        id: registration.id,
-      },
-      data: {
-        topics: {
-          connect: topicIdArr,
-        },
-      },
-    });
-  }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
@@ -314,6 +330,7 @@ export const cancelOnDate = async (req, res) => {
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
+      date: dateObj,
     },
   });
 
@@ -437,6 +454,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     return res;
   }
   const date = new Date(req.params.date);
+  const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
   const officeHour = await prisma.officeHour.findUnique({
@@ -450,13 +468,18 @@ export const getTimeSlotsRemaining = async (req, res) => {
       courseId: officeHour.courseId,
     },
   });
+  const course = await prisma.course.findUnique({
+    where: { id: officeHour.courseId },
+  });
   const startDate = new Date(officeHour.startDate);
   const endDate = new Date(officeHour.endDate);
+  let crossesDaylightSavings = false;
   if (endDate.getTimezoneOffset() !== startDate.getTimezoneOffset()) {
     endDate.setUTCHours(
       endDate.getUTCHours() +
         (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
     );
+    crossesDaylightSavings = true;
   }
   let start = createJustTimeObject(new Date(startDate));
   const end = createJustTimeObject(new Date(endDate));
@@ -503,6 +526,8 @@ export const getTimeSlotsRemaining = async (req, res) => {
   let timeSlotsPerType = [];
   let sessionStartTime;
   // loops over each time length
+  const now = new Date();
+  start = createJustTimeObject(new Date(startDate));
   timeLengths.forEach((timeLength) => {
     sessionStartTime = new Date(startDate);
     let times = [];
@@ -523,10 +548,24 @@ export const getTimeSlotsRemaining = async (req, res) => {
       // if available, adds to times array
       const justDate = new Date(date);
       justDate.setUTCHours(0);
+      const beforeConstraint = new Date(justDate);
+      beforeConstraint.setUTCHours(sessionStartTime.getUTCHours());
+      beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
+      beforeConstraint.setUTCHours(
+        beforeConstraint.getUTCHours() - course.startRegConstraint
+      );
+      const endConstraint = new Date(justDate);
+      endConstraint.setUTCHours(sessionStartTime.getUTCHours());
+      endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
+      endConstraint.setUTCHours(
+        endConstraint.getUTCHours() - course.endRegConstraint
+      );
       if (
         available &&
         (new Date() < justDate ||
-          createJustTimeObject(new Date()) <= new Date(sessionStartTime))
+          createJustTimeObject(new Date()) <= new Date(sessionStartTime)) &&
+        beforeConstraint < now &&
+        endConstraint >= now
       ) {
         const startTime = new Date(sessionStartTime);
         const endTime = new Date(sessionStartTime);
@@ -539,6 +578,12 @@ export const getTimeSlotsRemaining = async (req, res) => {
       sessionStartTime.setMinutes(sessionStartTime.getMinutes() + length);
     }
     // adds times array and type to the timeSlotsPerType array
+    if (start.getTimezoneOffset() !== offset && !crossesDaylightSavings) {
+      times.forEach((time) => {
+        time.startTime.setUTCMonth(6);
+        time.endTime.setUTCMonth(6);
+      });
+    }
     timeSlotsPerType.push({
       type: timeLength.title,
       duration: timeLength.duration,
@@ -558,6 +603,9 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       officeHourId: officeHourId,
       isCancelled: false,
       isCancelledStaff: false,
+    },
+    select: {
+      account: true,
     },
   });
   const { startDate, endDate, location } = req.body;
@@ -656,6 +704,9 @@ export const editAll = async (req, res) => {
       officeHourId: officeHourId,
       isCancelled: false,
       isCancelledStaff: false,
+    },
+    select: {
+      account: true,
     },
   });
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
@@ -948,7 +999,16 @@ export const cancelRegistration = async (req, res) => {
     hour12: true,
   });
 
+  const donotreply = "--- Do not reply to this email ---";
+
   let emailStr =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    registration.account.firstName +
+    " " +
+    registration.account.lastName +
+    ",\n\n" +
     "Your registration on " +
     dateStr +
     " from " +
@@ -961,20 +1021,32 @@ export const cancelRegistration = async (req, res) => {
     registration.officeHour.hosts[0].lastName +
     " at " +
     registration.officeHour.location +
-    " has been cancelled.";
+    " has been cancelled.\n\n" +
+    +"Thanks,\n" +
+    "The Hourly Team, \n" +
+    "\n\n" +
+    donotreply;
   let subject =
     "[" +
     registration.officeHour.course.courseNumber +
-    "]" +
-    " Registration Cancelled";
+    "] " +
+    registration.officeHour.course.title +
+    ": Registration Cancelled";
   let emailReq = {
     email: userEmail,
     subject: subject,
     text: emailStr,
   };
   sendEmail(emailReq);
-  officeHour.hosts.forEach((acc) => {
+  registration.officeHour.hosts.forEach((acc) => {
     emailStr =
+      donotreply +
+      "\n\n" +
+      "Dear " +
+      registration.account.firstName +
+      " " +
+      registration.account.lastName +
+      ",\n\n" +
       "Your registration on " +
       dateStr +
       " from " +
@@ -991,8 +1063,9 @@ export const cancelRegistration = async (req, res) => {
     subject =
       "[" +
       registration.officeHour.course.courseNumber +
-      "]" +
-      " Registration Cancelled";
+      "] " +
+      registration.officeHour.course.title +
+      ": Registration Cancelled";
     emailReq = {
       email: acc.email,
       subject: subject,

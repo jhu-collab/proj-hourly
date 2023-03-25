@@ -38,6 +38,7 @@ router.post(
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
+  validator.durationIsMultipleof5,
   //timeValidator.isTime,
   //validator.areValidDOW,
   //dateValidator.officeHourDateCheck,
@@ -66,6 +67,7 @@ router.post(
   validator.isUserNotRegistered,
   validator.isRegistrationInFuture,
   courseValidator.areTopicsForCourse,
+  courseValidator.isWithinRegisterConstraint,
   controller.register
 );
 
@@ -116,6 +118,8 @@ router.post(
   validator.isOfficeHourHostParams,
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
+  dateValidator.endIsAfterStart,
+  validator.durationIsMultipleof5,
   controller.rescheduleSingleOfficeHour
 );
 
@@ -143,6 +147,7 @@ router.post(
   validator.isOfficeHourHostParams,
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
+  validator.durationIsMultipleof5,
   controller.editAll
 );
 
@@ -200,6 +205,7 @@ router.post(
   validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   courseValidator.areTopicsForCourse,
+  courseValidator.isWithinRegisterConstraint,
   controller.editRegistration
 );
 

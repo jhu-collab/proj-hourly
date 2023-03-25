@@ -1,5 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
+import { combineTimeAndDate } from "./icalHelpers.js";
+import { stringToTimeObj } from "./officeHourValidator.js";
 
 export const isUniqueCourse = async (req, res, next) => {
   const { title, number, semester, year } = req.body;
@@ -24,7 +26,7 @@ export const isCourseCode = async (req, res, next) => {
   const { code } = req.body;
   const query = await prisma.course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
   });
   if (query === null) {
@@ -327,7 +329,7 @@ export const isNotInCourse = async (req, res, next) => {
   const id = req.id;
   const roster = await prisma.course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
     include: {
       students: true,
@@ -568,5 +570,57 @@ export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
     return res.status(StatusCodes.BAD_REQUEST).json({
       msg: "ERROR: cannot delete the only time offering for the course",
     });
+  }
+};
+
+export const isWithinRegisterConstraint = async (req, res, next) => {
+  const { officeHourId, date, startTime } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+  });
+  const currDate = new Date();
+  const combined = combineTimeAndDate(
+    stringToTimeObj(startTime),
+    new Date(date)
+  );
+  const before = new Date(combined);
+  const end = new Date(combined);
+  before.setUTCHours(before.getUTCHours() - course.startRegConstraint);
+  end.setUTCHours(end.getUTCHours() - course.endRegConstraint);
+  if (currDate >= before && currDate <= end) {
+    next();
+  } else {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: you must register within your courses office hour contraints",
+    });
+  }
+};
+
+export const startAndEndArePositive = (req, res, next) => {
+  const { start, end } = req.body;
+  if (start <= 0 || end < 0) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: start and end must be positive" });
+  } else {
+    next();
+  }
+};
+
+export const startIsGreaterThanEnd = (req, res, next) => {
+  const { start, end } = req.body;
+  if (start >= end) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: start must be greater than end" });
+  } else {
+    next();
   }
 };

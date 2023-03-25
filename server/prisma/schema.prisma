@@ -33,19 +33,21 @@ enum Role {
 }
 
 model Course {
-  id                Int                     @id @default(autoincrement())
-  title             String
-  courseNumber      String
-  semester          String
-  calendarYear      Int
-  code              String                  @unique @db.Char(6)
-  students          Account[]               @relation("isStudent")
-  courseStaff       Account[]               @relation("isStaff")
-  instructors       Account[]               @relation("isInstructor")
-  officeHours       OfficeHour[]
-  officeHourOptions OfficeHourTimeOptions[] @relation("isCourseTimeOption")
-  topics            Topic[]
-  iCalJson          Json?
+  id                 Int                     @id @default(autoincrement())
+  title              String
+  courseNumber       String
+  semester           String
+  calendarYear       Int
+  code               String                  @unique @db.Char(6)
+  students           Account[]               @relation("isStudent")
+  courseStaff        Account[]               @relation("isStaff")
+  instructors        Account[]               @relation("isInstructor")
+  officeHours        OfficeHour[]
+  officeHourOptions  OfficeHourTimeOptions[] @relation("isCourseTimeOption")
+  topics             Topic[]
+  iCalJson           Json?
+  startRegConstraint Int                     @default(48) //in hours
+  endRegConstraint   Int                     @default(2)
 }
 
 model OfficeHourTimeOptions {
@@ -57,21 +59,21 @@ model OfficeHourTimeOptions {
 }
 
 model OfficeHour {
-  id             Int                 @id @default(autoincrement())
+  id            Int                 @id @default(autoincrement())
   //startTime      DateTime            @db.Timetz()
   //endTime        DateTime            @db.Timetz()
-  startDate      DateTime            //@db.Date
-  endDate        DateTime            //@db.Date
+  startDate     DateTime //@db.Date
+  endDate       DateTime //@db.Date
   //timePerStudent Int
-  course         Course              @relation(fields: [courseId], references: [id])
-  courseId       Int
-  location       String
-  isRecurring    Boolean
-  hosts          Account[]           @relation("isHost")
-  isCancelledOn  DateTime[]          @db.Date
-  isOnDayOfWeek  numberToDayOfWeek[] @relation("isOnDayOfWeek")
-  registrations  Registration[]
-  isDeleted      Boolean             @default(false)
+  course        Course              @relation(fields: [courseId], references: [id])
+  courseId      Int
+  location      String
+  isRecurring   Boolean
+  hosts         Account[]           @relation("isHost")
+  isCancelledOn DateTime[]          @db.Date
+  isOnDayOfWeek numberToDayOfWeek[] @relation("isOnDayOfWeek")
+  registrations Registration[]
+  isDeleted     Boolean             @default(false)
 }
 
 model numberToDayOfWeek {

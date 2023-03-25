@@ -1,6 +1,5 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import { STATUS_CODES } from "http";
 import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 
@@ -122,7 +121,10 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       id: officeHourId,
     },
   });
-
+  const start = new Date(officeHour.startDate);
+  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   dateObj.setUTCHours(
     new Date(officeHour.startDate).getUTCHours() -
       dateObj.getTimezoneOffset() / 60
@@ -165,6 +167,9 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
     },
   });
   dateObj.setUTCHours(0);
+  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   dateObj.setUTCHours(
     new Date(officeHour.startDate).getUTCHours() -
       dateObj.getTimezoneOffset() / 60
@@ -648,6 +653,9 @@ export const checkOptionalDateBody = async (req, res, next) => {
         id: officeHourId,
       },
     });
+    if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+      dateObj.setDate(dateObj.getDate() + 1);
+    }
     dateObj.setUTCHours(
       new Date(officeHour.startDate).getUTCHours() -
         dateObj.getTimezoneOffset() / 60
@@ -783,6 +791,23 @@ export const officeHoursHasNotBegunCancelAll = async (req, res, next) => {
         msg: "ERROR: office hours cannot be cancelled after their start date",
       });
     }
+  } else {
+    next();
+  }
+};
+
+export const durationIsMultipleof5 = async (req, res, next) => {
+  const { startDate, endDate } = req.body;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  end.setFullYear(start.getFullYear());
+  end.setMonth(start.getMonth());
+  end.setDate(start.getDate());
+  const duration = Math.floor((end - start) / 60000);
+  if (duration % 5 !== 0) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: office hour duration is not a multiple of 5" });
   } else {
     next();
   }
