@@ -31,7 +31,7 @@ export const isCourseCode = async (req, res, next) => {
   }
   const query = await prisma.course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
   });
   if (query === null) {
@@ -334,7 +334,7 @@ export const isNotInCourse = async (req, res, next) => {
   const id = req.id;
   const roster = await prisma.course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
     include: {
       students: true,

@@ -108,7 +108,7 @@ export const register = async (req, res) => {
   const id = req.id;
   const course = await prisma.Course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
     include: {
       instructors: true,

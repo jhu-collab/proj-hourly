@@ -46,6 +46,7 @@ function Calendar() {
 
   const { isLoading, error, data } = useQueryOfficeHours();
 
+
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
@@ -142,7 +143,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={false}
-              events={data?.calendar || []}
+              events={Array.isArray(data?.calendar) ? data?.calendar: []}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{
