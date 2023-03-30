@@ -32,7 +32,7 @@ router.post(
 
 router.post(
   "/signup",
-  body("code", "Course code is required").notEmpty(),
+  body("code", "Course code is required").notEmpty().isString(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,

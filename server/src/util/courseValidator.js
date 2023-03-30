@@ -24,6 +24,11 @@ export const isUniqueCourse = async (req, res, next) => {
 
 export const isCourseCode = async (req, res, next) => {
   const { code } = req.body;
+  if (code === null || code === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "No course code included!" });
+  }
   const query = await prisma.course.findUnique({
     where: {
       code,
