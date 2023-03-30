@@ -709,6 +709,11 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
   const course = await prisma.course.delete({
     where: {
       id,
