@@ -11,6 +11,7 @@ describe(`Test endpoint ${endpoint}`, () => {
   let courses = [];
   let users = [];
   let userInCourse = [];
+  let topics = [];
   beforeAll(async () => {
     // create the users
     await prisma.account.createMany({
@@ -925,6 +926,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text).topic;
       expect(topic.value).toBe("Exam");
+      topics.push(topic);
     });
     it("Return 409 when duplicate topic is created", async () => {
       const attributes = {
@@ -939,6 +941,164 @@ describe(`Test endpoint ${endpoint}`, () => {
           "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(409);
+    });
+  });
+
+  describe("HTTP POST request - edit topic", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/editTopic`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is not included", async () => {
+      const attributes = {
+        value: "Midterms",
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when value is not included", async () => {
+      const attributes = {
+        courseId: courses[0].id,
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when value is not included", async () => {
+      const attributes = {
+        courseId: courses[0].id,
+        value: "Midterms",
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: -1,
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not an instructor", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: courses[0].id,
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 403 when topic id is invalid", async () => {
+      const attributes = {
+        value: "Midterms",
+        courseId: courses[0].id,
+        topicId: -1,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 409 when duplicate topic", async () => {
+      const topic = await prisma.topic.create({
+        data: {
+          value: "Exams2",
+          course: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      topics.push(topic);
+      const attributes = {
+        value: "Exams2",
+        courseId: courses[0].id,
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(409);
+    });
+    it("Return 202 when course is created", async () => {
+      const attributes = {
+        value: "Midterms",
+        courseId: courses[0].id,
+        topicId: topics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const topic = JSON.parse(response.text);
+      expect(topic.value).toBe("Midterms");
+      topics[0] = topic;
     });
   });
 
