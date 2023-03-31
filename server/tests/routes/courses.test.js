@@ -1102,6 +1102,51 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP Get request - get topics for course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.get(`${endpoint}/${courses[0].id}/topics`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topics`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/topics`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topics`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 200", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topics`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(202);
+      const topics = JSON.parse(response.text);
+      expect(topics.length).toBe(2);
+    });
+  });
+
   // office hour time intervals
   describe("HTTP POST request - create office hour time interval", () => {
     it("Return 401 when no authorization toke is provided", async () => {
