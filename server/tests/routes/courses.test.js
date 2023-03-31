@@ -645,7 +645,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
-  describe("HTTP Get request", () => {
+  describe("HTTP Get request - get office hours for course", () => {
     it("Return 401 when no authorization toke is provided", async () => {
       await prisma.course.update({
         where: {
@@ -700,6 +700,133 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).calendar;
       expect(officeHours.test).toBe("test");
+    });
+  });
+
+  describe("HTTP Get request - get office hours for course filtered", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const user4 = users.find((u) => u.userName === "user4");
+      await prisma.account.update({
+        where: {
+          id: user4.id,
+        },
+        data: {
+          staffCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      await prisma.officeHour.create({
+        data: {
+          startDate: new Date(2023, 0, 1, 12),
+          endDate: new Date(2023, 0, 1, 14),
+          course: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+          location: "zoom",
+          isRecurring: false,
+          isDeleted: false,
+          hosts: {
+            connect: {
+              id: users.find((u) => u.role === Role.Admin).id,
+            },
+          },
+        },
+      });
+      await prisma.officeHour.create({
+        data: {
+          startDate: new Date(2023, 0, 2, 12),
+          endDate: new Date(2023, 0, 2, 14),
+          course: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+          location: "zoom",
+          isRecurring: false,
+          isDeleted: false,
+          hosts: {
+            connect: {
+              id: user4.id,
+            },
+          },
+        },
+      });
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/officeHours/mine`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid filter", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/yours`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when invalid course id", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/officeHours/mine`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 403 when user is student", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user1").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 202", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const officeHours = JSON.parse(response.text).officeHours;
+      expect(officeHours.length).toBe(1);
+    });
+    it("Return 202", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/officeHours/all`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const officeHours = JSON.parse(response.text).officeHours;
+      expect(officeHours.length).toBe(2);
     });
   });
 
@@ -1095,11 +1222,12 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   afterAll(async () => {
+    const deleteOfficeHours = prisma.officeHour.deleteMany();
     const deleteUsers = prisma.account.deleteMany();
     const deleteTopics = prisma.topic.deleteMany();
     const deleteTimeOptions = prisma.officeHourTimeOptions.deleteMany();
     const deleteCourses = prisma.course.deleteMany();
-
+    await prisma.$transaction([deleteOfficeHours]);
     await prisma.$transaction([deleteUsers]);
     await prisma.$transaction([deleteTopics]);
     await prisma.$transaction([deleteTimeOptions]);
