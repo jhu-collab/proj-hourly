@@ -561,12 +561,87 @@ describe(`Test endpoint ${endpoint}`, () => {
           "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(202);
-      const attributes = {
-        title: "OOSE",
-        number: "601.421",
-        semester: "Spring",
-        year: 2023,
-      };
+    });
+  });
+
+  describe("HTTP Delete Request - remove student from course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const user2 = users.find((u) => u.userName === "user2");
+      await prisma.account.update({
+        where: {
+          id: user2.id,
+        },
+        data: {
+          studentCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      const response = await request.delete(
+        `${endpoint}/${courses[0].id}/removeStudent/${user2.id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const user2 = users.find((u) => u.userName === "user2");
+      const response = await request
+        .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const user2 = users.find((u) => u.userName === "user2");
+      const response = await request
+        .delete(`${endpoint}/-1/removeStudent/${user2.id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not instructor", async () => {
+      const user2 = users.find((u) => u.userName === "user2");
+      const response = await request
+        .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 403 when user id is invalid", async () => {
+      const response = await request
+        .delete(`${endpoint}/${courses[0].id}/removeStudent/-1`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 403 when user id is not staff", async () => {
+      const user = users.find((u) => u.userName === "user4");
+      const response = await request
+        .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 202 when staff is deleted", async () => {
+      const user = users.find((u) => u.userName === "user2");
+      const response = await request
+        .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
     });
   });
 
