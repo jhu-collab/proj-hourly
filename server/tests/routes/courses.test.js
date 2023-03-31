@@ -830,6 +830,118 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  //topic routes
+  describe("HTTP POST request - create topic", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/createTopic`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is not included", async () => {
+      const attributes = {
+        value: "Exams",
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when value is not included", async () => {
+      const attributes = {
+        courseId: courses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: -1,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when course id is invalid", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: courses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 202 when course is created", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: courses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const topic = JSON.parse(response.text).topic;
+      expect(topic.value).toBe("Exam");
+    });
+    it("Return 409 when duplicate topic is created", async () => {
+      const attributes = {
+        value: "Exam",
+        courseId: courses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(409);
+    });
+  });
+
   // office hour time intervals
   describe("HTTP POST request - create office hour time interval", () => {
     it("Return 401 when no authorization toke is provided", async () => {

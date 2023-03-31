@@ -64,6 +64,9 @@ export const isCourseIdUrlValid = async (req, res, next) => {
 };
 
 export const isCourseId = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { courseId } = req.body;
   const query = await prisma.course.findUnique({
     where: {
