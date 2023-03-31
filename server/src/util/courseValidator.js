@@ -80,6 +80,9 @@ export const isCourseId = async (req, res, next) => {
 };
 
 export const isCourseIdParams = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {

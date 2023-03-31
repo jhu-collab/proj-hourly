@@ -723,6 +723,9 @@ export const deleteCourse = async (req, res) => {
 };
 
 export const createTimeLength = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const id = parseInt(req.params.courseId, 10);
   const { length, title } = req.body;
   const time = await prisma.OfficeHourTimeOptions.create({
