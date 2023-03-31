@@ -1147,6 +1147,62 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP Delete Request - delete topic", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.delete(
+        `${endpoint}/topic/${topics[0].id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .delete(`${endpoint}/topic/${topics[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid topic id is provided", async () => {
+      const response = await request
+        .delete(`${endpoint}/topic/-1`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not in course", async () => {
+      const response = await request
+        .delete(`${endpoint}/topic/${topics[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 403 when user is not instructor", async () => {
+      const response = await request
+        .delete(`${endpoint}/topic/${topics[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user1").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 202 when course is deleted", async () => {
+      let response = await request
+        .delete(`${endpoint}/topic/${topics[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const topic = JSON.parse(response.text);
+      expect(topic.value).toBe("Midterms");
+    });
+  });
+
   // office hour time intervals
   describe("HTTP POST request - create office hour time interval", () => {
     it("Return 401 when no authorization toke is provided", async () => {

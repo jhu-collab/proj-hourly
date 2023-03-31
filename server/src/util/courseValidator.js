@@ -561,7 +561,7 @@ export const isAccountInstructorForTopic = async (req, res, next) => {
           },
         },
       });
-      if (query === null) {
+      if (query.instructors.length === 0) {
         return res
           .status(StatusCodes.FORBIDDEN)
           .json({ msg: "Account is not an instructor in the course" });
