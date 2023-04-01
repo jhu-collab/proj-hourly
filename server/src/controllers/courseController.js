@@ -108,7 +108,7 @@ export const register = async (req, res) => {
   const id = req.id;
   const course = await prisma.Course.findUnique({
     where: {
-      code,
+      code: code.toUpperCase(),
     },
     include: {
       instructors: true,
@@ -705,6 +705,11 @@ export const deleteCourse = async (req, res) => {
     },
   });
   await prisma.officeHour.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  await prisma.officeHourTimeOptions.deleteMany({
     where: {
       courseId: id,
     },

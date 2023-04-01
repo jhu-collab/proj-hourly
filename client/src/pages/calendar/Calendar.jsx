@@ -54,6 +54,7 @@ function Calendar() {
 
   const { isLoading, error, data } = useQueryOfficeHours();
 
+
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
