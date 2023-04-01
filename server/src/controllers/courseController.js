@@ -250,6 +250,10 @@ export const getRegistrationStudentCounts = async (req, res) => {
       id: "desc",
     },
   });
+  accounts.forEach((acc) => {
+    delete acc["hashedPassword"];
+    delete acc["token"];
+  });
   let count = 0;
   const countsAndAccount = accounts.map((account, index) => {
     if (
