@@ -133,7 +133,7 @@ function Calendar() {
                   : { start: "title", end: "prev,next" }
               }
               initialView="timeGridWeek"
-              height="88%"
+              height="100%"
               eventClick={handleEventClick}
               eventBackgroundColor={eventColorPalette[0].bottomColor}
               eventContent={eventContent}
@@ -159,9 +159,7 @@ function Calendar() {
               nowIndicatorContent={nowIndicatorContent}
               {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
             />
-            
           </StyleWrapper>
-        
           
         </Box>
       </Stack>
