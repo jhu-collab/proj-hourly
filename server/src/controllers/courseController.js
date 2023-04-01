@@ -965,6 +965,18 @@ export const getRoleInCourseParams = async (req, res) => {
   if (role === "Student") {
     delete course["code"];
   }
+  course.instructors.forEach((instructor) => {
+    delete instructor["hashedPassword"];
+    delete instructor["token"];
+  });
+  course.courseStaff.forEach((staff) => {
+    delete staff["hashedPassword"];
+    delete staff["token"];
+  });
+  course.students.forEach((student) => {
+    delete student["hashedPassword"];
+    delete student["token"];
+  });
   return res.status(StatusCodes.ACCEPTED).json({
     role,
     course,

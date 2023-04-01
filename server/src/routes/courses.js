@@ -266,6 +266,7 @@ router.get(
   "/:courseId/:id/getRole",
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountValidParams,
+  validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   validator.isCourseStaffOrInstructor,
   controller.getRoleInCourseParams
