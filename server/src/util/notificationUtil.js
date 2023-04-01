@@ -1,3 +1,4 @@
+import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
 
@@ -59,17 +60,17 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
   });
 };
 
+//TODO: make sure to find a way to not depend on the prereq
+//PREREQ: registration must include account, which can be achieved by select: {account: true} when fetching registrations
 export const sendEmailForEachRegistrationWhenChanged = (
   registrations,
   editedOfficeHour
 ) => {
-  registrations.forEach(async (registration) => {
-    const account = await prisma.Account.findFirst({
-      where: {
-        id: registration.accountId,
-      },
-    });
-
+  const accounts = [];
+  registrations.forEach((registration) => {
+    accounts.push(registration.account);
+  });
+  accounts.forEach(async (account) => {
     const text = `The office hours starting on ${new Date(
       editedOfficeHour.startDate
     ).toLocaleString()} to ${new Date(

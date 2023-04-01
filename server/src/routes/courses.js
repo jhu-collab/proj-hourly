@@ -32,20 +32,11 @@ router.post(
 
 router.post(
   "/signup",
-  body("code", "Course code is required").notEmpty(),
+  body("code", "Course code is required").notEmpty().isString(),
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,
   controller.register
-);
-
-router.post(
-  "/addInstructor/:courseId/:id",
-  accountValidator.isAccountValidHeader,
-  accountValidator.isAccountValidParams,
-  accountValidator.accountIsNotInstructor,
-  validator.isCourseIdUrlValid,
-  controller.addInstructor
 );
 
 router.get("/", accountController.getCourses);
