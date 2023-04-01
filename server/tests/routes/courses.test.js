@@ -1203,6 +1203,80 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP Get request - get role for course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.get(`${endpoint}/${courses[0].id}/role`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/role`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/role`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/role`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 200 - student", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/role`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(202);
+      expect(JSON.parse(response.text).role).toBe("Student");
+    });
+    it("Return 200 - instructor", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/role`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      expect(JSON.parse(response.text).role).toBe("Instructor");
+    });
+    it("Return 200 - course staff", async () => {
+      const user4 = users.find((u) => u.userName === "user4");
+      await prisma.account.update({
+        where: {
+          id: user4.id,
+        },
+        data: {
+          staffCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/role`)
+        .set("Authorization", "bearer " + user4.token);
+      expect(response.status).toBe(202);
+      expect(JSON.parse(response.text).role).toBe("Staff");
+    });
+  });
+
   // office hour time intervals
   describe("HTTP POST request - create office hour time interval", () => {
     it("Return 401 when no authorization toke is provided", async () => {
