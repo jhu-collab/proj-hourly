@@ -1803,6 +1803,148 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP POST request - edit registration constraints", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(
+        `${endpoint}/${courses[0].id}/registrationConstraints`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when start is not included", async () => {
+      const attributes = {
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when end is not included", async () => {
+      const attributes = {
+        start: 72,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const attributes = {
+        start: 72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/-1/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when it is not an instructor", async () => {
+      const attributes = {
+        start: 72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 400 when start is negative", async () => {
+      const attributes = {
+        start: -72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when end is negative", async () => {
+      const attributes = {
+        start: 72,
+        end: -1,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when end is greater than start", async () => {
+      const attributes = {
+        start: 1,
+        end: 72,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course is created", async () => {
+      const attributes = {
+        start: 72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const course = JSON.parse(response.text).course;
+      expect(course.startRegConstraint).toBe(72);
+      expect(course.endRegConstraint).toBe(0);
+    });
+  });
+
   afterAll(async () => {
     const deleteOfficeHours = prisma.officeHour.deleteMany();
     const deleteUsers = prisma.account.deleteMany();

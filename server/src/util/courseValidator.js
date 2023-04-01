@@ -631,7 +631,7 @@ export const startAndEndArePositive = (req, res, next) => {
 
 export const startIsGreaterThanEnd = (req, res, next) => {
   const { start, end } = req.body;
-  if (start >= end) {
+  if (start <= end) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: start must be greater than end" });
