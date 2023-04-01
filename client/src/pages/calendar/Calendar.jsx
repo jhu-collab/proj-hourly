@@ -133,7 +133,7 @@ function Calendar() {
                   : { start: "title", end: "prev,next" }
               }
               initialView="timeGridWeek"
-              height="90%"
+              height="88%"
               eventClick={handleEventClick}
               eventBackgroundColor={eventColorPalette[0].bottomColor}
               eventContent={eventContent}
