@@ -136,7 +136,6 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
         
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
@@ -152,7 +151,7 @@ function Calendar() {
               ]}
               customButtons={{
                 mobileCalMenu: {
-                  text: "menu",
+                  text: "view options",
                   click: function () {
                     setMobileCalMenu(!mobileCalMenu);
                   },
@@ -192,13 +191,17 @@ function Calendar() {
               allDaySlot={false}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
-              {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
+              {...(!matchUpSm && { headerToolbar: { 
+                start: "mobileCalMenu",
+                center: "prev title next",
+                end: ""} })}
             />
           </StyleWrapper>
           
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
+      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
       {isLoading && <Loader />}
     </>
   );

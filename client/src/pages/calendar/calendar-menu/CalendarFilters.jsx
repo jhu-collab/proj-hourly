@@ -25,7 +25,7 @@ function CalendarFilters(props) {
         <Typography variant="subtile1" fontWeight={600} color="text.secondary">
           filter
         </Typography>
-      <FormControl fullWidth>
+      <FormControl fullWidth size = "large">
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
