@@ -167,7 +167,10 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
     },
   });
   dateObj.setUTCHours(0);
-  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+  if (
+    new Date(officeHour.start).getUTCHours() <
+    dateObj.getTimezoneOffset() / 60
+  ) {
     dateObj.setDate(dateObj.getDate() + 1);
   }
   dateObj.setUTCHours(
