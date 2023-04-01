@@ -2010,6 +2010,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(400);
     });
+    it("Return 400 when student id is invalid", async () => {
+      const attributes = {
+        studentId: -1,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
     it("Return 403 when it is not an instructor", async () => {
       const attributes = {
         studentId: users[0].id,
@@ -2070,6 +2084,134 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Instructor");
+      expect(account.oldRole).toBe("Staff");
+    });
+  });
+
+  describe("HTTP POST request - demote route", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(
+        `${endpoint}/${courses[0].id}/demote`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when role is not included", async () => {
+      const attributes = {
+        studentId: users[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when studentId is not included", async () => {
+      const attributes = {
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/-1/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when student id is invalid", async () => {
+      const attributes = {
+        studentId: -1,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when it is not an instructor", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 400 when role is not valid", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "stuff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when staff is demoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const account = JSON.parse(response.text);
+      expect(account.newRole).toBe("Student");
       expect(account.oldRole).toBe("Staff");
     });
   });
