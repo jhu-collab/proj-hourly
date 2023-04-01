@@ -1945,12 +1945,143 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP POST request - promote route", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/${courses[0].id}`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when role is not included", async () => {
+      const attributes = {
+        studentId: users[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when studentId is not included", async () => {
+      const attributes = {
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/-1`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when it is not an instructor", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 400 when role is not valid", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "stuff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when student is promoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const account = JSON.parse(response.text);
+      expect(account.newRole).toBe("Staff");
+      expect(account.oldRole).toBe("Student");
+    });
+    it("Return 202 when student is promoted", async () => {
+      const attributes = {
+        studentId: users[3].id,
+        role: "Instructor",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const account = JSON.parse(response.text);
+      expect(account.newRole).toBe("Instructor");
+      expect(account.oldRole).toBe("Staff");
+    });
+  });
+
   afterAll(async () => {
+    const deleteRegistrations = prisma.registration.deleteMany();
     const deleteOfficeHours = prisma.officeHour.deleteMany();
     const deleteUsers = prisma.account.deleteMany();
     const deleteTopics = prisma.topic.deleteMany();
     const deleteTimeOptions = prisma.officeHourTimeOptions.deleteMany();
     const deleteCourses = prisma.course.deleteMany();
+    await prisma.$transaction([deleteRegistrations]);
     await prisma.$transaction([deleteOfficeHours]);
     await prisma.$transaction([deleteUsers]);
     await prisma.$transaction([deleteTopics]);

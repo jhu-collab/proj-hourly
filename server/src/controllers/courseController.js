@@ -861,6 +861,8 @@ export const promote = async (req, res) => {
       },
     });
   }
+  delete account["token"];
+  delete account["hashedPassword"];
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
@@ -890,6 +892,8 @@ export const demote = async (req, res) => {
       },
     });
   }
+  delete account["token"];
+  delete account["hashedPassword"];
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
