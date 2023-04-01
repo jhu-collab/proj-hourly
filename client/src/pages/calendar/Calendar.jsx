@@ -117,12 +117,16 @@ function Calendar() {
   }
   
   const chosenData = (data) => {
-    if (filtered === "all") {
-      return data.calendar;
-    } else if (filtered === "mine") {
-      return filter(data);
-    } else {
+    if (!data || !data.calendar || data.calendar.length === 0) {
       return [];
+    } else {
+      if (filtered === "all") {
+        return data.calendar;
+      } else if (filtered === "mine") {
+        return filter(data);
+      } else {
+        return [];
+      }
     }
   }
 
