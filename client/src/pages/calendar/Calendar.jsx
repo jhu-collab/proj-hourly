@@ -60,6 +60,7 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
+    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -91,6 +92,7 @@ function Calendar() {
   };
 
   const handleEventDrop = (info) => {
+    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
