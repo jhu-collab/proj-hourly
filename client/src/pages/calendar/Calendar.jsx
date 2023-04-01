@@ -136,6 +136,7 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
+        {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
         
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
           <StyleWrapper>
@@ -198,7 +199,6 @@ function Calendar() {
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
       {isLoading && <Loader />}
     </>
   );

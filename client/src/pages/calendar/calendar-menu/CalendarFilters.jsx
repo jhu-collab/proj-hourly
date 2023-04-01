@@ -21,7 +21,7 @@ function CalendarFilters(props) {
 
 
   return (
-    <Stack direction="column" spacing={.25}>
+    <Stack direction="column" spacing={1.25}>
         <Typography variant="subtile1" fontWeight={600} color="text.secondary">
           filter
         </Typography>

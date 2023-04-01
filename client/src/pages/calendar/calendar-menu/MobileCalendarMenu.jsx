@@ -32,7 +32,7 @@ function MobileCalendarMenu({ calendarRef, isStaff, setFiltered}) {
 
   return (
     <SwipeableDrawer
-      anchor="bottom"
+      anchor="top"
       open={open}
       onClose={toggleDrawer(false)}
       onOpen={toggleDrawer(true)}
