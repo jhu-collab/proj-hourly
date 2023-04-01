@@ -2216,6 +2216,114 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe("HTTP Get request - get roster for course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      await prisma.topic.create({
+        data: {
+          value: "Homework",
+          course: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/topicCounts`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topicCounts`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+        );
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/topicCounts`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.User).token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when user is not an instructor", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topicCounts`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user1").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 200 - no registrations", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topicCounts`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const { counts } = JSON.parse(response.text);
+      counts.forEach((count) => {
+        expect(count._count.registrations).toBe(0);
+      });
+    });
+    it("Return 200 - one registration", async () => {
+      const officeHours = await prisma.officeHour.findMany({
+        where: {
+          courseId: courses[0].id,
+        },
+      });
+      const topics = await prisma.topic.findMany({
+        where: {
+          courseId: courses[0].id,
+        },
+      });
+      await prisma.registration.create({
+        data: {
+          startTime: new Date(1970, 0, 1, 17),
+          endTime: new Date(1970, 0, 1, 17, 10),
+          date: new Date(2023, 0, 1),
+          officeHour: {
+            connect: {
+              id: officeHours[0].id,
+            },
+          },
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: topics[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/topicCounts`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.role === Role.Admin).token
+        );
+      expect(response.status).toBe(202);
+      const { counts } = JSON.parse(response.text);
+      counts.forEach((count) => {
+        if (count.value === topics[0].value) {
+          expect(count._count.registrations).toBe(1);
+        } else {
+          expect(count._count.registrations).toBe(0);
+        }
+      });
+    });
+  });
+
   afterAll(async () => {
     const deleteRegistrations = prisma.registration.deleteMany();
     const deleteOfficeHours = prisma.officeHour.deleteMany();
