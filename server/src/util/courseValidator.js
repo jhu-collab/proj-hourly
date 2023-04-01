@@ -2,8 +2,12 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { combineTimeAndDate } from "./icalHelpers.js";
 import { stringToTimeObj } from "./officeHourValidator.js";
+import validate from "../util/checkValidation.js";
 
 export const isUniqueCourse = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
   const { title, number, semester, year } = req.body;
   const query = await prisma.course.findFirst({
     where: {
@@ -24,6 +28,11 @@ export const isUniqueCourse = async (req, res, next) => {
 
 export const isCourseCode = async (req, res, next) => {
   const { code } = req.body;
+  if (code === null || code === undefined) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "No course code included!" });
+  }
   const query = await prisma.course.findUnique({
     where: {
       code: code.toUpperCase(),
@@ -200,9 +209,9 @@ export const isInCourseFromHeader = async (req, res, next) => {
     },
   });
   if (
-    studentQuery === null &&
-    staffQuery === null &&
-    instructorQuery === null
+    studentQuery.students.length === 0 &&
+    staffQuery.courseStaff.length === 0 &&
+    instructorQuery.instructors.length === 0
   ) {
     return res
       .status(StatusCodes.FORBIDDEN)
