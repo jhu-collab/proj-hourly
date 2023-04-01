@@ -39,9 +39,8 @@ router.post(
   controller.register
 );
 
-router.get("/", accountController.getCourses);
+router.get("/", accountController.getCourses); //done
 
-// account id will be stored in header until we get a token
 router.delete(
   "/leave/:courseId",
   validator.isCourseIdUrlValid,
@@ -159,6 +158,7 @@ router.get(
   "/:courseId/getRoster",
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
   controller.getRoster
 );
 
@@ -181,8 +181,8 @@ router.delete(
 router.post(
   "/:courseId/officeHourTimeInterval",
   param("courseId", "Must provide a courseId").notEmpty(),
-  body("length", "Body must include time length").isInt({ min: 10 }),
-  body("title", "Body must have a title").isString(),
+  body("length", "Body must include time length").notEmpty().isInt({ min: 10 }),
+  body("title", "Body must have a title").notEmpty().isString(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isLengthMultipleOf5,
