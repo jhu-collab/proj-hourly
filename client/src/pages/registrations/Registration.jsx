@@ -120,6 +120,12 @@ function Registration({ registration, type }) {
               Type: <strong>{registration.type}</strong>
             </Typography>
           </Stack>
+          {registration.question !== "" && (
+            <>
+              <Typography fontWeight={600}>Additional Notes:</Typography>
+              <Typography marginBottom={4}>{registration.question}</Typography>
+            </>
+          )}
           {type === 0 && (isHost || courseType === "Student") && (
             <>
               <Button
