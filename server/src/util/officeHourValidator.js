@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { decodeToken } from "./token.js";
 import { body } from "express-validator";
+import { handleUTCDateChange } from "./helpers.js";
 
 export const weekday = [
   "Sunday",
@@ -115,20 +116,12 @@ export const noConflictsWithHosts = async (req, res, next) => {
 
 export const isOfficeHourOnDay = async (req, res, next) => {
   const { officeHourId, date } = req.body;
-  const dateObj = new Date(date);
   let officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  const start = new Date(officeHour.startDate);
-  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
-    dateObj.setDate(dateObj.getDate() + 1);
-  }
-  dateObj.setUTCHours(
-    new Date(officeHour.startDate).getUTCHours() -
-      dateObj.getTimezoneOffset() / 60
-  );
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -160,23 +153,12 @@ export const isOfficeHourOnDay = async (req, res, next) => {
 export const isOfficeHourOnDayParam = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = req.params.date;
-  const dateObj = new Date(date);
   let officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  dateObj.setUTCHours(0);
-  if (
-    new Date(officeHour.start).getUTCHours() <
-    dateObj.getTimezoneOffset() / 60
-  ) {
-    dateObj.setDate(dateObj.getDate() + 1);
-  }
-  dateObj.setUTCHours(
-    new Date(officeHour.startDate).getUTCHours() -
-      dateObj.getTimezoneOffset() / 60
-  );
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -709,15 +691,10 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
     },
   });
   const startTimeObj = new Date(registration.startTime);
-  const dateObj = new Date(registration.date);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (
-    registration.officeHour.startDate.getUTCHours() >=
-    registration.officeHour.endDate.getUTCHours()
-  ) {
-    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
-  }
+  const dateObj = handleUTCDateChange(
+    new Date(registration.date),
+    registration.officeHour
+  );
   if (dateObj > new Date()) {
     next();
   } else {
@@ -735,12 +712,7 @@ export const isRegistrationInFuture = async (req, res, next) => {
     },
   });
   const startTimeObj = stringToTimeObj(startTime);
-  const dateObj = new Date(date);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (officeHour.startDate.getUTCHours() >= officeHour.endDate.getUTCHours()) {
-    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
-  }
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   if (dateObj > new Date()) {
     next();
   } else {
@@ -766,9 +738,7 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
       });
     }
   } else {
-    const dateObj = new Date(date);
-    dateObj.setUTCHours(officeHour.startDate.getUTCHours());
-    dateObj.setUTCMinutes(officeHour.startDate.getUTCMinutes());
+    const dateObj = handleUTCDateChange(new Date(date), officeHour);
     if (dateObj <= new Date()) {
       return res.status(StatusCodes.FORBIDDEN).json({
         msg: "ERROR: office hours cannot be cancelled after their start date",
