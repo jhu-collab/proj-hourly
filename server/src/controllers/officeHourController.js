@@ -173,17 +173,25 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
+  const origDate = new Date(date);
   const dateObj = new Date(date);
-  // if (
-  //   officeHour.startTime > officeHour.endTime &&
-  //   startTime < officeHour.startTime
-  // ) {
-  //   dateObj.setDate(dateObj.getDate() + 1);
-  // }
+  const dateObj2 = new Date(date);
+  dateObj.setUTCHours(0);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
+  }
+  dateObj.setUTCHours(
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      dateObj.getTimezoneOffset() / 60
+  );
+  dateObj.setUTCHours(origDate.getUTCHours());
+  dateObj.setUTCMinutes(origDate.getUTCMinutes());
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  //dateObj.setUTCHours(startTimeObj.getUTCHours());
+  //dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
@@ -462,6 +470,17 @@ export const getTimeSlotsRemaining = async (req, res) => {
       id: officeHourId,
     },
   });
+  const dateObj2 = new Date(date);
+  date.setUTCHours(0);
+  date.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (date.getUTCDate() != dateObj2.getUTCDate()) {
+    date.setUTCDate(dateObj2.getUTCDate());
+  }
+  date.setUTCHours(
+    date.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      date.getTimezoneOffset() / 60
+  );
   //gets the office hour session lengths for the course
   const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
     where: {
@@ -851,7 +870,23 @@ export const getRegistrationStatus = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const date = new Date(req.params.date);
+  const dateObj2 = new Date(date);
+  date.setUTCHours(0);
+  date.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (date.getUTCDate() != dateObj2.getUTCDate()) {
+    date.setUTCDate(dateObj2.getUTCDate());
+  }
+  date.setUTCHours(
+    date.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      date.getTimezoneOffset() / 60
+  );
   const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
@@ -940,6 +975,17 @@ export const getAllRegistrationsOnDate = async (req, res) => {
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = new Date(req.params.date);
+  const dateObj2 = new Date(date);
+  date.setUTCHours(0);
+  date.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (date.getUTCDate() != dateObj2.getUTCDate()) {
+    date.setUTCDate(dateObj2.getUTCDate());
+  }
+  date.setUTCHours(
+    date.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      date.getTimezoneOffset() / 60
+  );
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -1090,8 +1136,16 @@ export const editRegistration = async (req, res) => {
           id: true,
         },
       },
+      officeHour: true,
     },
   });
+  if (
+    registrationTopics.officeHour.startTime >
+      registrationTopics.officeHour.endTime &&
+    startTime < registrationTopics.officeHour.startTime
+  ) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   let topicArr = registrationTopics.topics;
   /*
   might do:

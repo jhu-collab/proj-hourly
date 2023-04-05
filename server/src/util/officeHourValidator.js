@@ -121,12 +121,15 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const start = new Date(officeHour.startDate);
-  if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
-    dateObj.setDate(dateObj.getDate() + 1);
+  const dateObj2 = new Date(date);
+  dateObj.setUTCHours(0);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
   }
   dateObj.setUTCHours(
-    new Date(officeHour.startDate).getUTCHours() -
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
       dateObj.getTimezoneOffset() / 60
   );
   const dow = weekday[dateObj.getUTCDay()];
@@ -166,15 +169,15 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
       id: officeHourId,
     },
   });
+  const dateObj2 = new Date(date);
   dateObj.setUTCHours(0);
-  if (
-    new Date(officeHour.start).getUTCHours() <
-    dateObj.getTimezoneOffset() / 60
-  ) {
-    dateObj.setDate(dateObj.getDate() + 1);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
   }
   dateObj.setUTCHours(
-    new Date(officeHour.startDate).getUTCHours() -
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
       dateObj.getTimezoneOffset() / 60
   );
   const dow = weekday[dateObj.getUTCDay()];
@@ -710,14 +713,17 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   const startTimeObj = new Date(registration.startTime);
   const dateObj = new Date(registration.date);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (
-    registration.officeHour.startDate.getUTCHours() >=
-    registration.officeHour.endDate.getUTCHours()
-  ) {
-    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  const dateObj2 = new Date(registration.date);
+  dateObj.setUTCHours(0);
+  dateObj.setHours(new Date(registration.officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
   }
+  dateObj.setUTCHours(
+    dateObj.getUTCHours() +
+      new Date(registration.officeHour.startDate).getTimezoneOffset() / 60 -
+      dateObj.getTimezoneOffset() / 60
+  );
   if (dateObj > new Date()) {
     next();
   } else {
@@ -736,11 +742,17 @@ export const isRegistrationInFuture = async (req, res, next) => {
   });
   const startTimeObj = stringToTimeObj(startTime);
   const dateObj = new Date(date);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (officeHour.startDate.getUTCHours() >= officeHour.endDate.getUTCHours()) {
-    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  const dateObj2 = new Date(date);
+  dateObj.setUTCHours(0);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
   }
+  dateObj.setUTCHours(
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      dateObj.getTimezoneOffset() / 60
+  );
   if (dateObj > new Date()) {
     next();
   } else {
@@ -767,8 +779,17 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
     }
   } else {
     const dateObj = new Date(date);
-    dateObj.setUTCHours(officeHour.startDate.getUTCHours());
-    dateObj.setUTCMinutes(officeHour.startDate.getUTCMinutes());
+    const dateObj2 = new Date(date);
+    dateObj.setUTCHours(0);
+    dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+    if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+      dateObj.setUTCDate(dateObj2.getUTCDate());
+    }
+    dateObj.setUTCHours(
+      dateObj.getUTCHours() +
+        new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+        dateObj.getTimezoneOffset() / 60
+    );
     if (dateObj <= new Date()) {
       return res.status(StatusCodes.FORBIDDEN).json({
         msg: "ERROR: office hours cannot be cancelled after their start date",
