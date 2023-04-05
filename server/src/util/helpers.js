@@ -72,7 +72,7 @@ export const computeDiff = (start, end) => {
 };
 
 export const handleUTCDateChange = (dateObj, officeHour) => {
-  const dateObj2 = new Date(date);
+  const dateObj2 = new Date(dateObj);
   dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
   if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
     dateObj.setUTCDate(dateObj2.getUTCDate());
