@@ -176,7 +176,6 @@ export const register = async (req, res) => {
   const origDate = new Date(date);
   const dateObj = new Date(date);
   const dateObj2 = new Date(date);
-  dateObj.setUTCHours(0);
   dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
   if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
     dateObj.setUTCDate(dateObj2.getUTCDate());
@@ -194,6 +193,18 @@ export const register = async (req, res) => {
   //dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
+  if (dateObj.getUTCDate() != origDate.getUTCDate()) {
+    dateObj.setUTCDate(origDate.getUTCDate());
+  }
+  if (
+    (endTimeObj.getUTCHours() +
+      (new Date(officeHour.startDate).getTimezoneOffset() -
+        endTimeObj.getTimezoneOffset())) %
+      24 <
+    new Date(officeHour.startDate).getUTCHours()
+  ) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
   }
   const registration = await prisma.registration.create({
     data: {
