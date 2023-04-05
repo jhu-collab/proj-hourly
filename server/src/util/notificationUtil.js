@@ -28,14 +28,14 @@ export const sendEmail = async (req) => {
   };
 
   // send mail with defined transport object
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return "stop";
-    }
+  // transporter.sendMail(mailOptions, function (error, info) {
+  //   if (error) {
+  //     console.log(error);
+  //     return "stop";
+  //   }
 
-    console.log("Message sent: " + info.response);
-  });
+  //   console.log("Message sent: " + info.response);
+  // });
 };
 
 export default sendEmail;
