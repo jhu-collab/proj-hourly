@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { decodeToken } from "./token.js";
 import { body } from "express-validator";
+import { handleUTCDateChange } from "./helpers.js";
 
 export const weekday = [
   "Sunday",
@@ -115,23 +116,12 @@ export const noConflictsWithHosts = async (req, res, next) => {
 
 export const isOfficeHourOnDay = async (req, res, next) => {
   const { officeHourId, date } = req.body;
-  const dateObj = new Date(date);
   let officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  const dateObj2 = new Date(date);
-  dateObj.setUTCHours(0);
-  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-    dateObj.setUTCDate(dateObj2.getUTCDate());
-  }
-  dateObj.setUTCHours(
-    dateObj.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      dateObj.getTimezoneOffset() / 60
-  );
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -163,23 +153,12 @@ export const isOfficeHourOnDay = async (req, res, next) => {
 export const isOfficeHourOnDayParam = async (req, res, next) => {
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const date = req.params.date;
-  const dateObj = new Date(date);
   let officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  const dateObj2 = new Date(date);
-  dateObj.setUTCHours(0);
-  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-    dateObj.setUTCDate(dateObj2.getUTCDate());
-  }
-  dateObj.setUTCHours(
-    dateObj.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      dateObj.getTimezoneOffset() / 60
-  );
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -712,17 +691,9 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
     },
   });
   const startTimeObj = new Date(registration.startTime);
-  const dateObj = new Date(registration.date);
-  const dateObj2 = new Date(registration.date);
-  dateObj.setUTCHours(0);
-  dateObj.setHours(new Date(registration.officeHour.startDate).getHours() % 24);
-  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-    dateObj.setUTCDate(dateObj2.getUTCDate());
-  }
-  dateObj.setUTCHours(
-    dateObj.getUTCHours() +
-      new Date(registration.officeHour.startDate).getTimezoneOffset() / 60 -
-      dateObj.getTimezoneOffset() / 60
+  const dateObj = handleUTCDateChange(
+    new Date(registration.date),
+    registration.officeHour
   );
   if (dateObj > new Date()) {
     next();
@@ -741,18 +712,7 @@ export const isRegistrationInFuture = async (req, res, next) => {
     },
   });
   const startTimeObj = stringToTimeObj(startTime);
-  const dateObj = new Date(date);
-  const dateObj2 = new Date(date);
-  dateObj.setUTCHours(0);
-  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-    dateObj.setUTCDate(dateObj2.getUTCDate());
-  }
-  dateObj.setUTCHours(
-    dateObj.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      dateObj.getTimezoneOffset() / 60
-  );
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   if (dateObj > new Date()) {
     next();
   } else {
@@ -778,18 +738,7 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
       });
     }
   } else {
-    const dateObj = new Date(date);
-    const dateObj2 = new Date(date);
-    dateObj.setUTCHours(0);
-    dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
-    if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-      dateObj.setUTCDate(dateObj2.getUTCDate());
-    }
-    dateObj.setUTCHours(
-      dateObj.getUTCHours() +
-        new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-        dateObj.getTimezoneOffset() / 60
-    );
+    const dateObj = handleUTCDateChange(new Date(date), officeHour);
     if (dateObj <= new Date()) {
       return res.status(StatusCodes.FORBIDDEN).json({
         msg: "ERROR: office hours cannot be cancelled after their start date",

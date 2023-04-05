@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
-import { computeDiff } from "../util/helpers.js";
+import { computeDiff, handleUTCDateChange } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 import {
   sendEmailForEachRegistrationWhenCancelled,
@@ -173,20 +173,10 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
-  const origDate = new Date(date);
-  const dateObj = new Date(date);
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
   const dateObj2 = new Date(date);
-  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
-    dateObj.setUTCDate(dateObj2.getUTCDate());
-  }
-  dateObj.setUTCHours(
-    dateObj.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      dateObj.getTimezoneOffset() / 60
-  );
-  dateObj.setUTCHours(origDate.getUTCHours());
-  dateObj.setUTCMinutes(origDate.getUTCMinutes());
+  dateObj.setUTCHours(dateObj2.getUTCHours());
+  dateObj.setUTCMinutes(dateObj2.getUTCMinutes());
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
   //dateObj.setUTCHours(startTimeObj.getUTCHours());
@@ -194,8 +184,8 @@ export const register = async (req, res) => {
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
-  if (dateObj.getUTCDate() != origDate.getUTCDate()) {
-    dateObj.setUTCDate(origDate.getUTCDate());
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
   }
   if (
     (endTimeObj.getUTCHours() +
@@ -472,7 +462,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const date = new Date(req.params.date);
+  let date = new Date(req.params.date);
   const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
@@ -481,17 +471,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       id: officeHourId,
     },
   });
-  const dateObj2 = new Date(date);
-  date.setUTCHours(0);
-  date.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (date.getUTCDate() != dateObj2.getUTCDate()) {
-    date.setUTCDate(dateObj2.getUTCDate());
-  }
-  date.setUTCHours(
-    date.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      date.getTimezoneOffset() / 60
-  );
+  date = handleUTCDateChange(date, officeHour);
   //gets the office hour session lengths for the course
   const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
     where: {
@@ -888,18 +868,8 @@ export const getRegistrationStatus = async (req, res) => {
       id: officeHourId,
     },
   });
-  const date = new Date(req.params.date);
-  const dateObj2 = new Date(date);
-  date.setUTCHours(0);
-  date.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (date.getUTCDate() != dateObj2.getUTCDate()) {
-    date.setUTCDate(dateObj2.getUTCDate());
-  }
-  date.setUTCHours(
-    date.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      date.getTimezoneOffset() / 60
-  );
+  let date = new Date(req.params.date);
+  date = handleUTCDateChange(date, officeHour);
   const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
@@ -987,18 +957,12 @@ export const getAllRegistrationsOnDate = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const date = new Date(req.params.date);
-  const dateObj2 = new Date(date);
-  date.setUTCHours(0);
-  date.setHours(new Date(officeHour.startDate).getHours() % 24);
-  if (date.getUTCDate() != dateObj2.getUTCDate()) {
-    date.setUTCDate(dateObj2.getUTCDate());
-  }
-  date.setUTCHours(
-    date.getUTCHours() +
-      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
-      date.getTimezoneOffset() / 60
-  );
+  const officehour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const date = handleUTCDateChange(new Date(req.params.date), officehour);
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,

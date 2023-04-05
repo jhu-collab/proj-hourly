@@ -70,3 +70,17 @@ export const computeDiff = (start, end) => {
       1000
   );
 };
+
+export const handleUTCDateChange = (dateObj, officeHour) => {
+  const dateObj2 = new Date(date);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
+  }
+  dateObj.setUTCHours(
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      dateObj.getTimezoneOffset() / 60
+  );
+  return dateObj;
+};
