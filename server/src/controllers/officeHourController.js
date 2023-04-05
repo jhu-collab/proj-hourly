@@ -566,7 +566,6 @@ export const getTimeSlotsRemaining = async (req, res) => {
       }
       // if available, adds to times array
       const justDate = new Date(date);
-      justDate.setUTCHours(0);
       const beforeConstraint = new Date(justDate);
       beforeConstraint.setUTCHours(sessionStartTime.getUTCHours());
       beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
@@ -574,6 +573,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
         beforeConstraint.getUTCHours() - course.startRegConstraint
       );
       const endConstraint = new Date(justDate);
+      endConstraint.setUTCDate(
+        endConstraint.getUTCDate() + sessionStartTime.getUTCDate() - 1
+      );
       endConstraint.setUTCHours(sessionStartTime.getUTCHours());
       endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       endConstraint.setUTCHours(
@@ -594,7 +596,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
           endTime,
         });
       }
-      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + length);
+      sessionStartTime.setUTCMinutes(sessionStartTime.getUTCMinutes() + length);
     }
     // adds times array and type to the timeSlotsPerType array
     if (start.getTimezoneOffset() !== offset && !crossesDaylightSavings) {
