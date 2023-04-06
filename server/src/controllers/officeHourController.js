@@ -947,9 +947,21 @@ export const getOfficeHourById = async (req, res) => {
     include: {
       hosts: true,
       isOnDayOfWeek: true,
-      isCancelledOn: true,
       course: {
-        id: true,
+        select: {
+          id: true,
+        },
+      },
+      hosts: {
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          preferredName: true,
+          role: true,
+        },
       },
     },
   });
