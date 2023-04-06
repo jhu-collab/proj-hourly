@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { stringToTimeObj } from "../util/officeHourValidator.js";
 import checkValidation from "../util/checkValidation.js";
 import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
-import { computeDiff } from "../util/helpers.js";
+import { computeDiff, handleUTCDateChange } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 import {
   sendEmailForEachRegistrationWhenCancelled,
@@ -173,19 +173,32 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
-  const dateObj = new Date(date);
-  // if (
-  //   officeHour.startTime > officeHour.endTime &&
-  //   startTime < officeHour.startTime
-  // ) {
-  //   dateObj.setDate(dateObj.getDate() + 1);
-  // }
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj2 = new Date(date);
+  dateObj.setUTCHours(dateObj2.getUTCHours());
+  dateObj.setUTCMinutes(dateObj2.getUTCMinutes());
   const startTimeObj = stringToTimeObj(startTime);
   const endTimeObj = stringToTimeObj(endTime);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  //dateObj.setUTCHours(startTimeObj.getUTCHours());
+  //dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+  }
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
+  }
+  if (
+    (endTimeObj.getUTCHours() +
+      (new Date(officeHour.startDate).getTimezoneOffset() -
+        endTimeObj.getTimezoneOffset())) %
+      24 <
+    new Date(officeHour.startDate).getUTCHours()
+  ) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  if (dateObj.getUTCHours() <= dateObj.getTimezoneOffset() / 60) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
   }
   const registration = await prisma.registration.create({
     data: {
@@ -453,7 +466,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const date = new Date(req.params.date);
+  let date = new Date(req.params.date);
   const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
@@ -462,6 +475,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       id: officeHourId,
     },
   });
+  date = handleUTCDateChange(date, officeHour);
   //gets the office hour session lengths for the course
   const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
     where: {
@@ -547,7 +561,6 @@ export const getTimeSlotsRemaining = async (req, res) => {
       }
       // if available, adds to times array
       const justDate = new Date(date);
-      justDate.setUTCHours(0);
       const beforeConstraint = new Date(justDate);
       beforeConstraint.setUTCHours(sessionStartTime.getUTCHours());
       beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
@@ -555,6 +568,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
         beforeConstraint.getUTCHours() - course.startRegConstraint
       );
       const endConstraint = new Date(justDate);
+      endConstraint.setUTCDate(
+        endConstraint.getUTCDate() + sessionStartTime.getUTCDate() - 1
+      );
       endConstraint.setUTCHours(sessionStartTime.getUTCHours());
       endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       endConstraint.setUTCHours(
@@ -575,7 +591,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
           endTime,
         });
       }
-      sessionStartTime.setMinutes(sessionStartTime.getMinutes() + length);
+      sessionStartTime.setUTCMinutes(sessionStartTime.getUTCMinutes() + length);
     }
     // adds times array and type to the timeSlotsPerType array
     if (start.getTimezoneOffset() !== offset && !crossesDaylightSavings) {
@@ -851,7 +867,13 @@ export const getRegistrationStatus = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const date = new Date(req.params.date);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  let date = new Date(req.params.date);
+  date = handleUTCDateChange(date, officeHour);
   const id = req.id;
   const status = await prisma.registration.findFirst({
     where: {
@@ -939,7 +961,12 @@ export const getAllRegistrationsOnDate = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const date = new Date(req.params.date);
+  const officehour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const date = handleUTCDateChange(new Date(req.params.date), officehour);
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -1090,8 +1117,16 @@ export const editRegistration = async (req, res) => {
           id: true,
         },
       },
+      officeHour: true,
     },
   });
+  if (
+    registrationTopics.officeHour.startTime >
+      registrationTopics.officeHour.endTime &&
+    startTime < registrationTopics.officeHour.startTime
+  ) {
+    dateObj.setDate(dateObj.getDate() + 1);
+  }
   let topicArr = registrationTopics.topics;
   /*
   might do:

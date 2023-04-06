@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { combineTimeAndDate } from "./icalHelpers.js";
 import { stringToTimeObj } from "./officeHourValidator.js";
+import { handleUTCDateChange } from "./helpers.js";
 import validate from "../util/checkValidation.js";
 
 export const isUniqueCourse = async (req, res, next) => {
@@ -595,12 +596,10 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
     },
   });
   const currDate = new Date();
-  const combined = combineTimeAndDate(
-    stringToTimeObj(startTime),
-    new Date(date)
-  );
-  const before = new Date(combined);
-  const end = new Date(combined);
+  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  dateObj.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
+  const before = new Date(dateObj);
+  const end = new Date(dateObj);
   before.setUTCHours(before.getUTCHours() - course.startRegConstraint);
   end.setUTCHours(end.getUTCHours() - course.endRegConstraint);
   if (currDate >= before && currDate <= end) {
