@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 import { handleUTCDateChange } from "./helpers.js";
+import { equalDates } from "./icalHelpers.js";
 
 export const weekday = [
   "Sunday",
@@ -115,13 +116,25 @@ export const noConflictsWithHosts = async (req, res, next) => {
 };
 
 export const isOfficeHourOnDay = async (req, res, next) => {
-  const { officeHourId, date } = req.body;
+  const { officeHourId } = req.body;
   let officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
     },
   });
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj = new Date(req.targetDate);
+  dateObj.setUTCHours(dateObj.getUTCHours() - dateObj.getTimezoneOffset() / 60);
+  if (
+    new Date(officeHour.startDate).getTimezoneOffset() !=
+    dateObj.getTimezoneOffset()
+  ) {
+    dateObj.setUTCHours(
+      dateObj.getUTCHours() -
+        (new Date(officeHour.startDate).getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+  }
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -158,7 +171,19 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj = new Date(req.targetDate);
+  dateObj.setUTCHours(dateObj.getUTCHours() - dateObj.getTimezoneOffset() / 60);
+  if (
+    new Date(officeHour.startDate).getTimezoneOffset() !=
+    dateObj.getTimezoneOffset()
+  ) {
+    dateObj.setUTCHours(
+      dateObj.getUTCHours() -
+        (new Date(officeHour.startDate).getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+  }
   const dow = weekday[dateObj.getUTCDay()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
@@ -441,7 +466,7 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
 };
 
 export const isDateInFuture = async (req, res, next) => {
-  const date = new Date(req.body.date);
+  const date = req.targetDate;
   const curr = new Date();
   curr.setUTCHours(0);
   curr.setUTCMinutes(0);
@@ -783,5 +808,100 @@ export const durationIsMultipleof5 = async (req, res, next) => {
       .json({ msg: "ERROR: office hour duration is not a multiple of 5" });
   } else {
     next();
+  }
+};
+
+export const getDatesForOfficeHour = async (req, res, next) => {
+  let { date, officeHourId, startTime } = req.body;
+  if (officeHourId === undefined) {
+    officeHourId = parseInt(req.params.officeHourId);
+  }
+  if (date === undefined) {
+    date = req.params.date;
+  }
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      course: true,
+      hosts: true,
+      isOnDayOfWeek: true,
+    },
+  });
+  const dateObj = new Date(date);
+  if (officeHour.isRecurring) {
+    const indexes = [];
+    officeHour.isOnDayOfWeek.forEach((dow) => {
+      indexes.push(weekday.indexOf(dow.dayOfWeek));
+    });
+    indexes.sort();
+    const entries = [];
+    let i = indexes.indexOf(officeHour.startDate.getDay());
+    let start = new Date(
+      new Date(officeHour.startDate).toLocaleString("en-US", {
+        timezone: "America/New_York",
+      })
+    );
+    const end = new Date(
+      new Date(officeHour.endDate).toLocaleString("en-US", {
+        timezone: "America/New_York",
+      })
+    );
+    let targetDate;
+    while (start < end) {
+      let notCancelled = true;
+      for (const date of officeHour.isCancelledOn) {
+        if (equalDates(date, start)) {
+          notCancelled = false;
+          break;
+        }
+      }
+      if (notCancelled) {
+        const currEnd = new Date(start);
+        currEnd.setUTCHours(end.getUTCHours());
+        currEnd.setUTCMinutes(end.getUTCMinutes());
+        currEnd.setUTCSeconds(end.getUTCSeconds());
+        if (end.getTimezoneOffset() !== start.getTimezoneOffset()) {
+          currEnd.setUTCHours(
+            currEnd.getUTCHours() +
+              (-end.getTimezoneOffset() + start.getTimezoneOffset()) / 60 //handles daylight savings
+          );
+        }
+        if (currEnd < start) {
+          currEnd.setUTCDate(currEnd.getUTCDate() + 1);
+        }
+        if (equalDates(start, dateObj)) {
+          targetDate = new Date(start);
+          break;
+        }
+      }
+      let diff =
+        indexes[(i + 1) % indexes.length] - indexes[i % indexes.length];
+      if (diff === 0) {
+        diff = 7;
+      } else if (diff < 0) {
+        diff += 7;
+      }
+      start.setDate(start.getDate() + diff);
+      i = (i + 1) % indexes.length;
+    }
+    if (targetDate !== null && targetDate !== undefined) {
+      req.targetDate = targetDate;
+      next();
+    } else {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "EROR: not availablem date!" });
+    }
+  } else {
+    if (equalDates(new Date(officeHour.startDate), dateObj)) {
+      req.targetDate = new Date(officeHour.startDate);
+      next();
+    } else {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "EROR: not availablem date!" });
+    }
   }
 };

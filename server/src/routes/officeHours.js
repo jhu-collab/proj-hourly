@@ -59,6 +59,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
+  validator.getDatesForOfficeHour,
   validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
@@ -79,6 +80,7 @@ router.post(
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHost,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegun,
   controller.cancelOnDate
@@ -103,6 +105,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   controller.getTimeSlotsRemaining
 );
@@ -165,6 +168,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   controller.getRegistrationStatus
 );
@@ -183,6 +187,7 @@ router.get(
   accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   controller.getAllRegistrationsOnDate
 );
@@ -198,6 +203,7 @@ router.post(
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
   accountValidator.isAccountValidHeader,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.doesRegistrationExistParams,
   validator.isStudentRegistered,

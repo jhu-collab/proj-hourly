@@ -648,6 +648,12 @@ export const getAllRegistrations = async (req, res) => {
         registration.type = option.title;
       }
     });
+    if (endTime.getTimezoneOffset !== registration.date.getTimezoneOffset()) {
+      registration.endTime.setUTCHours(endTime.getUTCHours() + 1);
+      registration.startTime.setUTCHours(
+        registration.startTime.getUTCHours() + 1
+      );
+    }
   });
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
