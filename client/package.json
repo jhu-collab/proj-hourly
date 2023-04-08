@@ -47,12 +47,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "prettier": "prettier --write \"src/**/*.{jsx,js}\" --config \".prettierrc\""
+    "prettier": "prettier --write \"src/**/*.{jsx,js}\" --config \".prettierrc\"",
+    "cypress:open": "cypress open"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
+    "cypress": "^12.9.0",
     "prettier": "2.7.1",
     "vite": "^2.9.9",
     "vite-plugin-pwa": "^0.12.3"
