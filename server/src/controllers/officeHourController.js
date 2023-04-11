@@ -11,6 +11,16 @@ import {
   sendEmail,
 } from "../util/notificationUtil.js";
 
+const combineStringTimeAndDate = (timeStr, date) => {
+  const timeArray = timeStr.split(":");
+  const time = new Date(date);
+  time.setUTCHours(timeArray[0]);
+  time.setUTCMinutes(timeArray[1]);
+  time.setUTCSeconds(timeArray[2]);
+  time.setUTCMilliseconds(0);
+  return time;
+};
+
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
   daysOfWeek.forEach(async (dayOfWeek) => {
@@ -174,23 +184,27 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
-  const startTimeObj = stringToTimeObj(startTime);
-  const endTimeObj = stringToTimeObj(endTime);
+  const startTimeObj = combineStringTimeAndDate(startTime, targetDate);
+  const endTimeObj = combineStringTimeAndDate(endTime, targetDate);
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
-  // if (endTimeObj.getTimezoneOffset != targetDate.getTimezoneOffset()) {
-  //   endTimeObj.setUTCHours(
-  //     endTimeObj.getUTCHours() +
-  //       endTimeObj.getTimezoneOffset() / 60 -
-  //       targetDate.getTimezoneOffset() / 60
-  //   );
-  //   startTimeObj.setUTCHours(
-  //     startTimeObj.getUTCHours() +
-  //       endTimeObj.getTimezoneOffset() / 60 -
-  //       targetDate.getTimezoneOffset() / 60
-  //   );
-  // }
+  if (
+    officeHour.startDate.getTimezoneOffset() != targetDate.getTimezoneOffset()
+  ) {
+    startTimeObj.setUTCHours(
+      startTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          targetDate.getTimezoneOffset()) /
+          60
+    );
+    endTimeObj.setUTCHours(
+      endTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          targetDate.getTimezoneOffset()) /
+          60
+    );
+  }
   const registration = await prisma.registration.create({
     data: {
       startTime: startTimeObj,
