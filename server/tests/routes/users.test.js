@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import { test, expect, beforeAll, describe, afterAll } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { createToken } from "../../src/util/helpers.js";
@@ -6,7 +7,7 @@ import { createToken } from "../../src/util/helpers.js";
 const request = supertest(app);
 const endpoint = "/api/users";
 
-describe(`Test endpoint ${endpoint}`, () => {
+test(`Test endpoint ${endpoint}`, () => {
   let users = [];
 
   beforeAll(async () => {
@@ -478,7 +479,7 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   afterAll(async () => {
-    const deleteUsers = prisma.user.deleteMany();
+    const deleteUsers = await prisma.user.deleteMany();
 
     await prisma.$transaction([deleteUsers]);
 

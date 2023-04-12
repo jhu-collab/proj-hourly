@@ -15,7 +15,8 @@
     "start": "node .",
     "dev": "yarn prisma:dev && nodemon .",
     "prettier": "prettier --write \"{prisma,src,tests}/**/*.js\" --config \".prettierrc\"",
-    "test": "yarn prisma:test && cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
+    "test": "yarn prisma:test && cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "vitest": "vitest"
   },
   "dependencies": {
     "@prisma/client": "^4.10.1",
