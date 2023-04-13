@@ -4,6 +4,7 @@ import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 import { handleUTCDateChange } from "./helpers.js";
 import { equalDates } from "./icalHelpers.js";
+import spacetime from "spacetime";
 
 export const weekday = [
   "Sunday",
@@ -122,20 +123,9 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       id: officeHourId,
     },
   });
-  const dateObj = new Date(req.targetDate);
-  dateObj.setUTCHours(dateObj.getUTCHours() - dateObj.getTimezoneOffset() / 60);
-  if (
-    new Date(officeHour.startDate).getTimezoneOffset() !=
-    dateObj.getTimezoneOffset()
-  ) {
-    dateObj.setUTCHours(
-      dateObj.getUTCHours() -
-        (new Date(officeHour.startDate).getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-  }
-  const dow = weekday[dateObj.getUTCDay()];
+  const dateObj = spacetime(req.targetDate);
+  dateObj.goto("America/New_York");
+  const dow = weekday[dateObj.day()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -294,9 +284,9 @@ export const isTimeAvailable = async (req, res, next) => {
   });
   let valid = true;
   registrations.forEach((registration) => {
-    if (registration.startTimeObj == startTimeObj) {
+    if (registration.startTime == startTimeObj) {
       valid = false;
-    } else if (registration.endTimeObj == endTimeObj) {
+    } else if (registration.endTime == endTimeObj) {
       valid = false;
     } else if (
       registration.startTime < startTimeObj &&
@@ -315,7 +305,7 @@ export const isTimeAvailable = async (req, res, next) => {
       valid = false;
     } else if (
       startTimeObj < registration.startTime &&
-      endTimeObj > registration.startTimeObj
+      endTimeObj > registration.startTime
     ) {
       valid = false;
     }
@@ -466,13 +456,13 @@ export const doesOfficeHourExistParams = async (req, res, next) => {
 };
 
 export const isDateInFuture = async (req, res, next) => {
-  const date = req.targetDate;
-  const curr = new Date();
-  curr.setUTCHours(0);
-  curr.setUTCMinutes(0);
-  curr.setUTCSeconds(0);
-  curr.setUTCMilliseconds(0);
-  if (curr > date) {
+  const date = spacetime(req.targetDate);
+  const curr = spacetime.now();
+  curr.hour(0);
+  curr.minute(0);
+  curr.second(0);
+  curr.millisecond(0);
+  if (curr.isAfter(date)) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "Date has already passed" });
@@ -829,7 +819,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       isOnDayOfWeek: true,
     },
   });
-  const dateObj = new Date(date);
+  const dateObj = spacetime(date);
   if (officeHour.isRecurring) {
     const indexes = [];
     officeHour.isOnDayOfWeek.forEach((dow) => {
@@ -838,41 +828,35 @@ export const getDatesForOfficeHour = async (req, res, next) => {
     indexes.sort();
     const entries = [];
     let i = indexes.indexOf(officeHour.startDate.getDay());
-    let start = new Date(
-      new Date(officeHour.startDate).toLocaleString("en-US", {
-        timezone: "America/New_York",
-      })
-    );
-    const end = new Date(
-      new Date(officeHour.endDate).toLocaleString("en-US", {
-        timezone: "America/New_York",
-      })
-    );
+    let start = spacetime(officeHour.startDate).goto("America/New_York");
+    const end = spacetime(officeHour.endDate).goto("America/New_York");
     let targetDate;
     while (start < end) {
       let notCancelled = true;
       for (const date of officeHour.isCancelledOn) {
-        if (equalDates(date, start)) {
+        if (equalDates(date, start.toNativeDate())) {
           notCancelled = false;
           break;
         }
       }
       if (notCancelled) {
-        const currEnd = new Date(start);
-        currEnd.setUTCHours(end.getUTCHours());
-        currEnd.setUTCMinutes(end.getUTCMinutes());
-        currEnd.setUTCSeconds(end.getUTCSeconds());
-        if (end.getTimezoneOffset() !== start.getTimezoneOffset()) {
-          currEnd.setUTCHours(
-            currEnd.getUTCHours() +
-              (-end.getTimezoneOffset() + start.getTimezoneOffset()) / 60 //handles daylight savings
+        const currEnd = start.clone();
+        currEnd.hour(end.hour());
+        currEnd.minute(end.minute());
+        currEnd.second(end.second());
+        if (end.timezone().current.offset !== start.timezone().current.offset) {
+          currEnd.hour(
+            currEnd.hour() +
+              (-end.timezone().current.offset +
+                start.timezone().current.offset) /
+                60 //handles daylight savings
           );
         }
         if (currEnd < start) {
-          currEnd.setUTCDate(currEnd.getUTCDate() + 1);
+          currEnd.date(currEnd.date() + 1);
         }
-        if (equalDates(start, dateObj)) {
-          targetDate = new Date(start);
+        if (equalDates(start.toNativeDate(), dateObj.toNativeDate())) {
+          targetDate = start.clone();
           break;
         }
       }
@@ -883,11 +867,11 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       } else if (diff < 0) {
         diff += 7;
       }
-      start.setDate(start.getDate() + diff);
+      start.date(start.date() + diff);
       i = (i + 1) % indexes.length;
     }
     if (targetDate !== null && targetDate !== undefined) {
-      req.targetDate = targetDate;
+      req.targetDate = targetDate.toNativeDate();
       next();
     } else {
       return res
@@ -895,8 +879,8 @@ export const getDatesForOfficeHour = async (req, res, next) => {
         .json({ msg: "EROR: not availablem date!" });
     }
   } else {
-    if (equalDates(new Date(officeHour.startDate), dateObj)) {
-      req.targetDate = new Date(officeHour.startDate);
+    if (equalDates(new Date(officeHour.startDate), dateObj.toNativeDate())) {
+      req.targetDate = spacetime(officeHour.startDate).toNativeDate();
       next();
     } else {
       return res

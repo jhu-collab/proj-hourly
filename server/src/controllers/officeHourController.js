@@ -10,6 +10,7 @@ import {
   sendEmailForEachRegistrationWhenChanged,
   sendEmail,
 } from "../util/notificationUtil.js";
+import spacetime from "spacetime";
 
 const combineStringTimeAndDate = (timeStr, date) => {
   const timeArray = timeStr.split(":");
@@ -107,17 +108,17 @@ export const create = async (req, res) => {
     hosts,
     daysOfWeek,
   } = req.body;
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const start = spacetime(startDate);
+  const end = spacetime(endDate);
   const numOfWeek = daysOfWeek.map((dow) => weekday.indexOf(dow));
   if (recurringEvent) {
-    while (!numOfWeek.includes(start.getDay())) {
-      start.setUTCDate(start.getUTCDate() + 1);
+    while (!numOfWeek.includes(start.day())) {
+      start.date(start.date() + 1);
     }
   }
   const officeHour = await createOfficeHour(
-    start,
-    end,
+    start.toNativeDate(),
+    end.toNativeDate(),
     courseId,
     location,
     recurringEvent,
@@ -167,7 +168,8 @@ export const register = async (req, res) => {
   }
   const { officeHourId, startTime, endTime, date, question, TopicIds } =
     req.body;
-  const targetDate = req.targetDate;
+  console.log(startTime, endTime, date, req.targetDate);
+  const targetDate = spacetime(req.targetDate);
   const id = req.id;
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -184,32 +186,35 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
-  const startTimeObj = combineStringTimeAndDate(startTime, targetDate);
-  const endTimeObj = combineStringTimeAndDate(endTime, targetDate);
+  const startTimeObj = spacetime(
+    combineStringTimeAndDate(startTime, targetDate)
+  );
+  const endTimeObj = spacetime(combineStringTimeAndDate(endTime, targetDate));
   if (endTimeObj < startTimeObj) {
-    endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
+    endTimeObj.date(endTimeObj.date() + 1);
   }
   if (
-    officeHour.startDate.getTimezoneOffset() != targetDate.getTimezoneOffset()
+    officeHour.startDate.getTimezoneOffset() !=
+    targetDate.timezone().current.offset()
   ) {
-    startTimeObj.setUTCHours(
-      startTimeObj.getUTCHours() -
+    startTimeObj.hour(
+      startTimeObj.hour() -
         (officeHour.startDate.getTimezoneOffset() -
-          targetDate.getTimezoneOffset()) /
+          targetDate.timezone().current.offset) /
           60
     );
-    endTimeObj.setUTCHours(
-      endTimeObj.getUTCHours() -
+    endTimeObj.hour(
+      endTimeObj.hour() -
         (officeHour.startDate.getTimezoneOffset() -
-          targetDate.getTimezoneOffset()) /
+          targetDate.timezone().current.offset) /
           60
     );
   }
   const registration = await prisma.registration.create({
     data: {
-      startTime: startTimeObj,
-      endTime: endTimeObj,
-      date: targetDate,
+      startTime: startTimeObj.toNativeDate(),
+      endTime: endTimeObj.toNativeDate(),
+      date: targetDate.toNativeDate(),
       isCancelled: false,
       officeHourId,
       accountId: id,
@@ -244,20 +249,20 @@ export const register = async (req, res) => {
   const hostFullName =
     officeHour.hosts[0].firstName + " " + officeHour.hosts[0].lastName;
   const today = new Date();
-  const emailStartTime = startTimeObj.toLocaleString("en-US", {
+  const emailStartTime = startTimeObj.toNativeDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
   });
-  const emailEndTime = endTimeObj.toLocaleString("en-US", {
+  const emailEndTime = endTimeObj.toNativeDate().toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
   });
-  targetDate.setUTCMinutes(
-    targetDate.getUTCMinutes() - targetDate.getTimezoneOffset()
-  );
-  const dateStr = targetDate.toLocaleDateString("en-US", options);
+  targetDate.minute(targetDate.minute() - targetDate.timezone().current.offset);
+  const dateStr = targetDate
+    .toNativeDate()
+    .toLocaleDateString("en-US", options);
 
   const donotreply = "--- Do not reply to this email ---";
   let subject =
