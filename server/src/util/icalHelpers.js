@@ -214,7 +214,9 @@ export const generateSingleEventJson = (officeHour) => {
 };
 
 export const generateCalendar = async (courseId) => {
+  debug("generateCalendar called!");
   const events = [];
+  debug("getting office hours...");
   const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
@@ -244,6 +246,7 @@ export const generateCalendar = async (courseId) => {
       events.push(generateSingleEventJson(officeHour));
     }
   });
+  debug("updating course...");
   await prisma.course.update({
     where: {
       id: courseId,
@@ -252,6 +255,7 @@ export const generateCalendar = async (courseId) => {
       iCalJson: events,
     },
   });
+  debug("generateCalendar done!");
   return events;
 };
 
