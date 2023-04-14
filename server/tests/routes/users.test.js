@@ -12,7 +12,7 @@ test(`Test endpoint ${endpoint}`, () => {
 
   beforeAll(async () => {
     // create the users
-    await prisma.user.createMany({
+    await prisma.account.createMany({
       data: [
         {
           name: "Test User I",
@@ -38,7 +38,7 @@ test(`Test endpoint ${endpoint}`, () => {
       skipDuplicates: true,
     });
 
-    users = await prisma.user.findMany({
+    users = await prisma.account.findMany({
       orderBy: {
         id: "asc",
       },
@@ -479,7 +479,7 @@ test(`Test endpoint ${endpoint}`, () => {
   });
 
   afterAll(async () => {
-    const deleteUsers = await prisma.user.deleteMany();
+    const deleteUsers = prisma.account.deleteMany();
 
     await prisma.$transaction([deleteUsers]);
 
