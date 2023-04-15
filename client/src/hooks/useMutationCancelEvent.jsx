@@ -50,10 +50,12 @@ function useMutationCancelEvent(deleteType) {
   const mutation = useMutation(
     recurring && deleteType === "this" ? cancelOnDate : cancelAll,
     {
-      onSuccess: (data) => {
+      onSuccess: (data, event) => {
         const officeHour = data.officeHourUpdate;
 
-        const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
+        let date = event.date;
+        date = date.replaceAll("-", "/");
+        //const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
         const startTime = DateTime.fromISO(officeHour.startDate).toLocaleString(
           DateTime.TIME_SIMPLE
         );

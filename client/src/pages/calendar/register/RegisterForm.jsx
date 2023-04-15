@@ -90,6 +90,8 @@ function RegisterForm() {
   const end = useStoreEvent((state) => state.end);
   const id = useStoreEvent((state) => state.id);
 
+  console.log(start);
+
   const date = start.toDateString();
   const startTime = DateTime.fromJSDate(start).toLocaleString(
     DateTime.TIME_SIMPLE
