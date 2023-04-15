@@ -205,7 +205,6 @@ export const register = async (req, res) => {
           60
     );
   }
-  console.log(startTimeObj);
   const registration = await prisma.registration.create({
     data: {
       startTime: startTimeObj,
