@@ -13,9 +13,11 @@ let instructors = [];
 let prefilledCourse = null;
 
 beforeAll(async () => {
-  const deleteUsers = prisma.account.deleteMany();
+  const deleteAccounts = prisma.account.deleteMany();
+  const deleteOfficeHours = prisma.officeHour.deleteMany();
+  const deleteCourses = prisma.course.deleteMany();
 
-  await prisma.$transaction([deleteUsers]);
+  await prisma.$transaction([deleteAccounts, deleteCourses, deleteOfficeHours]);
 
   await prisma.account.createMany({
     data: [
@@ -80,26 +82,26 @@ beforeAll(async () => {
 
   students = await prisma.account.findMany({ where: { userName: { contains: "Student" } } });
   students = students
-    .map((student) => ({
-      ...student,
-      token: createToken({ student }),
-      expiredToken: createToken({ student, expiresIn: "0" }),
+    .map((user) => ({
+      ...user,
+      token: createToken({ user }),
+      expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
-  staff = await prisma.account.findMany({ where: { name: { contains: "Staff" } } });
+  staff = await prisma.account.findMany({ where: { userName: { contains: "Staff" } } });
   staff = staff
-    .map((_staff) => ({
-      ..._staff,
-      token: createToken({ _staff }),
-      expiredToken: createToken({ _staff, expiresIn: "0" }),
+    .map((user) => ({
+      ...user,
+      token: createToken({ user }),
+      expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
-  instructors = await prisma.account.findMany({ where: { name: { contains: "Instructor" } } });
+  instructors = await prisma.account.findMany({ where: { userName: { contains: "Instructor" } } });
   instructors = instructors
-    .map((instructor) => ({
-      ...instructor,
-      token: createToken({ instructor }),
-      expiredToken: createToken({ instructor, expiresIn: "0" }),
+    .map((user) => ({
+      ...user,
+      token: createToken({ user }),
+      expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
   const now = new Date(Date.now());
@@ -107,36 +109,22 @@ beforeAll(async () => {
   await prisma.course.createMany({
     data: [
       {
-        id: 100,
         title: "Test Course I",
         courseNumber: "1.1.1.1",
         semester: "Fall",
         calendarYear: 2023,
         code: "abcdef",
-        students: students,
-        courseStaff: staff,
-        instructors: instructors,
-        officeHours: [],
-        officeHourOptions: [],
-        topics: [],
-        iCalJson: null,
+        iCalJson: undefined,
         startRegConstraint: 48,
         endRegConstraint: 2
       },
       {
-        id: 101,
         title: "Test Course II",
         courseNumber: "2.2.2.2",
         semester: "Fall",
         calendarYear: 2023,
         code: "ghijkl",
-        students: students,
-        courseStaff: staff,
-        instructors: instructors,
-        officeHours: [],
-        officeHourOptions: [],
-        topics: [],
-        iCalJson: null,
+        iCalJson: undefined,
         startRegConstraint: 48,
         endRegConstraint: 2
       }
@@ -148,21 +136,15 @@ beforeAll(async () => {
   await prisma.officeHour.createMany({
     data: [
       {
-        id: 100,
         startDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 12), // today at 12PM or 12:00
         endDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 13), // today at 1PM or 13:00
-        course: prefilledCourse,
         courseId: prefilledCourse.id, // 101
         location: "zoom",
         isRecurring: false,
         hosts: staff,
-        isCancelledOn: [],
-        isOnDayOfweek: [],
-        registrations: [],
         isDeleted: false
       },
       {
-        id: 101,
         startDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 9), // today at 9AM or 09:00
         endDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 11), // today at 11AM or 11:00
         course: prefilledCourse,
@@ -170,9 +152,6 @@ beforeAll(async () => {
         location: "zoom",
         isRecurring: false,
         hosts: staff,
-        isCancelledOn: [],
-        isOnDayOfweek: [],
-        registrations: [],
         isDeleted: false
       }, 
     ]
@@ -218,9 +197,11 @@ test (`Test endpoint ${endpoint}`, () => {
   })
 
   afterAll(async() => {
-    const deleteUsers = prisma.account.deleteMany();
+    const deleteAccounts = prisma.account.deleteMany();
+    const deleteCourses = prisma.course.deleteMany();
+    const deleteOfficeHours = prisma.officeHour.deleteMany()
 
-    await prisma.$transaction([deleteUsers]);
+    await prisma.$transaction([deleteAccounts, deleteCourses, deleteOfficeHours]);
 
     await prisma.$disconnect();
     // Tear down the test database by `yarn docker:down`
