@@ -4,7 +4,9 @@ import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
 import { Role } from "@prisma/client";
 import { generateCalendar } from "../util/icalHelpers.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 export const create = async (req, res) => {
   debug("creating account...");
