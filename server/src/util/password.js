@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 export const hashPassword = (password) => {
   debug("hashPassword called!");
   try {

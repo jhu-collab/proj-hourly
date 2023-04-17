@@ -1,7 +1,9 @@
 import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 export const sendEmail = async (req) => {
   debug("sendEmail called");
   // Create the transporter with the required configuration for Outlook

@@ -4,7 +4,9 @@ import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
 import { createTimeString } from "./helpers.js";
 import { weekday } from "./officeHourValidator.js";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 /**
  * Javascript Date object will often be one day off if you provide
  * it with the format of yyyy-mm-dd. However, if you pass in

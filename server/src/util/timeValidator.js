@@ -1,5 +1,7 @@
 import { StatusCodes } from "http-status-codes";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 export const isTime = async (req, res, next) => {
   debug("isTime called!");
   const { startTime, endTime } = req.body;

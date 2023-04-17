@@ -1,5 +1,7 @@
 import { StatusCodes } from "http-status-codes";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 export const officeHourDateCheck = (req, res, next) => {
   debug("officeHourDateCheck called!");
   const { recurringEvent, startDate, endDate } = req.body;
