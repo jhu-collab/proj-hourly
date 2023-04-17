@@ -4,7 +4,9 @@ import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 import { handleUTCDateChange } from "./helpers.js";
 import { equalDates } from "./icalHelpers.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 export const weekday = [
   "Sunday",

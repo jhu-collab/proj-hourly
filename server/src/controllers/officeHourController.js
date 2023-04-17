@@ -10,7 +10,9 @@ import {
   sendEmailForEachRegistrationWhenChanged,
   sendEmail,
 } from "../util/notificationUtil.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 const combineStringTimeAndDate = (timeStr, date) => {
   const timeArray = timeStr.split(":");

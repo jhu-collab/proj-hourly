@@ -7,7 +7,9 @@ import * as timeValidator from "../util/timeValidator.js";
 import * as controller from "../controllers/officeHourController.js";
 import * as dateValidator from "../util/dateValidator.js";
 import { checkToken } from "../util/middleware.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+ const debug = factory(import.meta.url);
 
 const router = express.Router();
 const body = express_validator.body;
