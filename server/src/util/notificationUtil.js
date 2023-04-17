@@ -1,10 +1,14 @@
 import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 export const sendEmail = async (req) => {
+  debug("sendEmail called");
   // Create the transporter with the required configuration for Outlook
   // change the user and pass !
+  debug("creating transport...");
   var transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST, // hostname
     secureConnection: false, // TLS requires secureConnection to be false
@@ -28,6 +32,7 @@ export const sendEmail = async (req) => {
   };
 
   // send mail with defined transport object
+  debug("sending mail...");
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
@@ -36,11 +41,13 @@ export const sendEmail = async (req) => {
 
     console.log("Message sent: " + info.response);
   });
+  debug("sendEmail done!");
 };
 
 export default sendEmail;
 
 export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
+  debug("sendEmailForEachRegistrationWhenCancelled called!");
   registrations.forEach(async (registration) => {
     const account = await prisma.Account.findFirst({
       where: {
@@ -58,6 +65,7 @@ export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
     };
     await sendEmail(cancellationNotification(account.email));
   });
+  debug("sendEmailForEachRegistrationWhenCancelled done!");
 };
 
 //TODO: make sure to find a way to not depend on the prereq
@@ -66,6 +74,7 @@ export const sendEmailForEachRegistrationWhenChanged = (
   registrations,
   editedOfficeHour
 ) => {
+  debug("sendEmailForEachRegistrationWhenChanged called!");
   const accounts = [];
   registrations.forEach((registration) => {
     accounts.push(registration.account);
@@ -92,4 +101,5 @@ export const sendEmailForEachRegistrationWhenChanged = (
     };
     await sendEmail(changeNotification(account.email));
   });
+  debug("sendEmailForEachRegistrationWhenChanged done!");
 };
