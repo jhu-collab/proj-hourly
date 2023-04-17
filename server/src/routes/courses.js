@@ -6,7 +6,9 @@ import * as accountValidator from "../util/accountValidator.js";
 import * as officeHourController from "../controllers/officeHourController.js";
 import * as accountController from "../controllers/accountController.js";
 import { checkToken } from "../util/middleware.js";
+import { factory } from "../util/debug.js";
 
+const debug = factory(import.meta.url);
 const router = express.Router();
 const body = express_validator.body;
 const param = express_validator.param;

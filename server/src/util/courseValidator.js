@@ -4,7 +4,9 @@ import { combineTimeAndDate } from "./icalHelpers.js";
 import { stringToTimeObj } from "./officeHourValidator.js";
 import { handleUTCDateChange } from "./helpers.js";
 import validate from "../util/checkValidation.js";
+import { factory } from "../util/debug.js";
 
+const debug = factory(import.meta.url);
 export const isUniqueCourse = async (req, res, next) => {
   debug("isUniqueCourse is called!");
   debug("Validating the request...");

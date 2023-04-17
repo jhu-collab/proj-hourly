@@ -4,8 +4,9 @@ import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
 
+const debug = factory(import.meta.url);
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 function makeCourseCode() {
