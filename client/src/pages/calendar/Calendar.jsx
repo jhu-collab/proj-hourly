@@ -142,7 +142,7 @@ function Calendar() {
               selectable={isStaff ? true : false}
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
-              unselectAuto={false}
+              unselectAuto={true}
               events={Array.isArray(data?.calendar) ? data?.calendar: []}
               select={handleSelect}
               slotDuration="0:30:00"
