@@ -65,7 +65,7 @@ export const checkToken = async (req, res, next) => {
     ) {
       throw new ApiError(401, "Invalid Authorization token was provided!");
     }
-    debug(`Token belongs to ${userInfo.username}`);
+    debug(`Token belongs to ${userInfo.userName}`);
 
     debug(
       `Attaching user and token (and its decoded expirtation date) to the req object`
