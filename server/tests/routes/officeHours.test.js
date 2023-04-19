@@ -4,6 +4,7 @@ import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
+import { off } from "process";
 
 const request = supertest(app);
 const endpoint = "/api/officeHour";
@@ -21,11 +22,14 @@ async function setup() {
      *  3 staff accounts (user)
      *  1 instructor account (admin)
    ***/
-  await prisma.topic.deleteMany();
-  await prisma.officeHour.deleteMany();
-  await prisma.officeHourTimeOptions.deleteMany();
-  await prisma.account.deleteMany();
-  await prisma.course.deleteMany();
+  const testUser = prisma.account.findFirst({ where: { userName: { contains: "Test "} } });
+  if (testUser) {
+    await prisma.topic.deleteMany();
+    await prisma.officeHour.deleteMany();
+    await prisma.officeHourTimeOptions.deleteMany();
+    await prisma.account.deleteMany();
+    await prisma.course.deleteMany();
+  }
 
   await prisma.account.createMany({
     data: [
@@ -89,16 +93,14 @@ async function setup() {
   });
 
   // Generate and add auth tokens to each user
-  let students = await prisma.account.findMany({ where: { userName: { contains: "Student" } } });
-  students = students
+  const students = (await prisma.account.findMany({ where: { userName: { contains: "Student" } } }))
     .map((user) => ({
       ...user,
       token: createToken({ user }),
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
-  let staff = await prisma.account.findMany({ where: { userName: { contains: "Staff" } } });
-  staff = staff
+  const staff = (await prisma.account.findMany({ where: { userName: { contains: "Staff" } } }))
     .map((user) => ({
       ...user,
       token: createToken({ user }),
@@ -106,14 +108,14 @@ async function setup() {
     }));
 
   const user = await prisma.account.findFirst({ where: { userName: "Test Instructor" } });
-  let instructor = {
+  const instructor = {
     ...user,
     token: createToken({ user }),
     expiredToken: createToken({ user, expiresIn: "0" }), 
   };
 
   // Create a course with the related students, staff, and instructor
-  await prisma.Course.create({
+  const course = await prisma.Course.create({
     data: {
       title: "Test Course",
       courseNumber: "1.1.1.1",
@@ -142,21 +144,64 @@ async function setup() {
           { id: staff[2].id }
         ]
       }
-    }
-  });
-
-  // Retrieve course information for tests
-  let course = await prisma.course.findFirst({
-    where: {
-      title: "Test Course"
     },
     include: {
       courseStaff: true,
       instructors: true
     }
   });
-  
-  return [ staff, instructor, course ];
+
+  // Create topics
+  const topics = await prisma.topic.createMany({
+    data: [
+      {
+        value: "Test Topic I",
+        courseId: course.id
+      },
+      {
+        value: "Test Topic II",
+        courseId: course.id
+      },
+      {
+        value: "Test Topic III",
+        courseId: course.id
+      },
+    ]
+  });
+
+  // Create office hours
+  const officeHour = await prisma.officeHour.create({
+    data: {
+      startDate: new Date(Date.now() + (1000 * 60 * 60 * 24)), // + 1 day
+      endDate: new Date(Date.now() + (1000 * 60 * 60 * 24) + (1000 * 60 * 60 * 2)), // + 1 day and 2 hours
+      course: { connect: { id: course.id } },
+      location: "zoom",
+      isRecurring: true,
+      hosts: { connect: { id: staff[0].id } }
+    }
+  });
+
+  const startDate = new Date(officeHour.startDate)
+  // Create registrations
+  const registration = await prisma.registration.create({
+    data: {
+      startTime: startDate,
+      endTime: (new Date(officeHour.startDate.getTime() + (1000 * 60 * 30))), // 30 minutes
+      date: startDate,
+      officeHour: { connect: { id: officeHour.id } },
+      account: { connect: { id: students[0].id } },
+    }
+  })
+
+  return {
+    students: students,
+    staff: staff,
+    instructor: instructor,
+    course: course,
+    topics: topics,
+    officeHour: officeHour,
+    registration: registration
+  };
 }
 
 async function teardown(courseId) {
@@ -207,7 +252,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     };
 
     beforeEach(async () => {
-      [staff, instructor, course] = await setup();
+      const params = await setup();
+      staff = params.staff;
+      instructor = params.instructor;
+      course = params.course;
       baseAttributes = { ...baseAttributes,
         courseId: course.id,
         hosts: staff.map((user) => user.id)
@@ -217,7 +265,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     afterEach(async () => {
       await teardown(course.id);
     });
-
 
     // Row 1
     test("Base Choice Test (all valid parameters)", async () => {
@@ -573,4 +620,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     }, 1000);
   });
+
+
 });
