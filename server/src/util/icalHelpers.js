@@ -31,7 +31,7 @@ export const getIsoDate = (dateObj) => {
 export const generateTitle = (officeHour) => {
   let summary = "";
   if (officeHour.hosts.length > 1) {
-    summary = "Office Hours for " + course.title;
+    summary = "Office Hours for " + officeHour.course.title;
   } else if (officeHour.hosts.length === 1) {
     summary = officeHour.hosts[0].firstName + "'s Office Hours";
   } else {
