@@ -7,6 +7,9 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 import NiceModal from "@ebay/nice-modal-react";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationChangeRole.jsx`);
 
 function useMutationChangeRole(params, role) {
   const { token } = useStoreToken();
@@ -16,9 +19,11 @@ function useMutationChangeRole(params, role) {
 
   const promoteStudent = async () => {
     try {
+      debug("Sending student ID and role to backend to be promoted...");
       const data = { studentId: params.id, role: role };
       const endpoint = `${BASE_URL}/api/course/${course.id}`;
       const res = await axios.post(endpoint, data, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -27,9 +32,11 @@ function useMutationChangeRole(params, role) {
 
   const demoteStudent = async () => {
     try {
+      debug("Sending student ID and role to backend to be demoted...");
       const data = { studentId: params.id, role: role };
       const endpoint = `${BASE_URL}/api/course/${course.id}/demote`;
       const res = await axios.post(endpoint, data, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -47,6 +54,7 @@ function useMutationChangeRole(params, role) {
         NiceModal.hide("change-user-role");
       },
       onError: (err) => {
+        debug( {err} );
         errorToast(err);
       },
     }
