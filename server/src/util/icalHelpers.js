@@ -4,7 +4,9 @@ import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
 import { createTimeString } from "./helpers.js";
 import { weekday } from "./officeHourValidator.js";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 /**
  * Javascript Date object will often be one day off if you provide
  * it with the format of yyyy-mm-dd. However, if you pass in
@@ -214,7 +216,9 @@ export const generateSingleEventJson = (officeHour) => {
 };
 
 export const generateCalendar = async (courseId) => {
+  debug("generateCalendar called!");
   const events = [];
+  debug("getting office hours...");
   const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
@@ -244,6 +248,7 @@ export const generateCalendar = async (courseId) => {
       events.push(generateSingleEventJson(officeHour));
     }
   });
+  debug("updating course...");
   await prisma.course.update({
     where: {
       id: courseId,
@@ -252,6 +257,7 @@ export const generateCalendar = async (courseId) => {
       iCalJson: events,
     },
   });
+  debug("generateCalendar done!");
   return events;
 };
 
