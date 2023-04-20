@@ -4,6 +4,10 @@ import { BASE_URL } from "../services/common";
 import { getConfig } from "./helper";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+
+const debug = new Debug(`hourly:hooks:useQueryStudentRegCounts.js`);
 
 function useQueryStudentRegCounts() {
   const queryKey = ["studentRegistrationCounts"];
@@ -16,8 +20,10 @@ function useQueryStudentRegCounts() {
         `${BASE_URL}/api/course/${course.id}/studentRegistrationCounts`,
         getConfig(token)
       );
+      debug("Getting stu Reg counts from backend.");
       return res.data;
     } catch (err) {
+      debug({ err });
       throw err;
     }
   };
