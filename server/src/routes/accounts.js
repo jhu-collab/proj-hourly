@@ -5,9 +5,15 @@ import * as controller from "../controllers/accountController.js";
 import { checkToken } from "../util/middleware.js";
 const router = express.Router();
 const body = express_validator.body;
+import { factory } from "./debug.js";
+const debug = factory(import.meta.url);
 
 router.post(
   "/signup",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("email", "Email is required").isEmail(),
   body("name", "Name is required").notEmpty(),
   body("phoneNumber").optional().isMobilePhone(),
@@ -18,19 +24,42 @@ router.post(
 
 router.post(
   "/login",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("email", "Email is required").isEmail(),
   validator.emailExists,
   controller.login
 );
 
-router.use(checkToken);
+router.use(checkToken, debug("checking token..."));
 
-router.delete("/:id", controller.deleteAccount);
+router.delete(
+  "/:id",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  controller.deleteAccount
+);
 
-router.get("/", validator.isAdmin, controller.getAll);
+router.get(
+  "/",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  validator.isAdmin,
+  controller.getAll
+);
 
 router.post(
   "/:id",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   validator.isAdmin,
   validator.isAccountValidParams,
   controller.promoteToAdmin
