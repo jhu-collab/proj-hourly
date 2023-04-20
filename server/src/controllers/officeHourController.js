@@ -1170,7 +1170,7 @@ export const cancelRegistration = async (req, res) => {
     " at " +
     registration.officeHour.location +
     " has been cancelled.\n\n" +
-    +"Thanks,\n" +
+    "Thanks,\n" +
     "The Hourly Team, \n" +
     "\n\n" +
     donotreply;
