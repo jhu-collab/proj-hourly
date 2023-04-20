@@ -16,6 +16,10 @@ import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
+
+import useStoreToken from "../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
+
 import Box from "@mui/material/Box";
 import StyleWrapper, {
   dayHeaderContent,
@@ -41,6 +45,10 @@ function Calendar() {
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
 
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+
+  const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
 
@@ -53,6 +61,7 @@ function Calendar() {
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
+    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -84,6 +93,7 @@ function Calendar() {
   };
 
   const handleEventDrop = (info) => {
+    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -96,6 +106,33 @@ function Calendar() {
     info.revert();
   };
 
+  const filter = (data) => {
+    const filtered = data.calendar.filter(function (officeHour) {
+      const hosts = officeHour.extendedProps.hosts;
+      for (let i = 0; i < hosts.length; i++) {
+        if (hosts[i].id == id) {
+          return true;
+        }
+      }
+      return false;
+    });
+    return filtered;
+  }
+  
+  const chosenData = (data) => {
+    if (!data || !data.calendar || data.calendar.length === 0) {
+      return [];
+    } else {
+      if (filtered === "all") {
+        return data.calendar;
+      } else if (filtered === "mine") {
+        return filter(data);
+      } else {
+        return [];
+      }
+    }
+  }
+
   return (
     <>
       <Stack
@@ -106,7 +143,7 @@ function Calendar() {
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
           <StyleWrapper>
           {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} />
+            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} />
           )}
             <FullCalendar
               plugins={[
@@ -117,7 +154,7 @@ function Calendar() {
               ]}
               customButtons={{
                 mobileCalMenu: {
-                  text: "menu",
+                  text: "view options",
                   click: function () {
                     setMobileCalMenu(!mobileCalMenu);
                   },
@@ -143,7 +180,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={true}
-              events={Array.isArray(data?.calendar) ? data?.calendar: []}
+              events={Array.isArray(data?.calendar) ? chosenData(data) : []}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{
@@ -157,14 +194,17 @@ function Calendar() {
               allDaySlot={false}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
-              {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
+              {...(!matchUpSm && { headerToolbar: { 
+                start: "mobileCalMenu",
+                center: "prev title next",
+                end: ""} })}
             />
           </StyleWrapper>
           
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
+      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
       {isLoading && <Loader />}
     </>
   );
