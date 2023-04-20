@@ -3,7 +3,7 @@ import * as express_validator from "express-validator";
 import * as validator from "../util/accountValidator.js";
 import * as controller from "../controllers/accountController.js";
 import { checkToken } from "../util/middleware.js";
-import { factory } from "./debug.js";
+import { factory } from "../util/debug.js";
 
 const router = express.Router();
 const body = express_validator.body;
@@ -34,7 +34,7 @@ router.post(
   controller.login
 );
 
-router.use(checkToken, debug("checking token..."));
+router.use(checkToken);
 
 router.delete(
   "/:id",

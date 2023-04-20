@@ -1,5 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { decodeToken } from "./token.js";
+import { factory } from "./debug.js";
+
+const debug = factory(import.meta.url);
 
 /**
  * checks if the token is a match for the user
