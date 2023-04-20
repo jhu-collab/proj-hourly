@@ -5,6 +5,9 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useQueryTopics.js`);
 
 function useQueryTopics() {
   const queryKey = ["topics"];
@@ -17,6 +20,7 @@ function useQueryTopics() {
         `${BASE_URL}/api/course/${course.id}/topics`,
         getConfig(token)
       );
+      debug("Getting all topics.");
       return res.data;
     } catch (err) {
       errorToast(err);

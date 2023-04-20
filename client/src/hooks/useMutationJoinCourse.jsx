@@ -6,6 +6,9 @@ import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationJoinCourse.jsx`);
 
 function useMutationJoinCourse() {
   const { token } = useStoreToken();
@@ -13,8 +16,10 @@ function useMutationJoinCourse() {
 
   const joinCourse = async (course) => {
     try {
+      debug("Sending course to be joined to the backend...");
       const endpoint = `${BASE_URL}/api/course/signup/`;
       const res = await axios.post(endpoint, course, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -31,6 +36,7 @@ function useMutationJoinCourse() {
       );
     },
     onError: (err) => {
+      debug( {err} );
       errorToast(err);
     },
   });

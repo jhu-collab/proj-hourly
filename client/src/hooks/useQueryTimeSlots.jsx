@@ -6,6 +6,9 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import useStoreEvent from "./useStoreEvent";
 import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useQueryTimeSlots.js`);
 
 function useQueryTimeSlots() {
   const queryKey = ["timeSlots"];
@@ -23,8 +26,10 @@ function useQueryTimeSlots() {
         `${BASE_URL}/api/officeHour/${id}/getRemainingTimeSlots/${date}`,
         getConfig(token)
       );
+      debug("Getting remaining time slots for a specific office hour.")
       return res.data;
     } catch (err) {
+      debug({ err });
       errorToast(err);
       throw err;
     }
