@@ -6,7 +6,7 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import { useResetStates } from "./helper";
 
-const debug = new Debug(`hourly:hooks:useAuth.js`);
+const debug = new Debug(`hourly:hooks:useAuth.jsx`);
 
 function useAuth() {
   const { token, updateToken } = useStoreToken();

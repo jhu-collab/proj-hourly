@@ -103,7 +103,7 @@ function Calendar() {
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
         
-        <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
+        <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
           <StyleWrapper>
           {matchUpSm && (
             <CalendarMenu calendarRef={calendarRef} />
@@ -142,7 +142,7 @@ function Calendar() {
               selectable={isStaff ? true : false}
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
-              unselectAuto={false}
+              unselectAuto={true}
               events={Array.isArray(data?.calendar) ? data?.calendar: []}
               select={handleSelect}
               slotDuration="0:30:00"

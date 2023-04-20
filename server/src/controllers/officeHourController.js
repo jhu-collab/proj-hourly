@@ -10,12 +10,26 @@ import {
   sendEmailForEachRegistrationWhenChanged,
   sendEmail,
 } from "../util/notificationUtil.js";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
+
+const combineStringTimeAndDate = (timeStr, date) => {
+  const timeArray = timeStr.split(":");
+  const time = new Date(date);
+  time.setUTCHours(timeArray[0]);
+  time.setUTCMinutes(timeArray[1]);
+  time.setUTCSeconds(timeArray[2]);
+  time.setUTCMilliseconds(0);
+  return time;
+};
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
   daysOfWeek.forEach(async (dayOfWeek) => {
     dowArr.push({ dayOfWeek: dayOfWeek });
   });
+  debug("updating office hour's days...");
   await prisma.officeHour.update({
     where: {
       id: officeHourId,
@@ -26,6 +40,7 @@ const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
       },
     },
   });
+  debug("office hour's days are updated");
 };
 
 const connectOfficeHourToHosts = async (officeHourId, hosts) => {
@@ -33,6 +48,7 @@ const connectOfficeHourToHosts = async (officeHourId, hosts) => {
   hosts.forEach(async (id) => {
     hostIds.push({ id: id });
   });
+  debug("updating office hour's hosts...");
   await prisma.officeHour.update({
     where: {
       id: officeHourId,
@@ -43,6 +59,7 @@ const connectOfficeHourToHosts = async (officeHourId, hosts) => {
       },
     },
   });
+  debug("office hour's hosts are updated");
 };
 
 const createOfficeHour = async (
@@ -53,7 +70,8 @@ const createOfficeHour = async (
   isRecurring,
   isDeleted
 ) => {
-  return await prisma.officeHour.create({
+  debug("creating office hour...");
+  const officeHour = await prisma.officeHour.create({
     data: {
       startDate,
       endDate,
@@ -67,6 +85,8 @@ const createOfficeHour = async (
       isDeleted,
     },
   });
+  debug("office hour is created");
+  return officeHour;
 };
 
 const createJustTimeObject = (time) => {
@@ -115,6 +135,7 @@ export const create = async (req, res) => {
   );
   await connectOfficeHourToHosts(officeHour.id, hosts);
   await connectOfficeHourToDOW(officeHour.id, daysOfWeek);
+  debug("getting office hour to return...");
   const officeHourWithData = await prisma.officeHour.findUnique({
     where: {
       id: officeHour.id,
@@ -132,7 +153,10 @@ export const create = async (req, res) => {
       },
     },
   });
+  debug("generating calendar...");
   const calendar = await generateCalendar(courseId);
+  debug("calendar is generated");
+  debug("office hour is returned");
   return res
     .status(StatusCodes.CREATED)
     .json({ officeHour: officeHourWithData });
@@ -143,11 +167,13 @@ export const getForCourse = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
+  debug("getting course...");
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
   });
+  debug("course is gotten");
   res.status(StatusCodes.ACCEPTED).json({ calendar: course.iCalJson });
 };
 
@@ -159,6 +185,7 @@ export const register = async (req, res) => {
     req.body;
   const targetDate = req.targetDate;
   const id = req.id;
+  debug("getting office hour...");
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -168,29 +195,35 @@ export const register = async (req, res) => {
       hosts: true,
     },
   });
+  debug("office hour is gotten");
   var topicArr = [];
   if (TopicIds !== null && TopicIds !== undefined) {
     TopicIds.map(async (topicId) => {
       topicArr.push({ id: topicId });
     });
   }
-  const startTimeObj = stringToTimeObj(startTime);
-  const endTimeObj = stringToTimeObj(endTime);
+  const startTimeObj = combineStringTimeAndDate(startTime, targetDate);
+  const endTimeObj = combineStringTimeAndDate(endTime, targetDate);
   if (endTimeObj < startTimeObj) {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
-  // if (endTimeObj.getTimezoneOffset != targetDate.getTimezoneOffset()) {
-  //   endTimeObj.setUTCHours(
-  //     endTimeObj.getUTCHours() +
-  //       endTimeObj.getTimezoneOffset() / 60 -
-  //       targetDate.getTimezoneOffset() / 60
-  //   );
-  //   startTimeObj.setUTCHours(
-  //     startTimeObj.getUTCHours() +
-  //       endTimeObj.getTimezoneOffset() / 60 -
-  //       targetDate.getTimezoneOffset() / 60
-  //   );
-  // }
+  if (
+    officeHour.startDate.getTimezoneOffset() != targetDate.getTimezoneOffset()
+  ) {
+    startTimeObj.setUTCHours(
+      startTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          targetDate.getTimezoneOffset()) /
+          60
+    );
+    endTimeObj.setUTCHours(
+      endTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          targetDate.getTimezoneOffset()) /
+          60
+    );
+  }
+  debug("creating registration...");
   const registration = await prisma.registration.create({
     data: {
       startTime: startTimeObj,
@@ -211,6 +244,7 @@ export const register = async (req, res) => {
       topics: true,
     },
   });
+  debug("registration is created");
   var options = {
     weekday: "long",
     year: "numeric",
@@ -287,8 +321,11 @@ export const register = async (req, res) => {
     subject: subject,
     text: emailBody,
   };
+  debug("sending email to student...");
   sendEmail(emailReq);
+  debug("email is sent to student");
   officeHour.hosts.forEach((acc) => {
+    debug("sending email to host...");
     subject =
       "[" +
       courseNumber +
@@ -322,6 +359,7 @@ export const register = async (req, res) => {
       text: emailBody,
     };
     sendEmail(emailReq);
+    debug("email is sent to host");
   });
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
@@ -332,6 +370,7 @@ export const cancelOnDate = async (req, res) => {
   }
   const { officeHourId, date } = req.body;
   const dateObj = new Date(date);
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -339,8 +378,9 @@ export const cancelOnDate = async (req, res) => {
       date: dateObj,
     },
   });
-
+  debug("registrations are found");
   dateObj.setUTCHours(0);
+  debug("finding office hour...");
   const officehour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -349,6 +389,8 @@ export const cancelOnDate = async (req, res) => {
       course: true,
     },
   });
+  debug("office hour is found");
+  debug * "updating registrations...";
   await prisma.registration.updateMany({
     where: {
       officeHourId: officeHourId,
@@ -358,6 +400,8 @@ export const cancelOnDate = async (req, res) => {
       isCancelledStaff: true,
     },
   });
+  debug("registrations are updated");
+  debug("updating office hour...");
   const officeHourUpdate = await prisma.officeHour.update({
     where: {
       id: officeHourId,
@@ -366,7 +410,10 @@ export const cancelOnDate = async (req, res) => {
       isCancelledOn: [...officehour.isCancelledOn, dateObj],
     },
   });
+  debug("office hour is updated");
+  debug("sending cancellation emails...");
   sendEmailForEachRegistrationWhenCancelled(registrations);
+  debug("cancellation emails are sent");
   const calendar = await generateCalendar(officehour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
@@ -377,7 +424,7 @@ export const cancelAll = async (req, res) => {
   }
   const { officeHourId } = req.body;
   const dateToEnd = req.body.date;
-
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -387,8 +434,10 @@ export const cancelAll = async (req, res) => {
       },
     },
   });
+  debug("registrations are found");
   const date = new Date(dateToEnd);
   const dateObj = new Date(dateToEnd);
+  debug("finding office hour...");
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -397,6 +446,7 @@ export const cancelAll = async (req, res) => {
       course: true,
     },
   });
+  debug("office hour is found");
   // dateObj.setUTCHours(
   //   new Date(officeHour.startDate).getUTCHours() -
   //     dateObj.getTimezoneOffset() / 60
@@ -405,19 +455,26 @@ export const cancelAll = async (req, res) => {
   const startObj = officeHour.startDate;
   let officeHourUpdate;
   if (officeHour.startDate >= date) {
+    debug("cancelling registrations...");
     await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
         isCancelled: false,
       },
     });
+    debug("registrations are cancelled");
+    debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
         id: officeHourId,
       },
     });
+    debug("office hour is updated");
+    debug("sending cancellation emails...");
     sendEmailForEachRegistrationWhenCancelled(registrations);
+    debug("cancellation emails are sent");
   } else if (officeHour.endDate > date) {
+    debug("cancelling registrations...");
     await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
@@ -427,6 +484,8 @@ export const cancelAll = async (req, res) => {
         isCancelled: false,
       },
     });
+    debug("registrations are cancelled");
+    debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.update({
       where: {
         id: officeHourId,
@@ -435,13 +494,19 @@ export const cancelAll = async (req, res) => {
         endDate: dateObj,
       },
     });
+    debug("office hour is updated");
+    debug("sending cancellation emails...");
     sendEmailForEachRegistrationWhenCancelled(registrations);
+    debug("cancellation emails are sent");
   } else if (date > startObj) {
+    debug("office hours already over or too close to start time");
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: office hours already over or too close to start time",
     });
   }
+  debug("generating calendar after cancellation...");
   const calendar = await generateCalendar(officeHour.course.id);
+  debug("calendar is generated");
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
@@ -463,21 +528,27 @@ export const getTimeSlotsRemaining = async (req, res) => {
   const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
+  debug("finding office hour...");
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
     },
   });
+  debug("office hour is found");
   //date = handleUTCDateChange(date, officeHour);
   //gets the office hour session lengths for the course
+  debug("finding time lengths...");
   const timeLengths = await prisma.OfficeHourTimeOptions.findMany({
     where: {
       courseId: officeHour.courseId,
     },
   });
+  debug("time lengths are found");
+  debug("finding course...");
   const course = await prisma.course.findUnique({
     where: { id: officeHour.courseId },
   });
+  debug("course is found");
   const startDate = new Date(officeHour.startDate);
   const endDate = new Date(officeHour.endDate);
   let crossesDaylightSavings = false;
@@ -494,6 +565,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
     end.setUTCDate(end.getUTCDate() + 1);
   }
   //gets all registrations for an office hour on a given day
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -501,6 +573,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       isCancelled: false,
     },
   });
+  debug("registrations are found");
   //maps a start time to its registration
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
@@ -597,6 +670,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       times,
     });
   });
+  debug("returning time slots");
   return res.status(StatusCodes.ACCEPTED).json({ timeSlotsPerType });
 };
 
@@ -605,6 +679,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -615,9 +690,11 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       account: true,
     },
   });
+  debug("registrations are found");
   const { startDate, endDate, location } = req.body;
   const dateObj = new Date(startDate);
   const dow = weekday[dateObj.getUTCDay()];
+  debug("updating office hour...");
   const officehour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -627,7 +704,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       hosts: true,
     },
   });
-
+  debug("office hour is found");
   let officeHourUpdate = {};
   if (officehour.isRecurring) {
     officeHourUpdate = await prisma.officeHour.update({
@@ -648,6 +725,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       },
     });
   }
+  debug("updating registrations...");
   await prisma.registration.updateMany({
     where: {
       officeHourId,
@@ -659,6 +737,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       isCancelledStaff: true,
     },
   });
+  debug("registrations are updated");
   const newLocation =
     location === null || location === undefined
       ? officehour.location
@@ -683,9 +762,12 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     },
   });
   let hostArr = [];
+  debug("connecting hosts...");
   officehour.hosts.forEach((account) => {
     hostArr.push({ id: account.id });
   });
+  debug("hosts are connected");
+  debug("updating office hour...");
   await prisma.officeHour.update({
     where: {
       id: newOfficeHour.id,
@@ -696,8 +778,13 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
       },
     },
   });
+  debug("office hour is updated");
+  debug("sending emails...");
   sendEmailForEachRegistrationWhenChanged(registrations, newOfficeHour);
+  debug("emails are sent");
+  debug("generating calendar...");
   const calendar = await generateCalendar(officehour.course.id);
+  debug("calendar is generated");
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
@@ -706,6 +793,7 @@ export const editAll = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -716,6 +804,7 @@ export const editAll = async (req, res) => {
       account: true,
     },
   });
+  debug("registrations are found");
   const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
     req.body;
   const editAfterDate = req.body.editAfterDate ? true : false;
@@ -739,6 +828,7 @@ export const editAll = async (req, res) => {
         hosts: true,
       },
     });
+    debug("creating new office hour...");
     const newOfficeHour = await createOfficeHour(
       new Date(startDate),
       new Date(endDate),
@@ -747,13 +837,17 @@ export const editAll = async (req, res) => {
       true,
       false
     );
+    debug("new office hour is created");
     await connectOfficeHourToDOW(newOfficeHour.id, daysOfWeek);
+    debug("connecting hosts...");
     await connectOfficeHourToHosts(
       newOfficeHour.id,
       update.hosts.map((hosts) => hosts.id)
     );
+    debug("hosts are connected");
     const startTimeObj = createJustTimeObject(new Date());
     const today = createJustDateObject(new Date());
+    debug("updating registrations...");
     await prisma.registration.updateMany({
       where: {
         officeHourId,
@@ -777,6 +871,8 @@ export const editAll = async (req, res) => {
         isCancelledStaff: true,
       },
     });
+    debug("registrations are updated");
+    debug("getting office hour with data...");
     const officeHourWithData = await prisma.officeHour.findUnique({
       where: {
         id: officeHourId,
@@ -795,7 +891,10 @@ export const editAll = async (req, res) => {
         course: true,
       },
     });
+    debug("office hour with data is got");
+    debug("sending emails...");
     const calendar = await generateCalendar(officeHourWithData.course.id);
+    debug("emails are sent");
     sendEmailForEachRegistrationWhenChanged(registrations, newOfficeHour);
     return res.status(StatusCodes.ACCEPTED).json({
       oldOfficeHour: officeHourWithData,
@@ -846,7 +945,9 @@ export const editAll = async (req, res) => {
         course: true,
       },
     });
+    debug("creating calendat...");
     const calendar = await generateCalendar(updatedOfficeHour.course.id);
+    debug("calendar is created");
     return res.status(StatusCodes.ACCEPTED).json({
       updatedOfficeHour,
     });
@@ -858,13 +959,16 @@ export const getRegistrationStatus = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  debug("finding office hour...");
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
     },
   });
+  debug("office hour is found");
   let date = req.targetDate;
   const id = req.id;
+  debug("finding registration...");
   const status = await prisma.registration.findFirst({
     where: {
       officeHourId,
@@ -874,13 +978,17 @@ export const getRegistrationStatus = async (req, res) => {
       isCancelledStaff: false,
     },
   });
+  debug("registration is found");
   if (status === null || status === undefined) {
+    debug("registration is not found");
     return res.status(StatusCodes.ACCEPTED).json({ status: "Not Registered" });
   } else if (status.isCancelledStaff) {
+    debug("registration is cancelled by staff");
     return res
       .status(StatusCodes.ACCEPTED)
       .json({ status: "Not Registered - Cancelled by staff" });
   }
+  debug("registration is found");
   return res.status(StatusCodes.ACCEPTED).json({
     status: "Registered",
     registration: status,
@@ -888,6 +996,7 @@ export const getRegistrationStatus = async (req, res) => {
 };
 
 export const getForCourseWithFilter = async (req, res) => {
+  debug("getting office hours with filter...");
   const filter = req.params.filter;
   const courseId = parseInt(req.params.courseId, 10);
   const id = req.id;
@@ -918,10 +1027,12 @@ export const getForCourseWithFilter = async (req, res) => {
       },
     });
   } else {
+    debug("invalid filter");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Invalid filter" });
   }
+  debug("office hours with filter are got");
   return res.status(StatusCodes.ACCEPTED).json({ officeHours });
 };
 
@@ -929,6 +1040,7 @@ export const getOfficeHourById = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
+  debug("getting office hour by id...");
   const officeHourId = parseInt(req.params.officeHourId, 10);
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -955,6 +1067,7 @@ export const getOfficeHourById = async (req, res) => {
       },
     },
   });
+  debug("office hour is got");
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
@@ -963,12 +1076,15 @@ export const getAllRegistrationsOnDate = async (req, res) => {
     return res;
   }
   const officeHourId = parseInt(req.params.officeHourId, 10);
+  debug("finding office hour...");
   const officehour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
     },
   });
+  debug("office hour is found");
   const date = req.targetDate;
+  debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -984,11 +1100,13 @@ export const getAllRegistrationsOnDate = async (req, res) => {
       startTime: "asc",
     },
   });
+  debug("registrations are found");
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 
 export const cancelRegistration = async (req, res) => {
   const registrationId = parseInt(req.params.registrationId, 10);
+  debug("cancelling registration...");
   const registration = await prisma.registration.update({
     where: {
       id: registrationId,
@@ -1006,6 +1124,7 @@ export const cancelRegistration = async (req, res) => {
       },
     },
   });
+  debug("registration is cancelled");
   const userEmail = registration.account.email;
   const date = registration.date;
   var options = {
@@ -1066,7 +1185,10 @@ export const cancelRegistration = async (req, res) => {
     subject: subject,
     text: emailStr,
   };
+  debug("sending email to student...");
   sendEmail(emailReq);
+  debug("email is sent to student");
+  debug("sending email to hosts...");
   registration.officeHour.hosts.forEach((acc) => {
     emailStr =
       donotreply +
@@ -1102,6 +1224,7 @@ export const cancelRegistration = async (req, res) => {
     };
     sendEmail(emailReq);
   });
+  debug("emails are sent to hosts");
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
@@ -1109,6 +1232,7 @@ export const editRegistration = async (req, res) => {
   const registrationId = parseInt(req.params.registrationId, 10);
   const { startTime, endTime, date, question, TopicIds } = req.body;
   const dateObj = req.targetDate;
+  debug("finding registration with topics...");
   const registrationTopics = await prisma.registration.findFirst({
     where: {
       id: registrationId,
@@ -1122,6 +1246,7 @@ export const editRegistration = async (req, res) => {
       officeHour: true,
     },
   });
+  debug("registration with topics is found");
   if (
     registrationTopics.officeHour.startTime >
       registrationTopics.officeHour.endTime &&
@@ -1138,6 +1263,7 @@ export const editRegistration = async (req, res) => {
   TopicIds.forEach((topicId) => {
     topicArr.push({ id: topicId });
   });
+  debug("updating registration...");
   const registration = await prisma.registration.update({
     where: {
       id: registrationId,
@@ -1152,5 +1278,6 @@ export const editRegistration = async (req, res) => {
       },
     },
   });
+  debug("registration is updated");
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };

@@ -7,6 +7,9 @@ import * as timeValidator from "../util/timeValidator.js";
 import * as controller from "../controllers/officeHourController.js";
 import * as dateValidator from "../util/dateValidator.js";
 import { checkToken } from "../util/middleware.js";
+import { factory } from "../util/debug.js";
+
+ const debug = factory(import.meta.url);
 
 const router = express.Router();
 const body = express_validator.body;
@@ -15,6 +18,10 @@ router.use(checkToken);
 
 router.post(
   "/create",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("courseId", "Course is required").isInt(),
   body(
     "recurringEvent",
@@ -48,6 +55,10 @@ router.post(
 
 router.post(
   "/register",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("officeHourId", "Office Hour is required").isInt(),
   body("startTime", "Please include a startTime").notEmpty(),
   body("endTime", "Please include an endtime").notEmpty(),
@@ -74,6 +85,10 @@ router.post(
 
 router.post(
   "/cancelOnDate",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("officeHourId", "Office Hour is required").isInt(),
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
@@ -88,6 +103,10 @@ router.post(
 
 router.post(
   "/cancelAll",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("officeHourId", "Office Hour is required").isInt(),
   body("date", "Date is required").optional(),
   accountValidator.isAccountValidHeader,
@@ -102,6 +121,10 @@ router.post(
 
 router.get(
   "/:officeHourId/getRemainingTimeSlots/:date",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -112,6 +135,10 @@ router.get(
 
 router.post(
   "/:officeHourId/editForDate/:date",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").optional().isString(),
@@ -128,6 +155,10 @@ router.post(
 
 router.post(
   "/:officeHourId/editAll",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body("location", "Please specify a location for your office hours")
@@ -156,6 +187,10 @@ router.post(
 
 router.post(
   "/cancelRegistration/:registrationId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
   validator.isRegisteredOrIsStaffBody,
@@ -165,6 +200,10 @@ router.post(
 
 router.get(
   "/:officeHourId/date/:date/registrationStatus",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -175,6 +214,10 @@ router.get(
 
 router.get(
   "/:officeHourId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -183,6 +226,10 @@ router.get(
 
 router.get(
   "/:officeHourId/:date/registrationsOnDate",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
@@ -194,6 +241,10 @@ router.get(
 
 router.post(
   "/editRegistration/:registrationId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
   body("officeHourId", "Office Hour is required").isInt(),
   body("startTime", "Please include a startTime").notEmpty(),
   body("endTime", "Please include an endtime").notEmpty(),
