@@ -4,8 +4,12 @@ import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
 import { Role } from "@prisma/client";
 import { generateCalendar } from "../util/icalHelpers.js";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 export const create = async (req, res) => {
+  debug("creating account...");
   if (validate(req, res)) {
     return res;
   }
@@ -32,7 +36,9 @@ export const create = async (req, res) => {
       email,
     },
   });
+  debug("account created...");
 
+  debug("sending account creation email...");
   const donotreply = "--- Do not reply to this email ---";
   const text = "Congrats on creating your Hourly account!";
   const emailBody =
@@ -56,10 +62,12 @@ export const create = async (req, res) => {
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
+  debug("account creation email sent...");
   return res.status(StatusCodes.CREATED).json({ account });
 };
 
 export const login = async (req, res) => {
+  debug("logging in...");
   if (validate(req, res)) {
     return res;
   }
@@ -69,10 +77,12 @@ export const login = async (req, res) => {
       email,
     },
   });
+  debug("logged in...");
   return res.status(StatusCodes.ACCEPTED).json({ account });
 };
 
 export const getCourses = async (req, res) => {
+  debug("retrieving all courses...");
   if (validate(req, res)) {
     return res;
   }
@@ -107,6 +117,7 @@ export const getCourses = async (req, res) => {
       },
     },
   });
+  debug("courses retrieved...");
   return res.status(StatusCodes.ACCEPTED).json({
     student: studentCourses,
     staff: staffCourses,
@@ -115,6 +126,7 @@ export const getCourses = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
+  debug("deleting account...");
   if (validate(req, res)) {
     return res;
   }
@@ -218,6 +230,8 @@ export const deleteAccount = async (req, res) => {
       id,
     },
   });
+  debug("account deleted...");
+  debug("sending account deletion email...");
   const donotreply = "--- Do not reply to this email ---";
   const text =
     "Your Hourly account has been succeesfully deleted. All of your associated data has been removed";
@@ -241,10 +255,12 @@ export const deleteAccount = async (req, res) => {
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
+  debug("account deletion email sent...");
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
 
 export const getAll = async (req, res) => {
+  debug("retrieving all account...");
   const accounts = await prisma.account.findMany({
     select: {
       id: true,
@@ -256,10 +272,12 @@ export const getAll = async (req, res) => {
       role: true,
     },
   });
+  debug("accounts retrieved...");
   return res.status(StatusCodes.ACCEPTED).json({ accounts });
 };
 
 export const promoteToAdmin = async (req, res) => {
+  debug("promoting to admin...");
   const id = req.parseInt(req.params.id, 10);
   const account = await prisma.account.update({
     where: {
@@ -269,5 +287,6 @@ export const promoteToAdmin = async (req, res) => {
       role: Role.Admin,
     },
   });
+  debug("promoted to admin...");
   return res.status(StatusCodes.ACCEPTED).json(account);
 };
