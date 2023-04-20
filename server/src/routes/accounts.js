@@ -3,9 +3,10 @@ import * as express_validator from "express-validator";
 import * as validator from "../util/accountValidator.js";
 import * as controller from "../controllers/accountController.js";
 import { checkToken } from "../util/middleware.js";
+import { factory } from "./debug.js";
+
 const router = express.Router();
 const body = express_validator.body;
-import { factory } from "./debug.js";
 const debug = factory(import.meta.url);
 
 router.post(
