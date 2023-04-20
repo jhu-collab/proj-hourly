@@ -16,6 +16,7 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import useQueryTopics from "../../../hooks/useQueryTopics";
 import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 import { useEffect, useState } from "react";
+import FormInputText from "../../../components/form-ui/FormInputText";
 
 const getTimeSlotOptions = (timeSlotsPerType, type) => {
   const found = timeSlotsPerType.find((element) => element.type === type);
@@ -105,6 +106,7 @@ function RegisterForm() {
     defaultValues: {
       type: "",
       times: "",
+      question: "",
       topicIds: [],
     },
     resolver: yupResolver(registerSchema),
@@ -136,6 +138,7 @@ function RegisterForm() {
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      question: data.question,
       TopicIds: data.topicIds,
     });
   };
@@ -187,6 +190,13 @@ function RegisterForm() {
                     })}
                   </Box>
                 )}
+              />
+              <FormInputText
+                name="question"
+                control={control}
+                label="Additional Notes (optional)"
+                multiline
+                rows={4}
               />
               <Button
                 type="submit"
