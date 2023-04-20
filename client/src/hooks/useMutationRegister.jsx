@@ -34,6 +34,7 @@ function useMutationRegister() {
   const mutation = useMutation(register, {
     onSuccess: (data) => {
       const registration = data.registration;
+      console.log(registration)
 
       const date = DateTime.fromISO(
         registration.date.substring(0, 10) +
@@ -45,6 +46,10 @@ function useMutationRegister() {
       const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
+
+      console.log(date);
+      console.log(registration.startTime);
+      console.log(registration.endTime);
 
       queryClient.invalidateQueries(["studentRegistrationCounts"]);
       queryClient.invalidateQueries(["topicCounts"]);

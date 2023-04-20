@@ -96,6 +96,11 @@ function RegisterForm() {
   );
   const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
 
+  // console.log(startTime);
+  // console.log(endTime);
+  // console.log(start);
+  // console.log(end);
+
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       type: "",
@@ -122,6 +127,10 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
+    console.log("SUBMIT START")
+    console.log(startTime)
+    console.log(endTime)
+    console.log("SUBMIT END")
     mutate({
       officeHourId: id,
       startTime: startTime,
