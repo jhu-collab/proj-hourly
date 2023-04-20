@@ -10,6 +10,9 @@ import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationRegister.jsx`);
 
 function useMutationRegister() {
   const { token } = useStoreToken();
@@ -23,8 +26,10 @@ function useMutationRegister() {
 
   const register = async (officeHour) => {
     try {
+      debug("Sending office hour to register for to the backend...");
       const endpoint = `${BASE_URL}/api/officeHour/register`;
       const res = await axios.post(endpoint, officeHour, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -57,6 +62,7 @@ function useMutationRegister() {
       );
     },
     onError: (err) => {
+      debug( {err} );
       errorToast(err);
     },
   });
