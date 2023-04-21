@@ -817,10 +817,9 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   debug("got registration");
   const startTimeObj = new Date(registration.startTime);
-  const dateObj = handleUTCDateChange(
-    new Date(registration.date),
-    registration.officeHour
-  );
+  const dateObj = new Date(registration.date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
@@ -843,7 +842,9 @@ export const isRegistrationInFuture = async (req, res, next) => {
   });
   debug("got office hour");
   const startTimeObj = stringToTimeObj(startTime);
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();

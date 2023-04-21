@@ -630,7 +630,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       const beforeConstraint = new Date(justDate);
       beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       beforeConstraint.setUTCHours(
-        beforeConstraint.getUTCHours() - course.startRegConstraint
+        sessionStartTime.getUTCHours() - course.startRegConstraint
       );
       const endConstraint = new Date(justDate);
       endConstraint.setUTCDate(
@@ -638,7 +638,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       );
       endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       endConstraint.setUTCHours(
-        endConstraint.getUTCHours() - course.endRegConstraint
+        sessionStartTime.getUTCHours() - course.endRegConstraint
       );
       if (
         available &&
