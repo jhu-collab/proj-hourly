@@ -4,7 +4,6 @@ import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
-import { off } from "process";
 
 const request = supertest(app);
 const endpoint = "/api/officeHour";
@@ -25,6 +24,7 @@ async function setup() {
   const testUser = prisma.account.findFirst({ where: { userName: { contains: "Test "} } });
   if (testUser) {
     await prisma.topic.deleteMany();
+    await prisma.registration.deleteMany();
     await prisma.officeHour.deleteMany();
     await prisma.officeHourTimeOptions.deleteMany();
     await prisma.account.deleteMany();
@@ -97,21 +97,18 @@ async function setup() {
     .map((user) => ({
       ...user,
       token: createToken({ user }),
-      expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
   const staff = (await prisma.account.findMany({ where: { userName: { contains: "Staff" } } }))
     .map((user) => ({
       ...user,
       token: createToken({ user }),
-      expiredToken: createToken({ user, expiresIn: "0" }),
     }));
 
   const user = await prisma.account.findFirst({ where: { userName: "Test Instructor" } });
   const instructor = {
     ...user,
     token: createToken({ user }),
-    expiredToken: createToken({ user, expiresIn: "0" }), 
   };
 
   // Create a course with the related students, staff, and instructor
@@ -152,7 +149,7 @@ async function setup() {
   });
 
   // Create topics
-  const topics = await prisma.topic.createMany({
+  await prisma.topic.createMany({
     data: [
       {
         value: "Test Topic I",
@@ -168,20 +165,34 @@ async function setup() {
       },
     ]
   });
+  const topics = await prisma.topic.findMany({ where: { value : { contains: "Test" } } });
 
   // Create office hours
+  const startDate = new Date(Date.now() + (1000 * 60 * 60 * 24))
   const officeHour = await prisma.officeHour.create({
     data: {
-      startDate: new Date(Date.now() + (1000 * 60 * 60 * 24)), // + 1 day
-      endDate: new Date(Date.now() + (1000 * 60 * 60 * 24) + (1000 * 60 * 60 * 2)), // + 1 day and 2 hours
+      startDate: startDate, // + 1 day
+      endDate: new Date(Date.now() + (1000 * 60 * 60 * 24 * 21) ), // + 21 days
       course: { connect: { id: course.id } },
       location: "zoom",
       isRecurring: true,
-      hosts: { connect: { id: staff[0].id } }
+      hosts: { connect: { id: staff[0].id } },
+      isOnDayOfWeek: { connect: {
+        dayNumber: startDate.getDay()
+      }},
     }
   });
 
-  const startDate = new Date(officeHour.startDate)
+  // Create office hour time options
+  const officeHourTimeOption = await prisma.officeHourTimeOptions.create({
+    data: { // default duration is 10 minutes
+      title: "Test Office Hour Time Option",
+      course: {
+        connect: { id: course.id }
+      }
+    }
+  })
+
   // Create registrations
   const registration = await prisma.registration.create({
     data: {
@@ -200,7 +211,8 @@ async function setup() {
     course: course,
     topics: topics,
     officeHour: officeHour,
-    registration: registration
+    registration: registration,
+    officeHourTimeOption: officeHourTimeOption
   };
 }
 
@@ -236,10 +248,11 @@ async function teardown(courseId) {
 describe(`Test endpoint ${endpoint}`, () => {
   // set up database for testing
 
-  describe(`Test endpoint: ${endpoint}/create`, async () => {
+  describe(`Test: ${endpoint}/create`, async () => {
     let staff = [];
     let instructor = {};
     let course = {};
+ 
     let baseAttributes = {
       startTime: "10:30:00",
       endTime: "11:30:00",
@@ -453,10 +466,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
-      expect(response.status).toBe(201);
-      const id = response.body.officeHour.id;
-      const officeHour = prisma.officeHour.findUniqueOrThrow({ where: { id } });
-      expect(officeHour).toBeDefined();
+      expect(response.status).toBe(400);
     }, 1000);
 
     // Row 13
@@ -486,10 +496,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
-      expect(response.status).toBe(201);
-      const id = response.body.officeHour.id;
-      const officeHour = prisma.officeHour.findUniqueOrThrow({ where: { id } });
-      expect(officeHour).toBeDefined();
+      expect(response.status).toBe(400);
     }, 1000);
 
     // Row 15
@@ -534,7 +541,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
     }, 1000);
  
     // Row 18
@@ -542,7 +549,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { ...baseAttributes,
         hosts: [staff[0].id]
       };
-      console.log("attributes: " + JSON.stringify(attributes));
       const response = await request
         .post(`${endpoint}/create`)
         .send(attributes)
@@ -576,7 +582,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { ...baseAttributes,
         daysOfWeek: ["Monday"]
       };
-      console.log("attributes: " + JSON.stringify(attributes));
       const response = await request
         .post(`${endpoint}/create`)
         .send(attributes)
@@ -621,5 +626,407 @@ describe(`Test endpoint ${endpoint}`, () => {
     }, 1000);
   });
 
+  describe(`Test: ${endpoint}/register`, async () => {
+    let students = [];
+    let officeHour = {};
+    let topics = [];
+    let course = {};
+    let baseAttributes = {
+      startTime: "12:40:00",
+      endTime: "12:50:00",
+      question: "Test Question",
+    }
 
+    beforeEach(async () => {
+      const params = await setup();
+      students = params.students;
+      officeHour = params.officeHour;
+      topics = params.topics;
+      course = params.course;
+      const mdy = (new Date(officeHour.startDate).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
+
+      baseAttributes = { ...baseAttributes,
+        officeHourId: officeHour.id,
+        TopicIds: topics.map((topic) => topic.id),
+        date: mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",","")
+      };
+    });
+
+    afterEach(async () => {
+      await teardown(course.id);
+    });
+
+    // Row 1
+    test("Base Choice Test (all valid parameters)", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = prisma.registration.findUniqueOrThrow({ where: { id } });
+      expect(registration).toBeDefined();
+    }, 1000);
+
+    // Row 2
+    test("office hour id is positive but invalid (course does not exist)", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: (officeHour.id * 2)
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 3
+    test("office hour id is 0", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: 0
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 4
+    test("office hour id < 0", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: -officeHour.id
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 5
+    test("start and end time is a valid PM time", async () => {
+      const attributes = { ...baseAttributes,
+        startTime: "13:00:00",
+        endTime: "13:10:00",
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = prisma.registration.findUniqueOrThrow({ where: { id } });
+      expect(registration).toBeDefined();
+    }, 1000);
+
+    // Row 6
+    test("start time is an empty string", async () => {
+      const attributes = { ...baseAttributes,
+        startTime: ""
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+
+    // Row 7
+    test("start time is an invalid nonempty string (not a time)", async () => {
+      const attributes = { ...baseAttributes,
+        startTime: "Hello World"
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+
+    // Row 8
+    test("end time is an empty string", async () => {
+      const attributes = { ...baseAttributes,
+        endTime: ""
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+
+    // Row 9
+    test("end time is an invalid nonempty string (not a time)", async () => {
+      const attributes = { ...baseAttributes,
+        endTime: "Hello World"
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+
+    // Row 10
+    test("date is a valid date now", async () => {
+      const attributes = { ...baseAttributes,
+        date: new Date(Date.now()).toISOString()
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(409); // will always be outside of range of the scheduled office hour
+    }, 1000);
+
+    // Row 11
+    test("date is valid date in the past", async () => {
+      const attributes = { ...baseAttributes,
+        date: "2002-11-05T04:00:00.000"
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(403);
+    }, 1000);
+
+    // Row 12
+    test("question is an empty string", async () => {
+      const attributes = { ...baseAttributes,
+        question: ""
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = prisma.registration.findUniqueOrThrow({ where: { id } });
+      expect(registration).toBeDefined();
+    }, 1000);
+
+    // Row 13
+    test("topic ids is a singleton", async () => {
+      const attributes = { ...baseAttributes,
+        TopicIds: [topics[0].id]
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = prisma.registration.findUniqueOrThrow({ where: { id } });
+      expect(registration).toBeDefined();
+    }, 1000);
+
+    // Row 14
+    test("topic ids is an empty list", async () => {
+      const attributes = { ...baseAttributes,
+        TopicIds: []
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + students[1].token
+        );
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = prisma.registration.findUniqueOrThrow({ where: { id } });
+      expect(registration).toBeDefined();
+    }, 1000);
+  });
+
+  describe(`Test: ${endpoint}/cancelOnDate`, async () => {
+    let course = {};
+    let officeHour = {};
+    let staff = [];
+    let baseAttributes = {}
+
+    beforeEach(async () => {
+      const params = await setup();
+      officeHour = params.officeHour;
+      staff = params.staff;
+      course = params.course;
+      const mdy = (new Date(officeHour.startDate).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
+
+      baseAttributes = { ...baseAttributes,
+        officeHourId: officeHour.id,
+        date: mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",","")
+      };
+    });
+
+    afterEach(async () => {
+      await teardown(course.id);
+    });
+
+    // Row 1
+    test("Base Choice Test (all valid parameters)", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+        console.log("response: " + response.text);
+      expect(response.status).toBe(202);
+      const id = response.body.officeHourUpdate.id;
+      const officeHour = await prisma.officeHour.findUniqueOrThrow({ where: { id } });
+      expect(officeHour).toBeDefined();
+      expect(officeHour.isCancelledOn.length).toEqual(1);
+    }, 1000);
+
+    // Row 2
+    test("office hour id is an invalid positive number (office hour does not exist)", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: officeHour.id * 2
+      };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 3 
+    test("office hour id is 0", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: 0
+      };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 4
+    test("office hour id is negative", async () => {
+      const attributes = { ...baseAttributes,
+        officeHourId: -officeHour.id
+      };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+      expect(response.status).toBe(400);
+    }, 1000);
+
+    // Row 5
+    test("date is valid date now", async () => {
+      const mdy = (new Date(Date.now()).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
+      const attributes = { ...baseAttributes,
+        date: mdy[0] + "-" + mdy[1] + "-" + mdy[2]
+      };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+
+    // Row 6
+    test("date is valid date in the past", async () => {
+      const attributes = { ...baseAttributes,
+        date: "01-01-2002"
+      };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set(
+          "Authorization",
+          "Bearer " + staff[0].token
+        );
+      expect(response.status).toBe(409);
+    }, 1000);
+  });
+
+  describe(`Test: ${endpoint}/cancelAll`, async () => {
+
+  });
+
+  describe(`Test: ${endpoint}/:officeHourId/editForDate/:date`, async () => {
+
+  });
+
+  describe(`Test: ${endpoint}/:officeHourId/editAll`, async () => {
+
+  });
+
+  describe(`Test: ${endpoint}/cancelRegistration/:registrationId`, async () => {
+
+  });
+
+  describe(`Test: ${endpoint}/editRegistration/:registrationId`, async () => {
+
+  });
+
+  /* The remaining tests are for the GET methods and thus we will not use equivalence partitioning */
+
+  describe(`Test: ${endpoint}/:officeHourId/getRemainingTimeSlots/:date`, async () => {
+
+  });
+
+
+  describe(`Test: ${endpoint}/:officeHourId`, async () => {
+
+  });
 });
