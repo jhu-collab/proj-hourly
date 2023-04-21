@@ -2,7 +2,8 @@ describe("Login Page", () => {
   const BASE_URL = "http://localhost:3000/";
 
   beforeEach(() => {
-    cy.visit(BASE_URL + "login");
+    cy.visit(BASE_URL);
+    cy.task("deleteDb");
   });
 
   /** Test: Layout Contains all Required Elements

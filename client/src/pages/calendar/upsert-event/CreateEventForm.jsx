@@ -176,8 +176,14 @@ function CreateEventForm() {
               buttons={BUTTONS}
             />
           )}
-          <FormInputText name="location" control={control} label="Location" />
+          <FormInputText
+            data-cy="location-input"
+            name="location"
+            control={control}
+            label="Location"
+          />
           <Button
+            data-cy="create-event-submit"
             type="submit"
             variant="contained"
             disabled={isLoading}
