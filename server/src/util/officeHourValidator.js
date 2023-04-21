@@ -323,28 +323,28 @@ export const isTimeAvailable = async (req, res, next) => {
   debug("got registrations");
   let valid = true;
   registrations.forEach((registration) => {
-    if (registration.startTimeObj == startTimeObj) {
+    if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
-    } else if (registration.endTimeObj == endTimeObj) {
+    } else if (registration.endTime.getTime() === endTimeObj.getTime()) {
       valid = false;
     } else if (
-      registration.startTime < startTimeObj &&
-      registration.endTime > endTimeObj
+      registration.startTime.getTime() < startTimeObj.getTime() &&
+      registration.endTime.getTime() > endTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      registration.startTime < startTimeObj &&
-      registration.endTime > startTimeObj
+      registration.startTime.getTime() < startTimeObj.getTime() &&
+      registration.endTime.getTime() > startTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      registration.endTime > endTimeObj &&
-      registration.startTime < endTimeObj
+      registration.endTime.getTime() > endTimeObj.getTime() &&
+      registration.startTime.getTime() < endTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      startTimeObj < registration.startTime &&
-      endTimeObj > registration.startTimeObj
+      startTimeObj.getTime() < registration.startTime.getTime() &&
+      endTimeObj.getTime() > registration.startTime.getTime()
     ) {
       valid = false;
     }
