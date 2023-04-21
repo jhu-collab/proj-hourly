@@ -26,6 +26,7 @@ function DeleteAction() {
   return (
     <>
       <IconButton
+        data-cy="delete-action-icon"
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog("Do you really want to delete this event?", () =>

@@ -128,6 +128,7 @@ function CreateEventForm() {
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
             <FormInputText
+              data-cy="start-time-text"
               name="startTime"
               control={control}
               label="Start Time"
@@ -135,6 +136,7 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
             <FormInputText
+              data-cy="end-time-text"
               name="endTime"
               control={control}
               label="End Time"
@@ -154,6 +156,7 @@ function CreateEventForm() {
               label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
             /> */}
           <FormInputText
+            data-cy="start-date-text"
             name="startDate"
             control={control}
             label={recurring ? "Start Date" : "Date"}
@@ -162,6 +165,7 @@ function CreateEventForm() {
           />
           {recurring && (
             <FormInputText
+              data-cy="end-date-text"
               name="endDate"
               control={control}
               label="End Date"

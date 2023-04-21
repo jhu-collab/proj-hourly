@@ -48,7 +48,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "prettier": "prettier --write \"src/**/*.{jsx,js}\" --config \".prettierrc\"",
-    "cypress:open": "cypress open"
+    "test": "cypress open"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
