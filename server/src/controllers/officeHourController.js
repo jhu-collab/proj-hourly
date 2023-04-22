@@ -1142,15 +1142,19 @@ export const cancelRegistration = async (req, res) => {
     month: "long",
     day: "numeric",
   };
-  const dateStr = date.toLocaleDateString("en-US", options);
-  const startTime = registration.startTime;
-  let startTimeStr = startTime.toLocaleString("en-US", {
+  const startTimeObj = new Date(registration.startTime);
+  startTimeObj.setHours(startTimeObj.getHours() + 1)
+  const endTimeObj = new Date(registration.endTime);
+  endTimeObj.setHours(endTimeObj.getHours() + 1);
+  const dateObj = new Date(date);
+  dateObj.setDate(dateObj.getDate() + 1);
+  const dateStr = dateObj.toLocaleDateString("en-US", options);
+  let startTimeStr = startTimeObj.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
   });
-  const endTime = registration.endTime;
-  let endTimeStr = endTime.toLocaleString("en-US", {
+  let endTimeStr = endTimeObj.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
