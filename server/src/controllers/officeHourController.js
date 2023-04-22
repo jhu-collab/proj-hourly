@@ -1203,9 +1203,9 @@ export const cancelRegistration = async (req, res) => {
       donotreply +
       "\n\n" +
       "Dear " +
-      registration.account.firstName +
+      acc.firstName +
       " " +
-      registration.account.lastName +
+      acc.lastName +
       ",\n\n" +
       "Your registration on " +
       dateStr +
@@ -1219,7 +1219,11 @@ export const cancelRegistration = async (req, res) => {
       registration.account.lastName +
       " at " +
       registration.officeHour.location +
-      " has been cancelled.";
+      " has been cancelled.\n\n" +
+      "Thanks,\n" +
+      "The Hourly Team, \n" +
+      "\n\n" +
+      donotreply;
     subject =
       "[" +
       registration.officeHour.course.courseNumber +
