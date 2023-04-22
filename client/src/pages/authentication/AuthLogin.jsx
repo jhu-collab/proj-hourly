@@ -1,6 +1,5 @@
 import Divider from "@mui/material/Divider";
 import { useState } from "react";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
@@ -12,6 +11,10 @@ import { loginSchema } from "../../utils/validators";
 import FormInputText from "../../components/form-ui/FormInputText";
 import useAuth from "../../hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
@@ -30,6 +33,14 @@ function AuthLogin() {
 
   const onSubmit = (data) => {
     signIn(data);
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -84,8 +95,20 @@ function AuthLogin() {
             control={control}
             variant="standard"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             InputLabelProps={{ shrink: true }}
+            InputProps={{
+              endAdornment:
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
+              </InputAdornment>
+            }}
           />
           <AnimateButton>
             <Button
