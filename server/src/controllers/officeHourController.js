@@ -306,6 +306,8 @@ export const register = async (req, res) => {
     emailEndTime +
     " on " +
     dateStr +
+    " with " +
+    hostFullName +
     " at " +
     location +
     "!" +
@@ -335,9 +337,12 @@ export const register = async (req, res) => {
       emailEndTime +
       "!";
     emailBody =
+    donotreply +
+      "\n\n" +
+      "Dear " +
       hostFullName +
       "," +
-      "\n" +
+      "\n\n" +
       "You have a new registration for your " +
       courseTitle +
       " office hours from " +
@@ -351,7 +356,7 @@ export const register = async (req, res) => {
       " with student " +
       fullName +
       "!" +
-      "\ntopics: " +
+      "\n\nTopics: " +
       topics +
       "\n\n" +
       "Thanks,\n" +
