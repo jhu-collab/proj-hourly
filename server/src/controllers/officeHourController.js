@@ -352,7 +352,11 @@ export const register = async (req, res) => {
       fullName +
       "!" +
       "\ntopics: " +
-      topics;
+      topics +
+      "\n\n" +
+      "Thanks,\n" +
+      "The Hourly Team\n\n" +
+      donotreply;
     emailReq = {
       email: acc.email,
       subject: subject,
