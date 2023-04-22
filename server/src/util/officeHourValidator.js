@@ -312,6 +312,11 @@ export const isTimeAvailable = async (req, res, next) => {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
   debug("getting registrations...");
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -320,8 +325,23 @@ export const isTimeAvailable = async (req, res, next) => {
       isCancelledStaff: false,
     },
   });
+  const dateObj = new Date(date);
   debug("got registrations");
   let valid = true;
+  if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
+    startTimeObj.setUTCHours(
+      startTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+    endTimeObj.setUTCHours(
+      endTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+  }
   registrations.forEach((registration) => {
     if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
