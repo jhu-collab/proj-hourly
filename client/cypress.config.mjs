@@ -11,11 +11,16 @@ export default defineConfig({
           return null;
         },
         async deleteCourse(code) {
-          const courseId = await prisma.course.findUnique({
+          const course = await prisma.course.findUnique({
             where: {
               code: code,
             },
-          }).id;
+          });
+          if (!course) {
+            console.log("is null");
+            return null;
+          }
+          const courseId = course.id;
           console.log(courseId);
           await prisma.registration.deleteMany();
           await prisma.topic.deleteMany({
