@@ -5,6 +5,9 @@ import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useQueryTopicCounts.js`);
 
 function useQueryTopicCounts() {
   const queryKey = ["topicCounts"];
@@ -17,8 +20,10 @@ function useQueryTopicCounts() {
         `${BASE_URL}/api/course/${course.id}/topicCounts`,
         getConfig(token)
       );
+      debug("Getting topic counts for a course.");
       return res.data;
     } catch (err) {
+      debug({ err });
       errorToast(err);
       throw err;
     }

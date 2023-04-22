@@ -784,8 +784,10 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
     },
   });
   const currDate = new Date();
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
-  dateObj.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
+  const dateObj = new Date(date);
+  const timeObj = stringToTimeObj(startTime);
+  dateObj.setUTCHours(timeObj.getUTCHours());
+  dateObj.setUTCMinutes(timeObj.getUTCMinutes());
   const before = new Date(dateObj);
   const end = new Date(dateObj);
   before.setUTCHours(before.getUTCHours() - course.startRegConstraint);

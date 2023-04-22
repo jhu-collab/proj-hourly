@@ -2,9 +2,12 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
 import { getConfig } from "./helper";
+import Debug from "debug";
 import useStoreEvent from "./useStoreEvent";
 import useStoreToken from "./useStoreToken";
 import { DateTime } from "luxon";
+
+const debug = new Debug(`hourly:hooks:useQueryRegistrationStatus.js`);
 
 function useQueryRegistrationStatus() {
   const queryKey = ["registrationStatus"];
@@ -22,8 +25,10 @@ function useQueryRegistrationStatus() {
         `${BASE_URL}/api/officeHour/${id}/date/${date}/registrationStatus`,
         getConfig(token)
       );
+      debug("Getting registration status.");
       return res.data;
     } catch (err) {
+      debug({ err });
       throw err;
     }
   };

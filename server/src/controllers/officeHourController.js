@@ -11,7 +11,9 @@ import {
   sendEmail,
 } from "../util/notificationUtil.js";
 import spacetime from "spacetime";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 const combineStringTimeAndDate = (timeStr, date) => {
   const timeArray = timeStr.split(":");
@@ -633,7 +635,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       const beforeConstraint = new Date(justDate);
       beforeConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       beforeConstraint.setUTCHours(
-        beforeConstraint.getUTCHours() - course.startRegConstraint
+        sessionStartTime.getUTCHours() - course.startRegConstraint
       );
       const endConstraint = new Date(justDate);
       endConstraint.setUTCDate(
@@ -641,7 +643,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
       );
       endConstraint.setUTCMinutes(sessionStartTime.getUTCMinutes());
       endConstraint.setUTCHours(
-        endConstraint.getUTCHours() - course.endRegConstraint
+        sessionStartTime.getUTCHours() - course.endRegConstraint
       );
       if (
         available &&
@@ -1173,7 +1175,7 @@ export const cancelRegistration = async (req, res) => {
     " at " +
     registration.officeHour.location +
     " has been cancelled.\n\n" +
-    +"Thanks,\n" +
+    "Thanks,\n" +
     "The Hourly Team, \n" +
     "\n\n" +
     donotreply;

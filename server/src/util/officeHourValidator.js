@@ -4,7 +4,9 @@ import { decodeToken } from "./token.js";
 import { body } from "express-validator";
 import { handleUTCDateChange } from "./helpers.js";
 import { equalDates } from "./icalHelpers.js";
-import { debug } from "console";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 export const weekday = [
   "Sunday",
@@ -299,6 +301,11 @@ export const isTimeAvailable = async (req, res, next) => {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
   debug("getting registrations...");
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -307,31 +314,46 @@ export const isTimeAvailable = async (req, res, next) => {
       isCancelledStaff: false,
     },
   });
+  const dateObj = new Date(date);
   debug("got registrations");
   let valid = true;
+  if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
+    startTimeObj.setUTCHours(
+      startTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+    endTimeObj.setUTCHours(
+      endTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+  }
   registrations.forEach((registration) => {
-    if (registration.startTime == startTimeObj) {
+    if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
-    } else if (registration.endTime == endTimeObj) {
+    } else if (registration.endTime.getTime() === endTimeObj.getTime()) {
       valid = false;
     } else if (
-      registration.startTime < startTimeObj &&
-      registration.endTime > endTimeObj
+      registration.startTime.getTime() < startTimeObj.getTime() &&
+      registration.endTime.getTime() > endTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      registration.startTime < startTimeObj &&
-      registration.endTime > startTimeObj
+      registration.startTime.getTime() < startTimeObj.getTime() &&
+      registration.endTime.getTime() > startTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      registration.endTime > endTimeObj &&
-      registration.startTime < endTimeObj
+      registration.endTime.getTime() > endTimeObj.getTime() &&
+      registration.startTime.getTime() < endTimeObj.getTime()
     ) {
       valid = false;
     } else if (
-      startTimeObj < registration.startTime &&
-      endTimeObj > registration.startTime
+      startTimeObj.getTime() < registration.startTime.getTime() &&
+      endTimeObj.getTime() > registration.startTime.getTime()
     ) {
       valid = false;
     }
@@ -804,10 +826,9 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   debug("got registration");
   const startTimeObj = new Date(registration.startTime);
-  const dateObj = handleUTCDateChange(
-    new Date(registration.date),
-    registration.officeHour
-  );
+  const dateObj = new Date(registration.date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
@@ -830,7 +851,9 @@ export const isRegistrationInFuture = async (req, res, next) => {
   });
   debug("got office hour");
   const startTimeObj = stringToTimeObj(startTime);
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
