@@ -38,8 +38,6 @@ export const sendEmail = async (req) => {
       console.log(error);
       return "stop";
     }
-
-    console.log("Message sent: " + info.response);
   });
   debug("sendEmail done!");
 };
