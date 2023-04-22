@@ -312,6 +312,11 @@ export const isTimeAvailable = async (req, res, next) => {
     endTimeObj.setUTCDate(endTimeObj.getUTCDate() + 1);
   }
   debug("getting registrations...");
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId,
@@ -320,8 +325,23 @@ export const isTimeAvailable = async (req, res, next) => {
       isCancelledStaff: false,
     },
   });
+  const dateObj = new Date(date);
   debug("got registrations");
   let valid = true;
+  if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
+    startTimeObj.setUTCHours(
+      startTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+    endTimeObj.setUTCHours(
+      endTimeObj.getUTCHours() -
+        (officeHour.startDate.getTimezoneOffset() -
+          dateObj.getTimezoneOffset()) /
+          60
+    );
+  }
   registrations.forEach((registration) => {
     if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
@@ -817,10 +837,9 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   debug("got registration");
   const startTimeObj = new Date(registration.startTime);
-  const dateObj = handleUTCDateChange(
-    new Date(registration.date),
-    registration.officeHour
-  );
+  const dateObj = new Date(registration.date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
@@ -843,7 +862,9 @@ export const isRegistrationInFuture = async (req, res, next) => {
   });
   debug("got office hour");
   const startTimeObj = stringToTimeObj(startTime);
-  const dateObj = handleUTCDateChange(new Date(date), officeHour);
+  const dateObj = new Date(date);
+  dateObj.setUTCHours(startTimeObj.getUTCHours());
+  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
