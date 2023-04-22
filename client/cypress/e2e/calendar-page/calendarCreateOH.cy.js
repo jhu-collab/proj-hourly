@@ -35,14 +35,12 @@ describe("Calendar Page: Create Office Hours", () => {
     cy.get('[data-cy="location-input"]')
       .should("be.visible")
       .type(locationName);
-    cy.get('[data-cy="create-event-submit"').should("be.visible").click();
+    cy.get('[data-cy="create-event-submit"]').should("be.visible").click();
 
     /**First Fault:
      * After making an office hours, the page needs to be reloaded in order for
      * it to be clickable
      */
-    cy.reload();
-    cy.get('button[title="Next week"]').should("be.visible").click();
     cy.get(".css-zs52uy > .MuiTypography-root").should("be.visible").click();
 
     //Test that the Date is mostly correct on Tuesday
