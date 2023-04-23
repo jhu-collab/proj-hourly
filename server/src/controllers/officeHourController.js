@@ -306,6 +306,8 @@ export const register = async (req, res) => {
     emailEndTime +
     " on " +
     dateStr +
+    " with " +
+    hostFullName +
     " at " +
     location +
     "!" +
@@ -335,9 +337,12 @@ export const register = async (req, res) => {
       emailEndTime +
       "!";
     emailBody =
+    donotreply +
+      "\n\n" +
+      "Dear " +
       hostFullName +
       "," +
-      "\n" +
+      "\n\n" +
       "You have a new registration for your " +
       courseTitle +
       " office hours from " +
@@ -351,8 +356,12 @@ export const register = async (req, res) => {
       " with student " +
       fullName +
       "!" +
-      "\ntopics: " +
-      topics;
+      "\n\nTopics: " +
+      topics +
+      "\n\n" +
+      "Thanks,\n" +
+      "The Hourly Team\n\n" +
+      donotreply;
     emailReq = {
       email: acc.email,
       subject: subject,
@@ -1194,9 +1203,9 @@ export const cancelRegistration = async (req, res) => {
       donotreply +
       "\n\n" +
       "Dear " +
-      registration.account.firstName +
+      acc.firstName +
       " " +
-      registration.account.lastName +
+      acc.lastName +
       ",\n\n" +
       "Your registration on " +
       dateStr +
@@ -1210,7 +1219,11 @@ export const cancelRegistration = async (req, res) => {
       registration.account.lastName +
       " at " +
       registration.officeHour.location +
-      " has been cancelled.";
+      " has been cancelled.\n\n" +
+      "Thanks,\n" +
+      "The Hourly Team, \n" +
+      "\n\n" +
+      donotreply;
     subject =
       "[" +
       registration.officeHour.course.courseNumber +
