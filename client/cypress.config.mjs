@@ -21,7 +21,6 @@ export default defineConfig({
             return null;
           }
           const courseId = course.id;
-          console.log(courseId);
           await prisma.registration.deleteMany();
           await prisma.topic.deleteMany({
             where: {
@@ -45,25 +44,32 @@ export default defineConfig({
           });
           return null;
         },
-        // async removeAllCourses(userName) {
-        //   const user = await prisma.account.findUnique({
-        //     where: {
-        //       userName: userName,
-        //     },
-        //   });
-
-        //   user.instructorCourses = null;
-        //   user.staffCourses = null;
-        //   user.studentCourses = null;
-
-        //   prisma.account.update({
-        //     where: {
-        //       userName: userName,
-        //     },
-        //     data: user,
-        //   });
-        //   return null;
-        // },
+        async deleteStudentCourses(userName) {
+          await prisma.Account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              studentCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
+        async deleteInstructorCourses(userName) {
+          await prisma.Account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              instructorCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
       });
     },
   },

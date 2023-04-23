@@ -20,6 +20,7 @@ describe("My Courses Page", () => {
   });
 
   beforeEach(() => {
+    cy.task("deleteStudentCourses", "user-1");
     cy.visit(BASE_URL + "login");
 
     cy.get('input[id=":r1:"]').type("user-1");
