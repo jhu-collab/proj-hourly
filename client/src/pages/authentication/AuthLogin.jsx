@@ -38,6 +38,7 @@ function AuthLogin() {
         <Stack spacing={1}>
           <AnimateButton>
             <Button
+              data-cy="sign-in-as-user-button"
               variant="contained"
               fullWidth
               size="large"
@@ -73,6 +74,7 @@ function AuthLogin() {
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} marginTop={-0.5} alignItems="center">
           <FormInputText
+            data-cy="username-input-text"
             name="username"
             control={control}
             variant="standard"
@@ -80,6 +82,7 @@ function AuthLogin() {
             InputLabelProps={{ shrink: true }}
           />
           <FormInputText
+            data-cy="password-input-text"
             name="password"
             control={control}
             variant="standard"
@@ -89,6 +92,7 @@ function AuthLogin() {
           />
           <AnimateButton>
             <Button
+              data-cy="login-button"
               type="submit"
               variant="contained"
               size="large"

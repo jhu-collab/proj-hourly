@@ -22,7 +22,11 @@ function MyCourses() {
 
   return (
     <>
-      <Typography fontWeight={500} fontSize="23px">
+      <Typography
+        data-cy="staff-courses-label"
+        fontWeight={500}
+        fontSize="23px"
+      >
         Staff Courses
       </Typography>
       <Grid
@@ -34,7 +38,11 @@ function MyCourses() {
       >
         <CourseList courseType="staff" />
       </Grid>
-      <Typography fontWeight={500} fontSize="23px">
+      <Typography
+        data-cy="student-courses-label"
+        fontWeight={500}
+        fontSize="23px"
+      >
         Student Courses
       </Typography>
       <Grid

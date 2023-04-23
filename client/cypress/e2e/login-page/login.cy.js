@@ -1,6 +1,11 @@
 describe("Login Page", () => {
   const BASE_URL = "http://localhost:3000/";
 
+  const signInAsUserButton = '[data-cy="sign-in-as-user-button"]';
+  const userNameInputText = '[data-cy="username-input-text"]';
+  const passwordInputText = '[data-cy="password-input-text"]';
+  const loginButton = '[data-cy="login-button"]';
+
   beforeEach(() => {
     cy.visit(BASE_URL + "login");
   });
@@ -47,7 +52,6 @@ describe("Login Page", () => {
     cy.contains("button", "Login").click();
 
     cy.get(".Toastify")
-      .should("have.length", 1)
       .contains("div", "Wrong username or password")
       .should("be.visible");
   });
@@ -63,7 +67,6 @@ describe("Login Page", () => {
     cy.contains("button", "Login").click();
 
     cy.get(".Toastify")
-      .should("have.length", 1)
       .contains("div", "Wrong username or password")
       .should("be.visible");
   });

@@ -20,6 +20,7 @@ function Header({ open, handleDrawerToggle }) {
   const mainHeader = (
     <Toolbar>
       <IconButton
+        data-cy="navbar-button"
         disableRipple
         aria-label="open drawer"
         onClick={handleDrawerToggle}
