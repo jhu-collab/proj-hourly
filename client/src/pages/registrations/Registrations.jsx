@@ -102,7 +102,6 @@ function Registrations() {
     error: errorTypes,
     data: dataTypes,
   } = useQueryRegistrationTypes();
-
   useEffect(() => {
     let result = data?.registrations || [];
     let registrationTypes = dataTypes?.times || [];

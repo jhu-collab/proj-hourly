@@ -16,6 +16,7 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import useQueryTopics from "../../../hooks/useQueryTopics";
 import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 import { useEffect, useState } from "react";
+import FormInputText from "../../../components/form-ui/FormInputText";
 
 const getTimeSlotOptions = (timeSlotsPerType, type) => {
   const found = timeSlotsPerType.find((element) => element.type === type);
@@ -96,10 +97,16 @@ function RegisterForm() {
   );
   const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
 
+  // console.log(startTime);
+  // console.log(endTime);
+  // console.log(start);
+  // console.log(end);
+
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       type: "",
       times: "",
+      question: "",
       topicIds: [],
     },
     resolver: yupResolver(registerSchema),
@@ -122,11 +129,16 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
+    console.log("SUBMIT START")
+    console.log(startTime)
+    console.log(endTime)
+    console.log("SUBMIT END")
     mutate({
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      question: data.question,
       TopicIds: data.topicIds,
     });
   };
@@ -178,6 +190,13 @@ function RegisterForm() {
                     })}
                   </Box>
                 )}
+              />
+              <FormInputText
+                name="question"
+                control={control}
+                label="Additional Notes (optional)"
+                multiline
+                rows={4}
               />
               <Button
                 type="submit"
