@@ -5,7 +5,6 @@ import prisma from "../../prisma/client.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
 import { weekday } from "../../src/util/officeHourValidator.js";
-import { start } from "repl";
 
 const request = supertest(app);
 const endpoint = "/api/officeHour";
