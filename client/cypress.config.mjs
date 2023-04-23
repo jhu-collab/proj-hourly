@@ -70,6 +70,14 @@ export default defineConfig({
           });
           return null;
         },
+        async getCourseByCode(code) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: code,
+            },
+          });
+          return course;
+        },
       });
     },
   },

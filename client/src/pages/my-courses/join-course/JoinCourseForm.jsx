@@ -41,6 +41,7 @@ function JoinCourseForm() {
         </Typography>
         <Stack direction="column" spacing={0.5}>
           <FormInputText
+            data-cy="join-course-input"
             name="code"
             label="Course Code"
             control={control}
