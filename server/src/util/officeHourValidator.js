@@ -568,7 +568,7 @@ export const isDateInFuture = async (req, res, next) => {
 export const isStudentRegistered = async (req, res, next) => {
   debug("checking if student is registered");
   const registrationId = parseInt(req.params.registrationId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   debug("getting registration...");
   const registration = await prisma.registration.findFirst({
     where: {
