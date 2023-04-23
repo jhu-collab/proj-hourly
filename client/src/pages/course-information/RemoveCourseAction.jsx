@@ -13,6 +13,7 @@ function RemoveCourseAction({ courseId }) {
   return (
     <>
       <Button
+        data-cy="leave-course-button"
         color="error"
         variant="contained"
         fullWidth
