@@ -115,10 +115,11 @@ function EditEventForm() {
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)} data-cy="edit-event-form">
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
             <FormInputText
+              data-cy="edit-start-time-text"
               name="startTime"
               control={control}
               label="Start Time"
@@ -126,6 +127,7 @@ function EditEventForm() {
               InputLabelProps={{ shrink: true }}
             />
             <FormInputText
+              data-cy="edit-end-time-text"
               name="endTime"
               control={control}
               label="End Time"
@@ -141,6 +143,7 @@ function EditEventForm() {
             />
           )}
           <FormInputText
+            data-cy="edit-start-date-text"
             name="startDate"
             control={control}
             label={recurringEvent ? "Start Date" : "Date"}
@@ -149,6 +152,7 @@ function EditEventForm() {
           />
           {recurringEvent && (
             <FormInputText
+              data-cy="edit-end-date-text"
               name="endDate"
               control={control}
               label="End Date"
@@ -164,8 +168,14 @@ function EditEventForm() {
               color="primary"
             />
           )}
-          <FormInputText name="location" control={control} label="Location" />
+          <FormInputText
+            data-cy="edit-location-input"
+            name="location"
+            control={control}
+            label="Location"
+          />
           <Button
+            data-cy="edit-event-submit"
             type="submit"
             variant="contained"
             disabled={isLoading}

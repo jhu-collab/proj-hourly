@@ -30,7 +30,6 @@ function EventPopover() {
 
   return (
     <Popover
-      data-cy="event-pop"
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={() => setAnchorEl(null)}

@@ -110,7 +110,12 @@ export const eventContent = (arg) => {
   if (arg.view.type === "timeGridWeek" || arg.view.type === "timeGridDay") {
     arg.backgroundColor = eventColorPalette[hostId % 6].bottomColor;
     return (
-      <Stack justifyContent="center" alignItems="center" spacing={1}>
+      <Stack
+        data-cy={`event-${arg.timeText}`}
+        justifyContent="center"
+        alignItems="center"
+        spacing={1}
+      >
         <Box
           height="25px"
           width="101.5%"

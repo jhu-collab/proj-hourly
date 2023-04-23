@@ -6,14 +6,44 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", {
-        async removeOH() {
-          await prisma.officeHour.deleteMany();
-          return null;
-        },
-        async deleteCourse(code) {
+        async removeOH(courseCode) {
           const course = await prisma.course.findUnique({
             where: {
-              code: code,
+              code: courseCode,
+            },
+            include: {
+              officeHours: true,
+            },
+          });
+          await prisma.OfficeHour.deleteMany({
+            where: {
+              courseId: course.id,
+            },
+          });
+          await prisma.course.update({
+            where: {
+              code: courseCode,
+            },
+            data: {
+              officeHours: {
+                set: [],
+              },
+              iCalJson: {
+                set: [],
+              },
+            },
+          });
+          const c = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          return null;
+        },
+        async deleteCourse(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
             },
           });
           if (!course) {
