@@ -163,7 +163,6 @@ export const isUrlStudent = async (req, res, next) => {
 
 export const areAccountsIdsValid = async (req, res, next) => {
   debug("checking if accounts are valid...");
-  console.log(req.body);
   const { hosts } = req.body;
   let checkAllAccounts = [];
   hosts.forEach((element) => {

@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import {test, expect} from "vitest";
 import app from "../src/index.js";
 
 const request = supertest(app);

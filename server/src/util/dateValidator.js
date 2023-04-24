@@ -8,7 +8,6 @@ export const officeHourDateCheck = (req, res, next) => {
   const startObj = new Date(startDate);
   const endObj = new Date(endDate);
   if (recurringEvent && startObj > endObj) {
-    console.log("error1");
     debug("Start date is after end date...");
     return res
       .status(StatusCodes.BAD_REQUEST)

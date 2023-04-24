@@ -93,7 +93,9 @@ export const create = async (req, res) => {
     account.firstName +
     " " +
     account.lastName +
-    " your course " +
+    "," +
+    "\n\n" +
+    "Your course " +
     title +
     " was created. Give this code, " +
     code +
@@ -107,7 +109,6 @@ export const create = async (req, res) => {
     email: account.email,
     subject: title + " Created!",
     text,
-    html: "<p> " + text + " <p/>",
   });
   debug("Create is done!");
   return res.status(StatusCodes.CREATED).json({ course });
