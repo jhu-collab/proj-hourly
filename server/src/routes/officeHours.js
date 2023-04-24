@@ -9,7 +9,7 @@ import * as dateValidator from "../util/dateValidator.js";
 import { checkToken } from "../util/middleware.js";
 import { factory } from "../util/debug.js";
 
- const debug = factory(import.meta.url);
+const debug = factory(import.meta.url);
 
 const router = express.Router();
 const body = express_validator.body;
@@ -45,10 +45,10 @@ router.post(
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
+  dateValidator.officeHourDateCheck,
   validator.durationIsMultipleof5,
   //timeValidator.isTime,
   //validator.areValidDOW,
-  //dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
 );
