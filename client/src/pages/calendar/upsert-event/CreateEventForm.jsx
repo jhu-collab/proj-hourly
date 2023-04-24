@@ -145,6 +145,7 @@ function CreateEventForm() {
             />
           </Stack>
           <FormCheckbox
+          data-cy="create-recurring-checkbox"
             name="recurringEvent"
             control={control}
             label="Recurring event"

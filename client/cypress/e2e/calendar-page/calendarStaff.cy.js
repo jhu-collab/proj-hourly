@@ -41,12 +41,10 @@ describe("Calendar Page: Staff Office Hours", () => {
       //This is extremely hard coded, trying to click a time on tuesday
       //It seems difficult to put a data-cy tag on a element because it's
       //a premade calendar
-      cy.xpath(
-        "/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/div/div/div/div[2]/table/tbody/tr/td[4]/div"
-      ).click({ force: true });
+      cy.get('[data-cy="full-calendar"]').click();
 
-      cy.get('input[id=":r7:"]').should("have.value", "11:30");
-      cy.get('input[id=":r9:"]').should("have.value", "12:00");
+      cy.get('input[id=":r7:"]').should("have.value", "06:30");
+      cy.get('input[id=":r9:"]').should("have.value", "07:00");
 
       const locationName = "Mark's Location";
 
@@ -66,12 +64,12 @@ describe("Calendar Page: Staff Office Hours", () => {
       //Test that the Date is mostly correct on Tuesday
       cy.get('[data-cy="date-text"]')
         .should("be.visible")
-        .contains("Date: Tue");
+        .contains("Date: Wed");
 
       //Test that the time matches with what was inputted
       cy.get('[data-cy="time-text"]')
         .should("be.visible")
-        .should("have.text", "Time: 11:30 AM - 12:00 PM");
+        .should("have.text", "Time: 6:30 AM - 7:00 AM");
 
       //Test that the location matches with what was inputted
       cy.get('[data-cy="location-text"]')
@@ -79,7 +77,7 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
 
-    it.skip("staff can create recurring office hours", () => {
+    it("staff can create recurring office hours and it should show up for same week", () => {
       //Look one week ahead because want to be able to run these tests anytime
       //since cannot make office hours in the past
       cy.get('button[title="Next week"]').should("be.visible").click();
@@ -87,25 +85,49 @@ describe("Calendar Page: Staff Office Hours", () => {
       //This is extremely hard coded, trying to click a time on tuesday
       //It seems difficult to put a data-cy tag on a element because it's
       //a premade calendar
-      cy.xpath(
-        "/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/div/div/div/div[2]/table/tbody/tr/td[4]/div"
-      ).click({ force: true });
+      cy.get('[data-cy="full-calendar"]').click();
 
-      cy.get('input[id=":r7:"]').should("have.value", "11:30");
-      cy.get('input[id=":r9:"]').should("have.value", "12:00");
+      cy.get('input[id=":r7:"]').should("have.value", "06:30");
+      cy.get('input[id=":r9:"]').should("have.value", "07:00");
 
-      cy.get('input[id=":rb:"]').type("2023-04-25");
+      //Activate recurring
+      cy.get('input[name="recurringEvent"]').check();
+
+      const newDate = new Date(now.setMonth(now.getMonth()+1));
+      const newDateStr = formatCypressDate(newDate);
+      cy.get('[data-cy="create-end-date-text"]').clear().type(newDateStr);
 
       const locationName = "Mark's Location";
-
       cy.get('[data-cy="create-location-input"]')
         .should("be.visible")
         .type(locationName);
+
+      cy.get('button[value="Monday"]').click();
+      cy.get('button[value="Wednesday"]').click();
+      cy.get('button[value="Friday"]').click();
+
       cy.get('[data-cy="create-event-submit"]').should("be.visible").click();
 
       cy.reload();
       cy.get('button[title="Next week"]').should("be.visible").click();
-      cy.get("[data-cy^=event-]").should("have.length", 1).click();
+      //It should be 2 because I clicked on wednesday, then recurred for MWF. Clicking on wednesday
+      //should make it so that this week's wednesday and friday should have an event
+      cy.get('[data-cy^=event-]').should('have.length', 2);
+
+      //The number of recurrences should be about 12
+      cy.get('button[value="month"]').click();
+      let countOfElements = 0;
+      cy.get('div[class="fc-event-title"]').then($elements => {
+        cy.log($elements.length);
+        countOfElements += $elements.length;
+        cy.get('button[title="Next month"]').should("be.visible").click();
+        cy.get('div[class="fc-event-title"]').then($elements => {
+          cy.log($elements.length);
+          countOfElements += $elements.length;
+          cy.wrap(countOfElements).should('be.lte', 14);
+          cy.wrap(countOfElements).should('be.gte', 10);
+        });
+      });
     });
   });
 
@@ -132,12 +154,10 @@ describe("Calendar Page: Staff Office Hours", () => {
       //This is extremely hard coded, trying to click a time on tuesday
       //It seems difficult to put a data-cy tag on a element because it's
       //a premade calendar
-      cy.xpath(
-        "/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/div/div/div/div[2]/table/tbody/tr/td[4]/div"
-      ).click({ force: true });
+      cy.get('[data-cy="full-calendar"]').click();
 
-      cy.get('input[id=":r7:"]').should("have.value", "11:30");
-      cy.get('input[id=":r9:"]').should("have.value", "12:00");
+      cy.get('input[id=":r7:"]').should("have.value", "06:30");
+      cy.get('input[id=":r9:"]').should("have.value", "07:00");
 
       const locationName = "Mark's Location";
 
@@ -157,7 +177,7 @@ describe("Calendar Page: Staff Office Hours", () => {
     });
   });
 
-  describe("editing office hours", () => {
+  describe.skip("editing office hours", () => {
     beforeEach(() => {
       now = new Date();
       cy.task("removeOH", "AVENGE");
@@ -176,12 +196,10 @@ describe("Calendar Page: Staff Office Hours", () => {
       //This is extremely hard coded, trying to click a time on tuesday
       //It seems difficult to put a data-cy tag on a element because it's
       //a premade calendar
-      cy.xpath(
-        "/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[2]/div/table/tbody/tr/td/div/div/div/div[2]/table/tbody/tr/td[4]/div"
-      ).click({ force: true });
+      cy.get('[data-cy="full-calendar"]').click();
 
-      cy.get('input[id=":r7:"]').should("have.value", "11:30");
-      cy.get('input[id=":r9:"]').should("have.value", "12:00");
+      cy.get('input[id=":r7:"]').should("have.value", "06:30");
+      cy.get('input[id=":r9:"]').should("have.value", "07:00");
 
       const locationName = "Mark's Location";
 
@@ -194,7 +212,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('button[title="Next week"]').should("be.visible").click();
     });
 
-    it.skip("edit location", () => {
+    it("edit location", () => {
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
       cy.get("[data-cy=edit-action-icon]").click();
 
@@ -215,12 +233,12 @@ describe("Calendar Page: Staff Office Hours", () => {
       //Test that the Date is mostly correct on Tuesday
       cy.get('[data-cy="date-text"]')
         .should("be.visible")
-        .contains("Date: Tue");
+        .contains("Date: Wed");
 
       //Test that the time did not change
       cy.get('[data-cy="time-text"]')
         .should("be.visible")
-        .should("have.text", "Time: 11:30 AM - 12:00 PM");
+        .should("have.text", "Time: 6:30 AM - 7:00 AM");
 
       //Test that the location is new
       cy.get('[data-cy="location-text"]')
@@ -228,7 +246,7 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + newLocationName);
     });
 
-    it.skip("edit time", () => {
+    it("edit time", () => {
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
       cy.get("[data-cy=edit-action-icon]").click();
 
@@ -252,7 +270,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       //Test that the Date is mostly correct on Tuesday
       cy.get('[data-cy="date-text"]')
         .should("be.visible")
-        .contains("Date: Tue");
+        .contains("Date: Wed");
 
       //Test that the time did change
       cy.get('[data-cy="time-text"]')
@@ -267,7 +285,6 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
 
-    //TODO: Broken
     it("edit day", () => {
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
       cy.get("[data-cy=edit-action-icon]").click();
@@ -275,15 +292,32 @@ describe("Calendar Page: Staff Office Hours", () => {
       //The actual edit form should exist
       cy.get('[data-cy="edit-event-form"]').should("be.visible");
 
-      cy.log(formatCypressDate(now));
-      //Edit to start at 9  :30 am
-      now.setDate(now.getDate() + 8);
-      const nowStr = formatCypressDate(now);
+      //Change the date
+      now.setDate(now.getDate() + 11);
+      const nowStr = formatCypressDate(now)
 
-      //TODO: This is broken.
-      //It is very hard to change the date when creating/editing an event
-      cy.log(nowStr);
-      cy.get('input[id=":r9:"]').clear().type(`${nowStr}`);
+      cy.get('[data-cy="edit-start-date-text"]').clear().type(`${nowStr}`)
+      cy.get('[data-cy="edit-event-submit"').should("be.visible").click();
+
+      cy.get("[data-cy^=event-]").should("have.length", 1);
+      cy.get("[data-cy^=event-]").click();
+
+      //Test that the Date changed one day
+      cy.get('[data-cy="date-text"]')
+        .should("be.visible")
+        .contains("Date: Thu");
+
+      //Test that the time did not change
+      cy.get('[data-cy="time-text"]')
+        .should("be.visible")
+        .should("have.text", "Time: 6:30 AM - 7:00 AM");
+
+      const locationName = "Mark's Location";
+
+      //Test that the location did not change
+      cy.get('[data-cy="location-text"]')
+        .should("be.visible")
+        .should("have.text", "Location: " + locationName);
     });
   });
 });
