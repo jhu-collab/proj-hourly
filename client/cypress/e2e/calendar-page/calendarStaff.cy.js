@@ -33,7 +33,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       //remove any office hours that were created in the making of the tests
       cy.task("removeOH", "AVENGE");
     });
-    it.skip("staff can create office hours", () => {
+    it("staff can create office hours", () => {
       //Look one week ahead because want to be able to run these tests anytime
       //since cannot make office hours in the past
       cy.get('button[title="Next week"]').should("be.visible").click();
@@ -93,7 +93,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       //Activate recurring
       cy.get('input[name="recurringEvent"]').check();
 
-      const newDate = new Date(now.setMonth(now.getMonth()+1));
+      const newDate = new Date(now.setMonth(now.getMonth() + 1));
       const newDateStr = formatCypressDate(newDate);
       cy.get('[data-cy="create-end-date-text"]').clear().type(newDateStr);
 
@@ -112,26 +112,26 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('button[title="Next week"]').should("be.visible").click();
       //It should be 2 because I clicked on wednesday, then recurred for MWF. Clicking on wednesday
       //should make it so that this week's wednesday and friday should have an event
-      cy.get('[data-cy^=event-]').should('have.length', 2);
+      cy.get("[data-cy^=event-]").should("have.length", 2);
 
       //The number of recurrences should be about 12
       cy.get('button[value="month"]').click();
       let countOfElements = 0;
-      cy.get('div[class="fc-event-title"]').then($elements => {
+      cy.get('div[class="fc-event-title"]').then(($elements) => {
         cy.log($elements.length);
         countOfElements += $elements.length;
         cy.get('button[title="Next month"]').should("be.visible").click();
-        cy.get('div[class="fc-event-title"]').then($elements => {
+        cy.get('div[class="fc-event-title"]').then(($elements) => {
           cy.log($elements.length);
           countOfElements += $elements.length;
-          cy.wrap(countOfElements).should('be.lte', 14);
-          cy.wrap(countOfElements).should('be.gte', 10);
+          cy.wrap(countOfElements).should("be.lte", 14);
+          cy.wrap(countOfElements).should("be.gte", 10);
         });
       });
     });
   });
 
-  describe.skip("deleting office hours", () => {
+  describe("deleting office hours", () => {
     beforeEach(() => {
       cy.visit(BASE_URL);
       cy.get('input[id=":r1:"]').type("thor");
@@ -177,7 +177,7 @@ describe("Calendar Page: Staff Office Hours", () => {
     });
   });
 
-  describe.skip("editing office hours", () => {
+  describe("editing office hours", () => {
     beforeEach(() => {
       now = new Date();
       cy.task("removeOH", "AVENGE");
@@ -294,9 +294,9 @@ describe("Calendar Page: Staff Office Hours", () => {
 
       //Change the date
       now.setDate(now.getDate() + 11);
-      const nowStr = formatCypressDate(now)
+      const nowStr = formatCypressDate(now);
 
-      cy.get('[data-cy="edit-start-date-text"]').clear().type(`${nowStr}`)
+      cy.get('[data-cy="edit-start-date-text"]').clear().type(`${nowStr}`);
       cy.get('[data-cy="edit-event-submit"').should("be.visible").click();
 
       cy.get("[data-cy^=event-]").should("have.length", 1);

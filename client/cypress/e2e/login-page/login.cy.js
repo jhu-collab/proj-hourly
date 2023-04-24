@@ -17,7 +17,7 @@ describe("Login Page", () => {
    * 3. Page should contain a clickable button to login.
    * 4. Page should contain a clickable button to sign in as a user.
    */
-  it("Layout Contains all Required Elements", () => {
+  it.only("Layout Contains all Required Elements", () => {
     cy.get(signInAsUserButton).should("be.visible").should("be.enabled");
     cy.get(userNameInputText).should("be.visible");
     cy.get(passwordInputText).should("be.visible");
