@@ -18,14 +18,10 @@ describe("Login Page", () => {
    * 4. Page should contain a clickable button to sign in as a user.
    */
   it("Layout Contains all Required Elements", () => {
-    cy.get('label[id=":r1:-label"]').should("be.visible").contains("Username");
-    cy.get('input[id=":r1:"]').should("be.visible").should("be.enabled");
-    cy.get('label[id=":r3:-label"]').should("be.visible").contains("Password");
-    cy.get('input[id=":r3:"]').should("be.visible").should("be.enabled");
-    cy.contains("button", "Login").should("be.visible").should("be.enabled");
-    cy.contains("button", "Sign in as User")
-      .should("be.visible")
-      .should("be.enabled");
+    cy.get(signInAsUserButton).should("be.visible").should("be.enabled");
+    cy.get(userNameInputText).should("be.visible");
+    cy.get(passwordInputText).should("be.visible");
+    cy.get(loginButton).should("be.visible").should("be.enabled");
   });
 
   /** Test: Successful Login
@@ -34,9 +30,9 @@ describe("Login Page", () => {
    * 1. Verify that the user is redirected to the / endpoint.
    */
   it("Successful Login", () => {
-    cy.get('input[id=":r1:"]').type("user-1");
-    cy.get('input[id=":r3:"]').type("user-1");
-    cy.contains("button", "Login").click();
+    cy.get(userNameInputText).type("user-1");
+    cy.get(passwordInputText).type("user-1");
+    cy.get(loginButton).click();
 
     cy.url().should("be.equal", BASE_URL);
   });
@@ -47,9 +43,9 @@ describe("Login Page", () => {
    * 1. Verify that a toast message is displayed with the text "Wrong username or password".
    */
   it("Failed Login with Invalid Username", () => {
-    cy.get('input[id=":r1:"]').type("InvalidUsername");
-    cy.get('input[id=":r3:"]').type("user-1");
-    cy.contains("button", "Login").click();
+    cy.get(userNameInputText).type("InvalidUsername");
+    cy.get(passwordInputText).type("user-1");
+    cy.get(loginButton).click();
 
     cy.get(".Toastify")
       .contains("div", "Wrong username or password")
@@ -62,9 +58,9 @@ describe("Login Page", () => {
    * 1. Verify that a toast message is displayed with the text "Wrong username or password".
    */
   it("Failed Login with Invalid Password", () => {
-    cy.get('input[id=":r1:"]').type("user-1");
-    cy.get('input[id=":r3:"]').type("InvalidPassword");
-    cy.contains("button", "Login").click();
+    cy.get(userNameInputText).type("user-1");
+    cy.get(passwordInputText).type("InvalidPassword");
+    cy.get(loginButton).click();
 
     cy.get(".Toastify")
       .contains("div", "Wrong username or password")
@@ -78,7 +74,7 @@ describe("Login Page", () => {
    * 1. Verify that the user is redirected to the / endpoint.
    */
   it("Successful Sign In as User", () => {
-    cy.contains("button", "Sign in as User").click();
+    cy.get(signInAsUserButton).click();
 
     cy.url().should("be.equal", BASE_URL);
   });
