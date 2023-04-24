@@ -40,41 +40,6 @@ export default defineConfig({
           });
           return null;
         },
-        async deleteCourse(courseCode) {
-          const course = await prisma.course.findUnique({
-            where: {
-              code: courseCode,
-            },
-          });
-          console.log(course);
-          if (!course) {
-            console.log("is null");
-            return null;
-          }
-          const courseId = course.id;
-          await prisma.registration.deleteMany();
-          await prisma.topic.deleteMany({
-            where: {
-              courseId: courseId,
-            },
-          });
-          await prisma.officeHour.deleteMany({
-            where: {
-              courseId: courseId,
-            },
-          });
-          await prisma.officeHourTimeOptions.deleteMany({
-            where: {
-              courseId: courseId,
-            },
-          });
-          await prisma.course.delete({
-            where: {
-              id: courseId,
-            },
-          });
-          return null;
-        },
         async deleteStudentCourses(userName) {
           await prisma.Account.update({
             where: {
@@ -89,14 +54,21 @@ export default defineConfig({
           return null;
         },
         async deleteInstructorCourses(userName) {
-          // const user = await prisma.Account.findUnique({
-          //   where: {
-          //     userName: userName,
-          //   },
-          //   include: {
-          //     instructorCourses: true,
-          //   },
-          // });
+          const user = await prisma.Account.findUnique({
+            where: {
+              userName: userName,
+            },
+            include: {
+              instructorCourses: true,
+            },
+          });
+          for (const c of user.instructorCourses) {
+            console.log(c);
+            await prisma.officeHourTimeOptions.deleteMany({
+              where: { courseId: c.id },
+            });
+            await prisma.course.delete({ where: { id: c.id } });
+          }
           await prisma.Account.update({
             where: {
               userName: userName,
@@ -107,10 +79,6 @@ export default defineConfig({
               },
             },
           });
-          // for (const c of user.instructorCourses) {
-          //   console.log(c);
-          //   deleteCourse(c.code);
-          // }
           return null;
         },
         async getCourseByCode(code) {
