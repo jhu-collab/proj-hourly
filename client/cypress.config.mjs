@@ -46,7 +46,7 @@ export default defineConfig({
               code: courseCode,
             },
           });
-          console.log(course)
+          console.log(course);
           if (!course) {
             console.log("is null");
             return null;
@@ -89,14 +89,14 @@ export default defineConfig({
           return null;
         },
         async deleteInstructorCourses(userName) {
-          const user = await prisma.Account.findUnique({
-            where: {
-              userName: userName,
-            },
-            include: {
-              instructorCourses: true,
-            },
-          });
+          // const user = await prisma.Account.findUnique({
+          //   where: {
+          //     userName: userName,
+          //   },
+          //   include: {
+          //     instructorCourses: true,
+          //   },
+          // });
           await prisma.Account.update({
             where: {
               userName: userName,
@@ -107,10 +107,10 @@ export default defineConfig({
               },
             },
           });
-          for (const c of user.instructorCourses) {
-            console.log(c)
-            deleteCourse(c.code);
-          }
+          // for (const c of user.instructorCourses) {
+          //   console.log(c);
+          //   deleteCourse(c.code);
+          // }
           return null;
         },
         async getCourseByCode(code) {

@@ -77,7 +77,6 @@ function CreateCourseForm() {
             label="Course Number"
           />
           <FormInputDropdown
-            data-cy="course-semester-input"
             name="semester"
             control={control}
             label="Semester"

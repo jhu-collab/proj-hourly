@@ -25,7 +25,7 @@ describe("My Courses Page", () => {
   const createCourseButton = '[data-cy="create-course-button"]';
   const createCourseTitle = '[data-cy="course-title-input"]';
   const createCourseNumber = '[data-cy="course-number-input"]';
-  const createCourseSemester = '[data-cy="course-semester-input"]';
+  const createCourseSemesterDropdown = '[data-cy="form-input-dropdown"]';
   const createCourseYear = '[data-cy="course-year-input"]';
   const createButton = '[data-cy="create-button"]';
 
@@ -49,6 +49,7 @@ describe("My Courses Page", () => {
     }
     cy.get(staffCoursesLabel).should("be.visible");
     cy.get(staffCourseList)
+      .children()
       .should("be.visible")
       .should("have.length", 1)
       .contains(
@@ -56,6 +57,7 @@ describe("My Courses Page", () => {
       );
     cy.get(studentCoursesLabel).should("be.visible");
     cy.get(studentCourseList)
+      .children()
       .should("be.visible")
       .should("have.length", 1)
       .contains(
@@ -82,8 +84,11 @@ describe("My Courses Page", () => {
     cy.get(addCourseButton).click();
     cy.get(joinCourseButton).click();
 
+    cy.wait(1000);
+
     cy.get(joinCourseInput).contains("p", "Course code is required");
     cy.get(studentCourseList)
+      .children()
       .should("be.visible")
       .should("have.length", 1)
       .contains(
@@ -92,12 +97,17 @@ describe("My Courses Page", () => {
   });
 
   it("Failure to Join Student Course With Invalid Course Number Length", () => {
+    const courseCode = "0000";
+
     cy.get(addCourseButton).click();
-    cy.get(joinCourseInput).type("0000");
+    cy.get(joinCourseInput).type(courseCode);
     cy.get(joinCourseButton).click();
+
+    cy.wait(1000);
 
     cy.get(joinCourseInput).contains("p", "Course code must be 6 characters");
     cy.get(studentCourseList)
+      .children()
       .should("be.visible")
       .should("have.length", 1)
       .contains(
@@ -112,6 +122,8 @@ describe("My Courses Page", () => {
     cy.get(joinCourseInput).type(courseCode);
     cy.get(joinCourseButton).click();
 
+    cy.wait(1000);
+
     cy.task("getCourseByCode", courseCode).then((course) => {
       cy.get(".Toastify")
         .contains(
@@ -120,6 +132,7 @@ describe("My Courses Page", () => {
         )
         .should("be.visible");
       cy.get(studentCourseList)
+        .children()
         .should("be.visible")
         .should("have.length", 1)
         .contains(course.title);
@@ -132,7 +145,7 @@ describe("My Courses Page", () => {
 
     cy.get(createCourseTitle).should("be.visible");
     cy.get(createCourseNumber).should("be.visible");
-    cy.get(createCourseSemester).should("be.visible");
+    cy.get(createCourseSemesterDropdown).should("be.visible");
     cy.get(createCourseYear).should("be.visible");
     cy.get(createButton).should("be.visible").should("be.enabled");
   });
@@ -142,43 +155,223 @@ describe("My Courses Page", () => {
     cy.get(createCourseButton).click();
     cy.get(createButton).click();
 
-    // Add Tests
+    cy.wait(1000);
+
+    cy.get(createCourseTitle).contains("p", "Course title is required");
+    cy.get(createCourseNumber).contains(
+      "p",
+      "Course number is invalid. Must be xxx.xxx"
+    );
+    cy.get(createCourseSemesterDropdown).contains("p", "Semester is required");
+    cy.get(createCourseYear).contains("p", "Please enter valid year");
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a staff member."
+      );
   });
 
   it("Failed Creation of Instructor Course with Invalid Course Number", () => {
+    const courseTitle = "Test Course";
+    const courseNumber = "-1";
+    const courseSemester = "Fall";
+    const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
     cy.get(addCourseButton).click();
     cy.get(createCourseButton).click();
-
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
 
-    // Add tests
+    cy.wait(1000);
+
+    cy.get(createCourseNumber).contains(
+      "p",
+      "Course number is invalid. Must be xxx.xxx"
+    );
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a staff member."
+      );
   });
 
   it("Failed Creation of Instructor Course with Invalid Semester", () => {
+    const courseTitle = "Test Course";
+    const courseNumber = "601.000";
+    const courseSemester = "Winter";
+    const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
     cy.get(addCourseButton).click();
     cy.get(createCourseButton).click();
-
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
 
-    // Add tests
+    cy.wait(1000);
+
+    cy.get(createCourseSemesterDropdown).contains(
+      "p",
+      "Please enter a current or future semester"
+    );
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a staff member."
+      );
   });
 
   it("Failed Creation of Instructor Course with Invalid Year", () => {
+    const courseTitle = "Test Course";
+    const courseNumber = "601.000";
+    const courseSemester = "Fall";
+    const courseYear = "2022";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
     cy.get(addCourseButton).click();
     cy.get(createCourseButton).click();
-
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
 
-    // Add tests
+    cy.wait(1000);
+
+    cy.get(createCourseSemesterDropdown).contains(
+      "p",
+      "Please enter a current or future semester"
+    );
+    cy.get(createCourseYear).contains(
+      "p",
+      "Please enter current or future year"
+    );
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a staff member."
+      );
   });
 
   it("Successful Creation of Instructor Course", () => {
+    const courseTitle = "Test Course";
+    const courseNumber = "601.000";
+    const courseSemester = "Fall";
+    const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
     cy.get(addCourseButton).click();
     cy.get(createCourseButton).click();
-
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
 
-    // Add tests
+    cy.get(".Toastify")
+      .contains(
+        "div",
+        `Successfully created the ${courseTitle} course for ${courseSemester} ${courseYear}`
+      )
+      .should("be.visible");
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1);
+  });
+
+  it("Failed Creation of Duplicate Course", () => {
+    const courseTitle = "Test Course";
+    const courseNumber = "601.001";
+    const courseSemester = "Fall";
+    const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
+    cy.get(addCourseButton).click();
+    cy.get(createCourseButton).click();
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
+    cy.get(createButton).click();
+
+    cy.get(addCourseButton).click();
+    cy.get(createCourseButton).click();
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
+    cy.get(createButton).click();
+
+    cy.wait(1000);
+
+    cy.get(".Toastify")
+      .contains("div", "course already exists")
+      .should("be.visible");
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1);
+  });
+
+  it("Failed Creation of Two Different Courses with Same Course Number", () => {
+    const courseTitle1 = "Test Course";
+    const courseTitle2 = "Test Course 2";
+    const courseNumber = "601.002";
+    const courseSemester = "Fall";
+    const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
+
+    cy.get(addCourseButton).click();
+    cy.get(createCourseButton).click();
+    cy.get(createCourseTitle).type(courseTitle1);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
+    cy.get(createButton).click();
+
+    cy.get(addCourseButton).click();
+    cy.get(createCourseButton).click();
+    cy.get(createCourseTitle).type(courseTitle2);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
+    cy.get(createButton).click();
+
+    cy.wait(1000);
+
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1);
   });
 
   it("Successfully Opening a Student Course", () => {
@@ -187,9 +380,13 @@ describe("My Courses Page", () => {
     cy.get(joinCourseInput).type(courseCode);
     cy.get(joinCourseButton).click();
 
+    cy.wait(1000);
+
     const courseNumber = "123.456";
     const course = `[data-cy="${courseNumber}"]`;
     cy.get(course).click();
+
+    cy.wait(1000);
 
     cy.url().should("be.equal", BASE_URL + "calendar");
   });
@@ -197,16 +394,26 @@ describe("My Courses Page", () => {
   it("Successfully Opening an Instructor Course", () => {
     const courseTitle = "Software Testing and Debugging";
     const courseNumber = "601.422";
-    // const courseSemester =
+    const courseSemester = "Fall";
     const courseYear = "2023";
+
+    const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
     cy.get(addCourseButton).click();
     cy.get(createCourseButton).click();
     cy.get(createCourseTitle).type(courseTitle);
     cy.get(createCourseNumber).type(courseNumber);
-    // Select Semester here
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
     cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
+
+    cy.wait(1000);
+
+    const course = `[data-cy="${courseNumber}"]`;
+    cy.get(course).click();
+
+    cy.wait(1000);
 
     cy.url().should("be.equal", BASE_URL + "calendar");
   });
@@ -218,6 +425,8 @@ describe("My Courses Page", () => {
     cy.get(profileNameButton).click();
     cy.get(logoutButton).click();
 
+    cy.wait(1000);
+
     cy.url().should("be.equal", BASE_URL + "login");
   });
 
@@ -227,6 +436,8 @@ describe("My Courses Page", () => {
     }
     cy.get(profileNameButton).click();
     cy.get(profileButton).click();
+
+    cy.wait(1000);
 
     cy.url().should("be.equal", BASE_URL + "profile");
   });
