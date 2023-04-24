@@ -6,8 +6,32 @@ describe("Course Details Page: Staff", () => {
   const loginButton = '[data-cy="login-button"]';
 
   const addCourseButton = '[data-cy="add-course-button"]';
+  const createCourseButton = '[data-cy="create-course-button"]';
+  const createCourseTitle = '[data-cy="course-title-input"]';
+  const createCourseNumber = '[data-cy="course-number-input"]';
+  const createCourseSemesterDropdown = '[data-cy="form-input-dropdown"]';
+  const createCourseYear = '[data-cy="course-year-input"]';
+  const createButton = '[data-cy="create-button"]';
+
+  const navbarButton = '[data-cy="navbar-button"]';
+  const navbar = '[data-cy="navbar"]';
+
+  const courseDetailsTitle = '[data-cy="course-details-title"]';
+  const courseDetailsNumber = '[data-cy="course-details-number"]';
+  const courseDetailsSemester = '[data-cy="course-details-semester"]';
+  const courseDetailsYear = '[data-cy="course-details-year"]';
+  const courseDetailsCode = '[data-cy="course-details-code"]';
+
+  const courseTitle = "Machine Learning";
+  const courseNumber = "601.475";
+  const courseSemester = "Fall";
+  const courseYear = "2023";
+
+  const createCourseSemester = `[data-cy="${courseSemester}"]`;
+  const courseCard = `[data-cy="${courseNumber}"]`;
 
   beforeEach(() => {
+    cy.task("deleteStudentCourses", "user-1");
     cy.task("deleteInstructorCourses", "user-1");
 
     cy.visit(BASE_URL + "login");
@@ -17,10 +41,33 @@ describe("Course Details Page: Staff", () => {
     cy.get(loginButton).click();
 
     cy.get(addCourseButton).click();
+    cy.get(createCourseButton).click();
+    cy.get(createCourseTitle).type(courseTitle);
+    cy.get(createCourseNumber).type(courseNumber);
+    cy.get(createCourseSemesterDropdown).click();
+    cy.get(createCourseSemester).click();
+    cy.get(createCourseYear).type(courseYear);
+    cy.get(createButton).click();
+
+    cy.wait(1000);
+
+    cy.get(courseCard).click();
+
+    cy.wait(1000);
+
+    cy.get(navbarButton).click();
+    cy.get(navbar).contains("a", "course details").click();
+    cy.get("body").click();
   });
 
   it("Course Details Look as Expected", () => {
-    /* TODO: COMPLETE */
+    cy.get(courseDetailsTitle).contains(`Course Name: ${courseTitle}`);
+    cy.get(courseDetailsNumber).contains(`Course Number: ${courseNumber}`);
+    cy.get(courseDetailsSemester).contains(`Semester: ${courseSemester}`);
+    cy.get(courseDetailsYear).contains(`Year: ${courseYear}`);
+    cy.task("getCourseByNumber", courseNumber).then((course) => {
+      cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
+    });
   });
 });
 
@@ -53,6 +100,7 @@ describe("Course Details Page: Student", () => {
 
   beforeEach(() => {
     cy.task("deleteStudentCourses", "user-1");
+    cy.task("deleteInstructorCourses", "user-1");
 
     cy.visit(BASE_URL + "login");
 
@@ -63,6 +111,8 @@ describe("Course Details Page: Student", () => {
     cy.get(addCourseButton).click();
     cy.get(joinCourseInput).type(courseCode);
     cy.get(joinCourseButton).click();
+
+    cy.wait(1000);
 
     cy.task("getCourseByCode", courseCode).then((course) => {
       const courseCard = `[data-cy="${course.courseNumber}"]`;

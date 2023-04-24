@@ -121,6 +121,15 @@ export default defineConfig({
           });
           return course;
         },
+        async getCourseByNumber(number) {
+          const course = await prisma.course.findFirst({
+            where: {
+              courseNumber: number,
+            },
+          });
+          console.log(course);
+          return course;
+        },
       });
     },
   },
