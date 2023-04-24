@@ -58,7 +58,6 @@ router.get(
   accountController.getCourses
 );
 
-// account id will be stored in header until we get a token
 router.delete(
   "/leave/:courseId",
   async (req, res, next) => {
@@ -232,6 +231,7 @@ router.get(
   },
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
   controller.getRoster
 );
 
@@ -262,8 +262,8 @@ router.delete(
 router.post(
   "/:courseId/officeHourTimeInterval",
   param("courseId", "Must provide a courseId").notEmpty(),
-  body("length", "Body must include time length").isInt({ min: 10 }),
-  body("title", "Body must have a title").isString(),
+  body("length", "Body must include time length").notEmpty().isInt({ min: 10 }),
+  body("title", "Body must have a title").notEmpty().isString(),
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
@@ -375,6 +375,7 @@ router.get(
   },
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountValidParams,
+  validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   validator.isCourseStaffOrInstructor,
   controller.getRoleInCourseParams

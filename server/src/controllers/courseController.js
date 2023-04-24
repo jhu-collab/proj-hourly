@@ -279,6 +279,10 @@ export const getRegistrationStudentCounts = async (req, res) => {
       id: "desc",
     },
   });
+  accounts.forEach((acc) => {
+    delete acc["hashedPassword"];
+    delete acc["token"];
+  });
   let count = 0;
   const countsAndAccount = accounts.map((account, index) => {
     if (
@@ -501,6 +505,18 @@ export const getRoleInCourse = async (req, res) => {
     delete course["code"];
   }
   debug("getRoleInCourse is done!");
+  course.instructors.forEach((instructor) => {
+    delete instructor["hashedPassword"];
+    delete instructor["token"];
+  });
+  course.courseStaff.forEach((staff) => {
+    delete staff["hashedPassword"];
+    delete staff["token"];
+  });
+  course.students.forEach((student) => {
+    delete student["hashedPassword"];
+    delete student["token"];
+  });
   return res.status(StatusCodes.ACCEPTED).json({
     role,
     course,
@@ -525,6 +541,18 @@ export const getRoster = async (req, res) => {
     },
   });
   debug("getRoster is done!");
+  curCourse.instructors.forEach((instructor) => {
+    delete instructor["hashedPassword"];
+    delete instructor["token"];
+  });
+  curCourse.courseStaff.forEach((staff) => {
+    delete staff["hashedPassword"];
+    delete staff["token"];
+  });
+  curCourse.students.forEach((student) => {
+    delete student["hashedPassword"];
+    delete student["token"];
+  });
   return res.status(StatusCodes.ACCEPTED).json({
     instructors: curCourse.instructors,
     staff: curCourse.courseStaff,
@@ -951,6 +979,8 @@ export const promote = async (req, res) => {
     });
   }
   debug("promote is done!");
+  delete account["token"];
+  delete account["hashedPassword"];
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
@@ -986,6 +1016,8 @@ export const demote = async (req, res) => {
     });
   }
   debug("demote is done!");
+  delete account["token"];
+  delete account["hashedPassword"];
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ ...account, newRole: role, oldRole: req.currentRole });
@@ -1082,6 +1114,18 @@ export const getRoleInCourseParams = async (req, res) => {
     delete course["code"];
   }
   debug("getRoleInCourseParams is done!");
+  course.instructors.forEach((instructor) => {
+    delete instructor["hashedPassword"];
+    delete instructor["token"];
+  });
+  course.courseStaff.forEach((staff) => {
+    delete staff["hashedPassword"];
+    delete staff["token"];
+  });
+  course.students.forEach((student) => {
+    delete student["hashedPassword"];
+    delete student["token"];
+  });
   return res.status(StatusCodes.ACCEPTED).json({
     role,
     course,

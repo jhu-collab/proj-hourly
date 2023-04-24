@@ -3,6 +3,7 @@ import { test, expect, beforeAll, describe, afterAll } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { createToken } from "../../src/util/helpers.js";
+import { Role } from "@prisma/client";
 
 const request = supertest(app);
 const endpoint = "/api/users";
@@ -15,24 +16,28 @@ test(`Test endpoint ${endpoint}`, () => {
     await prisma.account.createMany({
       data: [
         {
-          name: "Test User I",
+          //name: "Test User I",
           email: "user1@test.io",
-          role: "USER",
+          role: Role.User,
+          userName: "user1",
         },
         {
-          name: "Test User II",
+          //name: "Test User II",
           email: "user2@test.io",
-          role: "USER",
+          role: Role.User,
+          userName: "user2",
         },
         {
-          name: "Test User III",
+          //name: "Test User III",
           email: "user3@test.io",
-          role: "ADMIN",
+          role: Role.Admin,
+          userName: "user3",
         },
         {
-          name: "Test User IIII",
+          //name: "Test User IIII",
           email: "user4@test.io",
-          role: "ADMIN",
+          role: Role.Admin,
+          userName: "user4",
         },
       ],
       skipDuplicates: true,
@@ -63,7 +68,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").expiredToken
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -73,7 +78,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "USER").token
+          "bearer " + users.find((u) => u.role === Role.User).token
         );
       expect(response.status).toBe(403);
     });
@@ -83,7 +88,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBeGreaterThan(0);
@@ -98,7 +103,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}?${query_key}=${query_value}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(0);
@@ -111,7 +116,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}?${query_key}=${query_value}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBeGreaterThan(0);
@@ -131,13 +136,13 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").expiredToken
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
         );
       expect(response.status).toBe(401);
     });
 
     it("Return 403 when a USER attempts to access another USER's account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const response = await request
         .get(`${endpoint}/${id}`)
@@ -151,7 +156,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -162,7 +167,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(404);
     });
@@ -173,14 +178,14 @@ test(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBe(Number(id));
     });
 
     it("Return 200 when a USER attempts to access own account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const response = await request
         .get(`${endpoint}/${id}`)
@@ -210,13 +215,13 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").expiredToken
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
         );
       expect(response.status).toBe(401);
     });
 
     it("Return 403 when a USER attempts to create an account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const attributes = {
         email: "test-user@example.com",
         name: "test user",
@@ -239,7 +244,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -254,7 +259,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -268,7 +273,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -283,7 +288,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(201);
       expect(response.body.data.email).toBe("test-user@example.com");
@@ -311,13 +316,13 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").expiredToken
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
         );
       expect(response.status).toBe(401);
     });
 
     it("Return 403 when a USER attempts to update another USER's account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const attributes = {
         name: "updated name from test",
@@ -337,7 +342,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -352,7 +357,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -367,13 +372,13 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(404);
     });
 
     test("Return 200 when an ADMIN updates a user account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[1].id; // valid user ID
       const attributes = {
         name: "updated name from test",
@@ -383,7 +388,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBe(Number(id));
@@ -391,7 +396,7 @@ test(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 200 when a USER attempts to update own account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const attributes = {
         name: "updated name from test",
@@ -419,13 +424,13 @@ test(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").expiredToken
+          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
         );
       expect(response.status).toBe(401);
     });
 
     it("Return 403 when a USER attempts to delete another USER's account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const response = await request
         .delete(`${endpoint}/${id}`)
@@ -439,7 +444,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(400);
     });
@@ -450,7 +455,7 @@ test(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(404);
     });
@@ -461,14 +466,14 @@ test(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === "ADMIN").token
+          "bearer " + users.find((u) => u.role === Role.Admin).token
         );
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBe(Number(id));
     });
 
     it("Return 200 when a USER attempts to delete own account", async () => {
-      const regularUsers = users.filter((u) => u.role === "USER");
+      const regularUsers = users.filter((u) => u.role === Role.User);
       const id = regularUsers[0].id; // valid user ID
       const response = await request
         .delete(`${endpoint}/${id}`)
@@ -483,7 +488,7 @@ test(`Test endpoint ${endpoint}`, () => {
 
     await prisma.$transaction([deleteUsers]);
 
-    await prisma.$disconnect();
+    //await prisma.$disconnect();
     // Tear down the test database by `yarn docker:down`
   });
 });
