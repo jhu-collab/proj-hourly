@@ -342,7 +342,7 @@ export const register = async (req, res) => {
       emailEndTime +
       "!";
     emailBody =
-    donotreply +
+      donotreply +
       "\n\n" +
       "Dear " +
       hostFullName +
@@ -383,17 +383,17 @@ export const cancelOnDate = async (req, res) => {
     return res;
   }
   const { officeHourId, date } = req.body;
-  const dateObj = new Date(date);
+  const dateObj = spacetime(date);
   debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
-      date: dateObj,
+      date: dateObj.toNativeDate(),
     },
   });
   debug("registrations are found");
-  dateObj.setUTCHours(0);
+  dateObj.hour(0);
   debug("finding office hour...");
   const officehour = await prisma.officeHour.findUnique({
     where: {
@@ -408,7 +408,9 @@ export const cancelOnDate = async (req, res) => {
   await prisma.registration.updateMany({
     where: {
       officeHourId: officeHourId,
-      date: dateObj,
+      date: {
+        equals: dateObj.toNativeDate(),
+      },
     },
     data: {
       isCancelledStaff: true,
@@ -421,7 +423,7 @@ export const cancelOnDate = async (req, res) => {
       id: officeHourId,
     },
     data: {
-      isCancelledOn: [...officehour.isCancelledOn, dateObj],
+      isCancelledOn: [...officehour.isCancelledOn, dateObj.toNativeDate()],
     },
   });
   debug("office hour is updated");

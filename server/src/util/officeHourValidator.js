@@ -5,6 +5,7 @@ import { body } from "express-validator";
 import { handleUTCDateChange } from "./helpers.js";
 import { equalDates } from "./icalHelpers.js";
 import { factory } from "../util/debug.js";
+import spacetime from "spacetime";
 
 const debug = factory(import.meta.url);
 
@@ -147,7 +148,9 @@ export const isOfficeHourOnDay = async (req, res, next) => {
   let isCancelled = false;
   if (officeHour !== null) {
     officeHour.isCancelledOn.forEach((cancelledDate) => {
-      if (cancelledDate.toDateString() === dateObj.toDateString()) {
+      if (
+        cancelledDate.toDateString() === dateObj.toNativeDate().toDateString()
+      ) {
         isCancelled = true;
       }
     });
@@ -876,7 +879,7 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
   });
   debug("got office hour");
   if (!officeHour.isRecurring) {
-    if (new Date() < officeHour.startDate) {
+    if (spacetime.now().isBefore(spacetime(officeHour.startDate))) {
       debug("office hours has not begun");
       next();
     } else {
@@ -886,8 +889,11 @@ export const officeHoursHasNotBegun = async (req, res, next) => {
       });
     }
   } else {
-    const dateObj = handleUTCDateChange(new Date(date), officeHour);
-    if (dateObj <= new Date()) {
+    const dateObj = spacetime(date).goto("America/New_York");
+    const startObj = spacetime(officeHour.startDate).goto("America/New_York");
+    dateObj.hour(startObj.hour());
+    dateObj.minute(startObj.minute());
+    if (dateObj.isBefore(spacetime.now())) {
       debug("office hours has begun");
       return res.status(StatusCodes.FORBIDDEN).json({
         msg: "ERROR: office hours cannot be cancelled after their start date",
@@ -977,7 +983,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
     let start = spacetime(officeHour.startDate).goto("America/New_York");
     const end = spacetime(officeHour.endDate).goto("America/New_York");
     let targetDate;
-    while (start < end) {
+    while (start.isBefore(end)) {
       let notCancelled = true;
       for (const date of officeHour.isCancelledOn) {
         if (equalDates(date, start.toNativeDate())) {
@@ -1013,7 +1019,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       } else if (diff < 0) {
         diff += 7;
       }
-      start.date(start.date() + diff);
+      start = start.add(diff, "day");
       i = (i + 1) % indexes.length;
     }
     if (targetDate !== null && targetDate !== undefined) {
@@ -1024,7 +1030,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       debug("office hour is not available on this date");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "EROR: not availablem date!" });
+        .json({ msg: "EROR: not available on date!" });
     }
   } else {
     if (equalDates(new Date(officeHour.startDate), dateObj.toNativeDate())) {
