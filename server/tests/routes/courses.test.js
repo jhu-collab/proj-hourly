@@ -182,13 +182,23 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "bearer " + users.find((u) => u.role === Role.Admin).token
         );
+      let course;
+      if (response.status !== 201) {
+        course = await prisma.course.findFirst({
+          where: {
+            title: "OOSE"
+          }
+        });
+      } else {
+        course = JSON.parse(response.text).course;
+      }
+      courses.push(course);
       expect(response.status).toBe(201);
-      const course = JSON.parse(response.text).course;
       expect(course.title).toBe("OOSE");
       expect(course.courseNumber).toBe("601.421");
       expect(course.semester).toBe("Spring");
       expect(course.calendarYear).toBe(2023);
-      courses.push(course);
+      expect(response.status).toBe(201);
       userInCourse.push(users.find((u) => u.role === Role.Admin));
     });
     it("Return 409 when duplicate course is created", async () => {
@@ -2548,12 +2558,60 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   afterAll(async () => {
-    const deleteRegistrations = prisma.registration.deleteMany();
-    const deleteOfficeHours = prisma.officeHour.deleteMany();
-    const deleteUsers = prisma.account.deleteMany();
-    const deleteTopics = prisma.topic.deleteMany();
-    const deleteTimeOptions = prisma.officeHourTimeOptions.deleteMany();
-    const deleteCourses = prisma.course.deleteMany();
+    const userIds = users.map((user) => user.id);
+    const courseIds = courses.map((course) => course.id);
+    const topicIds = topics.map((topic) => topic.id);
+    const deleteRegistrations = prisma.registration.deleteMany({
+      where: {
+        accountId: {
+          in: userIds
+        }
+      }
+    });
+    const deleteOfficeHours = prisma.officeHour.deleteMany({
+      where: {
+        courseId: {
+          in: courseIds
+        }
+      }
+    });
+    const deleteUsers = prisma.account.deleteMany({
+      where: {
+        id: {
+          in: userIds
+        }
+      }
+    });
+    const deleteTopics = prisma.topic.deleteMany({
+      where: {
+        OR: [
+          {
+            id: {
+              in: topicIds
+            }
+          },
+          {
+            courseId: {
+              in: courseIds
+            }
+          }
+        ]
+      }
+    });
+    const deleteTimeOptions = prisma.officeHourTimeOptions.deleteMany({
+      where: {
+        courseId: {
+          in: courseIds
+        }
+      }
+    });
+    const deleteCourses = prisma.course.deleteMany({
+      where: {
+        id: {
+          in: courseIds
+        }
+      }
+    });
     await prisma.$transaction([deleteRegistrations]);
     await prisma.$transaction([deleteOfficeHours]);
     await prisma.$transaction([deleteUsers]);

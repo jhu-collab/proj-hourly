@@ -15,6 +15,38 @@ const endpoint = "/api/officeHour";
  *    - The base choices are meant to represent partitions that are valid and common for those who use the app.
  *  EP Spreadsheet: https://docs.google.com/spreadsheets/d/1GSCA7QCj_J6x4iDSIZAxy5DT8Pi0Y_PxVI0NmHzaHSc/edit?usp=sharing
  */
+let ids = {
+  users: [],
+  course: 0,
+  timeOption: 0,
+  topics: [],
+  officeHours: [],
+  registrations: []
+}
+
+function updateIds(field, createdIds) {
+  if (field === "users") {
+    ids.users = ids.users.concat(createdIds);
+  } else if (field === "courses") {
+    ids.course = createdIds[0]
+  } else if (field === "topics") {
+    ids.topics = ids.users.concat(createdIds);
+  } else if (field === "officeHours") {
+    ids.officeHours = ids.users.concat(createdIds);
+  } else if (field === "registrations") {
+    ids.registrations = ids.users.concat(createdIds);
+  }
+}
+
+function resetIds() {
+  ids = {
+    users: [],
+    courses: [],
+    topics: [],
+    officeHours: [],
+    registrations: []
+  }
+}
 
 async function setup() {
   /*** Create
@@ -24,38 +56,71 @@ async function setup() {
    ***/
   const testUser = prisma.account.findFirst({ where: { userName: { contains: "Test "} } });
   if (testUser) {
-    await prisma.topic.deleteMany();
-    await prisma.registration.deleteMany();
-    await prisma.officeHour.deleteMany();
-    await prisma.officeHourTimeOptions.deleteMany();
-    await prisma.account.deleteMany();
-    await prisma.course.deleteMany();
+    await prisma.topic.deleteMany({
+      where: {
+        value: {
+          contains: "Test"
+        }
+      }
+    });
+    await prisma.registration.deleteMany({
+      where: {
+        accountId: testUser.id
+      }
+    });
+    await prisma.officeHour.deleteMany({
+      where: {
+        location: "test"
+      }
+    });
+    await prisma.officeHourTimeOptions.deleteMany({
+      where: {
+        title: {
+          contains: "Test"
+        }
+      }
+    });
+    await prisma.account.deleteMany({
+      where: {
+        userName: {
+          contains: "Test"
+        }
+      }
+    });
+    await prisma.course.deleteMany({
+      where: {
+        title: {
+          contains: "Test"
+        }
+      }
+    });
   }
 
   await prisma.account.createMany({
     data: [
       {
         userName: "Test Student I",
-        hashedPassword: "Test Password I",
         email: "student1@test.io",
-        firstName: "Test First Name I",
-        lastName: "Test Last Name I",
         role: Role.User
       },
       {
         userName: "Test Student II",
-        hashedPassword: "Test Password II",
         email: "student2@test.io",
-        firstName: "Test First Name II",
-        lastName: "Test Last Name II",
         role: Role.User
       },
       {
         userName: "Test Student III",
-        hashedPassword: "Test Password III",
         email: "student3@test.io",
-        firstName: "Test First Name III",
-        lastName: "Test Last Name III",
+        role: Role.User
+      },
+      {
+        userName: "Test Student IV",
+        email: "student4@test.io",
+        role: Role.User
+      },
+      {
+        userName: "Test Student V",
+        email: "student5@test.io",
         role: Role.User
       },
       {
@@ -68,26 +133,17 @@ async function setup() {
       },
       {
         userName: "Test Staff II",
-        hashedPassword: "Test Password II",
         email: "staff2@test.io",
-        firstName: "Test First Name V",
-        lastName: "Test Last Name V",
         role: Role.User
       },
       {
         userName: "Test Staff III",
-        hashedPassword: "Test Password III",
         email: "staff3@test.io",
-        firstName: "Test First Name VI",
-        lastName: "Test Last Name VI",
         role: Role.User
       },
       {
         userName: "Test Instructor",
-        hashedPassword: "Test Password",
         email: "instructor@test.io",
-        firstName: "Test First Name VII",
-        lastName: "Test Last Name VII",
         role: Role.Admin
       }
     ]
@@ -185,24 +241,27 @@ async function setup() {
       startDate: startDate, // + 1 day
       endDate: endDate,
       course: { connect: { id: course.id } },
-      location: "zoom",
+      location: "test",
       isRecurring: true,
       hosts: { connect: { id: staff[0].id } },
       isOnDayOfWeek: { connect: {
         dayNumber: startDate.getDay()
       }},
+    },
+    include: {
+      registrations: true
     }
   });
 
   // Create office hour time options
-  const officeHourTimeOption = await prisma.officeHourTimeOptions.create({
+  await prisma.officeHourTimeOptions.create({
     data: { // default duration is 10 minutes
       title: "Test Office Hour Time Option",
       course: {
         connect: { id: course.id }
       }
     }
-  })
+  });
 
   // Create registrations
   const regEndTime = new Date(startDate);
@@ -217,6 +276,14 @@ async function setup() {
     }
   });
 
+  updateIds("users", students.map((user) => user.id));
+  updateIds("users", staff.map((user) => user.id));
+  updateIds("users", [instructor.id]);
+  updateIds("courses", [course.id]);
+  updateIds("topics", topics.map((topic) => topic.id));
+  updateIds("officeHours", [officeHour.id]);
+  updateIds("registrations", [registration.id]);
+
   return {
     students: students,
     staff: staff,
@@ -224,37 +291,55 @@ async function setup() {
     course: course,
     topics: topics,
     officeHour: officeHour,
-    registration: registration,
-    officeHourTimeOption: officeHourTimeOption
+    registration: registration
   };
 }
 
-async function teardown(courseId) {
+async function teardown() {
   // Delete all objects generated for testing
-  await prisma.registration.deleteMany();
+  await prisma.registration.deleteMany({
+    where: {
+      OR: [
+        { id: { in: ids.registrations } },
+        { officeHourId: { in: ids.officeHours } },
+        { accountId: { in: ids.users } }
+      ]
+    }
+  });
   await prisma.topic.deleteMany({
     where: {
-      courseId: courseId,
-    },
+      OR: [
+        { id: { in: ids.topics } },
+        { courseId: ids.course }
+      ]
+    }
   });
   await prisma.officeHour.deleteMany({
     where: {
-      courseId: courseId,
-    },
+      courseId: ids.course
+    }
   });
   await prisma.officeHourTimeOptions.deleteMany({
     where: {
-      courseId: courseId,
-    },
+      courseId: ids.course
+    }
   });
   await prisma.course.deleteMany({
     where: {
-      id: courseId,
+      id: ids.course
     }
   });
-  await prisma.account.deleteMany();
+  await prisma.account.deleteMany({
+    where: {
+      id: {
+        in: ids.users
+      }
+    }
+  });
 
   await prisma.$disconnect();
+
+  resetIds();
   // Tear down the test database by `yarn docker:down`
 }
 
@@ -266,7 +351,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     let instructor = {};
     let course = {};
     let officeHour = {};
-
  
     let baseAttributes = {
       startTime: "10:30:00",
@@ -283,11 +367,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       instructor = params.instructor;
       course = params.course;
       officeHour = params.officeHour;
+
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       const nextMonth = new Date(today);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
+
       baseAttributes = { ...baseAttributes,
         startDate: tomorrow,
         endDate: nextMonth,
@@ -297,18 +383,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
-
-    afterEach(async () => {
-      await prisma.officeHour.deleteMany({
-        where: {
-          NOT: {
-            id: officeHour.id
-          }
-        }
-      })
-    })
 
     // Row 1
     it("Return 201 with all valid parameters", async () => {
@@ -322,6 +398,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
+      updateIds("officeHours", [id]);
       const officeHour = prisma.officeHour.findUniqueOrThrow({ where: { id } });
       expect(officeHour).toBeDefined();
     });
@@ -438,7 +515,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9 
-    it.skip("end time is an empty string", async () => {
+    it.skip("Return 400 when endTime is empty", async () => {
       const attributes = { ...baseAttributes,
         endTime: ""
       };
@@ -453,7 +530,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
-    it.skip("end time is invalid and non-empty (not a time)", async () => {
+    it.skip("Return 400 when endTime is not a time string", async () => {
       const attributes = { ...baseAttributes,
         endTime: "Hello World"
       };
@@ -481,6 +558,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
+      updateIds("officeHours", [id]);
       const officeHour = await prisma.officeHour.findUniqueOrThrow({ where: { id } });
       expect(officeHour).toBeDefined();
     });
@@ -502,6 +580,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(201);
         const id = response.body.officeHour.id;
+        updateIds("officeHours", [id]);
         const officeHour = await prisma.officeHour.findUniqueOrThrow({ where: { id } });
         expect(officeHour).toBeDefined();
       }
@@ -521,7 +600,12 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
+      console.log("startdate in the past: " + response.text);
       expect(response.status).toBe(201); 
+      const id = response.body.officeHour.id;
+      updateIds("officeHours", [id]);
+      const officeHour = await prisma.officeHour.findUniqueOrThrow({ where: { id } });
+      expect(officeHour).toBeDefined();
     });
 
     // Row 14
@@ -598,6 +682,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
+      updateIds("officeHours", [id]);
       const officeHour = prisma.officeHour.findUniqueOrThrow({ where: { id } });
       expect(officeHour).toBeDefined();
     }); 
@@ -631,12 +716,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
+      updateIds("officeHours", [id]);
       const officeHour = prisma.officeHour.findUniqueOrThrow({ where: { id } });
       expect(officeHour).toBeDefined();
     }); 
  
     // Row 21
-    it("Return 201 when daysOfWeek is empty", async () => {
+    it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes,
         daysOfWeek: []
       };
@@ -647,6 +733,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
+      console.log("daysOfweek empty: " + response.text);
       expect(response.status).toBe(400);
     }); 
 
@@ -670,8 +757,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     let students = [];
     let officeHour = {};
     let topics = [];
-    let course = {};
-    let registration = {};
     let baseAttributes = {
       startTime: "12:40:00",
       endTime: "12:50:00",
@@ -683,8 +768,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       students = params.students;
       officeHour = params.officeHour;
       topics = params.topics;
-      course = params.course;
-      registration = params.registration;
       const mdy = (new Date(officeHour.startDate).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
 
       baseAttributes = { ...baseAttributes,
@@ -695,18 +778,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
-
-    afterEach(async () => {
-      await prisma.registration.deleteMany({
-        where: {
-          NOT: {
-            id: registration.id
-          }
-        }
-      })
-    })
 
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
@@ -721,6 +794,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
+      updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -787,9 +861,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
+      updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
+      await prisma.registration.delete({ where: { id: id } })
     });
 
     // Row 6
@@ -885,6 +961,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     // Row 12
     it("Return 202 when question is empty", async () => {
       const attributes = { ...baseAttributes,
+        startTime: "12:50:00",
+        endTime: "13:00:00",
         question: ""
       };
       const response = await request
@@ -892,19 +970,22 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "Bearer " + students[1].token
+          "Bearer " + students[2].token
         );
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
+      updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
-      expect(registration.accountId).toEqual(students[1].id);
+      expect(registration.accountId).toEqual(students[2].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
     });
 
     // Row 13
     it("Return 202 when TopicIds is a singleton", async () => {
       const attributes = { ...baseAttributes,
+        startTime: "13:00:00",
+        endTime: "13:10:00",
         TopicIds: [topics[0].id]
       };
       const response = await request
@@ -912,19 +993,22 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "Bearer " + students[1].token
+          "Bearer " + students[3].token
         );
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
+      updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
-      expect(registration.accountId).toEqual(students[1].id);
+      expect(registration.accountId).toEqual(students[3].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
     });
 
     // Row 14
     it("Return 202 when TopicIds is empty", async () => {
       const attributes = { ...baseAttributes,
+        startTime: "13:10:00",
+        endTime: "13:20:00",
         TopicIds: []
       };
       const response = await request
@@ -932,19 +1016,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "Bearer " + students[1].token
+          "Bearer " + students[4].token
         );
+        console.log(response.text);
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
+      updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
-      expect(registration.accountId).toEqual(students[1].id);
+      expect(registration.accountId).toEqual(students[4].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
     });
   });
 
   describe(`Test POST: ${endpoint}/cancelOnDate`, async () => {
-    let course = {};
     let officeHour = {};
     let staff = [];
     let baseAttributes = {}
@@ -953,7 +1038,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const params = await setup();
       officeHour = params.officeHour;
       staff = params.staff;
-      course = params.course;
       const mdy = (new Date(officeHour.startDate).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
 
       baseAttributes = { ...baseAttributes,
@@ -963,7 +1047,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1092,7 +1176,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1224,7 +1308,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1451,7 +1535,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1691,7 +1775,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1752,7 +1836,6 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   describe(`Test POST: ${endpoint}/editRegistration/:registrationId`, async () => {
-    let course = {};
     let registration = {};
     let officeHour = {};
     let topics = [];
@@ -1763,7 +1846,6 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     beforeAll(async () => {
       const params = await setup();
-      course = params.course;
       registration = params.registration;
       officeHour = params.officeHour;
       topics = params.topics;
@@ -1779,7 +1861,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     afterEach(async () => {
@@ -1806,6 +1888,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + students[0].token
         );
+        console.log(response.text)
       expect(response.status).toBe(202);
     });
 
@@ -2059,7 +2142,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     it("Return 202 for valid date", async () => {
@@ -2114,7 +2197,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterAll(async () => {
-      await teardown(course.id);
+      await teardown();
     });
 
     it("Return 202 when ID is valid", async () => {
