@@ -177,7 +177,7 @@ describe("Calendar Page: Staff Office Hours", () => {
     });
   });
 
-  describe("editing office hours", () => {
+  describe("editing one day office hours", () => {
     beforeEach(() => {
       now = new Date();
       cy.task("removeOH", "AVENGE");
@@ -293,7 +293,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('[data-cy="edit-event-form"]').should("be.visible");
 
       //Change the date
-      now.setDate(now.getDate() + 11);
+      now.setDate(now.getDate() + 9);
       const nowStr = formatCypressDate(now);
 
       cy.get('[data-cy="edit-start-date-text"]').clear().type(`${nowStr}`);
@@ -320,4 +320,81 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
   });
+  
+  describe("editing recurring office hours", () => {
+    beforeEach(() => {
+      now = new Date();
+      cy.task("removeOH", "AVENGE");
+
+      cy.visit(BASE_URL);
+      cy.get('input[id=":r1:"]').type("thor");
+      cy.get('input[id=":r3:"]').type("thor");
+      cy.contains("button", "Login").click();
+
+      cy.contains("p", "Avengers").click();
+
+      //Look one week ahead because want to be able to run these tests anytime
+      //since cannot make office hours in the past
+      cy.get('button[title="Next week"]').should("be.visible").click();
+
+      //This is extremely hard coded, trying to click a time on tuesday
+      //It seems difficult to put a data-cy tag on a element because it's
+      //a premade calendar
+      cy.get('[data-cy="full-calendar"]').click();
+
+      //Activate recurring
+      cy.get('input[name="recurringEvent"]').check();
+
+      const newDate = new Date(now.setMonth(now.getMonth() + 1));
+      const newDateStr = formatCypressDate(newDate);
+      cy.get('[data-cy="create-end-date-text"]').clear().type(newDateStr);
+
+      const locationName = "Mark's Location";
+      cy.get('[data-cy="create-location-input"]')
+        .type(locationName);
+
+      cy.get('button[value="Monday"]').click();
+      cy.get('button[value="Wednesday"]').click();
+      cy.get('button[value="Friday"]').click();
+
+      cy.get('[data-cy="create-event-submit"]').click();
+
+      cy.reload();
+      cy.get('button[title="Next week"]').click();
+    });
+    afterEach(() => {
+      //remove any office hours that were created in the making of the tests
+      cy.task("removeOH", "AVENGE");
+    });
+    it("edit end day", () => {
+      cy.get("[data-cy^=event-]").first().click();
+      cy.get("[data-cy=edit-action-icon]").click();
+      cy.get('input[name="recurringEvent"]').check();
+
+      let newDate = new Date();
+      newDate.setDate(now.getDate() + 15);
+      const newDateStr = formatCypressDate(newDate);
+      cy.get('[data-cy="edit-end-date-text"]').clear().type(newDateStr);
+
+      cy.get('button[value="Monday"]').click();
+      cy.get('button[value="Wednesday"]').click();
+      cy.get('button[value="Friday"]').click();
+
+      cy.get('[data-cy="edit-event-submit"]').click();
+
+      cy.get('button[value="month"]').click();
+      let countOfElements = 0;
+      cy.get('div[class="fc-event-title"]').then(($elements) => {
+        cy.log($elements.length);
+        countOfElements += $elements.length;
+        cy.get('button[title="Next month"]').should("be.visible").click();
+        cy.get('div[class="fc-event-title"]').then(($elements) => {
+          cy.log($elements.length);
+          countOfElements += $elements.length;
+          cy.wrap(countOfElements).should("be.lte", 8);
+          cy.wrap(countOfElements).should("be.gte", 5);
+        });
+      });
+    })
+  })
 });

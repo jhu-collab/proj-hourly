@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "license": "UNLICENSED",
   "dependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.3",
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons": "^4.0.0-rc.0",
     "@ebay/nice-modal-react": "^1.2.6",
