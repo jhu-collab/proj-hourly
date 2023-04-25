@@ -13,24 +13,13 @@ export const create = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
-  const { email, name, phoneNumber } = req.body;
-  if (phoneNumber === null || phoneNumber === undefined) {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-      },
-    });
-  } else {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-        phoneNumber,
-      },
-    });
-  }
-
+  const { email, name } = req.body;
+  await prisma.Account.create({
+    data: {
+      email,
+      userName: name,
+    },
+  });
   const account = await prisma.Account.findUnique({
     where: {
       email,
