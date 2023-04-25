@@ -1,9 +1,11 @@
 import { defineConfig } from "cypress";
 import prisma from "../server/prisma/client.js";
+import registerCodeCoverageTasks from "@cypress/code-coverage/task.js";
 
 export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
+      registerCodeCoverageTasks(on, config);
       // implement node event listeners here
       on("task", {
         async removeOH(courseCode) {
@@ -15,7 +17,10 @@ export default defineConfig({
               officeHours: true,
             },
           });
-          await prisma.OfficeHour.deleteMany({
+          if (!course) {
+            return null;
+          }
+          await prisma.officeHour.deleteMany({
             where: {
               courseId: course.id,
             },
@@ -41,7 +46,7 @@ export default defineConfig({
           return null;
         },
         async deleteStudentCourses(userName) {
-          await prisma.Account.update({
+          await prisma.account.update({
             where: {
               userName: userName,
             },
@@ -54,7 +59,7 @@ export default defineConfig({
           return null;
         },
         async deleteInstructorCourses(userName) {
-          const user = await prisma.Account.findUnique({
+          const user = await prisma.account.findUnique({
             where: {
               userName: userName,
             },
@@ -62,6 +67,9 @@ export default defineConfig({
               instructorCourses: true,
             },
           });
+          if (!user) {
+            return null;
+          }
           for (const c of user.instructorCourses) {
             console.log(c);
             await prisma.officeHourTimeOptions.deleteMany({
@@ -69,7 +77,7 @@ export default defineConfig({
             });
             await prisma.course.delete({ where: { id: c.id } });
           }
-          await prisma.Account.update({
+          await prisma.account.update({
             where: {
               userName: userName,
             },
@@ -95,10 +103,10 @@ export default defineConfig({
               courseNumber: number,
             },
           });
-          console.log(course);
           return course;
         },
       });
+      return config;
     },
   },
 });

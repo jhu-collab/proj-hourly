@@ -1,17 +1,22 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import istanbul from "vite-plugin-istanbul";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    istanbul({
+      cypress: true,
+      requireEnv: false,
+    }),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       workbox: {
         sourcemap: true,
-        cleanupOutdatedCaches: false
+        cleanupOutdatedCaches: false,
       },
       manifest: {
         name: "Hourly",
@@ -39,4 +44,8 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    host: true,
+    port: 3000,
+  },
 });
