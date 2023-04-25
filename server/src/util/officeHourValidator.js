@@ -779,7 +779,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
         id: officeHourId,
       },
     });
-    if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    if (officeHour.startDate.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
       dateObj.setDate(dateObj.getDate() + 1);
     }
     dateObj.setUTCHours(
