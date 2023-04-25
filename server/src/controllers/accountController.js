@@ -267,7 +267,7 @@ export const getAll = async (req, res) => {
 
 export const promoteToAdmin = async (req, res) => {
   debug("promoting to admin...");
-  const id = req.parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id, 10);
   const account = await prisma.account.update({
     where: {
       id,
