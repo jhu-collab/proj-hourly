@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import { it, expect, beforeAll, describe, afterAll } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { createToken } from "../../src/util/helpers.js";

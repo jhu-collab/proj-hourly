@@ -258,7 +258,7 @@ async function teardown(courseId) {
   // Tear down the test database by `yarn docker:down`
 }
 
-describe.skip(`Test endpoint ${endpoint}`, () => {
+describe(`Test endpoint ${endpoint}`, () => {
   // set up database for testing
 
   describe(`Test POST: ${endpoint}/create`, async () => {
