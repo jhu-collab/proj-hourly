@@ -7,6 +7,7 @@ export default defineConfig({
     },
     globalSetup: "./tests/clearDB.js",
     singleThread: true,
-    outputFile: './tests/results.html'
+    outputFile: './tests/results.html',
+    testTimeout: 2000
   },
 })
