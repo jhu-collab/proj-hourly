@@ -175,6 +175,9 @@ export default defineConfig({
             await prisma.officeHourTimeOptions.deleteMany({
               where: { courseId: c.id },
             });
+            await prisma.topic.deleteMany({
+              where: { courseId: c.id },
+            });
             await prisma.course.delete({ where: { id: c.id } });
           }
           await prisma.account.update({
