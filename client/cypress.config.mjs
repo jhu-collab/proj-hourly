@@ -208,6 +208,5 @@ export default defineConfig({
       });
       return config;
     },
-    experimentalRunAllSpecs: true,
   },
 });
