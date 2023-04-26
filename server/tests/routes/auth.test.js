@@ -3,9 +3,10 @@ import { it, expect, beforeAll, describe, afterAll } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { Role } from "@prisma/client";
+import { hashPassword } from "../../src/util/password.js";
 
 const request = supertest(app);
-const endpoint = "/api/authenticate";
+const endpoint = "/authenticate";
 
 describe(`Test endpoint ${endpoint}`, () => {
   let user = {};
@@ -14,7 +15,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     user = await prisma.account.create({
       data: {
         userName: "Test Username",
-        hashedPassword: "Test Password",
+        hashedPassword: hashPassword("Test Password"),
         role: Role.User,
         email: "test_email1@test.io"
       }
@@ -29,10 +30,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
-  describe.only(`Test POST ${endpoint}`, async () => {
+  describe(`Test POST ${endpoint}`, async () => {
     it("Return 200 when providing correct username and password", async () => {
       const attributes = {
-        userName: "Test Username",
+        username: "Test Username",
         password: "Test Password"
       };
       const response = await request
@@ -50,12 +51,12 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when missing password", async () => {
       const attributes = {
-        userName: "Test Username",
+        username: "Test Username", 
       };
       const response = await request
         .post(endpoint)
         .send(attributes);
-      expect(response.body.status).toBe(400);
+      expect(response.status).toBe(400);
     });
 
     it("Return 400 when missing username", async () => {
@@ -70,7 +71,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 403 when username does not exist", async () => {
       const attributes = {
-        userName: "What?",
+        username: "What?",
         password: "Password"
       };
       const response = await request
@@ -81,7 +82,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 403 when password is incorrect", async () => {
       const attributes = {
-        userName: "Test Username",
+        username: "Test Username",
         password: "Wrong Password"
       };
       const response = await request
