@@ -233,7 +233,6 @@ describe(`Test office hour creation and registration for daylight savings`, () =
         "Authorization",
         "Bearer " + student.token
       );
-    console.log(response.text);
     expect(response.status).toBe(202); 
     const id = response.body.id;
     await prisma.registration.delete({

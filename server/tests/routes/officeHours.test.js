@@ -895,7 +895,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + students[1].token
         );
-      console.log(response.text);
       expect(response.status).toBe(400); // will always be outside of range of the scheduled office hour
     });
 

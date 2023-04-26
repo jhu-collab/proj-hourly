@@ -71,7 +71,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/signup`)
         .send(body);
-        console.log(response.text)
       expect(response.statusCode).toBe(201);
       const user = await prisma.account.findFirst({
         where: {

@@ -1416,7 +1416,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/${user4.id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users[2].token
+          "bearer " + users[3].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Instructor");
@@ -1810,6 +1810,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "bearer " + users[2].token
         );
+        console.log(response.text)
       expect(response.status).toBe(400);
     });
   });
