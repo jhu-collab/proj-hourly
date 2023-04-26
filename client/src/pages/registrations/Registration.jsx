@@ -75,7 +75,10 @@ function Registration({ registration, type }) {
           {/* Host (display only for instructors and students) and Student (display only for staff) */}
           <Stack direction="row" spacing={5}>
             {(courseType === "Instructor" || courseType === "Student") && (
-              <Typography color={isHost ? "info.main" : "text.primary"}>
+              <Typography
+                data-cy="registration-text"
+                color={isHost ? "info.main" : "text.primary"}
+              >
                 Host:{" "}
                 <strong>
                   {registration.officeHour.hosts[0].firstName}{" "}

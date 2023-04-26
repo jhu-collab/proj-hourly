@@ -154,6 +154,7 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       }
     });
   }
+
   if (officeHour === null || isCancelled) {
     return res
       .status(StatusCodes.CONFLICT)
