@@ -41,7 +41,7 @@ describe("Calendar Page: Student Office Hours", () => {
 
       //Should have only Regular or Debugging options
       //Bug
-      //cy.get("ul li").should("have.length", 2);
+      cy.get("ul li").should("have.length", 2);
 
       cy.get('[data-cy="Regular"]').click();
       cy.get('[data-cy="student-time-slots"]').click();

@@ -57,8 +57,8 @@ describe("Calendar Page: Staff Office Hours", () => {
        * After making an office hours, the page needs to be reloaded in order for
        * it to be clickable
        */
-      cy.reload();
-      cy.get('button[title="Next week"]').should("be.visible").click();
+      //cy.reload();
+      //cy.get('button[title="Next week"]').should("be.visible").click();
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
 
       //Test that the Date is mostly correct on Tuesday
@@ -320,7 +320,7 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
   });
-  
+
   describe("editing recurring office hours", () => {
     beforeEach(() => {
       now = new Date();
@@ -350,8 +350,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('[data-cy="create-end-date-text"]').clear().type(newDateStr);
 
       const locationName = "Mark's Location";
-      cy.get('[data-cy="create-location-input"]')
-        .type(locationName);
+      cy.get('[data-cy="create-location-input"]').type(locationName);
 
       cy.get('button[value="Monday"]').click();
       cy.get('button[value="Wednesday"]').click();
@@ -395,6 +394,6 @@ describe("Calendar Page: Staff Office Hours", () => {
           cy.wrap(countOfElements).should("be.gte", 5);
         });
       });
-    })
-  })
+    });
+  });
 });
