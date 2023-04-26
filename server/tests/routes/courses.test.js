@@ -1810,7 +1810,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "bearer " + users[2].token
         );
-        console.log(response.text)
+      console.log(response.text);
       expect(response.status).toBe(400);
     });
   });
@@ -2076,7 +2076,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "bearer " + users[2].token
         );
-        console.log(response.text);
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Staff");
