@@ -67,6 +67,7 @@ function Topic({ topic }) {
           >
             {edit && courseType === "Instructor" ? (
               <FormInputText
+                data-cy="edit-topic-input"
                 name="name"
                 control={control}
                 sx={{ width: 230 }}
