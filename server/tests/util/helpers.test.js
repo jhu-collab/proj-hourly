@@ -45,23 +45,23 @@ describe(`Test file "${filename}"`, () => {
     });
   });
 
-  describe('Test method "prismaErrorToHttpError"', () => {
+  describe.skip('Test method "prismaErrorToHttpError"', () => {
     /* Should be covered by API Testing (?) */
   });
 
-  describe('Test method "createToken"', () => {
+  describe.skip('Test method "createToken"', () => {
     /* Should be covered by API Testing (?) */
   });
 
-  describe('Test method "createTimeString"', () => {
+  describe.skip('Test method "createTimeString"', () => {
     /* Not used anywhere in the codebase */
   });
 
-  describe('Test method "computeDiff"', () => {
+  describe.skip('Test method "computeDiff"', () => {
     /* Not used anywhere in the codebase */
   });
 
-  describe('Test method "handleUTCDateChange"', () => {
+  describe.skip('Test method "handleUTCDateChange"', () => {
     /* Used in validator only so should be tested during API Testing */
   });
 });

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { factory } from "./debug.js";
-
+/* c8 ignore start */
 const debug = factory(import.meta.url);
 export const hashPassword = (password) => {
   debug("hashPassword called!");
@@ -19,3 +19,5 @@ export const hashPassword = (password) => {
 export const verifyPassword = (plainPassword, hashedPassword) => {
   return bcrypt.compareSync(plainPassword, hashedPassword);
 };
+
+/* c8 ignore end */

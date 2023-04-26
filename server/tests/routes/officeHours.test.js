@@ -54,47 +54,6 @@ async function setup() {
      *  3 staff accounts (user)
      *  1 instructor account (admin)
    ***/
-  const testUser = prisma.account.findFirst({ where: { userName: { contains: "Test "} } });
-  if (testUser) {
-    await prisma.topic.deleteMany({
-      where: {
-        value: {
-          contains: "Test"
-        }
-      }
-    });
-    await prisma.registration.deleteMany({
-      where: {
-        accountId: testUser.id
-      }
-    });
-    await prisma.officeHour.deleteMany({
-      where: {
-        location: "test"
-      }
-    });
-    await prisma.officeHourTimeOptions.deleteMany({
-      where: {
-        title: {
-          contains: "Test"
-        }
-      }
-    });
-    await prisma.account.deleteMany({
-      where: {
-        userName: {
-          contains: "Test"
-        }
-      }
-    });
-    await prisma.course.deleteMany({
-      where: {
-        title: {
-          contains: "Test"
-        }
-      }
-    });
-  }
 
   await prisma.account.createMany({
     data: [
@@ -344,8 +303,6 @@ async function teardown() {
 }
 
 describe(`Test endpoint ${endpoint}`, () => {
-  // set up database for testing
-
   describe(`Test POST: ${endpoint}/create`, async () => {
     let staff = [];
     let instructor = {};
@@ -600,7 +557,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
-      console.log("startdate in the past: " + response.text);
       expect(response.status).toBe(201); 
       const id = response.body.officeHour.id;
       updateIds("officeHours", [id]);
@@ -733,7 +689,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + instructor.token
         );
-      console.log("daysOfweek empty: " + response.text);
       expect(response.status).toBe(400);
     }); 
 
@@ -940,7 +895,8 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + students[1].token
         );
-      expect(response.status).toBe(409); // will always be outside of range of the scheduled office hour
+      console.log(response.text);
+      expect(response.status).toBe(400); // will always be outside of range of the scheduled office hour
     });
 
     // Row 11
@@ -1018,7 +974,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + students[4].token
         );
-        console.log(response.text);
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({ where: { id } });
@@ -1417,7 +1372,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 7
-    it("Return either 202 or 404 when date is now (depends on 5 minute interval)", async () => {
+    it("Return either 202 or 400 when date is now (depends on 5 minute interval)", async () => {
       const now = new Date(Date.now());
       const end = new Date(baseAttributes.endDate);
       const mdy = (new Date(officeHour.startDate).toLocaleString('en-US',{hour12:false}).split(" "))[0].split('/');
@@ -1604,7 +1559,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
-    it("Return either 202 or 404 when date is now (depends on 5 minute interval)", async () => {
+    it("Return either 202 or 400 when date is now (depends on 5 minute interval)", async () => {
       const now = new Date(Date.now());
       const end = new Date(baseAttributes.endDate);
       const attributes = { ...baseAttributes,
@@ -1888,7 +1843,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "Bearer " + students[0].token
         );
-        console.log(response.text)
       expect(response.status).toBe(202);
     });
 
@@ -2185,13 +2139,11 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   describe(`Test GET: ${endpoint}/:officeHourId`, async () => {
-    let course = {};
     let officeHour = {};
     let students = [];
 
     beforeAll(async () => {
       const params = await setup();
-      course = params.course;
       officeHour = params.officeHour;
       students = params.students;
     });

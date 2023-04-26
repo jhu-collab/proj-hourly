@@ -73,7 +73,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -84,7 +84,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -100,7 +100,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -116,7 +116,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -132,7 +132,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -148,7 +148,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -164,7 +164,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -180,7 +180,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       let course;
       if (response.status !== 201) {
@@ -199,7 +199,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(course.semester).toBe("Spring");
       expect(course.calendarYear).toBe(2023);
       expect(response.status).toBe(201);
-      userInCourse.push(users.find((u) => u.role === Role.Admin));
+      userInCourse.push(users[2]);
     });
     it("Return 409 when duplicate course is created", async () => {
       const attributes = {
@@ -213,7 +213,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(409);
     });
@@ -229,7 +229,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/signup`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -240,7 +240,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -258,7 +258,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -271,10 +271,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
-      userInCourse.push(users.find((u) => u.role === Role.User));
+      userInCourse.push(users[0]);
     });
     it("Return 409 when student is already registered for course", async () => {
       const attributes = {
@@ -285,7 +285,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(409);
     });
@@ -301,7 +301,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -310,7 +310,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       const { student, staff, instructor } = JSON.parse(response.text);
@@ -330,7 +330,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -339,7 +339,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -357,7 +357,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
     });
@@ -375,7 +375,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/leave/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -384,7 +384,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/leave/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -402,12 +402,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/leave/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       await prisma.account.update({
         where: {
-          id: users.find((u) => u.role === Role.User).id,
+          id: users[0].id,
         },
         data: {
           studentCourses: {
@@ -430,7 +430,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -439,7 +439,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -457,7 +457,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const attributes = {
@@ -471,7 +471,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(201);
       const course = JSON.parse(response.text).course;
@@ -482,7 +482,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       courses[0] = course;
       await prisma.account.update({
         where: {
-          id: users.find((u) => u.role === Role.User).id,
+          id: users[0].id,
         },
         data: {
           studentCourses: {
@@ -521,7 +521,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -531,7 +531,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/-1/removeStaff/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -541,7 +541,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -550,17 +550,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStaff/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is not staff", async () => {
-      const user = users.find((u) => u.userName === "user4");
+      const user = users[3];
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(403);
     });
@@ -570,7 +570,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
     });
@@ -602,7 +602,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -612,7 +612,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/-1/removeStudent/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -622,7 +622,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -631,17 +631,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStudent/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is not student", async () => {
-      const user = users.find((u) => u.userName === "user4");
+      const user = users[3];
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(403);
     });
@@ -651,7 +651,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
     });
@@ -680,7 +680,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -689,7 +689,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/officeHours`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -707,7 +707,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).calendar;
@@ -717,7 +717,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe("HTTP Get request - get office hours for course filtered", () => {
     it("Return 401 when no authorization toke is provided", async () => {
-      const user4 = users.find((u) => u.userName === "user4");
+      const user4 = users[3];
       await prisma.account.update({
         where: {
           id: user4.id,
@@ -744,7 +744,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           isDeleted: false,
           hosts: {
             connect: {
-              id: users.find((u) => u.role === Role.Admin).id,
+              id: users[2].id,
             },
           },
         },
@@ -778,7 +778,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -787,7 +787,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours/yours`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -796,7 +796,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/officeHours/mine`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -823,7 +823,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).officeHours;
@@ -834,7 +834,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHours/all`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).officeHours;
@@ -853,7 +853,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/createTopic`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -864,7 +864,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -877,7 +877,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -890,7 +890,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -904,7 +904,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -918,7 +918,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -932,7 +932,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text).topic;
@@ -949,7 +949,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(409);
     });
@@ -965,7 +965,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/editTopic`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -976,7 +976,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -990,7 +990,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1004,7 +1004,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1018,7 +1018,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1033,7 +1033,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1048,7 +1048,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -1063,7 +1063,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(403);
     });
@@ -1089,7 +1089,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(409);
     });
@@ -1104,7 +1104,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text);
@@ -1123,7 +1123,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/topics`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1132,7 +1132,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/topics`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -1150,7 +1150,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/topics`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       const topics = JSON.parse(response.text);
@@ -1170,7 +1170,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/topic/${topics[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1179,7 +1179,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/topic/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1206,7 +1206,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/topic/${topics[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text);
@@ -1224,7 +1224,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/role`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1233,7 +1233,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/role`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -1251,7 +1251,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/role`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Student");
@@ -1261,13 +1261,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/role`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Instructor");
     });
     it("Return 200 - course staff", async () => {
-      const user4 = users.find((u) => u.userName === "user4");
+      const user4 = users[3];
       await prisma.account.update({
         where: {
           id: user4.id,
@@ -1300,7 +1300,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getRoster`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1309,7 +1309,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/getRoster`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -1327,7 +1327,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getRoster`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       const roster = JSON.parse(response.text);
@@ -1349,7 +1349,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/${users[0].id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1358,7 +1358,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/${users[0].id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1367,7 +1367,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/-1/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1394,18 +1394,18 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/${users[0].id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Student");
     });
     it("Return 200 - gets role - staff", async () => {
-      const user4 = users.find((u) => u.userName === "user4");
+      const user4 = users[3];
       const response = await request
         .get(`${endpoint}/${courses[0].id}/${user4.id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Staff");
@@ -1416,7 +1416,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/${user4.id}/getRole`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Instructor");
@@ -1436,7 +1436,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1447,7 +1447,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1461,7 +1461,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1475,7 +1475,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1488,7 +1488,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1502,7 +1502,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1516,7 +1516,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -1530,7 +1530,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
     });
@@ -1548,7 +1548,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1557,7 +1557,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/officeHourTimeInterval`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1575,7 +1575,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       const timeSlots = JSON.parse(response.text).times;
@@ -1595,7 +1595,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1605,7 +1605,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1618,7 +1618,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1631,7 +1631,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1645,7 +1645,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1659,7 +1659,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/-1/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1673,7 +1673,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         )
         .send(attributes);
       expect(response.status).toBe(403);
@@ -1687,7 +1687,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         )
         .send(attributes);
       expect(response.status).toBe(400);
@@ -1701,7 +1701,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1/update`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         )
         .send(attributes);
       expect(response.status).toBe(409);
@@ -1722,7 +1722,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         )
         .send(attributes);
       expect(response.status).toBe(202);
@@ -1744,7 +1744,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1753,7 +1753,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/-1/officeHourTimeInterval/1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -1762,7 +1762,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -1771,7 +1771,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(409);
     });
@@ -1787,7 +1787,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const timeOption = JSON.parse(response.text).deletedTime;
@@ -1808,7 +1808,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1826,7 +1826,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1837,7 +1837,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1850,7 +1850,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1863,7 +1863,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1877,7 +1877,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1891,7 +1891,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -1905,7 +1905,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1919,7 +1919,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1933,7 +1933,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1947,7 +1947,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const course = JSON.parse(response.text).course;
@@ -1966,7 +1966,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -1977,7 +1977,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -1990,7 +1990,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2003,7 +2003,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2017,7 +2017,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2031,7 +2031,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2045,7 +2045,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -2059,7 +2059,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2073,8 +2073,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
+        console.log(response.text);
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Staff");
@@ -2090,7 +2091,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
@@ -2111,7 +2112,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/demote`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).expiredToken
+          "bearer " + users[2].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -2122,7 +2123,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2135,7 +2136,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2148,7 +2149,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2162,7 +2163,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2176,7 +2177,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2190,7 +2191,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(403);
     });
@@ -2204,7 +2205,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(400);
     });
@@ -2218,7 +2219,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
@@ -2249,7 +2250,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -2258,7 +2259,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/topicCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -2276,7 +2277,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const { counts } = JSON.parse(response.text);
@@ -2321,7 +2322,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const { counts } = JSON.parse(response.text);
@@ -2347,7 +2348,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -2356,7 +2357,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/studentRegistrationCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -2374,7 +2375,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const counts = JSON.parse(response.text).countsAndAccount;
@@ -2401,7 +2402,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       const counts = JSON.parse(response.text).countsAndAccount;
@@ -2413,7 +2414,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe("HTTP Get request - get all registrations", () => {
     it("Return 401 when no authorization toke is provided", async () => {
-      const user4 = users.find((u) => u.userName === "user4");
+      const user4 = users[3];
       await prisma.account.update({
         where: {
           id: user4.id,
@@ -2441,7 +2442,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).expiredToken
+          "bearer " + users[0].expiredToken
         );
       expect(response.status).toBe(401);
     });
@@ -2450,7 +2451,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/-1/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(400);
     });
@@ -2468,7 +2469,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
@@ -2478,7 +2479,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.userName === "user4").token
+          "bearer " + users[3].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
@@ -2488,7 +2489,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
@@ -2530,7 +2531,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.Admin).token
+          "bearer " + users[2].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(1);
@@ -2540,7 +2541,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.userName === "user4").token
+          "bearer " + users[3].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
@@ -2550,7 +2551,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
         .set(
           "Authorization",
-          "bearer " + users.find((u) => u.role === Role.User).token
+          "bearer " + users[0].token
         );
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(1);
