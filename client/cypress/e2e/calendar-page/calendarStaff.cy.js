@@ -78,6 +78,26 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
 
+    it("staff can cancel before committing to office hours", () => {
+      cy.get('button[title="Next week"]').should("be.visible").click();
+
+      //This is extremely hard coded, trying to click a time on tuesday
+      //It seems difficult to put a data-cy tag on a element because it's
+      //a premade calendar
+      cy.get('[data-cy="full-calendar"]').click();
+
+      cy.get('input[id=":r7:"]').should("have.value", "06:30");
+      cy.get('input[id=":r9:"]').should("have.value", "07:00");
+
+      const locationName = "Mark's Location";
+
+      cy.get('[data-cy="create-location-input"]')
+        .should("be.visible")
+        .type(locationName);
+      cy.get(".MuiPaper-root > .MuiBox-root > .MuiButtonBase-root").click();
+      cy.get("[data-cy^=event-]").should("have.length", 0);
+    });
+
     it("staff can create recurring office hours and it should show up for same week", () => {
       //Look one week ahead because want to be able to run these tests anytime
       //since cannot make office hours in the past
@@ -286,7 +306,7 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
 
-    it("edit day", () => {
+    it.only("edit day", () => {
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
       cy.get("[data-cy=edit-action-icon]").click();
 
@@ -294,7 +314,7 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('[data-cy="edit-event-form"]').should("be.visible");
 
       //Change the date
-      now.setDate(now.getDate() + 9);
+      now.setDate(now.getDate() + 8);
       const nowStr = formatCypressDate(now);
 
       cy.get('[data-cy="edit-start-date-text"]').clear().type(`${nowStr}`);
@@ -302,11 +322,11 @@ describe("Calendar Page: Staff Office Hours", () => {
 
       cy.get("[data-cy^=event-]").should("have.length", 1);
       cy.get("[data-cy^=event-]").click();
-
+      const listOfDays = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
       //Test that the Date changed one day
       cy.get('[data-cy="date-text"]')
         .should("be.visible")
-        .contains("Date: Thu");
+        .contains("Date: " + listOfDays[now.getDay()]);
 
       //Test that the time did not change
       cy.get('[data-cy="time-text"]')
