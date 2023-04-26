@@ -306,7 +306,7 @@ describe("Calendar Page: Staff Office Hours", () => {
         .should("have.text", "Location: " + locationName);
     });
 
-    it.only("edit day", () => {
+    it("edit day", () => {
       cy.get("[data-cy^=event-]").should("have.length", 1).click();
       cy.get("[data-cy=edit-action-icon]").click();
 
