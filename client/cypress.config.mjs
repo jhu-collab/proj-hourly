@@ -96,7 +96,7 @@ export default defineConfig({
               },
               isOnDayOfWeek: {
                 connect: {
-                  dayNumber: 3,
+                  dayNumber: start.getDay() % 7,
                 },
               },
             },
@@ -173,9 +173,6 @@ export default defineConfig({
           for (const c of user.instructorCourses) {
             console.log(c);
             await prisma.officeHourTimeOptions.deleteMany({
-              where: { courseId: c.id },
-            });
-            await prisma.topic.deleteMany({
               where: { courseId: c.id },
             });
             await prisma.course.delete({ where: { id: c.id } });

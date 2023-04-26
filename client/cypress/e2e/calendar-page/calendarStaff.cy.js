@@ -59,7 +59,8 @@ describe("Calendar Page: Staff Office Hours", () => {
        */
       //cy.reload();
       //cy.get('button[title="Next week"]').should("be.visible").click();
-      cy.get("[data-cy^=event-]").should("have.length", 1).click();
+      cy.get("[data-cy^=event-]").should("have.length", 1);
+      cy.get("[data-cy^=event-]").click();
 
       //Test that the Date is mostly correct on Tuesday
       cy.get('[data-cy="date-text"]')
