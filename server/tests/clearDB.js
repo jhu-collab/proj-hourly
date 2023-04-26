@@ -1,4 +1,5 @@
 import prisma from "../prisma/client.js";
+import { generateFakeData } from "../prisma/seed.js";
 const debug = require("debug");
 
 export async function setup() {
@@ -14,4 +15,5 @@ export async function setup() {
 
 export async function teardown() {
   debug.enable();
+  await generateFakeData();
 }
