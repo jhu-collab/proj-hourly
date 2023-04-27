@@ -439,20 +439,20 @@ export const cancelAll = async (req, res) => {
     return res;
   }
   const { officeHourId } = req.body;
-  const dateToEnd = req.body.date;
+  const dateToEnd = spacetime(req.body.date);
   debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
       isCancelled: false,
       date: {
-        gte: dateToEnd,
+        gte: dateToEnd.toNativeDate(),
       },
     },
   });
   debug("registrations are found");
-  const date = new Date(dateToEnd);
-  const dateObj = new Date(dateToEnd);
+  const date = spacetime(dateToEnd);
+  const dateObj = spacetime(dateToEnd);
   debug("finding office hour...");
   const officeHour = await prisma.officeHour.findUnique({
     where: {
@@ -468,9 +468,9 @@ export const cancelAll = async (req, res) => {
   //     dateObj.getTimezoneOffset() / 60
   // );
   // date.setUTCMinutes(new Date(officeHour.startDate).getUTCMinutes());
-  const startObj = officeHour.startDate;
+  const startObj = spacetime(officeHour.startDate);
   let officeHourUpdate;
-  if (officeHour.startDate >= date) {
+  if (!date.isBefore(spacetime(officeHour.startDate))) {
     debug("cancelling registrations...");
     await prisma.registration.deleteMany({
       where: {
@@ -489,13 +489,13 @@ export const cancelAll = async (req, res) => {
     debug("sending cancellation emails...");
     sendEmailForEachRegistrationWhenCancelled(registrations);
     debug("cancellation emails are sent");
-  } else if (officeHour.endDate > date) {
+  } else if (spacetime(officeHour.endDate).isAfter(date)) {
     debug("cancelling registrations...");
     await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
         date: {
-          gte: dateObj,
+          gte: dateObj.toNativeDate(),
         },
         isCancelled: false,
       },
@@ -507,7 +507,7 @@ export const cancelAll = async (req, res) => {
         id: officeHourId,
       },
       data: {
-        endDate: dateObj,
+        endDate: dateObj.toNativeDate(),
       },
     });
     debug("office hour is updated");

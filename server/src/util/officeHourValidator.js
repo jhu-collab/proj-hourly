@@ -713,7 +713,6 @@ export const checkOptionalDateBody = async (req, res, next) => {
   debug("got office hour");
   if (date === undefined || date === null) {
     if (officeHour.isRecurring) {
-      const today = new Date();
       //TODO: increment office hour dates until it reaches a date past today
       const indexes = [];
       officeHour.isOnDayOfWeek.forEach((dow) => {
@@ -721,18 +720,10 @@ export const checkOptionalDateBody = async (req, res, next) => {
       });
       indexes.sort();
       let i = indexes.indexOf(officeHour.startDate.getDay());
-      let start = new Date(
-        new Date(officeHour.startDate).toLocaleString("en-US", {
-          timezone: "America/New_York",
-        })
-      );
-      const end = new Date(
-        new Date(officeHour.endDate).toLocaleString("en-US", {
-          timezone: "America/New_York",
-        })
-      );
-      const now = new Date();
-      while (start < end && now > start) {
+      let start = spacetime(officeHour.startDate).goto("America/New_York");
+      const end = spacetime(officeHour.endDate).goto("America/New_York");
+      const now = spacetime.now();
+      while (start.isBefore(end) && now.isAfter(start)) {
         let diff =
           indexes[(i + 1) % indexes.length] - indexes[i % indexes.length];
         if (diff === 0) {
@@ -740,18 +731,18 @@ export const checkOptionalDateBody = async (req, res, next) => {
         } else if (diff < 0) {
           diff += 7;
         }
-        start.setDate(start.getDate() + diff);
+        start.add(diff, "day");
         i = (i + 1) % indexes.length;
       }
-      if (now > start) {
+      if (now.isAfter(start)) {
         return res.status(StatusCodes.FORBIDDEN).json({
           msg: "ERROR: cannot cancel office hours that have already occured",
         });
       } else {
-        start.setUTCHours(officeHour.endDate.getUTCHours());
-        start.setUTCMinutes(officeHour.endDate.getUTCMinutes());
-        start.setUTCDate(start.getUTCDate() - 1);
-        req.body.date = start.toISOString();
+        start.hour(end.hour());
+        start.minute(end.minute());
+        start.date(start.date() - 1);
+        req.body.date = start.toNativeDate().toISOString();
         next();
       }
     } else {
@@ -765,20 +756,21 @@ export const checkOptionalDateBody = async (req, res, next) => {
     }
   } else {
     const { officeHourId, date } = req.body;
-    const dateObj = new Date(date);
+    const dateObj = spacetime(date).goto("America/New_York");
     let officeHour = await prisma.officeHour.findFirst({
       where: {
         id: officeHourId,
       },
     });
-    if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
-      dateObj.setDate(dateObj.getDate() + 1);
-    }
-    dateObj.setUTCHours(
-      new Date(officeHour.startDate).getUTCHours() -
-        dateObj.getTimezoneOffset() / 60
-    );
-    const dow = weekday[dateObj.getUTCDay()];
+    let start = spacetime(officeHour.startDate).goto("America/New_York");
+    // if (start.getUTCHours() < dateObj.getTimezoneOffset() / 60) {
+    //   dateObj.setDate(dateObj.getDate() + 1);
+    // }
+    // dateObj.setUTCHours(
+    //   new Date(officeHour.startDate).getUTCHours() -
+    //     dateObj.getTimezoneOffset() / 60
+    // );
+    const dow = weekday[dateObj.day()];
     officeHour = await prisma.officeHour.findFirst({
       where: {
         id: officeHourId,
@@ -792,7 +784,9 @@ export const checkOptionalDateBody = async (req, res, next) => {
     let isCancelled = false;
     if (officeHour !== null) {
       officeHour.isCancelledOn.forEach((cancelledDate) => {
-        if (cancelledDate.toDateString() === dateObj.toDateString()) {
+        if (
+          cancelledDate.toDateString() === dateObj.toNativeDate().toDateString()
+        ) {
           isCancelled = true;
         }
       });
@@ -804,12 +798,12 @@ export const checkOptionalDateBody = async (req, res, next) => {
         .json({ msg: "ERROR: office hours is not available on day" });
     } else {
       debug("office hour is available on day");
-      const newEnd = new Date(date);
-      newEnd.setUTCHours(0 - dateObj.getTimezoneOffset() / 60);
-      newEnd.setUTCHours(officeHour.endDate.getUTCHours());
-      newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
+      const end = spacetime(officeHour.endDate).goto("America/New_York");
+      const newEnd = spacetime(date).goto("America/New_York");
+      newEnd.hour(end.hour());
+      newEnd.minute(end.minute());
       newEnd.setUTCSeconds(0);
-      req.body.date = newEnd.toISOString();
+      req.body.date = newEnd.toNativeDate().toISOString();
       next();
     }
   }
@@ -916,7 +910,7 @@ export const officeHoursHasNotBegunCancelAll = async (req, res, next) => {
   });
   debug("got office hour");
   if (!officeHour.isRecurring) {
-    if (new Date() < officeHour.startDate) {
+    if (spacetime.now().isBefore(spacetime(officeHour.startDate))) {
       debug("office hours has not begun");
       next();
     } else {
