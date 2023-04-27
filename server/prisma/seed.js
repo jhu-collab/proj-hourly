@@ -188,7 +188,7 @@ const generateFakeUser = async (role, username) => {
   });
 };
 
-const generateFakeData = async () => {
+export const generateFakeData = async () => {
   await prisma.Account.deleteMany();
 
   // Generate fake users

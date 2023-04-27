@@ -93,6 +93,9 @@ export const isCourseIdUrlValid = async (req, res, next) => {
 export const isCourseId = async (req, res, next) => {
   debug("isCourseId is called!");
   debug("Retrieving course id from body...");
+  if (validate(req, res)) {
+    return res;
+  }
   const { courseId } = req.body;
   const query = await prisma.course.findUnique({
     where: {
@@ -115,6 +118,9 @@ export const isCourseId = async (req, res, next) => {
 export const isCourseIdParams = async (req, res, next) => {
   debug("isCourseIdParams is called!");
   debug("Retrieving course id from params...");
+  if (validate(req, res)) {
+    return res;
+  }
   const courseId = parseInt(req.params.courseId, 10);
   const query = await prisma.course.findUnique({
     where: {
@@ -729,7 +735,7 @@ export const isAccountInstructorForTopic = async (req, res, next) => {
           },
         },
       });
-      if (query === null) {
+      if (query.instructors.length === 0) {
         debug("User is not an instructor for course...");
         debug("Error in isAccountInstructorForTopic!");
         return res

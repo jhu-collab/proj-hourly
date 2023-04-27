@@ -1,7 +1,7 @@
 import AccessControl from "accesscontrol";
 import ApiError from "../model/ApiError.js";
 import { factory } from "./debug.js";
-
+/* c8 ignore start */ // only used by users.js which is depricated
 const debug = factory(import.meta.url);
 
 /*
@@ -158,3 +158,4 @@ const checkPermission = (req, { method, resource, role, user, owner }) => {
 };
 
 export default checkPermission;
+/* c8 ignore end */
