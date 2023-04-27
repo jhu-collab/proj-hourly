@@ -7,7 +7,15 @@ export const officeHourDateCheck = (req, res, next) => {
   const { recurringEvent, startDate, endDate } = req.body;
   const startObj = new Date(startDate);
   const endObj = new Date(endDate);
-  if (recurringEvent && startObj > endObj) {
+  if (
+    !(startObj instanceof Date && !isNaN(startObj)) ||
+    !(endObj instanceof Date && !isNaN(endObj))
+  ) {
+    debug("Start or end date is invalid...");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: start or end date is invalid" });
+  } else if (recurringEvent && startObj > endObj) {
     debug("Start date is after end date...");
     return res
       .status(StatusCodes.BAD_REQUEST)
