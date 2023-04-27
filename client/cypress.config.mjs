@@ -105,6 +105,7 @@ export default defineConfig({
 
           start = null;
 
+          /*
           let startTwo = new Date();
           startTwo.setDate(startTwo.getDate() + 9);
           startTwo = new Date(startTwo.getTime() + 60 * minTomill);
@@ -141,7 +142,7 @@ export default defineConfig({
               },
             },
           });
-          generateCalendar(dsCourse.id);
+          generateCalendar(dsCourse.id);*/
 
           return null;
         },
@@ -214,5 +215,6 @@ export default defineConfig({
       });
       return config;
     },
+    experimentalRunAllSpecs: true,
   },
 });

@@ -6,6 +6,10 @@ describe("Calendar Page: Student Office Hours", () => {
     cy.task("addOfficeHoursDS");
   });
 
+  after(() => {
+    cy.task("removeOH", "ABCDEF");
+  });
+
   describe("Student registration", () => {
     beforeEach(() => {
       cy.task("removeOH", "ABCDEF");
@@ -47,6 +51,32 @@ describe("Calendar Page: Student Office Hours", () => {
       cy.get(".Toastify").contains("div", "Successfully registered");
       cy.visit(BASE_URL + "registrations");
       cy.get('[data-cy="registration-text"]').should("have.length", 1);
+    });
+
+    it("Student can cancel an office hours they registered for", () => {
+      cy.get("[data-cy^=event-]").first().click({ force: true });
+      cy.get('[data-cy="student-register-button"]').click();
+      cy.get('[data-cy="oh-topic-dropdown"]').click();
+      cy.get('[data-cy="Regular"]').click();
+      cy.get('[data-cy="student-time-slots"]').click();
+      cy.get("ul>li").eq(3).click();
+      cy.get('[data-cy="student-submit-register"]').click();
+
+      //Click on the event
+      cy.get(".css-1fn5qdc").click();
+
+      //Click to init cancel
+      cy.get('[data-cy="student-register-button"]').click();
+      //click b/c 100% sure to cancel
+      cy.get('[data-cy="confirm-delete-button"]').click();
+
+      cy.get("[data-cy^=event-]").first().click({ force: true });
+      cy.get('[data-cy="student-register-status"]')
+        .should("be.visible")
+        .contains("You are not registered for this session");
+
+      cy.visit(BASE_URL + "registrations");
+      cy.get('[data-cy="registration-text"]').should("have.length", 0);
     });
   });
 });

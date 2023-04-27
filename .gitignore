@@ -11,3 +11,4 @@ __MACOSX/*
 **/yarn-error.log*
 .env*
 **/coverage/*
+**/.nyc_output/*

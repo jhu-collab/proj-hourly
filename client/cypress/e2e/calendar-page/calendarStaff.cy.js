@@ -244,7 +244,7 @@ describe("Calendar Page: Staff Office Hours", () => {
 
       cy.get('[data-cy="edit-location-input"]')
         .should("be.visible")
-        .type("{selectall}{backspace}")
+        .clear()
         .type(newLocationName);
       cy.get('[data-cy="edit-event-submit"').should("be.visible").click();
 
