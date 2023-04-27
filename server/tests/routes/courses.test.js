@@ -1796,7 +1796,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(timeOption.duration).toBe(timeOptions.duration);
       expect(timeOption.courseId).toBe(timeOptions.courseId);
     });
-    it("Return 400 when it is the only time option remaining", async () => {
+    it("Return 403 when it is the only time option remaining", async () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
         where: {
           duration: 10,
@@ -1811,7 +1811,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           "bearer " + users[2].token
         );
       console.log(response.text);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
     });
   });
 
