@@ -144,6 +144,11 @@ beforeAll(async () => {
         connect: {
           id: staff.id
         }
+      },
+      isOnDayOfWeek: {
+        connect: {
+          dayNumber: 0 // Sunday
+        }
       }
     }
   });
@@ -178,6 +183,11 @@ beforeAll(async () => {
       hosts: {
         connect: {
           id: staff.id
+        }
+      },
+      isOnDayOfWeek: {
+        connect: {
+          dayNumber: 0 // Sunday
         }
       }
     }
