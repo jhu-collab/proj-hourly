@@ -1810,7 +1810,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           "Authorization",
           "bearer " + users[2].token
         );
-      console.log(response.text);
       expect(response.status).toBe(403);
     });
   });
