@@ -40,32 +40,6 @@ export const emailExists = async (req, res, next) => {
   }
 };
 
-export const isUniquePhone = async (req, res, next) => {
-  debug("checking if phone number is unique...");
-  const { phoneNumber } = req.body;
-  if (phoneNumber === null || phoneNumber === undefined) {
-    debug("phone number not provided...");
-    next();
-  } else {
-    /* c8 ignore start */ // phoneNumber is not a field of Account -> this code will always fail
-    const query = await prisma.Account.findFirst({
-      where: {
-        phoneNumber,
-      },
-    });
-    if (query !== null) {
-      debug("phone already associated with an account!");
-      return res
-        .status(StatusCodes.CONFLICT)
-        .json({ msg: "phoneNumber already associated with an account" });
-    } else {
-      debug("phone number is unique!");
-      next();
-    }
-    /* c8 ignore end */
-  }
-};
-
 export const isAccountIdValid = async (req, res, next) => {
   debug("checking if account is valid...");
   const id = req.id;

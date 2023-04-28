@@ -141,7 +141,7 @@ router.post(
   },
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
-  body("location", "location must be a string").optional().isString(),
+  body("location", "location must be a string").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -161,9 +161,10 @@ router.post(
   },
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
-  body("location", "Please specify a location for your office hours")
-    .optional()
-    .notEmpty(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
   body(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
@@ -254,6 +255,7 @@ router.post(
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
   accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.doesRegistrationExistParams,

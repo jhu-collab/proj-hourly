@@ -13,24 +13,13 @@ export const create = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
-  const { email, name, phoneNumber } = req.body;
-  if (phoneNumber === null || phoneNumber === undefined) {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-      },
-    });
-  } else {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-        phoneNumber,
-      },
-    });
-  }
-
+  const { email, name } = req.body;
+  await prisma.Account.create({
+    data: {
+      email,
+      userName: name,
+    },
+  });
   const account = await prisma.Account.findUnique({
     where: {
       email,
@@ -279,7 +268,7 @@ export const getAll = async (req, res) => {
 /* c8 ignore start */
 export const promoteToAdmin = async (req, res) => {
   debug("promoting to admin...");
-  const id = req.parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id, 10);
   const account = await prisma.account.update({
     where: {
       id,

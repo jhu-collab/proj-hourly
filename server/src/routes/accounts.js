@@ -17,9 +17,7 @@ router.post(
   },
   body("email", "Email is required").isEmail(),
   body("name", "Name is required").notEmpty(),
-  body("phoneNumber").optional().isMobilePhone(),
   validator.isUniqueEmail,
-  validator.isUniquePhone,
   controller.create
 );
 
