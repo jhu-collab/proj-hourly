@@ -307,14 +307,12 @@ describe(`Test endpoint ${endpoint}`, () => {
     let staff = [];
     let instructor = {};
     let course = {};
-    let officeHour = {};
  
     let baseAttributes = {
       startTime: "10:30:00",
       endTime: "11:30:00",
       recurringEvent: true,
       timeInterval: 10,
-      daysOfWeek: ["Monday", "Tuesday"],
       location: "zoom"
     };
 
@@ -323,7 +321,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       staff = params.staff;
       instructor = params.instructor;
       course = params.course;
-      officeHour = params.officeHour;
 
       const today = new Date();
       const tomorrow = new Date(today);
@@ -335,6 +332,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         startDate: tomorrow,
         endDate: nextMonth,
         courseId: course.id,
+        daysOfWeek: [weekday[tomorrow.getDay()], weekday[(tomorrow.getDay() + 1) % 7]],
         hosts: staff.map((user) => user.id)
       };
     });
