@@ -31,15 +31,26 @@ function CreateRegistrationTypeForm() {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} alignItems="center">
-        <FormInputText name="title" control={control} label="Name" />
         <FormInputText
+          data-cy="registration-type-name-input"
+          name="title"
+          control={control}
+          label="Name"
+        />
+        <FormInputText
+          data-cy="registration-type-duration-input"
           name="length"
           control={control}
           label="Duration (minutes)"
           type="number"
         />
         <AnimateButton>
-          <Button type="submit" variant="contained" size="large">
+          <Button
+            data-cy="create-registration-type-button"
+            type="submit"
+            variant="contained"
+            size="large"
+          >
             Create
           </Button>
         </AnimateButton>

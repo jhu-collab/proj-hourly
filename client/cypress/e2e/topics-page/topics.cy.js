@@ -122,7 +122,7 @@ describe("Topics Page", () => {
     cy.wait(1000);
 
     cy.get(topicCard).contains("button", "Edit").click();
-    cy.get(editTopicInput).get("input").clear();
+    cy.get(editTopicInput).type("{selectAll}").type("{backspace}");
     cy.get(topicCard).contains("button", "Submit").click();
 
     cy.get(editTopicInput).contains("p", "Topic name is required");
@@ -142,8 +142,10 @@ describe("Topics Page", () => {
     const newTopicName = "Multi-threaded Networks";
 
     cy.get(oldTopicCard).contains("button", "Edit").click();
-    cy.get(editTopicInput).get("input").clear();
-    cy.get(editTopicInput).type(newTopicName);
+    cy.get(editTopicInput)
+      .type("{selectAll}")
+      .type("{backspace}")
+      .type(newTopicName);
     cy.get(oldTopicCard).contains("button", "Submit").click();
 
     const newTopicCard = `[data-cy="${newTopicName}"]`;
@@ -164,7 +166,7 @@ describe("Topics Page", () => {
     const topicCard = `[data-cy="${topicName}"]`;
 
     cy.get(topicCard).contains("button", "Edit").click();
-    cy.get(editTopicInput).get("input").clear();
+    cy.get(editTopicInput).type("{selectAll}").type("{backspace}");
     cy.get(topicCard).contains("button", "Cancel").click();
 
     cy.wait(1000);
