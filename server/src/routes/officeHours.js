@@ -45,10 +45,10 @@ router.post(
   accountValidator.areAccountsIdsValid,
   courseValidator.isCourseId,
   courseValidator.areCourseStaffOrInstructor,
+  dateValidator.officeHourDateCheck,
   validator.durationIsMultipleof5,
   //timeValidator.isTime,
   //validator.areValidDOW,
-  //dateValidator.officeHourDateCheck,
   // validator.noConflictsWithHosts,
   controller.create
 );

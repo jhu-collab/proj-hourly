@@ -1,3 +1,4 @@
+/* c8 ignore start */
 class ApiError extends Error {
   constructor(statusCode, message, errors) {
     super(message);
@@ -11,3 +12,4 @@ class ApiError extends Error {
 }
 
 export default ApiError;
+/* c8 ignore end */

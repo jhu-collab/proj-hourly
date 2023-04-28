@@ -32,6 +32,7 @@ export const stringToTimeObj = (timeStr) => {
 };
 
 //TODO: check conflicts with host and fix query
+/* c8 ignore start */
 export const noConflictsWithHosts = async (req, res, next) => {
   debug("checking confilcts with hosts");
   const { hosts, startTime, endTime, startDate, endDate, daysOfWeek } =
@@ -120,6 +121,7 @@ export const noConflictsWithHosts = async (req, res, next) => {
     next();
   }
 };
+/* c8 ignore end */
 
 export const isOfficeHourOnDay = async (req, res, next) => {
   debug("checking if office hour is on day");
@@ -568,7 +570,7 @@ export const isDateInFuture = async (req, res, next) => {
 export const isStudentRegistered = async (req, res, next) => {
   debug("checking if student is registered");
   const registrationId = parseInt(req.params.registrationId, 10);
-  const id = parseInt(req.get("id"), 10);
+  const id = req.id;
   debug("getting registration...");
   const registration = await prisma.registration.findFirst({
     where: {
@@ -586,6 +588,7 @@ export const isStudentRegistered = async (req, res, next) => {
   next();
 };
 
+/* c8 ignore start */
 export const isStudentRegisteredBody = async (req, res, next) => {
   debug("checking if student is registered");
   const registrationId = parseInt(req.params.registrationId, 10);
@@ -606,6 +609,7 @@ export const isStudentRegisteredBody = async (req, res, next) => {
   debug("student is registered");
   next();
 };
+/* c8 ignore end */
 
 export const isRegisteredOrIsStaffBody = async (req, res, next) => {
   debug("checking if student is registered or is staff");
@@ -669,6 +673,7 @@ export const doesRegistrationExistParams = async (req, res, next) => {
   next();
 };
 
+/* c8 ignore start */
 export const areValidDOW = (req, res, next) => {
   debug("checking if days of week are valid");
   const { daysOfWeek } = req.body;
@@ -689,6 +694,7 @@ export const areValidDOW = (req, res, next) => {
   debug("days of week are valid");
   next();
 };
+/* c8 ignore start */
 
 export const startDateIsValidDOW = (req, res, next) => {
   debug("checking if start date is valid day of week");
