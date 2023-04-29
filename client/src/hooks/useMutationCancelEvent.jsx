@@ -66,8 +66,6 @@ function useMutationCancelEvent(deleteType) {
         } else {
           date = DateTime.fromISO(officeHour.startDate).toLocaleString(DateTime.DATE_SHORT);
         }
-        
-        //const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
         const startTime = DateTime.fromISO(officeHour.startDate).toLocaleString(
           DateTime.TIME_SIMPLE
         );

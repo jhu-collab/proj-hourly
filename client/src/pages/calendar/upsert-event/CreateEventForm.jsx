@@ -147,12 +147,6 @@ function CreateEventForm() {
             control={control}
             label="Recurring event"
           />
-          {/* TODO: UNFINISHED FEATURE */}
-          {/* <FormCheckbox
-              name="feedback"
-              control={control}
-              label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
-            /> */}
           <FormInputText
             name="startDate"
             control={control}

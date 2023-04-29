@@ -53,8 +53,6 @@ function DeleteAction() {
               control={<Radio />}
               label="This event"
             />
-            {/* TODO: Backend needs to create a route to delete this and following
-          events */}
             <FormControlLabel
               value="all"
               control={<Radio />}
