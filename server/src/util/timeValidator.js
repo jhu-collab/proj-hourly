@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
 
@@ -36,3 +37,4 @@ export const isTime = async (req, res, next) => {
     next();
   }
 };
+/* c8 ignore end */

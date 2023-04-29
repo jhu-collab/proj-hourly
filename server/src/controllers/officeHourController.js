@@ -337,7 +337,7 @@ export const register = async (req, res) => {
       emailEndTime +
       "!";
     emailBody =
-    donotreply +
+      donotreply +
       "\n\n" +
       "Dear " +
       hostFullName +
@@ -586,7 +586,19 @@ export const getTimeSlotsRemaining = async (req, res) => {
   //maps a start time to its registration
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
-    registrationTimes.set(registration.startTime.getTime(), registration);
+    const rTime = new Date(registration.startTime);
+    if (
+      officeHour.startDate.getTimezoneOffset() !=
+      new Date(date).getTimezoneOffset()
+    ) {
+      rTime.setUTCHours(
+        rTime.getUTCHours() +
+          (officeHour.startDate.getTimezoneOffset() -
+            new Date(date).getTimezoneOffset()) /
+            60
+      );
+    }
+    registrationTimes.set(rTime.getTime(), registration);
   });
   //number of 5 minute intervals in the office hour
   const timeStart = createJustTimeObject(startDate);
@@ -603,6 +615,16 @@ export const getTimeSlotsRemaining = async (req, res) => {
     if (registrationTimes.has(start.getTime())) {
       let registration = registrationTimes.get(start.getTime());
       const regEndTime = registration.endTime;
+      if (
+        officeHour.startDate.getTimezoneOffset() != date.getTimezoneOffset()
+      ) {
+        regEndTime.setUTCHours(
+          regEndTime.getUTCHours() +
+            (officeHour.startDate.getTimezoneOffset() -
+              new Date(date).getTimezoneOffset()) /
+              60
+        );
+      }
       while (start < regEndTime) {
         timeSlots[count++] = false;
         start.setMinutes(start.getMinutes() + 5);

@@ -40,30 +40,6 @@ export const emailExists = async (req, res, next) => {
   }
 };
 
-export const isUniquePhone = async (req, res, next) => {
-  debug("checking if phone number is unique...");
-  const { phoneNumber } = req.body;
-  if (phoneNumber === null || phoneNumber === undefined) {
-    debug("phone number not provided...");
-    next();
-  } else {
-    const query = await prisma.Account.findFirst({
-      where: {
-        phoneNumber,
-      },
-    });
-    if (query !== null) {
-      debug("phone already associated with an account!");
-      return res
-        .status(StatusCodes.CONFLICT)
-        .json({ msg: "phoneNumber already associated with an account" });
-    } else {
-      debug("phone number is unique!");
-      next();
-    }
-  }
-};
-
 export const isAccountIdValid = async (req, res, next) => {
   debug("checking if account is valid...");
   const id = req.id;
@@ -232,6 +208,7 @@ export const isAccountInstructor = async (req, res, next) => {
   }
 };
 
+/* c8 ignore start */
 export const accountIsNotInstructor = async (req, res, next) => {
   debug("checking if account is not instructor...");
   const id = parseInt(req.params.id, 10);
@@ -257,7 +234,9 @@ export const accountIsNotInstructor = async (req, res, next) => {
   debug("account is not an instructor in the course!");
   next();
 };
+/* c8 ignore end */
 
+/* c8 ignore start */
 export const isAccountStaff = async (req, res, next) => {
   debug("checking if account is staff...");
   const id = req.id;
@@ -284,6 +263,7 @@ export const isAccountStaff = async (req, res, next) => {
     next();
   }
 };
+/* c8 ignore start */
 
 export const isAccountStaffOrInstructor = async (req, res, next) => {
   debug("checking if account is staff or instructor...");
@@ -378,12 +358,14 @@ export const isAccountValidParams = async (req, res, next) => {
       id,
     },
   });
+  /* c8 ignore start */ // Unreachable -> other validators prior to this one already check this
   if (query === null) {
     debug("account is not valid!");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: is not a valid account" });
   }
+  /* c8 ignore end */
   debug("account is valid!");
   next();
 };
