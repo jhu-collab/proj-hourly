@@ -51,9 +51,9 @@ function Calendar() {
   const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
+  const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
   const { isLoading, error, data } = useQueryOfficeHours();
-
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
@@ -143,7 +143,7 @@ function Calendar() {
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
           <StyleWrapper>
           {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} />
+            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} setMaxEventsStacked={setMaxEventsStacked}/>
           )}
             <FullCalendar
               plugins={[
@@ -176,6 +176,9 @@ function Calendar() {
               eventContent={eventContent}
               eventDrop={handleEventDrop}
               editable={isStaff ? true : false}
+              eventStartEditable={false}
+              eventDurationEditable={false}
+              eventMaxStack={maxEventsStacked}
               selectable={isStaff ? true : false}
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
@@ -189,6 +192,7 @@ function Calendar() {
                 omitZeroMinute: false,
               }}
               slotLabelContent={slotLabelContent}
+              slotEventOverlap={false}
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
               allDaySlot={false}
