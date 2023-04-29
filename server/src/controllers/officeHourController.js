@@ -726,8 +726,8 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   });
   debug("registrations are found");
   const { startDate, endDate, location } = req.body;
-  const dateObj = new Date(startDate);
-  const dow = weekday[dateObj.getUTCDay()];
+  const dateObj = spacetime(startDate);
+  const dow = weekday[dateObj.day()];
   debug("updating office hour...");
   const officehour = await prisma.officeHour.findUnique({
     where: {
@@ -746,7 +746,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
         id: officeHourId,
       },
       data: {
-        isCancelledOn: [...officehour.isCancelledOn, dateObj],
+        isCancelledOn: [...officehour.isCancelledOn, dateObj.toNativeDate()],
       },
     });
   } else {
@@ -763,7 +763,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   await prisma.registration.updateMany({
     where: {
       officeHourId,
-      date: dateObj,
+      date: dateObj.toNativeDate(),
       isCancelled: false,
       isCancelledStaff: false,
     },

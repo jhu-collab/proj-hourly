@@ -437,9 +437,9 @@ export const isInFuture = async (req, res, next) => {
   debug("checking if office hour is in future");
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const dateObj = new Date(date);
-  const current = new Date();
-  if (dateObj < current) {
+  const dateObj = spacetime(date).goto("America/New_York");
+  const current = spacetime.now().goto("America/New_York");
+  if (dateObj.isBefore(current)) {
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: office hour date is before current date" });
@@ -451,11 +451,13 @@ export const isInFuture = async (req, res, next) => {
     },
   });
   debug("got office hour");
-  const officehourstart = officeHour.startDate;
-  officehourstart.setMonth(dateObj.getMonth());
-  officehourstart.setDate(dateObj.getDate());
-  officehourstart.setFullYear(dateObj.getFullYear());
-  if (current >= officehourstart) {
+  const officehourstart = spacetime(officeHour.startDate).goto(
+    "America/New_York"
+  );
+  officehourstart.month(dateObj.month());
+  officehourstart.date(dateObj.date());
+  officehourstart.year(dateObj.year());
+  if (!officehourstart.isAfter(current)) {
     debug("office hour has already started");
     return res
       .status(StatusCodes.CONFLICT)
