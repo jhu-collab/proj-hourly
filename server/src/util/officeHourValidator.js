@@ -179,20 +179,20 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
     },
   });
   debug("got office hour");
-  const dateObj = new Date(req.targetDate);
-  dateObj.setUTCHours(dateObj.getUTCHours() - dateObj.getTimezoneOffset() / 60);
-  if (
-    new Date(officeHour.startDate).getTimezoneOffset() !=
-    dateObj.getTimezoneOffset()
-  ) {
-    dateObj.setUTCHours(
-      dateObj.getUTCHours() -
-        (new Date(officeHour.startDate).getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-  }
-  const dow = weekday[dateObj.getUTCDay()];
+  const dateObj = spacetime(req.targetDate).goto("America/New_York");
+  // dateObj.setUTCHours(dateObj.getUTCHours() - dateObj.getTimezoneOffset() / 60);
+  // if (
+  //   new Date(officeHour.startDate).getTimezoneOffset() !=
+  //   dateObj.getTimezoneOffset()
+  // ) {
+  //   dateObj.setUTCHours(
+  //     dateObj.getUTCHours() -
+  //       (new Date(officeHour.startDate).getTimezoneOffset() -
+  //         dateObj.getTimezoneOffset()) /
+  //         60
+  //   );
+  // }
+  const dow = weekday[dateObj.day()];
   officeHour = await prisma.officeHour.findFirst({
     where: {
       id: officeHourId,
@@ -752,12 +752,10 @@ export const checkOptionalDateBody = async (req, res, next) => {
         next();
       }
     } else {
-      const newEnd = new Date();
+      const newEnd = spacetime(officeHour.startDate);
       //newEnd.setUTCHours(newEnd.getUTCHours() - newEnd.getTimezoneOffset() / 60);
-      newEnd.setUTCHours(officeHour.endDate.getUTCHours());
-      newEnd.setUTCMinutes(officeHour.endDate.getUTCMinutes());
-      newEnd.setUTCSeconds(0);
-      req.body.date = newEnd.toISOString();
+      newEnd.subtract(1, "hour");
+      req.body.date = newEnd.toNativeDate().toISOString();
       next();
     }
   } else {
@@ -952,7 +950,7 @@ export const durationIsMultipleof5 = async (req, res, next) => {
 
 export const getDatesForOfficeHour = async (req, res, next) => {
   debug("getting dates for office hour");
-  let { date, officeHourId, startTime } = req.body;
+  let { date, officeHourId } = req.body;
   if (officeHourId === undefined) {
     officeHourId = parseInt(req.params.officeHourId);
   }
