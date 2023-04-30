@@ -10,7 +10,7 @@ import CalendarViews from "./CalendarViews";
  * Represents the calendar menu.
  * @returns calendar menu
  */
-function CalendarMenu({ calendarRef, isStaff, setFiltered}) {
+function CalendarMenu({ calendarRef, isStaff, setFiltered, setMaxEventsStacked}) {
 
 
   const courseType = useStoreLayout((state) => state.courseType);
@@ -21,7 +21,9 @@ function CalendarMenu({ calendarRef, isStaff, setFiltered}) {
       <Grid container spacing = {2}>
         <Grid item xs = {12} md = {9}
         justifyContent = "center">
-          <CalendarViews calendarRef={calendarRef} />
+          <CalendarViews 
+            calendarRef={calendarRef} 
+            setMaxEventsStacked={setMaxEventsStacked}/>
         </Grid>
         <Grid item xs = {4} md = {3}>
           <CalendarFilters setFiltered = {setFiltered}/>
