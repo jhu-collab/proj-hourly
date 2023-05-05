@@ -2,6 +2,7 @@ import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
 import { factory } from "./debug.js";
+import { transporter } from "./mailClient.js";
 
 const debug = factory(import.meta.url);
 export const sendEmail = async (req) => {
@@ -9,18 +10,6 @@ export const sendEmail = async (req) => {
   // Create the transporter with the required configuration for Outlook
   // change the user and pass !
   debug("creating transport...");
-  var transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST, // hostname
-    secureConnection: false, // TLS requires secureConnection to be false
-    port: 587, // port for secure SMTP
-    tls: {
-      ciphers: "SSLv3",
-    },
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
 
   // setup e-mail data, even with unicode symbols
   var mailOptions = {
