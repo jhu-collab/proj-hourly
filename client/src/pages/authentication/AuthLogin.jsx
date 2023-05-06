@@ -37,8 +37,7 @@ function AuthLogin() {
     signIn(data);
   };
 
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
