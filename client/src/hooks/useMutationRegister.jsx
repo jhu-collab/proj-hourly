@@ -24,6 +24,13 @@ function useMutationRegister() {
 
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
 
+  const adjustTime = (today, orig) => {
+    const adjusted = today.toISOString().split('T')[0] + 'T' + orig.split('T')[1];
+    return DateTime.fromISO(adjusted).toLocaleString(
+      DateTime.TIME_SIMPLE
+    );
+  }
+
   const register = async (officeHour) => {
     try {
       debug("Sending office hour to register for to the backend...");
@@ -39,22 +46,30 @@ function useMutationRegister() {
   const mutation = useMutation(register, {
     onSuccess: (data) => {
       const registration = data.registration;
-      console.log(registration)
+
+      const today = new Date();
+      const curOffset = today.getTimezoneOffset();
+
+      const storedDate = new Date(registration.startTime.substring(0, 10));
+      const storedOffset = storedDate.getTimezoneOffset();
 
       const date = DateTime.fromISO(
         registration.date.substring(0, 10) +
           registration.startTime.substring(10)
       ).toLocaleString();
-      const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
+
+      let startTime = DateTime.fromISO(registration.startTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
-      const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
+      let endTime = DateTime.fromISO(registration.endTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
 
-      console.log(date);
-      console.log(registration.startTime);
-      console.log(registration.endTime);
+      if (curOffset != storedOffset) {
+        startTime = adjustTime(today, registration.startTime);
+        endTime = adjustTime(today, registration.endTime);
+      }
+      
 
       queryClient.invalidateQueries(["studentRegistrationCounts"]);
       queryClient.invalidateQueries(["topicCounts"]);

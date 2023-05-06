@@ -41,6 +41,7 @@ function useMutationCancelRegistration(registrationId) {
       const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
+
       const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
         DateTime.TIME_SIMPLE
       );
