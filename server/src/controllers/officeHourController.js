@@ -605,7 +605,19 @@ export const getTimeSlotsRemaining = async (req, res) => {
   //maps a start time to its registration
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
-    registrationTimes.set(registration.startTime.getTime(), registration);
+    const rTime = new Date(registration.startTime);
+    if (
+      officeHour.startDate.getTimezoneOffset() !=
+      new Date(date).getTimezoneOffset()
+    ) {
+      rTime.setUTCHours(
+        rTime.getUTCHours() +
+          (officeHour.startDate.getTimezoneOffset() -
+            new Date(date).getTimezoneOffset()) /
+            60
+      );
+    }
+    registrationTimes.set(rTime.getTime(), registration);
   });
   //number of 5 minute intervals in the office hour
   const timeStart = createJustTimeObjectSpacetime(startDate.clone());
@@ -1168,19 +1180,28 @@ export const cancelRegistration = async (req, res) => {
     month: "long",
     day: "numeric",
   };
-  const dateStr = date.toLocaleDateString("en-US", options);
+
   const startTime = registration.startTime;
-  let startTimeStr = startTime.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
   const endTime = registration.endTime;
+  if (
+    registration.date.getTimezoneOffset() !=
+    registration.startTime.getTimezoneOffset()
+  ) {
+    startTime.setUTCHours(startTime.getUTCHours() + 1);
+    endTime.setUTCHours(endTime.getUTCHours() + 1);
+  }
   let endTimeStr = endTime.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
   });
+  let startTimeStr = startTime.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  date.setUTCHours(startTime.getUTCHours());
+  const dateStr = date.toLocaleDateString("en-US", options);
 
   const donotreply = "--- Do not reply to this email ---";
 
