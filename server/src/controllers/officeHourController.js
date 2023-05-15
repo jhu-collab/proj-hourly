@@ -846,17 +846,17 @@ export const editAll = async (req, res) => {
     const oldOH = await prisma.officeHour.findUnique({
       where: { id: officeHourId },
     });
-    const endOldOH = new Date(endDateOldOfficeHour);
-    endOldOH.setUTCHours(oldOH.endDate.getUTCHours());
-    endOldOH.setUTCMinutes(oldOH.endDate.getUTCMinutes());
-    endOldOH.setUTCSeconds(oldOH.endDate.getUTCSeconds());
-    endOldOH.setDate(endOldOH.getDate() - 1);
+    const endOldOH = spacetime(endDateOldOfficeHour);
+    endOldOH.hour(oldOH.endDate.getUTCHours());
+    endOldOH.minute(oldOH.endDate.getUTCMinutes());
+    endOldOH.second(oldOH.endDate.getUTCSeconds());
+    endOldOH.date(endOldOH.date() - 1);
     const update = await prisma.officeHour.update({
       where: {
         id: officeHourId,
       },
       data: {
-        endDate: endOldOH,
+        endDate: endOldOH.toNativeDate(),
       },
       include: {
         hosts: true,

@@ -693,8 +693,8 @@ export const areValidDOW = (req, res, next) => {
 export const startDateIsValidDOW = (req, res, next) => {
   debug("checking if start date is valid day of week");
   const { daysOfWeek, startDate } = req.body;
-  const start = new Date(startDate);
-  const startDOW = weekday[start.getUTCDay()];
+  const start = spacetime(startDate);
+  const startDOW = weekday[start.day()];
   if (daysOfWeek.includes(startDOW)) {
     debug("start date is valid day of week");
     next();
