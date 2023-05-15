@@ -738,7 +738,7 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   });
   debug("registrations are found");
   const { startDate, endDate, location } = req.body;
-  const dateObj = spacetime(startDate);
+  const dateObj = spacetime(startDate).goto("America/New_York");
   const dow = weekday[dateObj.day()];
   debug("updating office hour...");
   const officehour = await prisma.officeHour.findUnique({
@@ -772,10 +772,15 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
     });
   }
   debug("updating registrations...");
+  const regDate = dateObj.clone();
+  regDate.hour(0);
+  regDate.minute(0);
+  regDate.second(0);
+  regDate.millisecond(0);
   await prisma.registration.updateMany({
     where: {
       officeHourId,
-      date: dateObj.toNativeDate(),
+      date: regDate.toNativeDate(),
       isCancelled: false,
       isCancelledStaff: false,
     },

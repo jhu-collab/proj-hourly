@@ -146,6 +146,7 @@ router.post(
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
   dateValidator.endIsAfterStart,
