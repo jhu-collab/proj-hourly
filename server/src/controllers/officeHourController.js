@@ -522,7 +522,7 @@ export const cancelAll = async (req, res) => {
     debug("sending cancellation emails...");
     sendEmailForEachRegistrationWhenCancelled(registrations);
     debug("cancellation emails are sent");
-  } else if (date > startObj) {
+  } else if (date.isAfter(startObj)) {
     debug("office hours already over or too close to start time");
     return res.status(StatusCodes.CONFLICT).json({
       msg: "ERROR: office hours already over or too close to start time",
