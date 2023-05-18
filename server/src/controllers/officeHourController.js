@@ -102,17 +102,17 @@ const createJustTimeObjectSpacetime = (time) => {
   newTime = newTime.date(1);
   newTime = newTime.month(0);
   newTime = newTime.year(1970);
-  if (
-    newTime.timezone().current.offset !==
-    spacetime(time).timezone().current.offset
-  ) {
-    newTime = newTime.add(
-      (newTime.timezone().current.offset -
-        spacetime(time).timezone().current.offset) /
-        60,
-      "hour"
-    );
-  }
+  // if (
+  //   newTime.timezone().current.offset !==
+  //   spacetime(time).timezone().current.offset
+  // ) {
+  //   newTime = newTime.add(
+  //     (newTime.timezone().current.offset -
+  //       spacetime(time).timezone().current.offset) /
+  //       60,
+  //     "hour"
+  //   );
+  // }
   return newTime;
 };
 
@@ -595,7 +595,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
   //   );
   //   crossesDaylightSavings = true;
   // }
-  let start = createJustTimeObjectSpacetime(spacetime(startDate));
+  let start = createJustTimeObjectSpacetime(spacetime(startDate)).goto(
+    "America/New_York"
+  );
   let end = createJustTimeObjectSpacetime(spacetime(endDate)).goto(
     "America/New_York"
   );
@@ -618,12 +620,12 @@ export const getTimeSlotsRemaining = async (req, res) => {
     const rTime = new Date(registration.startTime);
     if (
       officeHour.startDate.getTimezoneOffset() !=
-      new Date(date).getTimezoneOffset()
+      new Date(1970, 0, 1).getTimezoneOffset()
     ) {
       rTime.setUTCHours(
         rTime.getUTCHours() +
-          (officeHour.startDate.getTimezoneOffset() -
-            new Date(date).getTimezoneOffset()) /
+          (new Date(1970, 0, 1).getTimezoneOffset() -
+            officeHour.startDate.getTimezoneOffset()) /
             60
       );
     }
@@ -643,13 +645,24 @@ export const getTimeSlotsRemaining = async (req, res) => {
   while (start.isBefore(end)) {
     if (registrationTimes.has(start.toNativeDate().getTime())) {
       let registration = registrationTimes.get(start.toNativeDate().getTime());
-      const regEndTime = spacetime(registration.endTime);
+      let regEndTime = spacetime(registration.endTime).goto("America/New_York");
+      if (
+        registration.date.getTimezoneOffset() !=
+        new Date(1970, 0, 1).getTimezoneOffset()
+      ) {
+        regEndTime = regEndTime.hour(
+          regEndTime.hour() +
+            (new Date(1970, 0, 1).getTimezoneOffset() -
+              registration.date.getTimezoneOffset()) /
+              60
+        );
+      }
       while (start.isBefore(regEndTime)) {
         timeSlots[count++] = false;
-        start = start.add(5, "minute");
+        start = start.minute(start.minute() + 5);
       }
     } else {
-      start = start.add(5, "minute");
+      start = start.minute(start.minute() + 5);
       count++;
     }
   }
