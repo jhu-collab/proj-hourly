@@ -828,11 +828,11 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
     },
   });
   debug("got registration");
-  const startTimeObj = new Date(registration.startTime);
-  const dateObj = new Date(registration.date);
-  dateObj.setUTCHours(startTimeObj.getUTCHours());
-  dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
-  if (dateObj > new Date()) {
+  const startTimeObj = spacetime(registration.startTime);
+  const dateObj = spacetime(registration.date);
+  dateObj.hour(startTimeObj.hour());
+  dateObj.minute(startTimeObj.minute());
+  if (dateObj.isBefore(spacetime.now())) {
     debug("registration is in future");
     next();
   } else {

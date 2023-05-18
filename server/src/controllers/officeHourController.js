@@ -98,10 +98,22 @@ const createJustTimeObject = (time) => {
 };
 
 const createJustTimeObjectSpacetime = (time) => {
-  time = time.date(1);
-  time = time.month(0);
-  time = time.year(1970);
-  return time;
+  let newTime = time.clone();
+  newTime = newTime.date(1);
+  newTime = newTime.month(0);
+  newTime = newTime.year(1970);
+  if (
+    newTime.timezone().current.offset !==
+    spacetime(time).timezone().current.offset
+  ) {
+    newTime = newTime.add(
+      (newTime.timezone().current.offset -
+        spacetime(time).timezone().current.offset) /
+        60,
+      "hour"
+    );
+  }
+  return newTime;
 };
 
 const createJustDateObject = (date) => {
@@ -583,11 +595,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
   //   );
   //   crossesDaylightSavings = true;
   // }
-  let start = createJustTimeObjectSpacetime(
-    spacetime(startDate).goto("America/New_York")
-  );
-  let end = createJustTimeObjectSpacetime(
-    spacetime(endDate).goto("America/New_York")
+  let start = createJustTimeObjectSpacetime(spacetime(startDate));
+  let end = createJustTimeObjectSpacetime(spacetime(endDate)).goto(
+    "America/New_York"
   );
   if (start.isAfter(end)) {
     end = end.date(end.date() + 1);
@@ -636,10 +646,10 @@ export const getTimeSlotsRemaining = async (req, res) => {
       const regEndTime = spacetime(registration.endTime);
       while (start.isBefore(regEndTime)) {
         timeSlots[count++] = false;
-        start = start.minute(start.minute() + 5);
+        start = start.add(5, "minute");
       }
     } else {
-      start = start.minute(start.minute() + 5);
+      start = start.add(5, "minute");
       count++;
     }
   }
