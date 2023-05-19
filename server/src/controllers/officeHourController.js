@@ -137,12 +137,12 @@ export const create = async (req, res) => {
     hosts,
     daysOfWeek,
   } = req.body;
-  const start = spacetime(startDate);
+  let start = spacetime(startDate);
   const end = spacetime(endDate);
   const numOfWeek = daysOfWeek.map((dow) => weekday.indexOf(dow));
   if (recurringEvent) {
-    while (!numOfWeek.includes(start.day())) {
-      start.date(start.date() + 1);
+    while (!numOfWeek.includes(start.goto("America/New_York").day())) {
+      start = start.date(start.date() + 1);
     }
   }
   const officeHour = await createOfficeHour(
