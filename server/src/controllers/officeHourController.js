@@ -616,6 +616,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   if (start.isAfter(end)) {
     end = end.date(end.date() + 1);
   }
+  const startOrig = start.clone();
   //gets all registrations for an office hour on a given day
   debug("finding registrations...");
   const registrations = await prisma.registration.findMany({
@@ -640,6 +641,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
             registration.date.getTimezoneOffset()) /
             60
       );
+    }
+    if (rTime.getTime() < start.toNativeDate().getTime()) {
+      rTime.setDate(rTime.getDate() + 1);
     }
     registrationTimes.set(rTime.getTime(), registration);
   });
@@ -668,6 +672,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
               registration.date.getTimezoneOffset()) /
               60
         );
+      }
+      if (regEndTime.isBefore(startOrig)) {
+        regEndTime = regEndTime.add(1, "day");
       }
       while (start.isBefore(regEndTime)) {
         timeSlots[count++] = false;
