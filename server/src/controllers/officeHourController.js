@@ -222,14 +222,30 @@ export const register = async (req, res) => {
       topicArr.push({ id: topicId });
     });
   }
-  const startTimeObj = spacetime(
+  let startTimeObj = spacetime(
     combineStringTimeAndDate(startTime, targetDate.toNativeDate())
   );
-  const endTimeObj = spacetime(
+  let endTimeObj = spacetime(
     combineStringTimeAndDate(endTime, targetDate.toNativeDate())
   );
   if (endTimeObj < startTimeObj) {
     endTimeObj.date(endTimeObj.date() + 1);
+  }
+  if (
+    targetDate.goto("America/New_York").timezone().current.offset !=
+    officeHour.startDate.getTimezoneOffset() / 60
+  ) {
+    startTimeObj = startTimeObj.add(
+      spacetime(officeHour.startDate).timezone().current.offset -
+        targetDate.goto("America/New_York").timezone().current.offset,
+
+      "hour"
+    );
+    endTimeObj = endTimeObj.add(
+      spacetime(officeHour.startDate).timezone().current.offset -
+        targetDate.goto("America/New_York").timezone().current.offset,
+      "hour"
+    );
   }
   // if (
   //   officeHour.startDate.getTimezoneOffset() !=
@@ -546,6 +562,10 @@ export const cancelAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * This function computes the remaining time slots for a specific
  * office hour and returns them. This will compute time slots for each
@@ -587,14 +607,6 @@ export const getTimeSlotsRemaining = async (req, res) => {
   debug("course is found");
   const startDate = spacetime(officeHour.startDate).goto("America/New_York");
   const endDate = spacetime(officeHour.endDate).goto("America/New_York");
-  // let crossesDaylightSavings = false;
-  // if (endDate.getTimezoneOffset() !== startDate.getTimezoneOffset()) {
-  //   endDate.setUTCHours(
-  //     endDate.getUTCHours() +
-  //       (-endDate.getTimezoneOffset() + startDate.getTimezoneOffset()) / 60 //handles daylight savings
-  //   );
-  //   crossesDaylightSavings = true;
-  // }
   let start = createJustTimeObjectSpacetime(spacetime(startDate)).goto(
     "America/New_York"
   );
@@ -619,13 +631,13 @@ export const getTimeSlotsRemaining = async (req, res) => {
   registrations.forEach((registration) => {
     const rTime = new Date(registration.startTime);
     if (
-      officeHour.startDate.getTimezoneOffset() !=
+      registration.date.getTimezoneOffset() !=
       new Date(1970, 0, 1).getTimezoneOffset()
     ) {
       rTime.setUTCHours(
         rTime.getUTCHours() +
           (new Date(1970, 0, 1).getTimezoneOffset() -
-            officeHour.startDate.getTimezoneOffset()) /
+            registration.date.getTimezoneOffset()) /
             60
       );
     }
@@ -659,10 +671,10 @@ export const getTimeSlotsRemaining = async (req, res) => {
       }
       while (start.isBefore(regEndTime)) {
         timeSlots[count++] = false;
-        start = start.minute(start.minute() + 5);
+        start = start.add(5, "minute");
       }
     } else {
-      start = start.minute(start.minute() + 5);
+      start = start.add(5, "minute");
       count++;
     }
   }
