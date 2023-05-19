@@ -739,7 +739,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
         } else if (diff < 0) {
           diff += 7;
         }
-        start.add(diff, "day");
+        start = start.add(diff, "day");
         i = (i + 1) % indexes.length;
       }
       if (now.isAfter(start)) {

@@ -649,9 +649,9 @@ export const getTimeSlotsRemaining = async (req, res) => {
   });
   //number of 5 minute intervals in the office hour
   const timeStart = createJustTimeObjectSpacetime(startDate.clone());
-  const timeEnd = createJustTimeObjectSpacetime(endDate.clone());
+  let timeEnd = createJustTimeObjectSpacetime(endDate.clone());
   while (timeEnd.isBefore(timeStart)) {
-    timeEnd.date(timeEnd.date() + 1);
+    timeEnd = timeEnd.date(timeEnd.date() + 1);
   }
   let n = Math.abs(timeEnd.diff(timeStart, "minute") / 5);
   //an array of 5 minute intervals, marking if the interval is occupied
