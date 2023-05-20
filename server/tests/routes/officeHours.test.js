@@ -215,7 +215,7 @@ async function setup() {
       hosts: { connect: { id: staff[0].id } },
       isOnDayOfWeek: {
         connect: {
-          dayNumber: startDate.getDay(),
+          dayNumber: startDate.getDay() === 0 ? 7 : startDate.getDay(),
         },
       },
     },
