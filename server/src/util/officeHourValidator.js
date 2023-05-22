@@ -206,7 +206,9 @@ export const isOfficeHourOnDayParam = async (req, res, next) => {
   let isCancelled = false;
   if (officeHour !== null) {
     officeHour.isCancelledOn.forEach((cancelledDate) => {
-      if (cancelledDate.toDateString() === dateObj.toDateString()) {
+      if (
+        cancelledDate.toDateString() === dateObj.toNativeDate().toDateString()
+      ) {
         isCancelled = true;
       }
     });
