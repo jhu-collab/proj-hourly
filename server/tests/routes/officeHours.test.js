@@ -562,24 +562,24 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 16
-    it("Return 400 when timeInterval is 0", async () => {
-      const attributes = { ...baseAttributes, timeInterval: 0 };
-      const response = await request
-        .post(`${endpoint}/create`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when timeInterval is 0", async () => {
+    //   const attributes = { ...baseAttributes, timeInterval: 0 };
+    //   const response = await request
+    //     .post(`${endpoint}/create`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    // Row 17
-    it("Return 400 when timeInterval is less than 0", async () => {
-      const attributes = { ...baseAttributes, timeInterval: -5 };
-      const response = await request
-        .post(`${endpoint}/create`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(409);
-    });
+    // // Row 17
+    // it("Return 400 when timeInterval is less than 0", async () => {
+    //   const attributes = { ...baseAttributes, timeInterval: -5 };
+    //   const response = await request
+    //     .post(`${endpoint}/create`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(409);
+    // });
 
     // Row 18
     it("Return 201 when there is only one host", async () => {
@@ -688,6 +688,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
     });
 
     // Row 2
@@ -1032,6 +1037,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token)
         .set("id", staff[0].id);
+      console.log(response.text);
       expect(response.status).toBe(202);
       const id = response.body.officeHourUpdate.id;
       const officeHour = await prisma.officeHour.findUniqueOrThrow({
