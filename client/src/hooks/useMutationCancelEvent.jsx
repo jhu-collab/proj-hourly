@@ -11,6 +11,9 @@ import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreEvent from "./useStoreEvent";
 import useStoreLayout from "./useStoreLayout";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationCancelEvent.jsx`);
 
 function useMutationCancelEvent(deleteType) {
   const { token } = useStoreToken();
@@ -25,8 +28,10 @@ function useMutationCancelEvent(deleteType) {
 
   const cancelOnDate = async (event) => {
     try {
+      debug("Sending event to be cancelled to the backend...");
       const endpoint = `${BASE_URL}/api/officeHour/cancelOnDate`;
       const res = await axios.post(endpoint, event, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -35,12 +40,14 @@ function useMutationCancelEvent(deleteType) {
 
   const cancelAll = async (event) => {
     try {
+      debug("Sending office hour ID to cancel all event occurrences to the backend...");
       const endpoint = `${BASE_URL}/api/officeHour/cancelAll`;
       const res = await axios.post(
         endpoint,
         { officeHourId: event.officeHourId },
         getConfig(token)
       );
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -50,10 +57,17 @@ function useMutationCancelEvent(deleteType) {
   const mutation = useMutation(
     recurring && deleteType === "this" ? cancelOnDate : cancelAll,
     {
-      onSuccess: (data) => {
+      onSuccess: (data, event) => {
         const officeHour = data.officeHourUpdate;
-
-        const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
+        let date;
+        if (event.date) {
+          date = event.date;
+          date = date.replaceAll("-", "/");
+        } else {
+          date = DateTime.fromISO(officeHour.startDate).toLocaleString(DateTime.DATE_SHORT);
+        }
+        
+        //const date = DateTime.fromISO(officeHour.startDate).toLocaleString();
         const startTime = DateTime.fromISO(officeHour.startDate).toLocaleString(
           DateTime.TIME_SIMPLE
         );
@@ -76,6 +90,7 @@ function useMutationCancelEvent(deleteType) {
             );
       },
       onError: (error) => {
+        debug( {error} );
         errorToast(error);
       },
     }

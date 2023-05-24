@@ -10,6 +10,9 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
 import { DateTime } from "luxon";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationCancelRegistration.jsx`);
 
 function useMutationCancelRegistration(registrationId) {
   const { token } = useStoreToken();
@@ -22,8 +25,10 @@ function useMutationCancelRegistration(registrationId) {
 
   const cancelRegistration = async () => {
     try {
+      debug("Attempting to cancel registration...");
       const endpoint = `${BASE_URL}/api/officeHour/cancelRegistration/${registrationId}`;
       const res = await axios.post(endpoint, {}, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -50,6 +55,7 @@ function useMutationCancelRegistration(registrationId) {
       );
     },
     onError: (error) => {
+      debug( {error} );
       errorToast(error);
     },
   });
