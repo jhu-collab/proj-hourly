@@ -126,19 +126,22 @@ function Registration({ registration, type }) {
               <Typography marginBottom={4}>{registration.question}</Typography>
             </>
           )}
-          {type === 0 && (isHost || courseType === "Student") && (
-            <>
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={onClick}
-              >
-                Cancel
-              </Button>
-              <ConfirmPopup />
-            </>
-          )}
+          {type === 0 &&
+            (isHost ||
+              courseType === "Student" ||
+              courseType === "Instructor") && (
+              <>
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={onClick}
+                >
+                  Cancel
+                </Button>
+                <ConfirmPopup />
+              </>
+            )}
         </>
       </AccordionDetails>
     </Accordion>
