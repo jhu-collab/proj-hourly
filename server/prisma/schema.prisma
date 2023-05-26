@@ -51,11 +51,12 @@ model Course {
 }
 
 model OfficeHourTimeOptions {
-  id       Int    @id @default(autoincrement())
-  title    String
-  duration Int    @default(10)
-  course   Course @relation("isCourseTimeOption", fields: [courseId], references: [id])
-  courseId Int
+  id           Int            @id @default(autoincrement())
+  title        String
+  duration     Int            @default(10)
+  course       Course         @relation("isCourseTimeOption", fields: [courseId], references: [id])
+  courseId     Int
+  Registration Registration[]
 }
 
 model OfficeHour {
@@ -83,20 +84,22 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id               Int        @id @default(autoincrement())
-  startTime        DateTime   @db.Timetz()
-  endTime          DateTime   @db.Timetz()
-  date             DateTime   @db.Date
-  isCancelled      Boolean    @default(false)
-  officeHour       OfficeHour @relation(fields: [officeHourId], references: [id])
-  officeHourId     Int
-  account          Account    @relation(fields: [accountId], references: [id])
-  accountId        Int
-  question         String?
-  feedback         String?
-  rating           Int?
-  topics           Topic[]    @relation("withTopics")
-  isCancelledStaff Boolean    @default(false)
+  id                     Int                   @id @default(autoincrement())
+  startTime              DateTime              @db.Timetz()
+  endTime                DateTime              @db.Timetz()
+  date                   DateTime              @db.Date
+  isCancelled            Boolean               @default(false)
+  officeHour             OfficeHour            @relation(fields: [officeHourId], references: [id])
+  officeHourId           Int
+  account                Account               @relation(fields: [accountId], references: [id])
+  accountId              Int
+  question               String?
+  feedback               String?
+  rating                 Int?
+  topics                 Topic[]               @relation("withTopics")
+  isCancelledStaff       Boolean               @default(false)
+  officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
+  officeHourTimeOptionId Int
 }
 
 model Topic {
