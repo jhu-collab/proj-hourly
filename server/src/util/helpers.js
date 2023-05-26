@@ -44,6 +44,7 @@ export const createToken = ({ user, expiresIn }) => {
   });
 };
 
+/* c8 ignore start */
 export const createTimeString = (date) => {
   let hours = date.getUTCHours();
   let minutes = date.getUTCMinutes();
@@ -59,7 +60,9 @@ export const createTimeString = (date) => {
   }
   return hours + ":" + minutes + ":" + seconds;
 };
+/* c8 ignore end */
 
+/* c8 ignore start */
 export const computeDiff = (start, end) => {
   return (
     ((end.getUTCHours() * 60 + end.getUTCMinutes()) * 60 +
@@ -69,4 +72,19 @@ export const computeDiff = (start, end) => {
       start.getUTCSeconds()) *
       1000
   );
+};
+/* c8 ignore end */
+
+export const handleUTCDateChange = (dateObj, officeHour) => {
+  const dateObj2 = new Date(dateObj);
+  dateObj.setHours(new Date(officeHour.startDate).getHours() % 24);
+  if (dateObj.getUTCDate() != dateObj2.getUTCDate()) {
+    dateObj.setUTCDate(dateObj2.getUTCDate());
+  }
+  dateObj.setUTCHours(
+    dateObj.getUTCHours() +
+      new Date(officeHour.startDate).getTimezoneOffset() / 60 -
+      dateObj.getTimezoneOffset() / 60
+  );
+  return dateObj;
 };

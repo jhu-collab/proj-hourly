@@ -120,19 +120,28 @@ function Registration({ registration, type }) {
               Type: <strong>{registration.type}</strong>
             </Typography>
           </Stack>
-          {type === 0 && (isHost || courseType === "Student" || courseType === "Instructor") && (
+          {registration.question !== "" && (
             <>
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={onClick}
-              >
-                Cancel
-              </Button>
-              <ConfirmPopup />
+              <Typography fontWeight={600}>Additional Notes:</Typography>
+              <Typography marginBottom={4}>{registration.question}</Typography>
             </>
           )}
+          {type === 0 &&
+            (isHost ||
+              courseType === "Student" ||
+              courseType === "Instructor") && (
+              <>
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={onClick}
+                >
+                  Cancel
+                </Button>
+                <ConfirmPopup />
+              </>
+            )}
         </>
       </AccordionDetails>
     </Accordion>

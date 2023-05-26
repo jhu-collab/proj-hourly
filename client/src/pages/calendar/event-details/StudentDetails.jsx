@@ -7,6 +7,8 @@ import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
 import useQueryRegistrationStatus from "../../../hooks/useQueryRegistrationStatus";
 import useMutationCancelRegistration from "../../../hooks/useMutationCancelRegistration";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import useQueryTimeSlots from "../../../hooks/useQueryTimeSlots";
+import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 
 /**
  * Child component that displays information about an office hour
@@ -19,12 +21,28 @@ function StudentDetails() {
   const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
     data?.registration?.id || -1
   );
+  
+  const { isLoading: isLoadingTimeSlots, data: timeSlots } = useQueryTimeSlots();
+  const { isLoading: isLoadingRegTypes, data: dataRegTypes } = useQueryRegistrationTypes();
 
-  const start = useStoreEvent((state) => state.start);
+  const end = useStoreEvent((state) => state.end);
   const curDate = new Date();
-  const isPastBookingWindow = curDate.getTime() >= start.getTime();
 
-  if (isLoading) {
+  const getIsPastBookingWindow = () => {
+    if (curDate.getTime() >= end.getTime()) {
+      return true;
+    }
+
+    for (let i = 0; i < dataRegTypes.times.length; i++) {
+      if (timeSlots.timeSlotsPerType[i].times.length > 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  if (isLoading || isLoadingMutate || isLoadingRegTypes || isLoadingTimeSlots) {
     return <Alert severity="warning">Retrieving registration status ...</Alert>;
   }
 
@@ -35,6 +53,7 @@ function StudentDetails() {
   }
 
   const isRegistered = data.status === "Registered";
+  const isPastBookingWindow = getIsPastBookingWindow();
 
   const onClick = () => {
     isRegistered

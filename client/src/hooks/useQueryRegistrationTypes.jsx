@@ -2,8 +2,11 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { BASE_URL } from "../services/common";
 import { getConfig } from "./helper";
+import Debug from "debug";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
+
+const debug = new Debug(`hourly:hooks:useQueryRegistrationTypes.js`);
 
 function useQueryRegistrationTypes() {
   const queryKey = ["registrationTypes"];
@@ -17,8 +20,10 @@ function useQueryRegistrationTypes() {
         `${BASE_URL}/api/course/${course.id}/officeHourTimeInterval`,
         getConfig(token)
       );
+      debug("Getting office hour time interval from backend.");
       return res.data;
     } catch (err) {
+      debug({ err });
       throw err;
     }
   };
