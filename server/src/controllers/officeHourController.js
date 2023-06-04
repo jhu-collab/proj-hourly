@@ -27,7 +27,7 @@ const combineStringTimeAndDate = (timeStr, date) => {
 
 const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
   let dowArr = [];
-  daysOfWeek.forEach(async (dayOfWeek) => {
+  daysOfWeek.forEach((dayOfWeek) => {
     dowArr.push({ dayOfWeek: dayOfWeek });
   });
   debug("updating office hour's days...");
@@ -46,7 +46,7 @@ const connectOfficeHourToDOW = async (officeHourId, daysOfWeek) => {
 
 const connectOfficeHourToHosts = async (officeHourId, hosts) => {
   let hostIds = [];
-  hosts.forEach(async (id) => {
+  hosts.forEach((id) => {
     hostIds.push({ id: id });
   });
   debug("updating office hour's hosts...");
@@ -201,8 +201,15 @@ export const register = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { officeHourId, startTime, endTime, date, question, TopicIds } =
-    req.body;
+  const {
+    officeHourId,
+    startTime,
+    endTime,
+    date,
+    question,
+    TopicIds,
+    timeOptionId,
+  } = req.body;
   const targetDate = spacetime(req.targetDate);
   const id = req.id;
   debug("getting office hour...");
@@ -275,6 +282,7 @@ export const register = async (req, res) => {
       accountId: id,
       question,
       isCancelledStaff: false,
+      officeHourTimeOptionId: timeOptionId,
       topics: {
         connect: topicArr,
       },
@@ -411,6 +419,22 @@ export const register = async (req, res) => {
     sendEmail(emailReq);
     debug("email is sent to host");
   });
+  if (TopicIds !== null && TopicIds !== undefined) {
+    let topicIdArr = [];
+    TopicIds.forEach((topicId) => {
+      topicIdArr.push({ id: topicId });
+    });
+    await prisma.registration.update({
+      where: {
+        id: registration.id,
+      },
+      data: {
+        topics: {
+          connect: topicIdArr,
+        },
+      },
+    });
+  }
   return res.status(StatusCodes.ACCEPTED).json({ registration });
 };
 
@@ -1069,6 +1093,9 @@ export const getRegistrationStatus = async (req, res) => {
       date: date,
       isCancelled: false,
       isCancelledStaff: false,
+    },
+    include: {
+      officeHourTimeOptions: true,
     },
   });
   debug("registration is found");

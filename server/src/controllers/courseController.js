@@ -634,6 +634,7 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   } else if (role === "Instructor") {
@@ -672,6 +673,7 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   } else {
@@ -715,36 +717,28 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   }
-  debug("retrieving time options...");
-  const OfficeHourTimeOptions = await prisma.officeHourTimeOptions.findMany({
-    where: {
-      courseId,
-    },
-  });
-  debug("matching time options to registrations...");
-  registrations.forEach((registration) => {
-    let endTime = registration.endTime;
-    if (registration.endTime < registration.startTime) {
-      endTime.setUTCDate(endTime.getUTCDate() + 1);
-    }
-    const duration =
-      (endTime.getTime() - registration.startTime.getTime()) / (1000 * 60);
-    OfficeHourTimeOptions.forEach((option) => {
-      if (duration == option.duration) {
-        registration.type = option.title;
-      }
-    });
-    if (endTime.getTimezoneOffset !== registration.date.getTimezoneOffset()) {
-      registration.endTime.setUTCHours(endTime.getUTCHours() + 1);
-      registration.startTime.setUTCHours(
-        registration.startTime.getUTCHours() + 1
-      );
-    }
-  });
-  debug("getAllRegistrations is done!");
+  // const OfficeHourTimeOptions = await prisma.officeHourTimeOptions.findMany({
+  //   where: {
+  //     courseId,
+  //   },
+  // });
+  // registrations.forEach((registration) => {
+  //   let endTime = registration.endTime;
+  //   if (registration.endTime < registration.startTime) {
+  //     endTime.setUTCDate(endTime.getUTCDate() + 1);
+  //   }
+  //   const duration =
+  //     (endTime.getTime() - registration.startTime.getTime()) / (1000 * 60);
+  //   OfficeHourTimeOptions.forEach((option) => {
+  //     if (duration == option.duration) {
+  //       registration.type = option.title;
+  //     }
+  //   });
+  // });
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 

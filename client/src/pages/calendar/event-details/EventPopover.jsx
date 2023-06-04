@@ -53,12 +53,6 @@ function EventPopover() {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            {/* TODO: UNFINISHED FEATURE */}
-            {/* {courseType === "staff" && (
-              <IconButton sx={{ fontSize: "20px" }}>
-                <InfoCircleOutlined />
-              </IconButton>
-            )} */}
             {(isHost || isInstructor) && <EditAction />}
             {(isHost || isInstructor) && <DeleteAction />}
             <IconButton

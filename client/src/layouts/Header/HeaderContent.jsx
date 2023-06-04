@@ -8,10 +8,6 @@ function HeaderContent() {
   const matchesXs = useMediaQuery((theme) => theme.breakpoints.down("md"));
   return (
     <>
-      {/* TODO: UNFINISHED FEATURE */}
-      {/* <Settings /> */}
-      {/* TODO: UNFINISHED FEATURE */}
-      {/* <Notification /> */}
       {!matchesXs && <Profile />}
       {matchesXs && <MobileSection />}
     </>

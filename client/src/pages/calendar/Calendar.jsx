@@ -44,6 +44,7 @@ function Calendar() {
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
+  const openSidebar = useStoreLayout((state) => state.openSidebar);
 
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
@@ -59,9 +60,12 @@ function Calendar() {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
 
+  useEffect(() => {
+      setTimeout(() => calendarRef.current.getApi().updateSize(), 500);
+  }, [openSidebar]);
+
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
-    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -93,7 +97,6 @@ function Calendar() {
   };
 
   const handleEventDrop = (info) => {
-    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,

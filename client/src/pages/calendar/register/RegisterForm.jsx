@@ -97,11 +97,6 @@ function RegisterForm() {
   );
   const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
 
-  // console.log(startTime);
-  // console.log(endTime);
-  // console.log(start);
-  // console.log(end);
-
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       type: "",
@@ -129,10 +124,10 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
-    console.log("SUBMIT START")
-    console.log(startTime)
-    console.log(endTime)
-    console.log("SUBMIT END")
+    let timeOptionId = -1;
+    registrationTypeOptions.forEach((option) => {
+      if (option.label === data.type) timeOptionId = option.id;
+    });
     mutate({
       officeHourId: id,
       startTime: startTime,
@@ -140,6 +135,7 @@ function RegisterForm() {
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
       question: data.question,
       TopicIds: data.topicIds,
+      timeOptionId: timeOptionId,
     });
   };
 

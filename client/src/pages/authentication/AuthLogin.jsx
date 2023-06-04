@@ -57,17 +57,6 @@ function AuthLogin() {
               Sign in as User
             </Button>
           </AnimateButton>
-          {/* TODO: UNFINISHED FEATURE */}
-          {/* <AnimateButton>
-            <Button
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={() => signInAsAdmin()}
-            >
-              Sign in as Admin
-            </Button>
-          </AnimateButton> */}
         </Stack>
       ) : (
         <SingleSignOn />
