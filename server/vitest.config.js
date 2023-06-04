@@ -6,8 +6,6 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
     },
     globalSetup: "./tests/clearDB.js",
-    singleThread: true,
-    outputFile: './tests/results.html',
     testTimeout: 2000
   },
 })
