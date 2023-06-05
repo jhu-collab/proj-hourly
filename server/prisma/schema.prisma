@@ -75,6 +75,7 @@ model OfficeHour {
   isOnDayOfWeek numberToDayOfWeek[] @relation("isOnDayOfWeek")
   registrations Registration[]
   isDeleted     Boolean             @default(false)
+  isRemote      Boolean             @default(false)
 }
 
 model numberToDayOfWeek {

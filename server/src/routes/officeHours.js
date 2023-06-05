@@ -27,6 +27,7 @@ router.post(
     "recurringEvent",
     "Please specify if this is a recurring event"
   ).isBoolean(),
+  body("remote", "Please specify if there event is remote").notEmpty().isBoolean(), 
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -172,6 +173,7 @@ router.post(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
   ),
+  body("remote", "Please specify if this event is remote").notEmpty().isBoolean(),
   body(
     "endDateOldOfficeHour",
     "Please specify when the new edited office hours should take effect"
