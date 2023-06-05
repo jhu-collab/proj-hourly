@@ -1110,3 +1110,20 @@ export const getDatesForOfficeHour = async (req, res, next) => {
     }
   }
 };
+
+export const isPastDate = async (req, res, next) => {
+  const id = req.id;
+  next();
+}
+
+export const isHostOrInstructor = async (req, res, next) =>  {
+  next(); 
+}
+
+export const isRegistrationId = async (req, res, next) =>  {
+  next();  
+}
+
+export const isNotCancelled = async (req, res, next) =>  {
+  next();  
+}
