@@ -1111,8 +1111,8 @@ export const getDatesForOfficeHour = async (req, res, next) => {
   }
 };
 
-export const isPastDate = async (req, res, next) => {
-  debug("checking if registration started in the past");
+export const isRegistrationInPast = async (req, res, next) => {
+  debug("checking if registration has started already");
   const { registrationId } = req.body;
   debug("getting registration...");
   const registration = await prisma.registration.findUnique({
@@ -1120,32 +1120,23 @@ export const isPastDate = async (req, res, next) => {
       id: registrationId,
     },
   });
+  debug("got registration");
   const dateObj = spacetime(registration.date).goto("America/New_York");
   const current = spacetime.now().goto("America/New_York");
-  debug("checking if registration is today");
-  if (dateObj.isBefore(current)) {
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: registration date is before current date" });
-  } else if (dateObj.isAfter(current)) {
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: registration date is after current date" });
-  }
-  debug("got registration");
-  const registrationStart = spacetime(registration.startTime).goto(
+  const registrationEnd = spacetime(registration.endTime).goto(
     "America/New_York"
   );
-  registrationStart.month(dateObj.month());
-  registrationStart.date(dateObj.date());
-  registrationStart.year(dateObj.year());
-  if (registrationStart.isAfter(current)) {
-    debug("registration has not started");
+  registrationEnd.month(dateObj.month());
+  registrationEnd.date(dateObj.date());
+  registrationEnd.year(dateObj.year());
+  debug("checking if registration has ended");
+  if (registrationEnd.isBefore(current)) {
+    debug("registration has not ended");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: registration has not started" });
+      .json({ msg: "ERROR: registration has not ended" });
   } else {
-    debug("registration has already started");
+    debug("registration has ended");
     next();
   }
 };

@@ -283,7 +283,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.isRegistrationId,
   validator.isOfficeHourHostOrInstructor,
-  validator.isPastDate,
+  validator.isRegistrationInPast,
   validator.isNotCancelled,
   controller.editRegistrationNoShow
 )
