@@ -1139,24 +1139,13 @@ export const isPastDate = async (req, res, next) => {
   registrationStart.month(dateObj.month());
   registrationStart.date(dateObj.date());
   registrationStart.year(dateObj.year());
-  const registrationEnd = spacetime(registration.endTime).goto(
-    "America/New_York"
-  );
-  registrationEnd.month(dateObj.month());
-  registrationEnd.date(dateObj.date());
-  registrationEnd.year(dateObj.year());
   if (registrationStart.isAfter(current)) {
     debug("registration has not started");
     return res
       .status(StatusCodes.CONFLICT)
       .json({ msg: "ERROR: registration has not started" });
-  } else if (registrationEnd.isBefore(current)) {
-    debug("registration has ended");
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: registration has ended" });
   } else {
-    debug("registration is occurring now");
+    debug("registration has already started");
     next();
   }
 };
