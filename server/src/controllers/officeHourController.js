@@ -957,7 +957,7 @@ export const editAll = async (req, res) => {
       location === undefined ? update.location : location,
       true,
       false,
-      remote //TO DO: ADD REMOTE
+      remote
     );
     debug("new office hour is created");
     await connectOfficeHourToDOW(newOfficeHour.id, daysOfWeek);

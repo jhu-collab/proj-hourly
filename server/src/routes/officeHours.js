@@ -27,7 +27,7 @@ router.post(
     "recurringEvent",
     "Please specify if this is a recurring event"
   ).isBoolean(),
-  body("remote", "Please specify if there event is remote").notEmpty().isBoolean(), 
+  body("remote", "Please specify if the event is remote").notEmpty().isBoolean(), 
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -156,6 +156,31 @@ router.post(
   validator.durationIsMultipleof5,
   controller.rescheduleSingleOfficeHour
 );
+
+router.post(
+  "/editLocation",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("officeHourId", "Office Hour is required").isInt(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
+  body("remote", "Please specify if the event is remote").notEmpty().isBoolean(),
+  body(
+    "recurringEvent",
+    "Please specify if this is a recurring event"
+  ).isBoolean(),
+  body("date", "Date is required").notEmpty(),
+  body("currentDay", 
+  "Please specify if it should be applied to the current date or all dates following").isBoolean(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.doesOfficeHourExist,
+  courseValidator.areCourseStaffOrInstructor,
+)
 
 router.post(
   "/:officeHourId/editAll",
