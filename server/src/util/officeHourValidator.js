@@ -1121,16 +1121,14 @@ export const isRegistrationInPast = async (req, res, next) => {
     },
   });
   debug("got registration");
-  const dateObj = spacetime(registration.date).goto("America/New_York");
-  const current = spacetime.now().goto("America/New_York");
-  let registrationEnd = spacetime(registration.endTime).goto(
-    "America/New_York"
-  );
-  registrationEnd = registrationEnd.month(dateObj.month());
-  registrationEnd = registrationEnd.date(dateObj.date());
-  registrationEnd = registrationEnd.year(dateObj.year());
+  let dateObj = new Date(registration.date);
+  const dateObjDay = dateObj.getDate();
+  const current = new Date();
+  const registrationEnd = new Date(registration.endTime);
+  dateObj.setUTCHours(registrationEnd.getUTCHours());
+  dateObj.setUTCMinutes(registrationEnd.getUTCMinutes());
   debug("checking if registration has ended");
-  if (!registrationEnd.isBefore(current)) {
+  if (dateObj >= (current)) {
     debug("registration has not ended");
     return res
       .status(StatusCodes.CONFLICT)
