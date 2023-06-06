@@ -496,18 +496,13 @@ export const isInFuture = async (req, res, next) => {
   officehourstart.month(dateObj.month());
   officehourstart.date(dateObj.date());
   officehourstart.year(dateObj.year());
-  if (!officehourstart.isBefore(current)) {
-    debug("office hour has not started");
+  if (!officehourstart.isAfter(current)) {
+    debug("office hour has already started");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: office hour has not started" });
-  } else if (!officehourend.isBefore(current)) {
-      debug("office hour has ended");
-      return res
-        .status(StatusCodes.CONFLICT)
-        .json({ msg: "ERROR: office hour has ended" });
+      .json({ msg: "ERROR: office hour has already started" });
   } else {
-    debug("office hour is occurring now");
+    debug("office hour is in future");
     next();
   }
 };
