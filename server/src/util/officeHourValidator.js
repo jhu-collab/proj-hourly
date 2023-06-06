@@ -493,9 +493,9 @@ export const isInFuture = async (req, res, next) => {
   const officehourstart = spacetime(officeHour.startDate).goto(
     "America/New_York"
   );
-  officehourstart.month(dateObj.month());
-  officehourstart.date(dateObj.date());
-  officehourstart.year(dateObj.year());
+  officehourstart = officehourstart.month(dateObj.month());
+  officehourstart = officehourstart.date(dateObj.date());
+  officehourstart = officehourstart.year(dateObj.year());
   if (!officehourstart.isAfter(current)) {
     debug("office hour has already started");
     return res
@@ -1126,9 +1126,9 @@ export const isRegistrationInPast = async (req, res, next) => {
   const registrationEnd = spacetime(registration.endTime).goto(
     "America/New_York"
   );
-  registrationEnd.month(dateObj.month());
-  registrationEnd.date(dateObj.date());
-  registrationEnd.year(dateObj.year());
+  registrationEnd = registrationEnd.month(dateObj.month());
+  registrationEnd = registrationEnd.date(dateObj.date());
+  registrationEnd = registrationEnd.year(dateObj.year());
   debug("checking if registration has ended");
   if (registrationEnd.isBefore(current)) {
     debug("registration has not ended");
