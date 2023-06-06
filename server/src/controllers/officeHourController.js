@@ -1418,7 +1418,7 @@ export const editRegistration = async (req, res) => {
 };
 
 export const editRegistrationNoShow = async (req, res) => {
-  const { registrationId} = req.body;
+  const {registrationId} = req.body;
   debug("finding registration...");
   const registration = await prisma.registration.findUnique({
     where: {

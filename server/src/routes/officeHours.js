@@ -282,7 +282,7 @@ router.post(
   body("registrationId", "Registration is required").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isRegistrationId,
-  validator.isHostOrInstructor,
+  validator.isOfficeHourHostOrInstructor,
   validator.isPastDate,
   validator.isNotCancelled,
   controller.editRegistrationNoShow

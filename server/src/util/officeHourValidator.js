@@ -496,13 +496,18 @@ export const isInFuture = async (req, res, next) => {
   officehourstart.month(dateObj.month());
   officehourstart.date(dateObj.date());
   officehourstart.year(dateObj.year());
-  if (!officehourstart.isAfter(current)) {
-    debug("office hour has already started");
+  if (!officehourstart.isBefore(current)) {
+    debug("office hour has not started");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: office hour has already started" });
+      .json({ msg: "ERROR: office hour has not started" });
+  } else if (!officehourend.isBefore(current)) {
+      debug("office hour has ended");
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "ERROR: office hour has ended" });
   } else {
-    debug("office hour is in future");
+    debug("office hour is occurring now");
     next();
   }
 };
@@ -1112,18 +1117,92 @@ export const getDatesForOfficeHour = async (req, res, next) => {
 };
 
 export const isPastDate = async (req, res, next) => {
-  const id = req.id;
-  next();
-}
-
-export const isHostOrInstructor = async (req, res, next) =>  {
-  next(); 
-}
+  debug("checking if registration started in the past");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  const dateObj = spacetime(registration.date).goto("America/New_York");
+  const current = spacetime.now().goto("America/New_York");
+  debug("checking if registration is today");
+  if (dateObj.isBefore(current)) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration date is before current date" });
+  } else if (dateObj.isAfter(current)) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration date is after current date" });
+  }
+  debug("got registration");
+  const registrationStart = spacetime(registration.startTime).goto(
+    "America/New_York"
+  );
+  registrationStart.month(dateObj.month());
+  registrationStart.date(dateObj.date());
+  registrationStart.year(dateObj.year());
+  const registrationEnd = spacetime(registration.endTime).goto(
+    "America/New_York"
+  );
+  registrationEnd.month(dateObj.month());
+  registrationEnd.date(dateObj.date());
+  registrationEnd.year(dateObj.year());
+  if (registrationStart.isAfter(current)) {
+    debug("registration has not started");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration has not started" });
+  } else if (registrationEnd.isBefore(current)) {
+    debug("registration has ended");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration has ended" });
+  } else {
+    debug("registration is occurring now");
+    next();
+  }
+};
 
 export const isRegistrationId = async (req, res, next) =>  {
-  next();  
-}
+  debug("checking if registration exists");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("got registration");
+  if (registration === null) {
+    debug("registration does not exist");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Registration does not exist" });
+  }
+  debug("registration exists");
+  next();
+};
 
 export const isNotCancelled = async (req, res, next) =>  {
-  next();  
-}
+  debug("checking if registration is cancelled");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("checking if registration is not cancelled");
+  if(registration.isCancelled || registration.isCancelledStaff) {
+    debug("registration has been cancelled");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration has been cancelled" });
+  } else {
+    debug("registration has not been cancelled");
+    next();
+  }
+};
