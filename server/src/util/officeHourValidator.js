@@ -490,7 +490,7 @@ export const isInFuture = async (req, res, next) => {
     },
   });
   debug("got office hour");
-  const officehourstart = spacetime(officeHour.startDate).goto(
+  let officehourstart = spacetime(officeHour.startDate).goto(
     "America/New_York"
   );
   officehourstart = officehourstart.month(dateObj.month());
@@ -1123,14 +1123,14 @@ export const isRegistrationInPast = async (req, res, next) => {
   debug("got registration");
   const dateObj = spacetime(registration.date).goto("America/New_York");
   const current = spacetime.now().goto("America/New_York");
-  const registrationEnd = spacetime(registration.endTime).goto(
+  let registrationEnd = spacetime(registration.endTime).goto(
     "America/New_York"
   );
   registrationEnd = registrationEnd.month(dateObj.month());
   registrationEnd = registrationEnd.date(dateObj.date());
   registrationEnd = registrationEnd.year(dateObj.year());
   debug("checking if registration has ended");
-  if (registrationEnd.isBefore(current)) {
+  if (!registrationEnd.isBefore(current)) {
     debug("registration has not ended");
     return res
       .status(StatusCodes.CONFLICT)
@@ -1178,6 +1178,48 @@ export const isNotCancelled = async (req, res, next) =>  {
       .json({ msg: "ERROR: registration has been cancelled" });
   } else {
     debug("registration has not been cancelled");
+    next();
+  }
+};
+
+export const isRegistrationHostOrInstructor = async (req, res, next) => {
+  const { registrationId } = req.body;
+  const id = req.id;
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    }
+  })
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: registration.officeHourId,
+    },
+    include: {
+      hosts: {
+        where: {
+          id,
+        },
+      },
+      course: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.course.id,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (officeHour.hosts.length === 0 && course.instructors.length === 0) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: must be host or instructor to mark registration as no show",
+    });
+  } else {
     next();
   }
 };
