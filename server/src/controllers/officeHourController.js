@@ -286,6 +286,7 @@ export const register = async (req, res) => {
       topics: {
         connect: topicArr,
       },
+      isNoShow: false,
     },
     include: {
       account: true,
@@ -1414,4 +1415,25 @@ export const editRegistration = async (req, res) => {
   });
   debug("registration is updated");
   return res.status(StatusCodes.ACCEPTED).json({ registration });
+};
+
+export const editRegistrationNoShow = async (req, res) => {
+  const {registrationId} = req.body;
+  debug("finding registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("updating registration...");
+  const updatedRegistration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      isNoShow: !registration.isNoShow,
+    },
+  });
+  debug("registration is updated");
+  return res.status(StatusCodes.ACCEPTED).json({updatedRegistration});
 };
