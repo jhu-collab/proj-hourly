@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import Stack from "@mui/material/Stack";
 import DeleteAction from "./DeleteAction";
+import EditLocation from "./EditLocation";
 import EventDetails from "./EventDetails";
 import EditAction from "./EditAction";
 import StudentDetails from "./StudentDetails";
@@ -55,6 +56,7 @@ function EventPopover() {
           <Stack direction="row" justifyContent="flex-end">
             {(isHost || isInstructor) && <EditAction />}
             {(isHost || isInstructor) && <DeleteAction />}
+            {(isHost || isInstructor) && <EditLocation />}
             <IconButton
               sx={{ fontSize: "20px" }}
               onClick={() => setAnchorEl(null)}
