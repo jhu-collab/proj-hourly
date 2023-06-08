@@ -914,7 +914,7 @@ export const editLocationSingleDay = async(req, res) => {
     return res;
   }
   const { officeHourId, location, remote } = req.body;
-  await prisma.officeHour.update( {
+  const officeHour = await prisma.officeHour.update( {
     where: {
       id: officeHourId
     },
@@ -923,7 +923,7 @@ export const editLocationSingleDay = async(req, res) => {
       location: location,
     }
   });
-
+  return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
 export const editAll = async (req, res) => {
