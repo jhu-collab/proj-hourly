@@ -909,6 +909,23 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
+export const editLocationSingleDay = async(req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { officeHourId, location, remote } = req.body;
+  await prisma.officeHour.update( {
+    where: {
+      id: officeHourId
+    },
+    data: {
+      remote: remote,
+      location: location,
+    }
+  });
+
+};
+
 export const editAll = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;

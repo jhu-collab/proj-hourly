@@ -158,7 +158,7 @@ router.post(
 );
 
 router.post(
-  "/editLocation",
+  "/editLocationSingleDay",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
@@ -169,17 +169,11 @@ router.post(
     "Please specify a location for your office hours"
   ).notEmpty(),
   body("remote", "Please specify if the event is remote").notEmpty().isBoolean(),
-  body(
-    "recurringEvent",
-    "Please specify if this is a recurring event"
-  ).isBoolean(),
-  body("date", "Date is required").notEmpty(),
-  body("currentDay", 
-  "Please specify if it should be applied to the current date or all dates following").isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesOfficeHourExist,
   courseValidator.areCourseStaffOrInstructor,
+  controller.editLocationSingleDay
 )
 
 router.post(
@@ -198,7 +192,6 @@ router.post(
     "daysOfWeek",
     "Please include which days of the week for the office hours"
   ),
-  body("remote", "Please specify if this event is remote").notEmpty().isBoolean(),
   body(
     "endDateOldOfficeHour",
     "Please specify when the new edited office hours should take effect"
