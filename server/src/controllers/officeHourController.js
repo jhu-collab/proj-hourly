@@ -923,6 +923,7 @@ export const editLocationSingleDay = async(req, res) => {
       location: location,
     }
   });
+  const calendar = await generateCalendar(officeHour.course.id);
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
