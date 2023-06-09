@@ -930,11 +930,11 @@ export const editAll = async (req, res) => {
     const oldOH = await prisma.officeHour.findUnique({
       where: { id: officeHourId },
     });
-    const endOldOH = spacetime(endDateOldOfficeHour);
-    endOldOH.hour(oldOH.endDate.getUTCHours());
-    endOldOH.minute(oldOH.endDate.getUTCMinutes());
-    endOldOH.second(oldOH.endDate.getUTCSeconds());
-    endOldOH.date(endOldOH.date() - 1);
+    const oldEnd = spacetime(oldOH.endDate);
+    let endOldOH = spacetime(endDateOldOfficeHour);
+    endOldOH = endOldOH.hour(oldEnd.hour());
+    endOldOH = endOldOH.minute(oldEnd.minute());
+    endOldOH = endOldOH.date(endOldOH.date() - 1);
     const update = await prisma.officeHour.update({
       where: {
         id: officeHourId,
@@ -1418,7 +1418,7 @@ export const editRegistration = async (req, res) => {
 };
 
 export const editRegistrationNoShow = async (req, res) => {
-  const {registrationId} = req.body;
+  const { registrationId } = req.body;
   debug("finding registration...");
   const registration = await prisma.registration.findUnique({
     where: {
@@ -1435,5 +1435,5 @@ export const editRegistrationNoShow = async (req, res) => {
     },
   });
   debug("registration is updated");
-  return res.status(StatusCodes.ACCEPTED).json({updatedRegistration});
+  return res.status(StatusCodes.ACCEPTED).json({ updatedRegistration });
 };
