@@ -5,6 +5,7 @@ import { stringToTimeObj } from "./officeHourValidator.js";
 import { handleUTCDateChange } from "./helpers.js";
 import validate from "../util/checkValidation.js";
 import { factory } from "../util/debug.js";
+import { isArray } from "util";
 
 const debug = factory(import.meta.url);
 export const isUniqueCourse = async (req, res, next) => {
@@ -830,7 +831,7 @@ export const startAndEndArePositive = (req, res, next) => {
 
 export const startIsGreaterThanEnd = (req, res, next) => {
   debug("startIsGreaterThanEnd is called!");
-  debug("Retrieving star and end from body...");
+  debug("Retrieving start and end from body...");
   const { start, end } = req.body;
   if (start <= end) {
     debug("Start is less than or equal to end...");
@@ -844,3 +845,70 @@ export const startIsGreaterThanEnd = (req, res, next) => {
     next();
   }
 };
+
+export const isValidFilterValue = (req, res, next) => {
+  debug("isValidFilterValue is called!");
+  debug("Retrieving filterType and filterValue from body...");
+  const {filterType, filterValue} = req.params;
+  if(filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: filter value must be of type Date" });
+  } else if (filterType === "officeHour" ) {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type office hour" });
+    }
+    const officeHour = await prisma.officeHour.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(officeHour === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type office hour" });
+    }
+  } else if(filterType === "account") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type account" });
+    }
+    const account = await prisma.account.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(account === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type account" });
+    }
+  } else if(filterType === "topics") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type topic" });
+    }
+    const topic = await prisma.topic.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(topic !== null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type topic" });
+    }
+  } else if(filterType === "isNoShow" && !(filterValue === "true" || filterValue === "false")) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: filter value must be of type boolean" });
+  } else {
+    debug("The filterValue is a valid type for the filterType!");
+    debug("isValidFilterValue is done!");
+    next();
+  }
+}

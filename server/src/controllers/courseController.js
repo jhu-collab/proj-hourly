@@ -1146,3 +1146,57 @@ export const updateRegistrationConstraints = async (req, res) => {
   debug("updateRegistrationConstraints is done!");
   return res.status(StatusCodes.ACCEPTED).json({ course });
 };
+
+export const getRegistrationWithFilter = async(req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
+  debug("retreiving course from db...");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  const role =
+    course.instructors.length === 1
+      ? "Instructor"
+      : course.courseStaff.length === 1
+      ? "Staff"
+      : "Student";
+  if(role === "Instructor") {
+    return getRegistrationInstructor(req, res, course);
+  } else if(role === "Staff") {
+    return getRegistrationStaff(req, res, course);
+  } else {
+    return getRegistrationStudent(req, res, course);
+  }
+}
+
+const getRegistrationStaff = async(req, res, course) => {
+  const {filterType, filterValue} = req.params;
+}
+
+const getRegistrationStudent = async(req, res, course) => {
+  const {filterType, filterValue} = req.params;
+}
+
+const getRegistrationInstructor = async(req, res, course) => {
+  const {filterType, filterValue} = req.params;
+
+}

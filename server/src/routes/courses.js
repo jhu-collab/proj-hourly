@@ -399,4 +399,26 @@ router.post(
   controller.updateRegistrationConstraints
 );
 
+
+router.get(
+  "/:courseId/getRegistration/:filterType/value/:filterValue",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("filterType", "filterType is required").isIn([
+    "date",
+    "officeHour",
+    "account",
+    "topics",
+    "isNoShow",
+  ]),
+  param("filterValue", "filterType is required").isString(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  validator.isValidFilterValue,
+  controller.getRegistrationWithFilter
+)
+
 export default router;
