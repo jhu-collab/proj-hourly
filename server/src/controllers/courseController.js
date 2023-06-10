@@ -1148,49 +1148,131 @@ export const updateRegistrationConstraints = async (req, res) => {
 };
 
 export const getRegistrationWithFilter = async(req, res) => {
+  debug("getRegistrationWithFilter is starting!");
   const courseId = parseInt(req.params.courseId, 10);
-  const id = req.id;
-  debug("retreiving course from db...");
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-    include: {
-      instructors: {
-        where: {
-          id,
-        },
-      },
-      courseStaff: {
-        where: {
-          id,
-        },
-      },
-      students: {
-        where: {
-          id,
-        },
-      },
-    },
-  });
-  if(course.instructors.length === 1) {
-    return getRegistrationInstructor(req, res, course);
-  } else if(course.courseStaff.length === 1) {
-    return getRegistrationStaff(req, res, course);
+  if(req.role === "Instructor") {
+    return getRegistrationInstructor(req, res, courseId);
+  } else if(req.role === "Staff") {
+    return getRegistrationStaff(req, res, courseId);
   } else {
-    return getRegistrationStudent(req, res, course);
+    return getRegistrationStudent(req, res, courseId);
   }
 }
 
-const getRegistrationStaff = async(req, res, course) => {
+const registrationsInclude = {
+  topics: true,
+  account: {
+    select: {
+      id: true,
+      userName: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      preferredName: true,
+    },
+  },
+  officeHour: {
+    select: {
+      hosts: {
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          preferredName: true,
+        },
+      },
+    },
+  },
+  officeHourTimeOptions: true,
+};
+
+const getRegistrationStudent = async(req, res, courseId) => {
+  debug("filtering registration for student...");
+  const id = req.id;
   const {filterType, filterValue} = req.params;
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    accountId: id,
+    officeHour: {
+      courseId: courseId,
+    },
+  };
+  if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: filterValue,
+      }
+    }
+  } else {
+    where[filterType] = filterValue;
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 }
 
-const getRegistrationStudent = async(req, res, course) => {
+const getRegistrationStaff = async(req, res, courseId) => {
+  debug("filtering registration for staff...");
+  const id = req.id;
   const {filterType, filterValue} = req.params;
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    officeHour: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: id,
+        }
+      }
+    },
+  };
+  if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: filterValue,
+      }
+    }
+  } else {
+    where[filterType] = filterValue;
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for staff...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 }
 
-const getRegistrationInstructor = async(req, res, course) => {
+const getRegistrationInstructor = async(req, res, courseId) => {
+  debug("filtering registration for instructor...");
   const {filterType, filterValue} = req.params;
-
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    officeHour: {
+      courseId: courseId,
+    },
+  };
+  if(filterType === "hosts") {
+    where["officeHour"] = {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: filterValue,
+        }
+      }
+    }
+  } else if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: filterValue,
+      }
+    }
+  } else {
+    where[filterType] = filterValue;
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for instructor...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
 }

@@ -408,16 +408,18 @@ router.get(
   },
   param("filterType", "filterType is required").isIn([
     "date",
-    "officeHour",
-    "account",
+    "officeHourId",
+    "accountId",
     "topics",
     "isNoShow",
+    "hosts",
   ]),
   param("filterValue", "filterType is required").isString(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
   validator.isValidFilterValue,
+  validator.isValidFilterForRole,
   controller.getRegistrationWithFilter
 )
 

@@ -853,7 +853,7 @@ export const isValidFilterValue = (req, res, next) => {
     return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: filter value must be of type Date" });
-  } else if (filterType === "officeHour" ) {
+  } else if (filterType === "officeHourId" ) {
     if (isNaN(parseInt(filterValue))) {
       return res
       .status(StatusCodes.BAD_REQUEST)
@@ -868,8 +868,12 @@ export const isValidFilterValue = (req, res, next) => {
       return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type office hour" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
     }
-  } else if(filterType === "account") {
+  } else if(filterType === "accountId") {
     if (isNaN(parseInt(filterValue))) {
       return res
       .status(StatusCodes.BAD_REQUEST)
@@ -884,6 +888,10 @@ export const isValidFilterValue = (req, res, next) => {
       return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type account" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
     }
   } else if(filterType === "topics") {
     if (isNaN(parseInt(filterValue))) {
@@ -896,18 +904,69 @@ export const isValidFilterValue = (req, res, next) => {
         id: parseInt(filterValue, 10),
       },
     })
-    if(topic !== null) {
+    if(topic === null) {
       return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type topic" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
     }
   } else if(filterType === "isNoShow" && !(filterValue === "true" || filterValue === "false")) {
     return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: filter value must be of type boolean" });
+  } else if (filterType === "hosts") {
+    // DO THIS
+    // check if instructor or staff for course
+    // if not, throw error
   } else {
     debug("The filterValue is a valid instance of the filterType!");
     debug("isValidFilterValue is done!");
     next();
   }
+}
+
+export const isValidFilterForRole = (req, res, next) => {
+  req.role = "role";
+  debug("isValidFilterValue is called!");
+  const id = req.id;
+  const { courseId } = req.body;
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id,
+          },
+        },
+      },
+    ],
+  };
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    req.role === "Student"
+  } else {
+    if (staffQuery.instructors === 1) {
+      req.role === "Instructor"
+    } else {
+      req.role === "Staff"
+    }
+  }
+  debug("isValidFilterForRole is done!");
+  next();
 }
