@@ -19,11 +19,13 @@ function useMutationChangeNoShowStatus(registrationId) {
     console.log("in changeNoShowStatus");
     try {
       console.log("registration id:" + registrationId);
-      debug("Sending registration id to the backend to change no show status...");
+      debug(
+        "Sending registration id to the backend to change no show status..."
+      );
       const endpoint = `${BASE_URL}/api/officeHour/editRegistrationNoShow`;
       const res = await axios.post(
-        endpoint, 
-        registrationId, 
+        endpoint,
+        { registrationId },
         getConfig(token)
       );
       debug("Successful! Returning result data...");
@@ -45,7 +47,7 @@ function useMutationChangeNoShowStatus(registrationId) {
       );
     },
     onError: (err) => {
-      debug( {err} );
+      debug({ err });
       errorToast(err);
     },
   });
