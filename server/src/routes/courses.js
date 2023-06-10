@@ -418,8 +418,8 @@ router.get(
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
-  validator.isValidFilterValue,
   validator.isValidFilterForRole,
+  validator.isValidFilterValue,
   controller.getRegistrationWithFilter
 )
 

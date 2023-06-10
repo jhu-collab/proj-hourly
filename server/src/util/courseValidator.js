@@ -845,10 +845,62 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   }
 };
 
+export const isValidFilterForRole = (req, res, next) => {
+  req.role = "role";
+  debug("isValidFilterValue is called!");
+  debug("Finding user role.")
+  const id = req.id;
+  const { courseId } = req.body;
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id,
+          },
+        },
+      },
+    ],
+  };
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    req.role === "Student"
+  } else {
+    if (staffQuery.instructors === 1) {
+      req.role === "Instructor"
+    } else {
+      req.role === "Staff"
+    }
+  }
+  debug("User level found.");
+  if (filterType === "hosts" && req.role !== "Instructors") {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: user does not have access to filter" });
+  }
+  debug("isValidFilterForRole is complete!");
+  next();
+}
+
 export const isValidFilterValue = (req, res, next) => {
   debug("isValidFilterValue is called!");
-  debug("Retrieving filterType and filterValue from body...");
+  debug("Retrieving filterType and filterValue from params...");
   const {filterType, filterValue} = req.params;
+  const courseId = req.body;
+  const id = req.id;
   if(filterType === "date" && new Date(filterValue).valueOf() === NaN) {
     return res
     .status(StatusCodes.BAD_REQUEST)
@@ -918,55 +970,28 @@ export const isValidFilterValue = (req, res, next) => {
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
-    // DO THIS
-    // check if instructor or staff for course
-    // if not, throw error
+    const course = await prisma.course.findMany({
+      where: {
+        courseId: courseId,
+        hosts: {
+          some: {
+            id,
+          }
+        }
+      }
+    })
+    if (course === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type host" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
+    }
   } else {
     debug("The filterValue is a valid instance of the filterType!");
     debug("isValidFilterValue is done!");
     next();
   }
-}
-
-export const isValidFilterForRole = (req, res, next) => {
-  req.role = "role";
-  debug("isValidFilterValue is called!");
-  const id = req.id;
-  const { courseId } = req.body;
-  let roleQuery = {
-    OR: [
-      {
-        instructors: {
-          some: {
-            id,
-          },
-        },
-      },
-      {
-        courseStaff: {
-          some: {
-            id,
-          },
-        },
-      },
-    ],
-  };
-  debug("Checking if account is an instructor or staff for course...");
-  const staffQuery = await prisma.course.findFirst({
-    where: {
-      id: courseId,
-      AND: roleQuery,
-    },
-  });
-  if (staffQuery === null) {
-    req.role === "Student"
-  } else {
-    if (staffQuery.instructors === 1) {
-      req.role === "Instructor"
-    } else {
-      req.role === "Staff"
-    }
-  }
-  debug("isValidFilterForRole is done!");
-  next();
 }
