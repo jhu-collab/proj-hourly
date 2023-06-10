@@ -830,7 +830,7 @@ export const startAndEndArePositive = (req, res, next) => {
 
 export const startIsGreaterThanEnd = (req, res, next) => {
   debug("startIsGreaterThanEnd is called!");
-  debug("Retrieving star and end from body...");
+  debug("Retrieving start and end from body...");
   const { start, end } = req.body;
   if (start <= end) {
     debug("Start is less than or equal to end...");
@@ -844,3 +844,155 @@ export const startIsGreaterThanEnd = (req, res, next) => {
     next();
   }
 };
+
+export const isValidFilterForRole = async (req, res, next) => {
+  const {filterType, filterValue} = req.params;
+  debug("isValidFilterValue is called!");
+  debug("Finding user role.")
+  const id = req.id;
+  const courseId = parseInt(req.params.courseId);
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    }
+  });
+  if (staffQuery.students.length === 1) {
+    req.role = "Student";
+  } else if (staffQuery.instructors.length === 1) {
+    req.role = "Instructor";
+  } else {
+    req.role = "Staff";
+  }
+  debug("User level found.");
+  if (filterType === "hosts" && req.role === "Staff") {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: user does not have access to filter" });
+  } else if (filterType === "accountId" && req.role === "Student") {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: user does not have access to filter" });
+  } else {
+    debug("isValidFilterForRole is complete!");
+    next();
+  }
+}
+
+export const isValidFilterValue = async (req, res, next) => {
+  debug("isValidFilterValue is called!");
+  debug("Retrieving filterType and filterValue from params...");
+  const {filterType, filterValue} = req.params;
+  const courseId = req.body;
+  const id = req.id;
+  if(filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: filter value must be of type Date" });
+  } else if (filterType === "officeHourId" ) {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type office hour" });
+    }
+    const officeHour = await prisma.officeHour.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(officeHour === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type office hour" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
+    }
+  } else if(filterType === "accountId") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type account" });
+    }
+    const account = await prisma.account.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(account === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type account" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
+    }
+  } else if(filterType === "topics") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type topic" });
+    }
+    const topic = await prisma.topic.findUnique({
+      where: {
+        id: parseInt(filterValue, 10),
+      },
+    })
+    if(topic === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type topic" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
+    }
+  } else if(filterType === "isNoShow" && !(filterValue === "true" || filterValue === "false")) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: filter value must be of type boolean" });
+  } else if (filterType === "hosts") {
+    const course = await prisma.officeHour.findMany({
+      where: {
+        courseId: courseId,
+        hosts: {
+          some: {
+            id,
+          }
+        }
+      }
+    })
+    if (course === null) {
+      return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type host" });
+    } else {
+      debug("The filterValue is a valid instance of the filterType!");
+      debug("isValidFilterValue is done!");
+      next();
+    }
+  } else {
+    debug("The filterValue is a valid instance of the filterType!");
+    debug("isValidFilterValue is done!");
+    next();
+  }
+}
