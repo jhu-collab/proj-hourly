@@ -884,18 +884,18 @@ export const isValidFilterForRole = async (req, res, next) => {
   }
   console.log(req.role)
   debug("User level found.");
-  if (filterType === "hosts" && req.role !== "Instructor") {
+  if (filterType === "hosts" && req.role === "Staff") {
     return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: user does not have access to filter" });
-  }
-  if (filterType === "accountId" && req.role === "Student") {
+  } else if (filterType === "accountId" && req.role === "Student") {
     return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: user does not have access to filter" });
+  } else {
+    debug("isValidFilterForRole is complete!");
+    next();
   }
-  debug("isValidFilterForRole is complete!");
-  next();
 }
 
 export const isValidFilterValue = async (req, res, next) => {

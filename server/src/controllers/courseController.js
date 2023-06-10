@@ -5,6 +5,7 @@ import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
 import { factory } from "../util/debug.js";
+import { boolean } from "zod";
 
 const debug = factory(import.meta.url);
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -1203,11 +1204,24 @@ const getRegistrationStudent = async(req, res, courseId) => {
   if (filterType === "topics") {
     where[filterType] = {
       some: {
-        id: filterValue,
+        id: parseInt(filterValue),
       }
     }
+  } else if (filterType === "hosts") {
+    where["officeHour"] = {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: parseInt(filterValue),
+        }
+      }
+    }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId") {
+    where[filterType] = parseInt(filterValue);
   } else {
-    where[filterType] = filterValue;
+    where[filterType] = new Date(filterValue);
   }
   const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
   debug("done filtering registration for student...");
@@ -1230,23 +1244,18 @@ const getRegistrationStaff = async(req, res, courseId) => {
       }
     },
   };
-  if (filterType === "hosts") {
-    where["officeHour"] = {
-      courseId: courseId,
-      hosts: {
-        some: {
-          id: filterValue,
-        }
-      }
-    }
-  } else if (filterType === "topics") {
+  if (filterType === "topics") {
     where[filterType] = {
       some: {
-        id: filterValue,
+        id: parseInt(filterValue),
       }
     }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId" || filterType === "accountId") {
+    where[filterType] = parseInt(filterValue);
   } else {
-    where[filterType] = filterValue;
+    where[filterType] = new Date(filterValue);
   }
   const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
   debug("done filtering registration for staff...");
@@ -1268,18 +1277,22 @@ const getRegistrationInstructor = async(req, res, courseId) => {
       courseId: courseId,
       hosts: {
         some: {
-          id: filterValue,
+          id: parseInt(filterValue),
         }
       }
     }
   } else if (filterType === "topics") {
     where[filterType] = {
       some: {
-        id: filterValue,
+        id: parseInt(filterValue),
       }
     }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId" || filterType === "accountId") {
+    where[filterType] = parseInt(filterValue);
   } else {
-    where[filterType] = filterValue;
+    where[filterType] = new Date(filterValue);
   }
   const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
   debug("done filtering registration for instructor...");
