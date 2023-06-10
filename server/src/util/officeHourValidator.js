@@ -1221,4 +1221,3 @@ export const isRegistrationHostOrInstructor = async (req, res, next) => {
     next();
   }
 };
-

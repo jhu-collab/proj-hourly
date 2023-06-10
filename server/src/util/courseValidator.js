@@ -5,7 +5,6 @@ import { stringToTimeObj } from "./officeHourValidator.js";
 import { handleUTCDateChange } from "./helpers.js";
 import validate from "../util/checkValidation.js";
 import { factory } from "../util/debug.js";
-import { isArray } from "util";
 
 const debug = factory(import.meta.url);
 export const isUniqueCourse = async (req, res, next) => {
@@ -907,7 +906,7 @@ export const isValidFilterValue = (req, res, next) => {
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: filter value must be of type boolean" });
   } else {
-    debug("The filterValue is a valid type for the filterType!");
+    debug("The filterValue is a valid instance of the filterType!");
     debug("isValidFilterValue is done!");
     next();
   }
