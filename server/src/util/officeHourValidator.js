@@ -490,12 +490,12 @@ export const isInFuture = async (req, res, next) => {
     },
   });
   debug("got office hour");
-  const officehourstart = spacetime(officeHour.startDate).goto(
+  let officehourstart = spacetime(officeHour.startDate).goto(
     "America/New_York"
   );
-  officehourstart.month(dateObj.month());
-  officehourstart.date(dateObj.date());
-  officehourstart.year(dateObj.year());
+  officehourstart = officehourstart.month(dateObj.month());
+  officehourstart = officehourstart.date(dateObj.date());
+  officehourstart = officehourstart.year(dateObj.year());
   if (!officehourstart.isAfter(current)) {
     debug("office hour has already started");
     return res
@@ -1108,5 +1108,116 @@ export const getDatesForOfficeHour = async (req, res, next) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "ERROR: not available on date!" });
     }
+  }
+};
+
+export const isRegistrationInPast = async (req, res, next) => {
+  debug("checking if registration has started already");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("got registration");
+  let dateObj = new Date(registration.date);
+  const dateObjDay = dateObj.getDate();
+  const current = new Date();
+  const registrationEnd = new Date(registration.endTime);
+  dateObj.setUTCHours(registrationEnd.getUTCHours());
+  dateObj.setUTCMinutes(registrationEnd.getUTCMinutes());
+  debug("checking if registration has ended");
+  if (dateObj >= (current)) {
+    debug("registration has not ended");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration has not ended" });
+  } else {
+    debug("registration has ended");
+    next();
+  }
+};
+
+export const isRegistrationId = async (req, res, next) =>  {
+  debug("checking if registration exists");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("got registration");
+  if (registration === null) {
+    debug("registration does not exist");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Registration does not exist" });
+  }
+  debug("registration exists");
+  next();
+};
+
+export const isNotCancelled = async (req, res, next) =>  {
+  debug("checking if registration is cancelled");
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("checking if registration is not cancelled");
+  if(registration.isCancelled || registration.isCancelledStaff) {
+    debug("registration has been cancelled");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration has been cancelled" });
+  } else {
+    debug("registration has not been cancelled");
+    next();
+  }
+};
+
+export const isRegistrationHostOrInstructor = async (req, res, next) => {
+  const { registrationId } = req.body;
+  const id = req.id;
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    }
+  })
+  const officeHour = await prisma.officeHour.findFirst({
+    where: {
+      id: registration.officeHourId,
+    },
+    include: {
+      hosts: {
+        where: {
+          id,
+        },
+      },
+      course: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.course.id,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (officeHour.hosts.length === 0 && course.instructors.length === 0) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: must be host or instructor to mark registration as no show",
+    });
+  } else {
+    next();
   }
 };

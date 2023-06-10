@@ -293,4 +293,19 @@ router.post(
   controller.editRegistration
 );
 
+router.post(
+  "/editRegistrationNoShow",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("registrationId", "Registration is required").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isRegistrationId,
+  validator.isRegistrationHostOrInstructor,
+  validator.isRegistrationInPast,
+  validator.isNotCancelled,
+  controller.editRegistrationNoShow
+)
+
 export default router;
