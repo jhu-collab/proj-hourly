@@ -845,43 +845,44 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   }
 };
 
-export const isValidFilterForRole = (req, res, next) => {
-  req.role = "role";
+export const isValidFilterForRole = async (req, res, next) => {
+  const {filterType, filterValue} = req.params;
   debug("isValidFilterValue is called!");
   debug("Finding user role.")
   const id = req.id;
-  const { courseId } = req.body;
-  let roleQuery = {
-    instructors: {
-      some: {
-        id,
-      },
-    },
-    courseStaff: {
-      some: {
-        id,
-      },
-    },
-    students: {
-      some: {
-        id,
-      },
-    },
-  };
+  const courseId = parseInt(req.params.courseId);
   debug("Checking if account is an instructor or staff for course...");
-  const staffQuery = await prisma.course.findFirst({
+  const staffQuery = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
-    include: roleQuery,
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+      students: {
+        where: {
+          id,
+        },
+      },
+    }
   });
+  console.log(staffQuery.instructors.length === 1)
   if (staffQuery.students.length === 1) {
-    req.role === "Student"
+    req.role = "Student";
   } else if (staffQuery.instructors.length === 1) {
-    req.role === "Instructor"
+    req.role = "Instructor";
   } else {
-    req.role === "Staff"
+    req.role = "Staff";
   }
+  console.log(req.role)
   debug("User level found.");
   if (filterType === "hosts" && req.role !== "Instructor") {
     return res
@@ -897,7 +898,7 @@ export const isValidFilterForRole = (req, res, next) => {
   next();
 }
 
-export const isValidFilterValue = (req, res, next) => {
+export const isValidFilterValue = async (req, res, next) => {
   debug("isValidFilterValue is called!");
   debug("Retrieving filterType and filterValue from params...");
   const {filterType, filterValue} = req.params;
@@ -972,7 +973,7 @@ export const isValidFilterValue = (req, res, next) => {
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
-    const course = await prisma.course.findMany({
+    const course = await prisma.officeHour.findMany({
       where: {
         courseId: courseId,
         hosts: {

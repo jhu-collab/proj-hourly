@@ -1197,7 +1197,7 @@ const getRegistrationStudent = async(req, res, courseId) => {
     isCancelledStaff: false,
     accountId: id,
     officeHour: {
-      courseId: courseId,
+      courseId,
     },
   };
   if (filterType === "topics") {
