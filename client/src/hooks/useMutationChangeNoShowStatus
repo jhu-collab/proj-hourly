@@ -1,0 +1,58 @@
+import axios from "axios";
+import { useMutation, useQueryClient } from "react-query";
+import { errorToast } from "../utils/toasts";
+import { getConfig } from "./helper";
+import NiceModal from "@ebay/nice-modal-react";
+import { toast } from "react-toastify";
+import { BASE_URL } from "../services/common";
+import useStoreToken from "./useStoreToken";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationChangeNoShowStatus.jsx`);
+
+function useMutationChangeNoShowStatus(registrationId) {
+  console.log("in useMutation");
+  const { token } = useStoreToken();
+  const queryClient = useQueryClient();
+
+  const changeNoShowStatus = async () => {
+    console.log("in changeNoShowStatus");
+    try {
+      console.log("registration id:" + registrationId);
+      debug("Sending registration id to the backend to change no show status...");
+      const endpoint = `${BASE_URL}/api/officeHour/editRegistrationNoShow`;
+      const res = await axios.post(
+        endpoint, 
+        registrationId, 
+        getConfig(token)
+      );
+      debug("Successful! Returning result data...");
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const mutation = useMutation(changeNoShowStatus, {
+    onSuccess: (data) => {
+      const registration = data;
+
+      queryClient.invalidateQueries(["registrationStatus"]);
+      queryClient.invalidateQueries(["allRegistrations"]);
+
+      toast.success(
+        `Successfully changed registration no show status to ${registration.isNoShow}!`
+      );
+    },
+    onError: (err) => {
+      debug( {err} );
+      errorToast(err);
+    },
+  });
+
+  return {
+    ...mutation,
+  };
+}
+
+export default useMutationChangeNoShowStatus;
