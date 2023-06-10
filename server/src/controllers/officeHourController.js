@@ -914,14 +914,17 @@ export const editLocationSingleDay = async(req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { officeHourId, location, remote } = req.body;
+  const { officeHourId, location, isRemote } = req.body;
   const officeHour = await prisma.officeHour.update( {
     where: {
       id: officeHourId
     },
     data: {
-      remote: remote,
+      isRemote,
       location: location,
+    },
+    include: {
+      course: true
     }
   });
   const calendar = await generateCalendar(officeHour.course.id);

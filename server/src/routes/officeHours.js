@@ -163,16 +163,15 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("officeHourId", "Office Hour is required").isInt(),
+  body("officeHourId", "Office Hour ID is required").isInt(),
   body(
     "location",
     "Please specify a location for your office hours"
   ).notEmpty(),
-  body("remote", "Please specify if the event is remote").notEmpty().isBoolean(),
+  body("isRemote", "Please specify if the event is remote").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
-  courseValidator.isCourseId,
   validator.doesOfficeHourExist,
-  courseValidator.areCourseStaffOrInstructor,
+  validator.isOfficeHourHostOrInstructor,
   controller.editLocationSingleDay
 )
 
