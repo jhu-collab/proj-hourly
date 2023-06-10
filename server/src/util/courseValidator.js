@@ -874,7 +874,6 @@ export const isValidFilterForRole = async (req, res, next) => {
       },
     }
   });
-  console.log(staffQuery.instructors.length === 1)
   if (staffQuery.students.length === 1) {
     req.role = "Student";
   } else if (staffQuery.instructors.length === 1) {
@@ -882,7 +881,6 @@ export const isValidFilterForRole = async (req, res, next) => {
   } else {
     req.role = "Staff";
   }
-  console.log(req.role)
   debug("User level found.");
   if (filterType === "hosts" && req.role === "Staff") {
     return res
