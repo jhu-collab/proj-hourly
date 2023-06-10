@@ -5,7 +5,6 @@ import ical from "ical-generator";
 import { generateCalendar } from "../util/icalHelpers.js";
 import sendEmail from "../util/notificationUtil.js";
 import { factory } from "../util/debug.js";
-import { boolean } from "zod";
 
 const debug = factory(import.meta.url);
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
