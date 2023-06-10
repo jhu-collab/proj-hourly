@@ -1173,15 +1173,9 @@ export const getRegistrationWithFilter = async(req, res) => {
       },
     },
   });
-  const role =
-    course.instructors.length === 1
-      ? "Instructor"
-      : course.courseStaff.length === 1
-      ? "Staff"
-      : "Student";
-  if(role === "Instructor") {
+  if(course.instructors.length === 1) {
     return getRegistrationInstructor(req, res, course);
-  } else if(role === "Staff") {
+  } else if(course.courseStaff.length === 1) {
     return getRegistrationStaff(req, res, course);
   } else {
     return getRegistrationStudent(req, res, course);
