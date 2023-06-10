@@ -852,41 +852,43 @@ export const isValidFilterForRole = (req, res, next) => {
   const id = req.id;
   const { courseId } = req.body;
   let roleQuery = {
-    OR: [
-      {
-        instructors: {
-          some: {
-            id,
-          },
-        },
+    instructors: {
+      some: {
+        id,
       },
-      {
-        courseStaff: {
-          some: {
-            id,
-          },
-        },
+    },
+    courseStaff: {
+      some: {
+        id,
       },
-    ],
+    },
+    students: {
+      some: {
+        id,
+      },
+    },
   };
   debug("Checking if account is an instructor or staff for course...");
   const staffQuery = await prisma.course.findFirst({
     where: {
       id: courseId,
-      AND: roleQuery,
     },
+    include: roleQuery,
   });
-  if (staffQuery === null) {
+  if (staffQuery.students.length === 1) {
     req.role === "Student"
+  } else if (staffQuery.instructors.length === 1) {
+    req.role === "Instructor"
   } else {
-    if (staffQuery.instructors === 1) {
-      req.role === "Instructor"
-    } else {
-      req.role === "Staff"
-    }
+    req.role === "Staff"
   }
   debug("User level found.");
-  if (filterType === "hosts" && req.role !== "Instructors") {
+  if (filterType === "hosts" && req.role !== "Instructor") {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: user does not have access to filter" });
+  }
+  if (filterType === "accountId" && req.role === "Student") {
     return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ msg: "ERROR: user does not have access to filter" });

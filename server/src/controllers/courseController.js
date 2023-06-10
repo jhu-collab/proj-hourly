@@ -1230,7 +1230,16 @@ const getRegistrationStaff = async(req, res, courseId) => {
       }
     },
   };
-  if (filterType === "topics") {
+  if (filterType === "hosts") {
+    where["officeHour"] = {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: filterValue,
+        }
+      }
+    }
+  } else if (filterType === "topics") {
     where[filterType] = {
       some: {
         id: filterValue,
