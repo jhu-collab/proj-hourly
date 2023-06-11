@@ -1,4 +1,4 @@
-import { createEventSchema } from "../../../utils/validators";
+import { editLocationSchema } from "../../../utils/validators";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
@@ -56,14 +56,14 @@ const BUTTONS = [
  */
 function EditLocationForm() {
   const location = useStoreEvent((state) => state.location);
-  const remote = useStoreEvent((state) => state.remote);
+  const isRemote = useStoreEvent((state) => state.isRemote);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      remote: remote,
+      isRemote: isRemote,
       location: location || "",
     },
-    resolver: yupResolver(createEventSchema),
+    resolver: yupResolver(editLocationSchema),
   });
 
   const { mutate, isLoading } = useMutationEditLocation();
@@ -71,7 +71,7 @@ function EditLocationForm() {
   const onSubmit = (data) => {
     mutate({
         location: data.location,
-        remote: data.remote
+        isRemote: data.isRemote
     });
   };
 
@@ -83,7 +83,7 @@ function EditLocationForm() {
           </Stack>
           <FormInputText name="location" control={control} label="Location" />
           <FormCheckbox
-              name="remote"
+              name="isRemote"
               control = {control}
               label="Remote"
             />

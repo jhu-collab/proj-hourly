@@ -215,3 +215,8 @@ export const registrationTypeSchema = yup.object({
 export const topicSchema = yup.object({
   name: yup.string().required("Topic name is required"),
 });
+
+export const editLocationSchema = yup.object({
+  location: yup.string().required("Location is required"),
+  remote: yup.boolean()
+})

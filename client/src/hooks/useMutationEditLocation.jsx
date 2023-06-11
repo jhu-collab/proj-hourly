@@ -29,8 +29,9 @@ function useMutationEditLocation() {
     const editLocation = async (officeHour) => {
       try {
         debug("Sending office hour to edit one occurrence to the backend...");
+        console.log(officeHour);
         const endpoint = `${BASE_URL}/api/officeHour/editLocationSingleDay`;
-        const res = await axios.post(endpoint, officeHour, getConfig(token));
+        const res = await axios.post(endpoint, { officeHourId: id, ...officeHour}, getConfig(token));
         debug("Successful! Returning result data...");
         return res.data;
       } catch (err) {

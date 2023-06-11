@@ -74,6 +74,7 @@ function Calendar() {
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
       hosts: info.event.extendedProps.hosts,
+      isRemote: info.event.extendedProps.isRemote
     });
   };
 
@@ -104,6 +105,7 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
+      isRemote: info.event.extendedProps.isRemote
     });
     NiceModal.show("upsert-event", { type: "edit" });
     info.revert();
