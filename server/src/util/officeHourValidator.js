@@ -1095,7 +1095,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       debug("office hour is not available on this date");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "EROR: not available on date!" });
+        .json({ msg: "ERROR: not available on date!" });
     }
   } else {
     if (equalDates(new Date(officeHour.startDate), dateObj.toNativeDate())) {
@@ -1106,7 +1106,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       debug("office hour is not available on this date");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "EROR: not availablem date!" });
+        .json({ msg: "ERROR: not available on date!" });
     }
   }
 };

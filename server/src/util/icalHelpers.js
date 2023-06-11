@@ -157,6 +157,7 @@ export const generateRecurringEventJson = (officeHour) => {
           location: officeHour.location,
           id: officeHour.id,
           isRecurring: true,
+          isRemote: officeHour.isRemote
         },
       });
     }
@@ -211,6 +212,7 @@ export const generateSingleEventJson = (officeHour) => {
       location: officeHour.location,
       id: officeHour.id,
       isRecurring: false,
+      isRemote: officeHour.isRemote
     },
   };
 };

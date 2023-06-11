@@ -69,7 +69,8 @@ const createOfficeHour = async (
   courseId,
   location,
   isRecurring,
-  isDeleted
+  isDeleted,
+  remote
 ) => {
   debug("creating office hour...");
   const officeHour = await prisma.officeHour.create({
@@ -84,6 +85,7 @@ const createOfficeHour = async (
       location,
       isRecurring,
       isDeleted,
+      isRemote: remote,
     },
   });
   debug("office hour is created");
@@ -130,6 +132,7 @@ export const create = async (req, res) => {
   }
   const {
     recurringEvent,
+    remote,
     startDate,
     endDate,
     location,
@@ -151,7 +154,8 @@ export const create = async (req, res) => {
     courseId,
     location,
     recurringEvent,
-    false
+    false,
+    remote
   );
   await connectOfficeHourToHosts(officeHour.id, hosts);
   await connectOfficeHourToDOW(officeHour.id, daysOfWeek);
@@ -906,6 +910,27 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
+export const editLocationSingleDay = async(req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { officeHourId, location, isRemote } = req.body;
+  const officeHour = await prisma.officeHour.update( {
+    where: {
+      id: officeHourId
+    },
+    data: {
+      isRemote,
+      location: location,
+    },
+    include: {
+      course: true
+    }
+  });
+  const calendar = await generateCalendar(officeHour.course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ officeHour });
+};
+
 export const editAll = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -923,7 +948,7 @@ export const editAll = async (req, res) => {
     },
   });
   debug("registrations are found");
-  const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour } =
+  const { startDate, endDate, location, daysOfWeek, endDateOldOfficeHour, remote } =
     req.body;
   const editAfterDate = req.body.editAfterDate ? true : false;
   if (editAfterDate) {
@@ -953,7 +978,8 @@ export const editAll = async (req, res) => {
       update.courseId,
       location === undefined ? update.location : location,
       true,
-      false
+      false,
+      remote
     );
     debug("new office hour is created");
     await connectOfficeHourToDOW(newOfficeHour.id, daysOfWeek);
