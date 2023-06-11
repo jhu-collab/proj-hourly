@@ -10,6 +10,7 @@ import EditAction from "./EditAction";
 import EventDetails from "./EventDetails";
 import StudentDetails from "./StudentDetails";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import EditLocation from "./EditLocation";
 import useStoreLayout from "../../../hooks/useStoreLayout";
 
 /**
@@ -35,6 +36,9 @@ const MobileEventPopup = NiceModal.create(() => {
               <IconButton sx={{ fontSize: "20px" }} onClick={modal.hide}>
                 <CloseOutlined />
               </IconButton>
+              {(courseType === "Staff" || courseType === "Instructor") && (
+                <EditLocation />
+              )}
               {(courseType === "Staff" || courseType === "Instructor") && (
                 <EditAction />
               )}
