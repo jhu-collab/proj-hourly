@@ -11,17 +11,12 @@ import Debug from "debug";
 const debug = new Debug(`hourly:hooks:useMutationChangeNoShowStatus.jsx`);
 
 function useMutationChangeNoShowStatus(registrationId) {
-  console.log("in useMutation");
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
   const changeNoShowStatus = async () => {
-    console.log("in changeNoShowStatus");
     try {
-      console.log("registration id:" + registrationId);
-      debug(
-        "Sending registration id to the backend to change no show status..."
-      );
+      debug("Sending registration id to the backend to change no show status...");
       const endpoint = `${BASE_URL}/api/officeHour/editRegistrationNoShow`;
       const res = await axios.post(
         endpoint,
@@ -35,16 +30,16 @@ function useMutationChangeNoShowStatus(registrationId) {
     }
   };
 
-  const mutation = useMutation(changeNoShowStatus, {
+  const mutate = useMutation(changeNoShowStatus, {
     onSuccess: (data) => {
-      const registration = data;
+      const registration = data.updatedRegistration;
 
       queryClient.invalidateQueries(["registrationStatus"]);
       queryClient.invalidateQueries(["allRegistrations"]);
-
-      toast.success(
-        `Successfully changed registration no show status to ${registration.isNoShow}!`
-      );
+      
+      registration.isNoShow ? 
+        toast.success(`Successfully marked this registration as a no-show!`) :
+        toast.success(`Successfully marked this registration as present!`)
     },
     onError: (err) => {
       debug({ err });
@@ -53,7 +48,7 @@ function useMutationChangeNoShowStatus(registrationId) {
   });
 
   return {
-    ...mutation,
+    ...mutate,
   };
 }
 
