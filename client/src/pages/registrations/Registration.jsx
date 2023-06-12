@@ -48,7 +48,7 @@ function Registration({ registration, type }) {
   };
 
   const onNoShowClick = () => {
-    confirmDialog("Do you really change this student's no-show status?", () =>
+    confirmDialog("Do you really want to change this student's no-show status?", () =>
     mutate()
     );
   };
