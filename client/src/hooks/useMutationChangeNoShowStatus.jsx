@@ -38,7 +38,7 @@ function useMutationChangeNoShowStatus(registrationId) {
       queryClient.invalidateQueries(["allRegistrations"]);
       
       registration.isNoShow ? 
-        toast.success(`Successfully marked this registration as a no-show!`) :
+        toast.success(`Successfully marked this registration as no-show!`) :
         toast.success(`Successfully marked this registration as present!`)
     },
     onError: (err) => {
