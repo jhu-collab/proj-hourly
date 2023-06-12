@@ -25,13 +25,10 @@ import useMutationChangeNoShowStatus from "../../hooks/useMutationChangeNoShowSt
  * @returns a single Registration component.
  */
 function Registration({ registration, type }) {
-  // const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
-  //   registration.id || -1
-  // );
-
-  const { mutate, isLoading: isLoadingMutate } = useMutationChangeNoShowStatus(
-    registration.id || -1
-  );
+  // cancel and no-show will never be options as the same time
+  const { mutate, isLoading: isLoadingMutate } = type === 0 ? 
+    useMutationCancelRegistration(registration.id || -1) : 
+    useMutationChangeNoShowStatus(registration.id || -1);
 
   const courseType = useStoreLayout((state) => state.courseType);
   const token = useStoreToken((state) => state.token);
@@ -45,14 +42,14 @@ function Registration({ registration, type }) {
   }
 
   const onCancelClick = () => {
-    // confirmDialog("Do you really want to cancel this registration?", () =>
-    //   /mutate()
-    // );
+    confirmDialog("Do you really want to cancel this registration?", () =>
+      mutate()
+    );
   };
 
   const onNoShowClick = () => {
-    confirmDialog("Do you really want to mark this student as a no-show?", () =>
-      mutate()
+    confirmDialog("Do you really change this student's no-show status?", () =>
+    mutate()
     );
   };
 
@@ -74,7 +71,7 @@ function Registration({ registration, type }) {
                   registration.startTime.substring(10)
               ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
             </Typography>
-            <Typography fontWeight={600}>
+            <Typography fontWeight={600} color={isNoShow ? "error.main" : "text.primary"}>
               {DateTime.fromISO(registration.startTime).toLocaleString(
                 DateTime.TIME_SIMPLE
               )}{" "}
