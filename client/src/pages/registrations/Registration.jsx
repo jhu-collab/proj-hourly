@@ -144,7 +144,7 @@ function Registration({ registration, type }) {
                   fullWidth
                   onClick={onNoShowClick}
                 >
-                  Mark as No-Show
+                  {isNoShow ? "Mark as Present" : "Mark as No-Show"}
                 </Button>
                 <ConfirmPopup />
               </>
