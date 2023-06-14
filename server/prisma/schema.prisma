@@ -48,6 +48,7 @@ model Course {
   iCalJson           Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
+  calendarEvents     CalendarEvent[]
 }
 
 model OfficeHourTimeOptions {
@@ -111,3 +112,14 @@ model Topic {
   courseId      Int
   registrations Registration[] @relation("withTopics")
 }
+
+model CalendarEvent {
+  course         Course   @relation(fields: [courseId], references: [id])
+  courseId       Int
+  date           DateTime @db.Date()
+  agendaDescrip  String   @default("")
+  additionalInfo String?
+
+  @@unique([courseId, date])
+}
+// agendaDescrip string or array?
