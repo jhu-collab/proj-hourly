@@ -200,7 +200,7 @@ function Calendar() {
               slotEventOverlap={false}
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
-              allDaySlot={false}
+              allDaySlot={true}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
               {...(!matchUpSm && { headerToolbar: { 
