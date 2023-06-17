@@ -16,6 +16,9 @@ const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
 const CourseInfoPage = Loadable(
   lazy(() => import("./pages/course-information/CourseInfoPage"))
 );
+const Agenda = Loadable(
+  lazy(() => import("./pages/agenda/Agenda"))
+);
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))
@@ -44,6 +47,7 @@ function App() {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/registrations" element={<Registrations />} />
                 <Route path="/courseinformation" element={<CourseInfoPage />} />
+                <Route path="/agenda" element={<Agenda />} />
                 <Route path="" element={<StaffOnlyRoute />}>
                   <Route path="/roster" element={<Roster />} />
                   <Route path="/topics" element={<Topics />} />
