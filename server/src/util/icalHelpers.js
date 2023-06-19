@@ -1,4 +1,4 @@
-import ical from "ical-generator";
+import ical, { formatDate } from "ical-generator";
 import prisma from "../../prisma/client.js";
 import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
@@ -393,4 +393,46 @@ const generateRRule = (officeHour) => {
   // });
   // console.log(rruleSet.toString());
   //return rruleSet;
+};
+
+export const generateSingleEventJsonCourse = (calendarEvent) => {
+  return {
+    id: calendarEvent.id,
+    title: calendarEvent.agendaDescrip,
+    start: getIsoDate(calendarDate.date),
+    end: getIsoDate(calendarDate.date),
+    extendedProps: {
+      courseId: calendarEvent.course.id,
+      agendaDescrip: calendarEvent.agendaDescrip,
+      additionalInfo: calendarEvent.additionalInfo
+    },
+  };
+};
+
+export const generateCourseCalendar = async (courseId) => {
+  debug("generateCourseCalendar called!");
+  const events = [];
+  debug("getting calendar events...");
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      courseId,
+    },
+    include: {
+      course: true,
+    }
+  });
+  calendarEvents.forEach((calendarEvent) => {
+    events.push(generateSingleEventJsonCourse(calendarEvent));
+  });
+  debug("updating course...");
+  await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      iCalJsonCalEvent: events,
+    },
+  });
+  debug("generateCourseCalendar done!");
+  return events;
 };
