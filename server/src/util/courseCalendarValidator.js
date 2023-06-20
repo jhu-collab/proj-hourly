@@ -52,6 +52,29 @@ export const doesEventExist =  async (req, res, next) => {
   }
 }
 
+export const doesEventNotExist =  async (req, res, next) => {
+  debug("checking whether calendar event exists");
+  const {courseId, date} = req.body;
+  debug("getting calendar event...");
+  const calendarEvent = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId: courseId,
+      date: new Date(date),
+    },
+  });
+  debug("got calendar event");
+  if (calendarEvent === null || calendarEvent === undefined) {
+    debug("calendar event does not exist");
+    next();
+  } else {
+    debug("calendar event exists");
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: calendar event exists" });
+  }
+}
+
+
 export const isEventNotCancelled =  async (req, res, next) => {
   debug("checking whether calendar event exists");
   const {courseId, date} = req.body;

@@ -20,10 +20,13 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
-  body("date", "Please specify the day of this event").notEmpty.isDate(),
-  body("agendaDescrip", "Please specify topic of the course event").notEmpty().isString(),
-  body("additionalInfo", "Please include additional information as a string").optional().isString(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("begDate", "Please specify the start day of this event").notEmpty().isDate(),
+  body("endDate", "Please specify the end day of this event").notEmpty().isDate(),
+  body("daysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
+  // body("date", "Please specify the day of this event").notEmpty().isDate(),
+  // body("agendaDescrip", "Please specify topic of the course event").notEmpty().isString(),
+  // body("additionalInfo", "Please include additional information as a string").optional().isString(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
@@ -37,8 +40,8 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
-  body("date", "Please specify the day of this event").notEmpty.isDate(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty().isDate(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -51,8 +54,8 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
-  body("date", "Please specify the day of this event").notEmpty.isDate(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty().isDate(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -65,8 +68,8 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
-  body("date", "Please specify the day of this event").notEmpty.isDate(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty().isDate(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -80,7 +83,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -93,7 +96,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -107,10 +110,40 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty.isInt(),
+  body("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isEventCancelled,
   controller.getAllCancelledEventsForCourse
+)
+
+router.post(
+  "/createEvent",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty().isDate(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.doesEventNotExist,
+  controller.addCourseEvent
+)
+
+router.post(
+  "/createRecurringEvent",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("begDate", "Please specify the start day of this event").notEmpty().isDate(),
+  body("endDate", "Please specify the end day of this event").notEmpty().isDate(),
+  body("newDaysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.endAfterStart,
+  controller.addRecurringCourseEvent
 )

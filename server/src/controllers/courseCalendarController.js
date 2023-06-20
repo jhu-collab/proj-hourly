@@ -204,7 +204,70 @@ export const getAllCancelledEventsForCourse = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
-// manually add course event
+export const addCourseEvent = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  const {date, agendaDescrip, additionalInfo, isCancelled, location, isRemote} = req.body;
+  const dateObj = new Date(date);
+  debug("finding course");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  debug("course is found");
+  const calendarEvent = await prisma.calendarEvent.create({
+    where: {
+      courseId,
+      date: {
+        equals: dateObj,
+      }
+    },
+    data: {
+      agendaDescrip: agendaDescrip,
+      additionalInfo: additionalInfo,
+      isCancelled: isCancelled,
+      isRemote: isRemote,
+      location: location,
+    },
+  });
+  const eventJSon = await generateCourseCalendar(courseId);
+  debug("made new calendar event...");
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+export const addRecurringCourseEvent = async (req, res) => {
+  const {courseId, begDate, endDate, newDaysOfWeek } = req.body;
+  debug("creating calendar events for course...");
+  let end = spacetime(endDate);
+  let beg = spacetime(begDate);
+  let indices = [];
+  newDaysOfWeek.forEach((dow) => {
+    indices.push(weekday.indexOf(dow));
+  });
+  indices.sort();
+  const calendarEvents = [];
+  i = indices.indexOf(begDate.toNativeDate().getDay());
+  while (!beg.isAfter(end)) {
+    courseInfo = {courseId, agendaDescrip, additionalInfo, location, date:begDate.toNativeDate()};
+    calendarEvents.push(courseInfo);
+    diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    if (diff <= 0) {
+      diff += 7;
+    };
+    begDate = begDate.add(diff, 'day');
+  }
+  const createdEvents = await prisma.calendarEvent.createMany({
+    data: calendarEvents,
+  });
+  const eventJSon = await generateCourseCalendar(courseId);
+  debug("calendar events are created");
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+
 // manually add new recurring date ????
 // edit all classes for a course
 // cancel class?
