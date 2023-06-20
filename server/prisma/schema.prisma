@@ -121,6 +121,8 @@ model CalendarEvent {
   agendaDescrip  String   @default("")
   additionalInfo String?
   isCancelled Boolean @default(false)
+  isRemote  Boolean @default(false)
+  location  String
 
   @@unique([courseId, date])
 }

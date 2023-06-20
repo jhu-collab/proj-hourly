@@ -396,8 +396,9 @@ const generateRRule = (officeHour) => {
 };
 
 export const generateSingleEventJsonCourse = (calendarEvent) => {
+  let i = 1;
   return {
-    id: calendarEvent.id,
+    id: i++,
     title: calendarEvent.agendaDescrip,
     start: getIsoDate(calendarDate.date),
     end: getIsoDate(calendarDate.date),

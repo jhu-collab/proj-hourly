@@ -33,7 +33,7 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   i = indices.indexOf(begDate.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    courseInfo = {courseId, agendaDescrip, additionalInfo, date:begDate.toNativeDate()};
+    courseInfo = {courseId, agendaDescrip, additionalInfo, location, date:begDate.toNativeDate()};
     calendarEvents.push(courseInfo);
     diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
@@ -44,7 +44,7 @@ export const create = async (req, res) => {
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
   });
-  const eventJSon = generateCourseCalendar(courseId);
+  const eventJSon = await generateCourseCalendar(courseId);
   debug("calendar events are created");
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
@@ -68,11 +68,31 @@ export const changeCancellation = async (req, res) => {
       isCancelled: !isCancelled,
     }
   });
-  const editedEvent = await prisma.calendarEvent.create({
-    data: calendarEvent,
-  });
-  const eventJSon = generateCourseCalendar(courseId);
+  const eventJSon = await generateCourseCalendar(courseId);
   debug("calendar event cancellation is changed")
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+export const changeRemote = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { courseId, date} = req.body;
+  const dateObj = new Date(date);
+  debug("making calendar event remote or in person calendar event...");
+  const calendarEvent = await prisma.calendarEvent.update({
+    where: {
+      courseId,
+      date: {
+        equals: dateObj,
+      }
+    },
+    data: {
+      isRemote: !isRemote,
+    }
+  });
+  const eventJSon = await generateCourseCalendar(courseId);
+  debug("made calendar event remote or in person calendar event...");
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
@@ -81,9 +101,9 @@ export const editEvent = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  const { date, agendaDescrip, additionalInfo, newDate } = req.body;
+  const { date, agendaDescrip, additionalInfo, newDate, isRemote, location } = req.body;
   debug("updating calendar event");
-  const calendarEvent = await prisma.officeHour.update({
+  const calendarEvent = await prisma.calendarEvent.update({
     where: {
       courseId: courseId,
       date: new Date(date),
@@ -93,6 +113,8 @@ export const editEvent = async (req, res) => {
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       isCancelled: calendarEvents.isCancelled,
+      isRemote: isRemote,
+      location: location,
     },
   });
   debug("calendar event is updated");

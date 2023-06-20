@@ -46,6 +46,20 @@ router.post(
 );
 
 router.post(
+  "/changeRemote",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("courseId", "Course ID is required").notEmpty.isInt(),
+  body("date", "Please specify the day of this event").notEmpty.isDate(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.doesEventExist,
+  controller.changeRemote
+);
+
+router.post(
   "/edit",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
