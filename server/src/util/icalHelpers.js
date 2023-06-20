@@ -1,4 +1,4 @@
-import ical, { formatDate } from "ical-generator";
+import ical from "ical-generator";
 import prisma from "../../prisma/client.js";
 import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;

@@ -50,23 +50,30 @@ export const create = async (req, res) => {
 };
 // pass in list of topics? assign those to dates until list runs out?
 
-export const deleteEvent = async (req, res) => {
+export const changeCancellation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
   const { courseId, date} = req.body;
   const dateObj = new Date(date);
-  debug("cancelling calendar event...");
-  const calendarEvent = await prisma.calendarEvent.delete({
+  debug("cancelling or uncancelling calendar event...");
+  const calendarEvent = await prisma.calendarEvent.update({
     where: {
       courseId,
       date: {
         equals: dateObj,
       }
     },
+    data: {
+      isCancelled: !isCancelled,
+    }
   });
-  debug("calendar event is cancelled")
-  return res.status(StatusCodes.ACCEPTED).json({ calendarEvent });
+  const editedEvent = await prisma.calendarEvent.create({
+    data: calendarEvent,
+  });
+  const eventJSon = generateCourseCalendar(courseId);
+  debug("calendar event cancellation is changed")
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
 export const editEvent = async (req, res) => {
@@ -74,23 +81,15 @@ export const editEvent = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  const dateObj = req.body.date;
-  const calendarEvents = await prisma.calendarEvent.findUnique({
-    where: {
-      courseId: courseId,
-      date: new Date(dateObj),
-    },
-  });
-  debug("calendar event is found");
-  const { date, agendaDescrip, additionalInfo } = req.body;
+  const { date, agendaDescrip, additionalInfo, newDate } = req.body;
   debug("updating calendar event");
   const calendarEvent = await prisma.officeHour.update({
     where: {
       courseId: courseId,
-      date: new Date(dateObj),
+      date: new Date(date),
     },
     data: {
-      date: new Date(date),
+      date: new Date(newDate),
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       isCancelled: calendarEvents.isCancelled,
@@ -115,10 +114,65 @@ export const getAllEventsForCourse = async (req, res) => {
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
+    },
+    include: {
+      course: true,
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+  debug("calendar events for course found");
+  return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
+};
+
+export const getAllNotCancelledEventsForCourse = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("finding course");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  debug("course is found");
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      courseId: courseId,
       isCancelled: false,
     },
     include: {
-      agendaDescrip: true,
+      course: true,
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+  debug("calendar events for course found");
+  return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
+};
+
+export const getAllCancelledEventsForCourse = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("finding course");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  debug("course is found");
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      courseId: courseId,
+      isCancelled: true,
+    },
+    include: {
+      course: true,
     },
     orderBy: {
       date: "asc",
