@@ -1,12 +1,9 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import validate from "../util/checkValidation.js";
 import ical from "ical-generator";
 import { generateCourseCalendar } from "../util/icalHelpers.js";
 import { factory } from "../util/debug.js";
 import spacetime from "spacetime";
-import { empty } from "@prisma/client/runtime/index.js";
-import { date } from "zod";
 
 const debug = factory(import.meta.url);
 
@@ -54,7 +51,7 @@ export const changeCancellation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { courseId, date} = req.body;
+  const { courseId, date, isCancelled } = req.body;
   const dateObj = new Date(date);
   debug("cancelling or uncancelling calendar event...");
   const calendarEvent = await prisma.calendarEvent.update({
@@ -77,7 +74,7 @@ export const changeRemote = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { courseId, date} = req.body;
+  const { courseId, date, isRemote } = req.body;
   const dateObj = new Date(date);
   debug("making calendar event remote or in person calendar event...");
   const calendarEvent = await prisma.calendarEvent.update({
@@ -118,7 +115,8 @@ export const editEvent = async (req, res) => {
     },
   });
   debug("calendar event is updated");
-  return res.status(StatusCodes.ACCEPTED).json({ calendarEvent });
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
 export const getAllEventsForCourse = async (req, res) => {
@@ -209,7 +207,7 @@ export const addCourseEvent = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  const {date, agendaDescrip, additionalInfo, isCancelled, location, isRemote} = req.body;
+  const {date, agendaDescrip, additionalInfo, location } = req.body;
   const dateObj = new Date(date);
   debug("finding course");
   const course = await prisma.course.findUnique({
@@ -228,8 +226,6 @@ export const addCourseEvent = async (req, res) => {
     data: {
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
-      isCancelled: isCancelled,
-      isRemote: isRemote,
       location: location,
     },
   });

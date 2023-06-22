@@ -1,8 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import validate from "../util/checkValidation.js";
 import { factory } from "../util/debug.js";
-import { debug } from "console";
+const debug = factory(import.meta.url);
 
 export const weekday = [
   "Sunday",
@@ -14,21 +13,23 @@ export const weekday = [
   "Saturday",
 ];
 
-// export const isCourseOnDay = async (req, res, next) => {
-//   debug("checking whether course is on entered day");
-//   const { date, daysOfWeek } = req.body;
-//   const dateObj = new Date(date);
-//   debug("getting calendar event...");
-//   daysOfWeek.forEach((dow) => {
-//     if (dateObj.toNativeDate().getDay() != dow) {
-//       return res
-//       .status(StatusCodes.BAD_REQUEST)
-//       .json({ msg: "ERROR: course does not occur on this day" });
-//     }
-//   });
-//   debug("course is on this day");
-//   next();
-// }
+export const isCourseOnDayAlready = async (req, res, next) => {
+  debug("checking whether course is on entered day");
+  const { newDaysOfWeek, daysOfWeek } = req.body;
+  const dateObj = new Date(date);
+  debug("getting calendar event...");
+  daysOfWeek.forEach((dow) => {
+    newDaysOfWeek.forEach((newDow) => {
+      if (newDow == dow) {
+        debug("new day already occurs");
+        next();
+      }
+    });
+  });
+  return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: course does not occur on this day" });
+}
 
 export const doesEventExist =  async (req, res, next) => {
   debug("checking whether calendar event exists");
@@ -137,17 +138,19 @@ export const endAfterStart = async (req, res, next) => {
   }
 }
 
-export const isCourseOnDay = async (req, res, next) => {
+export const doesCourseBeginOnDay = async (req, res, next) => {
   debug("checking whether course begins on beginning day");
   const { begDate, daysOfWeek } = req.body;
   const dateObj = new Date(begDate);
-  if (dateObj.toNativeDate().getDay() != daysOfWeek[0]) {
-    return res
+  daysOfWeek.forEach((dow) => {
+    if (dateObj.toNativeDate().getDay() == dow) {
+      debug("course begins on correct day");
+      next();
+    }
+  });
+  return res
     .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: course does not begin on this day" });
-  }
-  debug("course begins on this day");
-  next();
+    .json({ msg: "ERROR: course does not occur on this day" });
 }
 
 // in office hour?

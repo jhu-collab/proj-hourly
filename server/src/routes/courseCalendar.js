@@ -30,7 +30,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
-  validator.isCourseOnDay,
+  validator.doesCourseBeginOnDay,
   controller.create
 );
 
@@ -83,10 +83,9 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty().isInt(),
+  params("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
-  courseValidator.isCourseId,
-  validator.doesEventExist,
+  courseValidator.isCourseIdParams,
   controller.getAllEventsForCourse
 )
 
@@ -96,10 +95,9 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty().isInt(),
+  params("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
-  courseValidator.isCourseId,
-  validator.doesEventExist,
+  courseValidator.isCourseIdParams,
   validator.isEventNotCancelled,
   controller.getAllEventsForCourse
 )
@@ -110,10 +108,9 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("courseId", "Course ID is required").notEmpty().isInt(),
+  params("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
-  courseValidator.isCourseId,
-  validator.doesEventExist,
+  courseValidator.isCourseIdParams,
   validator.isEventCancelled,
   controller.getAllCancelledEventsForCourse
 )
@@ -129,6 +126,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventNotExist,
+  validator.isCourseOnDayAlready,
   controller.addCourseEvent
 )
 
@@ -145,5 +143,6 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
+  validator.isCourseOnDayAlready,
   controller.addRecurringCourseEvent
 )

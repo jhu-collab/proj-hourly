@@ -395,8 +395,7 @@ const generateRRule = (officeHour) => {
   //return rruleSet;
 };
 
-export const generateSingleEventJsonCourse = (calendarEvent) => {
-  let i = 1;
+export const generateSingleEventJsonCourse = (calendarEvent, i) => {
   return {
     id: i++,
     title: calendarEvent.agendaDescrip,
@@ -422,8 +421,9 @@ export const generateCourseCalendar = async (courseId) => {
       course: true,
     }
   });
+  let i = 1;
   calendarEvents.forEach((calendarEvent) => {
-    events.push(generateSingleEventJsonCourse(calendarEvent));
+    events.push(generateSingleEventJsonCourse(calendarEvent, i));
   });
   debug("updating course...");
   await prisma.course.update({
