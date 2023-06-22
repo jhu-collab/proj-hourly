@@ -33,7 +33,6 @@ export const confirmDialog = (message, onSubmit) => {
  */
 function ConfirmPopup({ header, children }) {
   const { message, onSubmit, close } = useStoreConfirmDialog();
-  console.log(children);
   return (
 
     <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth >

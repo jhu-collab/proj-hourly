@@ -62,8 +62,11 @@ const BUTTONS = [
  * @returns A component representing the Edit Event form.
  */
 function EditLocationForm() {
+  const start = useStoreEvent((state) => state.start);
+  const recurring = useStoreEvent((state) => state.recurring);
   const location = useStoreEvent((state) => state.location);
   const isRemote = useStoreEvent((state) => state.isRemote);
+  const [editType, setEditType] = useState("this");
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -73,14 +76,21 @@ function EditLocationForm() {
     resolver: yupResolver(editLocationSchema),
   });
 
-
-  const { mutate, isLoading } = useMutationEditLocation();
+  const recurringEvent = watch("recurringEvent");
+  const { mutate, isLoading } = useMutationEditLocation(editType);
 
   const onSubmit = (data) => {
+    console.log(start);
+    recurring ?
     mutate({
+        date: start.toISOString(),
         location: data.location,
         isRemote: data.isRemote
-    });
+    })
+    : mutate({
+        location: data.location,
+        isRemote: data.isRemote
+    })
   };
 
   return (
@@ -89,7 +99,27 @@ function EditLocationForm() {
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
           </Stack>
+          {recurring && (
+            <RadioGroup
+              value={editType}
+              onChange={(event) => setEditType(event.target.value)}
+            >
+              <Stack direction="row" sx={{ width: "100%" }} spacing={1}>
+              <FormControlLabel
+                value="this"
+                control={<Radio />}
+                label="This event only"
+              />
+              <FormControlLabel
+                value="all"
+                control={<Radio />}
+                label="All events"
+              />
+              </Stack>
+            </RadioGroup>
+          )}
           <FormInputText name="location" control={control} label="Location" />
+          
           <FormCheckbox
               name="isRemote"
               control = {control}

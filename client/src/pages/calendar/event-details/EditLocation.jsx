@@ -12,35 +12,38 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import CompassOutlined from "@ant-design/icons/CompassOutlined";
 import NiceModal from "@ebay/nice-modal-react";
 import useMutationEditLocation from "../../../hooks/useMutationEditLocation";
+import EditLocationForm from "../upsert-event/EditLocationForm";
 
 function EditLocation() {
-    const recurring = useStoreEvent((state) => state.recurring);
+    // const recurring = useStoreEvent((state) => state.recurring);
 
-    const [editType, setEditType] = useState("this");
+    // const [editType, setEditType] = useState("this");
 
-    const { mutate, isLoading } = useMutationEditLocation(editType);
+    // const { mutate, isLoading } = useMutationEditLocation(editType);
 
 
     return (
         <>
             <IconButton
                 sx={{ fontSize: "20px" }}
-                onClick={!recurring ? () => NiceModal.show("upsert-event", { type: "location" }) : () => {
+                onClick={/*!recurring ?*/ () => NiceModal.show("upsert-event", { type: "location" })} /*: () => {
                     confirmDialog("Do you really want to edit this event?", () =>
                       recurring && editType === "this"
-                        ? mutate({
-                            officeHourId: id,
-                            date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
-                              "MM-dd-yyyy"
-                            ),
-                          })
-                        : mutate({ officeHourId: id })
+                      ? <EditLocationForm/>
+                      : () => NiceModal.show("upsert-event", { type: "location" })
+                        // ? mutate({
+                        //     officeHourId: id,
+                        //     date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+                        //       "MM-dd-yyyy"
+                        //     ),
+                        //   })
+                        // : mutate({ officeHourId: id })
                     );
-                  }}
+                  }}*/
             >
                 <CompassOutlined />
             </IconButton>
-            <ConfirmPopup {...(recurring && { header: "Edit recurring event" })}>
+            {/* <ConfirmPopup {...(recurring && { header: "Edit recurring event" })}>
                 {recurring && (
                     <RadioGroup
                         value={editType}
@@ -59,7 +62,7 @@ function EditLocation() {
                     </RadioGroup>
                 )}
             </ConfirmPopup>
-            {isLoading && <Loader />}
+            {isLoading && <Loader />} */}
         </>
     );
 };
