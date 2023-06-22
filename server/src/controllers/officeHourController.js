@@ -916,17 +916,35 @@ export const editLocationRecurringDay = async(req, res) => {
   }
   const { officeHourId, location, isRemote, date } = req.body;
   const dateObj = spacetime(date);
+  const dateToEnd = spacetime(date);
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
-      date: dateObj.toNativeDate(),
       isCancelled: false,
       isCancelledStaff: false,
+      date: {
+        gte: dateToEnd.toNativeDate()
+      }
     },
     select: {
       account: true,
     },
   });
+
+  // /////*
+  // const { officeHourId } = req.body;
+  // const dateToEnd = spacetime(req.body.date);
+  // debug("finding registrations...");
+  // const registrations = await prisma.registration.findMany({
+  //   where: {
+  //     officeHourId: officeHourId,
+  //     isCancelled: false,
+  //     date: {
+  //       gte: dateToEnd.toNativeDate(),
+  //     },
+  //   },
+  // });
+  // /////
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -1003,17 +1021,21 @@ export const editLocationSingleDay = async(req, res) => {
     return res;
   }
   const { officeHourId, location, isRemote } = req.body;
+  const dateToEnd = spacetime(req.body.date);
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
-      date: dateObj.toNativeDate(),
       isCancelled: false,
       isCancelledStaff: false,
+      date: {
+        gte: dateToEnd.toNativeDate()
+      }
     },
     select: {
       account: true,
     },
   });
+  
   const officeHour = await prisma.officeHour.update( {
     where: {
       id: officeHourId
@@ -1025,14 +1047,6 @@ export const editLocationSingleDay = async(req, res) => {
     include: {
       course: true
     }
-  });
-  await prisma.registration.updateMany({
-    where: {
-      officeHourId: officeHourId,
-    },
-    data: {
-      officeHour: officeHour
-    },
   });
   sendEmailForEachRegistrationWhenLocationChanged(registrations, officeHour)
   const calendar = await generateCalendar(officeHour.course.id);
