@@ -13,23 +13,28 @@ export const weekday = [
   "Saturday",
 ];
 
-export const isCourseOnDayAlready = async (req, res, next) => {
-  debug("checking whether course is on entered day");
-  const { newDaysOfWeek, daysOfWeek } = req.body;
-  const dateObj = new Date(date);
-  debug("getting calendar event...");
-  daysOfWeek.forEach((dow) => {
-    newDaysOfWeek.forEach((newDow) => {
-      if (!(newDow != dow)) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ msg: "ERROR: course already occurs on this day" });
-      }
-    });
-  });
-  debug("course does not occur on this day yet");
-  next();
-}
+// export const isCourseOnDayAlready = async (req, res, next) => {
+//   debug("checking whether course is on entered day");
+//   const { newDaysOfWeek, daysOfWeek } = req.body;
+//   const dateObj = new Date(date);
+//   let isValid = true;
+//   debug("getting calendar event...");
+//   daysOfWeek.forEach((dow) => {
+//     newDaysOfWeek.forEach((newDow) => {
+//       if (!(newDow != dow)) {
+//         isValid = false;
+//       }
+//     });
+//   });
+//   if (isValid) {
+//     debug("course does not occur on this day yet");
+//     next();
+//   } else {
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ msg: "ERROR: course already occurs on this day" });
+//   }
+// }
 
 export const doesEventExist =  async (req, res, next) => {
   debug("checking whether calendar event exists");
@@ -51,6 +56,31 @@ export const doesEventExist =  async (req, res, next) => {
     debug("calendar event exists");
     next();
   }
+}
+
+export const doesEventExistRecurring =  async (req, res, next) => {
+  debug("checking whether calendar events exist");
+  const {courseId, newDaysOfWeek } = req.body;
+  debug("getting calendar event...");
+  newDaysOfWeek.forEach((dow) => {
+    const calendarEvent = await prisma.calendarEvent.findFirst({
+      where: {
+        courseId: courseId,
+        date : {
+          equals: dow,
+        },
+      },
+    });
+    if (calendarEvent !== null || calendarEvent !== undefined ) {
+      debug("event already occurs on this day");
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "ERROR: event already occurs on this day" });
+    }
+  });
+  debug("got calendar events");
+  debug("calendar event doesn't exist on proposed days");
+  next();
 }
 
 export const doesEventNotExist =  async (req, res, next) => {

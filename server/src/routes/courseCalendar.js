@@ -4,8 +4,10 @@ import * as validator from "../util/courseCalendarValidator.js";
 import * as controller from "../controllers/courseCalendarController.js";
 import * as courseValidator from "../util/courseValidator.js";
 import * as accountValidator from "../util/accountValidator.js";
+import * as officeHourValidator from "../util/officeHourValidator.js";
 import { checkToken } from "../util/middleware.js";
 import { factory } from "../util/debug.js";
+import { off } from "process";
 
 const debug = factory(import.meta.url);
 const router = express.Router();
@@ -32,6 +34,8 @@ router.post(
   validator.endAfterStart,
   validator.doesCourseBeginOnDay,
   validator.isCourseInstructor,
+  officeHourValidator.areValidDOW,
+  officeHourValidator.startDateIsValidDOW,
   controller.create
 );
 
@@ -132,8 +136,9 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventNotExist,
-  validator.isCourseOnDayAlready,
   validator.isCourseInstructor,
+  officeHourValidator.areValidDOW,
+  officeHourValidator.startDateIsValidDOW,
   controller.addCourseEvent
 )
 
@@ -150,7 +155,9 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
-  validator.isCourseOnDayAlready,
+  validator.doesEventExistRecurring,
   validator.isCourseInstructor,
+  officeHourValidator.areValidDOW,
+  officeHourValidator.startDateIsValidDOW,
   controller.addRecurringCourseEvent
 )
