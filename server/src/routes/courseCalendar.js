@@ -31,6 +31,7 @@ router.post(
   courseValidator.isCourseId,
   validator.endAfterStart,
   validator.doesCourseBeginOnDay,
+  validator.isCourseInstructor,
   controller.create
 );
 
@@ -42,9 +43,11 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("isCancelled", "Please specify whether cancelled as boolean").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
+  validator.isCourseInstructor,
   controller.changeCancellation
 );
 
@@ -56,9 +59,11 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("isRemote", "Please specify whether remote as boolean").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
+  validator.isCourseInstructor,
   controller.changeRemote
 );
 
@@ -74,6 +79,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isEventNotCancelled,
+  validator.isCourseInstructor,
   controller.editEvent
 )
 
@@ -127,6 +133,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventNotExist,
   validator.isCourseOnDayAlready,
+  validator.isCourseInstructor,
   controller.addCourseEvent
 )
 
@@ -144,5 +151,6 @@ router.post(
   courseValidator.isCourseId,
   validator.endAfterStart,
   validator.isCourseOnDayAlready,
+  validator.isCourseInstructor,
   controller.addRecurringCourseEvent
 )

@@ -20,15 +20,15 @@ export const isCourseOnDayAlready = async (req, res, next) => {
   debug("getting calendar event...");
   daysOfWeek.forEach((dow) => {
     newDaysOfWeek.forEach((newDow) => {
-      if (newDow == dow) {
-        debug("new day already occurs");
-        next();
+      if (!(newDow != dow)) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ msg: "ERROR: course already occurs on this day" });
       }
     });
   });
-  return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: course does not occur on this day" });
+  debug("course does not occur on this day yet");
+  next();
 }
 
 export const doesEventExist =  async (req, res, next) => {
@@ -143,14 +143,38 @@ export const doesCourseBeginOnDay = async (req, res, next) => {
   const { begDate, daysOfWeek } = req.body;
   const dateObj = new Date(begDate);
   daysOfWeek.forEach((dow) => {
-    if (dateObj.toNativeDate().getDay() == dow) {
-      debug("course begins on correct day");
-      next();
+    if(!(dateObj.toNativeDate().getDay() == dow)) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: course does not occur on this day" });
     }
   });
-  return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: course does not occur on this day" });
+  debug("course occurs on this day")
+  next();
 }
+
+export const isCourseInstructor = async (req, res, next) => {
+  const { courseId } = req.body;
+  const id = req.id;
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (course.instructors.length === 0) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: must be instructor",
+    });
+  } else {
+    next();
+  }
+};
 
 // in office hour?

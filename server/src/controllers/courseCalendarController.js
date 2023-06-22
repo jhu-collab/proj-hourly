@@ -109,7 +109,7 @@ export const editEvent = async (req, res) => {
       date: new Date(newDate),
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
-      isCancelled: calendarEvents.isCancelled,
+      isCancelled: false,
       isRemote: isRemote,
       location: location,
     },
@@ -124,13 +124,7 @@ export const getAllEventsForCourse = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  debug("finding course");
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-  });
-  debug("course is found");
+  debug("finding events");
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
@@ -151,13 +145,7 @@ export const getAllNotCancelledEventsForCourse = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  debug("finding course");
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-  });
-  debug("course is found");
+  debug("finding events");
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
@@ -170,7 +158,7 @@ export const getAllNotCancelledEventsForCourse = async (req, res) => {
       date: "asc",
     },
   });
-  debug("calendar events for course found");
+  debug("non-cancelled calendar events for course found");
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
@@ -179,13 +167,7 @@ export const getAllCancelledEventsForCourse = async (req, res) => {
     return res;
   }
   const courseId = parseInt(req.params.courseId, 10);
-  debug("finding course");
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-  });
-  debug("course is found");
+  debug("finding events");
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
@@ -198,7 +180,7 @@ export const getAllCancelledEventsForCourse = async (req, res) => {
       date: "asc",
     },
   });
-  debug("calendar events for course found");
+  debug("cancelled calendar events for course found");
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
