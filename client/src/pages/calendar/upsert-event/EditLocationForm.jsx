@@ -80,7 +80,6 @@ function EditLocationForm() {
   const { mutate, isLoading } = useMutationEditLocation(editType);
 
   const onSubmit = (data) => {
-    console.log(start);
     recurring ?
     mutate({
         date: start.toISOString(),
