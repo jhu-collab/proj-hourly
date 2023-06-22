@@ -920,6 +920,8 @@ export const editLocationRecurringDay = async(req, res) => {
     where: {
       officeHourId: officeHourId,
       date: dateObj.toNativeDate(),
+      isCancelled: false,
+      isCancelledStaff: false,
     },
     select: {
       account: true,
@@ -1004,6 +1006,9 @@ export const editLocationSingleDay = async(req, res) => {
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
+      date: dateObj.toNativeDate(),
+      isCancelled: false,
+      isCancelledStaff: false,
     },
     select: {
       account: true,
