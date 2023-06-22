@@ -176,6 +176,25 @@ router.post(
 )
 
 router.post(
+  "/editLocationRecurringDay",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("officeHourId", "Office Hour ID is required").isInt(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
+  body("isRemote", "Please specify if the event is remote").notEmpty().isBoolean(),
+  body("date", "Date is required").notEmpty(), //Should this be .notEmpty() or .optional()
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
+  validator.isOfficeHourHostOrInstructor,
+  controller.editLocationRecurringDay
+)
+
+router.post(
   "/:officeHourId/editAll",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);

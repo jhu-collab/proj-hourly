@@ -910,6 +910,53 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
+export const editLocationRecurringDay = async(req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const {officeHourId, location, isRemote, date } = req.body;
+  const dateObj = spacetime(date);
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      course: true,
+      hosts: true,
+    },
+  });
+  debug("office hour is found");
+
+  const officeHourUpdate = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isDeleted: true,
+      isCancelledOn: [...officeHour.isCancelledOn, dateObj.toNativeDate()],
+    }
+  });
+
+  const newOfficeHour = await prisma.officeHour.create({
+    data: {
+      startDate: new Date(date),
+      endDate: new Date(date),
+      course: {
+        connect: {
+          id: officeHour.course.id,
+        },
+      },
+      location,
+      isRecurring: false,
+      isDeleted: false,
+      isRemote
+    },
+  });
+
+  const calendar = await generateCalendar(officeHour.course.id);
+  return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
+};
+
 export const editLocationSingleDay = async(req, res) => {
   if (checkValidation(req, res)) {
     return res;
