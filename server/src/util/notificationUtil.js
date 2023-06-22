@@ -90,3 +90,29 @@ export const sendEmailForEachRegistrationWhenChanged = (
   });
   debug("sendEmailForEachRegistrationWhenChanged done!");
 };
+
+export const sendEmailForEachRegistrationWhenLocationChanged = 
+(registrations, editedOfficeHour) => {
+  const accounts = [];
+  registrations.forEach((registration) => {
+    accounts.push(registration.account);
+  });
+  accounts.forEach(async (account) => {
+    const text = `The office hours starting on ${new Date(
+      editedOfficeHour.startDate
+    ).toLocaleString()} to ${new Date(
+      editedOfficeHour.endDate
+    ).toLocaleString()} will now take place at ${
+      editedOfficeHour.location
+    }.`;
+    const changeNotification = (email) => {
+      return {
+        email: email,
+        subject: `Office Hour Location Changed!`,
+        text,
+        html: "<p> " + text + " </p>",
+      };
+    };
+    await sendEmail(changeNotification(account.email));
+  });
+}
