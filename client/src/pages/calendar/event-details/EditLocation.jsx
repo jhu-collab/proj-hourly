@@ -11,18 +11,57 @@ import useMutationCancelEvent from "../../../hooks/useMutationCancelEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import CompassOutlined from "@ant-design/icons/CompassOutlined";
 import NiceModal from "@ebay/nice-modal-react";
+import useMutationEditLocation from "../../../hooks/useMutationEditLocation";
 
 function EditLocation() {
+    const recurring = useStoreEvent((state) => state.recurring);
+
+    const [editType, setEditType] = useState("this");
+
+    const { mutate, isLoading } = useMutationEditLocation(editType);
+
+
     return (
         <>
             <IconButton
                 sx={{ fontSize: "20px" }}
-                onClick={() => NiceModal.show("upsert-event", { type: "location" })}
+                onClick={!recurring ? () => NiceModal.show("upsert-event", { type: "location" }) : () => {
+                    confirmDialog("Do you really want to edit this event?", () =>
+                      recurring && editType === "this"
+                        ? mutate({
+                            officeHourId: id,
+                            date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+                              "MM-dd-yyyy"
+                            ),
+                          })
+                        : mutate({ officeHourId: id })
+                    );
+                  }}
             >
-            <CompassOutlined />
+                <CompassOutlined />
             </IconButton>
+            <ConfirmPopup {...(recurring && { header: "Edit recurring event" })}>
+                {recurring && (
+                    <RadioGroup
+                        value={editType}
+                        onChange={(event) => setEditType(event.target.value)}
+                    >
+                        <FormControlLabel
+                            value="this"
+                            control={<Radio />}
+                            label="This event"
+                        />
+                        <FormControlLabel
+                            value="all"
+                            control={<Radio />}
+                            label="All events"
+                        />
+                    </RadioGroup>
+                )}
+            </ConfirmPopup>
+            {isLoading && <Loader />}
         </>
-    )
+    );
 };
 
 export default EditLocation;

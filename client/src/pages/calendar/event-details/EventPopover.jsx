@@ -55,8 +55,9 @@ function EventPopover() {
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
             {(isHost || isInstructor) && <EditAction />}
-            {(isHost || isInstructor) && <DeleteAction />}
             {(isHost || isInstructor) && <EditLocation />}
+            {(isHost || isInstructor) && <DeleteAction />}
+    
             <IconButton
               sx={{ fontSize: "20px" }}
               onClick={() => setAnchorEl(null)}

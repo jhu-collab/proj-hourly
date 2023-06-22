@@ -10,6 +10,13 @@ import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonG
 import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+
+import IconButton from "@mui/material/IconButton";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
+import { useState } from "react";
 import useMutationEditLocation from "../../../hooks/useMutationEditLocation";
 
 const BUTTONS = [
@@ -66,6 +73,7 @@ function EditLocationForm() {
     resolver: yupResolver(editLocationSchema),
   });
 
+
   const { mutate, isLoading } = useMutationEditLocation();
 
   const onSubmit = (data) => {
@@ -97,7 +105,7 @@ function EditLocationForm() {
           </Button>
         </Stack>
       </Form>
-      {isLoading && <Loader />}
+      <Loader />
     </>
   );
 }
