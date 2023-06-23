@@ -245,7 +245,82 @@ export const addRecurringCourseEvent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
-// edit all classes for a course
-// get a specific course day
-// delete all events for a course
-// delete  events for a course on certain day
+export const editAllEvents = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { agendaDescrip, additionalInfo, location, isCancelled, isRemote, courseId } = req.body;
+  debug("updating calendar event");
+  const edited = await prisma.calendarEvent.updateMany({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+      },
+    },
+    data: {
+      agendaDescrip: agendaDescrip,
+      additionalInfo: additionalInfo,
+      isCancelled: isCancelled,
+      isRemote: isRemote,
+      location: location,
+    },
+  });
+  debug("calendar event is updated");
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+export const getEventOnDay = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  const date = req.params.date;
+  debug("finding event");
+  const calendarEvents = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(date),
+      },
+    },
+  });
+  debug("calendar event for course found");
+  return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
+};
+
+export const deleteCourse = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("deleting all events for course");
+  const calendarEvents = await prisma.calendarEvent.deleteMany({
+    where: {
+      courseId: courseId,
+    },
+  });
+  debug("course events deleted")
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+export const deleteCourseOnDay = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  const date = req.params.date;
+  debug("deleting all events for course on date");
+  const calendarEvents = await prisma.calendarEvent.delete({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(date),
+      },
+    },
+  });
+  debug("course event deleted")
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};

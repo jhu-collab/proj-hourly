@@ -14,29 +14,6 @@ export const weekday = [
   "Saturday",
 ];
 
-// export const isCourseOnDayAlready = async (req, res, next) => {
-//   debug("checking whether course is on entered day");
-//   const { daysOfWeek, daysOfWeek } = req.body;
-//   const dateObj = new Date(date);
-//   let isValid = true;
-//   debug("getting calendar event...");
-//   daysOfWeek.forEach((dow) => {
-//     daysOfWeek.forEach((newDow) => {
-//       if (!(newDow != dow)) {
-//         isValid = false;
-//       }
-//     });
-//   });
-//   if (isValid) {
-//     debug("course does not occur on this day yet");
-//     next();
-//   } else {
-//     return res
-//       .status(StatusCodes.BAD_REQUEST)
-//       .json({ msg: "ERROR: course already occurs on this day" });
-//   }
-// }
-
 export const doesEventExist =  async (req, res, next) => {
   debug("checking whether calendar event exists");
   const {courseId, date} = req.body;
@@ -211,6 +188,31 @@ export const isCourseInstructor = async (req, res, next) => {
   }
 };
 
+export const isCourseInstructorParams = async (req, res, next) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  console.log(course)
+  if (course.instructors.length === 0) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "ERROR: must be instructor",
+    });
+  } else {
+    next();
+  }
+};
+
 export const areValidDOW = (req, res, next) => {
   debug("checking if days of week are valid");
   const { daysOfWeek } = req.body;
@@ -263,5 +265,143 @@ export const doesNotHaveCourseEvents = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: course has events" });
+  }
+};
+
+export const isEventInFutureByIdParams = async (req, res, next) => {
+  debug("checking if event is in future");
+  const courseId = parseInt(req.params.courseId, 10);
+  const date = req.params.date;
+  debug("getting course event...");
+  const calendarEvent = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(date),
+      },
+    },
+  });
+  debug("got course event");
+  const dateObj = spacetime(date);
+  if (dateObj.isAfter(spacetime.now())) {
+    debug("event is in future");
+    next();
+  } else {
+    debug("event is not in future");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: event has already passed" });
+  }
+};
+
+export const isEventInFuture = async (req, res, next) => {
+  debug("checking if event is in future");
+  const { date, courseId } = req.body;
+  debug("getting event...");
+  const calendarEvent = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(date),
+      },
+    },
+  });
+  debug("got event");
+  const dateObj = new Date(date);
+  if (dateObj > new Date()) {
+    debug("event is in future");
+    next();
+  } else {
+    debug("event is not in future");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: event has already passed" });
+  }
+};
+
+export const isInCourse = async (req, res, next) => {
+  debug("isInCourse is called!");
+  debug("Retrieving course id from url...");
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
+  debug("Checking if account is a student...");
+  const studentQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  debug("Checking if account is in course staff...");
+  const staffQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      courseStaff: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  debug("Checking if account is an instructor...");
+  const instructorQuery = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      instructors: {
+        where: {
+          id,
+        },
+      },
+    },
+  });
+  if (
+    studentQuery.students.length === 0 &&
+    staffQuery.courseStaff.length === 0 &&
+    instructorQuery.instructors.length === 0
+  ) {
+    debug("Account is not a course member...");
+    debug("Error in isInCourse!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not in course" });
+  } else {
+    debug("Account is a course member!");
+    debug("isInCourse is done!");
+    next();
+  }
+};
+
+export const NewDateNotOldDate = async (req, res, next) => {
+  const { newDate, courseId, date } = req.body;
+  const newDateObj = new Date(newDate);
+  const oldDateObj = new Date(date);
+  const calendarEvent = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(newDate),
+      },
+    },
+  });
+  if (newDateObj.getTime() === oldDateObj.getTime()) {
+    debug("edited course date is not changing");
+    next();
+  } else if ((calendarEvent === null || calendarEvent === undefined)) {
+    debug("course does not exist on this day");
+    next();
+  } else {
+    debug("Course already occurs on this day");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Course already exists on this day" });
   }
 };

@@ -87,6 +87,8 @@ router.post(
   validator.doesEventExist,
   validator.isEventNotCancelled,
   validator.isCourseInstructor,
+  validator.isEventInFuture,
+  validator.NewDateNotOldDate,
   controller.editEvent
 )
 
@@ -99,6 +101,7 @@ router.get(
   param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
+  validator.isInCourse,
   controller.getAllEventsForCourse
 )
 
@@ -111,6 +114,7 @@ router.get(
   param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
+  validator.isInCourse,
   controller.getAllEventsForCourse
 )
 
@@ -123,6 +127,7 @@ router.get(
   param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
+  validator.isInCourse,
   controller.getAllCancelledEventsForCourse
 )
 
@@ -159,6 +164,68 @@ router.post(
   validator.areValidDOW,
   validator.startDateIsValidDOW,
   controller.addRecurringCourseEvent
+)
+
+// router.post(
+//   "/editAllEventsForCourse",
+//   async (req, res, next) => {
+//     debug(`${req.method} ${req.path} called...`);
+//     next();
+//   },
+//   body("courseId", "Course ID is required").notEmpty().isInt(),
+//   body("agendaDescrip", "Agenda is required").notEmpty().isString(),
+//   body("additionalInfo", "Please specify additionalInfo").optional().isString(),
+//   body("isCancelled", "Please specify whether cancelled or not").notEmpty().isBoolean(),
+//   body("isRemote", "Please specify whether remote or not").notEmpty().isBoolean(),
+//   body("location", "Please specify location").notEmpty().isString(),
+//   accountValidator.isAccountValidHeader,
+//   courseValidator.isCourseId,
+//   validator.doesEventExist,
+//   validator.isEventNotCancelled,
+//   validator.isCourseInstructor,
+//   controller.editAllEvents
+// )
+
+router.get(
+  "/getEventOnDay/:courseId/date/:date",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Course ID is required").notEmpty().isInt(),
+  param("date", "Date is required").notEmpty().isDate(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  validator.isInCourse,
+  controller.getEventOnDay
+)
+
+router.delete(
+  "/deleteCourse/:courseId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Course ID is required").notEmpty().isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  validator.isCourseInstructorParams,
+  controller.deleteCourse
+)
+
+router.delete(
+  "/deleteCourse/:courseId/date/:date",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Course ID is required").notEmpty().isInt(),
+  param("date", "Date is required").notEmpty().isDate(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  validator.isCourseInstructorParams,
+  validator.isEventInFutureByIdParams,
+  controller.deleteCourseOnDay
 )
 
 export default router;

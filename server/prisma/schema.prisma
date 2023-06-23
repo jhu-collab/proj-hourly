@@ -46,7 +46,7 @@ model Course {
   officeHourOptions  OfficeHourTimeOptions[] @relation("isCourseTimeOption")
   topics             Topic[]
   iCalJson           Json?
-  iCalJsonCalEvent  Json?
+  iCalJsonCalEvent   Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
   calendarEvents     CalendarEvent[]
@@ -120,9 +120,9 @@ model CalendarEvent {
   date           DateTime @db.Date()
   agendaDescrip  String   @default("")
   additionalInfo String?
-  isCancelled Boolean @default(false)
-  isRemote  Boolean @default(false)
-  location  String
+  isCancelled    Boolean  @default(false)
+  isRemote       Boolean  @default(false)
+  location       String
 
   @@unique([courseId, date])
 }
