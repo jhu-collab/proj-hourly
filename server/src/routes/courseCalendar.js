@@ -4,10 +4,8 @@ import * as validator from "../util/courseCalendarValidator.js";
 import * as controller from "../controllers/courseCalendarController.js";
 import * as courseValidator from "../util/courseValidator.js";
 import * as accountValidator from "../util/accountValidator.js";
-import * as officeHourValidator from "../util/officeHourValidator.js";
 import { checkToken } from "../util/middleware.js";
 import { factory } from "../util/debug.js";
-import { off } from "process";
 
 const debug = factory(import.meta.url);
 const router = express.Router();
@@ -34,8 +32,9 @@ router.post(
   validator.endAfterStart,
   validator.doesCourseBeginOnDay,
   validator.isCourseInstructor,
-  officeHourValidator.areValidDOW,
-  officeHourValidator.startDateIsValidDOW,
+  validator.areValidDOW,
+  validator.startDateIsValidDOW,
+  validator.doesNotHaveCourseEvents,
   controller.create
 );
 
@@ -47,7 +46,6 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty().isDate(),
-  body("isCancelled", "Please specify whether cancelled as boolean").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -63,7 +61,6 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty().isDate(),
-  body("isRemote", "Please specify whether remote as boolean").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -79,6 +76,12 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("newDate", "Please specify the day of this event").notEmpty().isDate(),
+  body("agendaDescrip", "Agenda is required").notEmpty().isString(),
+  body("additionalInfo", "Please specify additionalInfo").optional().isString(),
+  body("isCancelled", "Please specify whether cancelled or not").notEmpty().isBoolean(),
+  body("isRemote", "Please specify whether remote or not").notEmpty().isBoolean(),
+  body("location", "Please specify location").notEmpty().isString(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
@@ -88,40 +91,38 @@ router.post(
 )
 
 router.get(
-  "/getAllEventsForCourse",
+  "/getAllEventsForCourse/:courseId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  params("courseId", "Course ID is required").notEmpty().isInt(),
+  param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   controller.getAllEventsForCourse
 )
 
 router.get(
-  "/getAllNotCancelledEventsForCourse",
+  "/getAllNotCancelledEventsForCourse/:courseId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  params("courseId", "Course ID is required").notEmpty().isInt(),
+  param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
-  validator.isEventNotCancelled,
   controller.getAllEventsForCourse
 )
 
 router.get(
-  "/getAllCancelledEventsForCourse",
+  "/getAllCancelledEventsForCourse/:courseId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  params("courseId", "Course ID is required").notEmpty().isInt(),
+  param("courseId", "Course ID is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
-  validator.isEventCancelled,
   controller.getAllCancelledEventsForCourse
 )
 
@@ -137,8 +138,6 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventNotExist,
   validator.isCourseInstructor,
-  officeHourValidator.areValidDOW,
-  officeHourValidator.startDateIsValidDOW,
   controller.addCourseEvent
 )
 
@@ -151,13 +150,15 @@ router.post(
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("begDate", "Please specify the start day of this event").notEmpty().isDate(),
   body("endDate", "Please specify the end day of this event").notEmpty().isDate(),
-  body("newDaysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
+  body("daysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
   validator.doesEventExistRecurring,
   validator.isCourseInstructor,
-  officeHourValidator.areValidDOW,
-  officeHourValidator.startDateIsValidDOW,
+  validator.areValidDOW,
+  validator.startDateIsValidDOW,
   controller.addRecurringCourseEvent
 )
+
+export default router;

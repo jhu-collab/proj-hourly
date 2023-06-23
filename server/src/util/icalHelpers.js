@@ -399,12 +399,15 @@ export const generateSingleEventJsonCourse = (calendarEvent, i) => {
   return {
     id: i,
     title: calendarEvent.agendaDescrip,
-    start: getIsoDate(calendarDate.date),
-    end: getIsoDate(calendarDate.date),
+    start: getIsoDate(calendarEvent.date),
+    end: getIsoDate(calendarEvent.date),
     extendedProps: {
       courseId: calendarEvent.course.id,
       agendaDescrip: calendarEvent.agendaDescrip,
-      additionalInfo: calendarEvent.additionalInfo
+      additionalInfo: calendarEvent.additionalInfo,
+      isCancelled: calendarEvent.isCancelled,
+      isRemote: calendarEvent.isRemote,
+      location: calendarEvent.location
     },
   };
 };

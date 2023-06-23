@@ -4,6 +4,7 @@ import ical from "ical-generator";
 import { generateCourseCalendar } from "../util/icalHelpers.js";
 import { factory } from "../util/debug.js";
 import spacetime from "spacetime";
+import checkValidation from "../util/checkValidation.js";
 
 const debug = factory(import.meta.url);
 
@@ -28,15 +29,15 @@ export const create = async (req, res) => {
   });
   indices.sort();
   const calendarEvents = [];
-  i = indices.indexOf(begDate.toNativeDate().getDay());
+  let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    courseInfo = {courseId, agendaDescrip, additionalInfo, location, date:begDate.toNativeDate()};
+    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: "", date:beg.toNativeDate()};
     calendarEvents.push(courseInfo);
-    diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
       diff += 7;
     };
-    begDate = begDate.add(diff, 'day');
+    beg = beg.add(diff, 'day');
   }
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
@@ -51,18 +52,26 @@ export const changeCancellation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { courseId, date, isCancelled } = req.body;
+  const { courseId, date } = req.body;
   const dateObj = new Date(date);
   debug("cancelling or uncancelling calendar event...");
-  const calendarEvent = await prisma.calendarEvent.update({
+  const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
-      courseId,
-      date: {
-        equals: dateObj,
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj,
       }
+    }
+  });
+  const newEvent = await prisma.calendarEvent.update({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj,
+      },
     },
     data: {
-      isCancelled: !isCancelled,
+      isCancelled: !calendarEvent.isCancelled,
     }
   });
   const eventJSon = await generateCourseCalendar(courseId);
@@ -77,15 +86,23 @@ export const changeRemote = async (req, res) => {
   const { courseId, date, isRemote } = req.body;
   const dateObj = new Date(date);
   debug("making calendar event remote or in person calendar event...");
-  const calendarEvent = await prisma.calendarEvent.update({
+  const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
-      courseId,
-      date: {
-        equals: dateObj,
-      }
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj,
+      },
+    },
+  });
+  const newEvent = await prisma.calendarEvent.update({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj,
+      },
     },
     data: {
-      isRemote: !isRemote,
+      isRemote: !calendarEvent.isRemote,
     }
   });
   const eventJSon = await generateCourseCalendar(courseId);
@@ -97,19 +114,20 @@ export const editEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const courseId = parseInt(req.params.courseId, 10);
-  const { date, agendaDescrip, additionalInfo, newDate, isRemote, location } = req.body;
+  const { date, agendaDescrip, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
   debug("updating calendar event");
-  const calendarEvent = await prisma.calendarEvent.update({
+  const edited = await prisma.calendarEvent.update({
     where: {
-      courseId: courseId,
-      date: new Date(date),
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(date),
+      },
     },
     data: {
       date: new Date(newDate),
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
-      isCancelled: false,
+      isCancelled: isCancelled,
       isRemote: isRemote,
       location: location,
     },
@@ -128,9 +146,6 @@ export const getAllEventsForCourse = async (req, res) => {
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
-    },
-    include: {
-      course: true,
     },
     orderBy: {
       date: "asc",
@@ -151,9 +166,6 @@ export const getAllNotCancelledEventsForCourse = async (req, res) => {
       courseId: courseId,
       isCancelled: false,
     },
-    include: {
-      course: true,
-    },
     orderBy: {
       date: "asc",
     },
@@ -173,9 +185,6 @@ export const getAllCancelledEventsForCourse = async (req, res) => {
       courseId: courseId,
       isCancelled: true,
     },
-    include: {
-      course: true,
-    },
     orderBy: {
       date: "asc",
     },
@@ -188,27 +197,18 @@ export const addCourseEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const courseId = parseInt(req.params.courseId, 10);
-  const {date, agendaDescrip, additionalInfo, location } = req.body;
+  const {courseId, date, agendaDescrip, additionalInfo, location, isRemote } = req.body;
   const dateObj = new Date(date);
-  debug("finding course");
-  const course = await prisma.course.findUnique({
-    where: {
-      id: courseId,
-    },
-  });
-  debug("course is found");
+  debug("adding new calendar event")
   const calendarEvent = await prisma.calendarEvent.create({
-    where: {
-      courseId,
-      date: {
-        equals: dateObj,
-      }
-    },
     data: {
+      courseId,
+      date: dateObj,
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       location: location,
+      isCancelled: false,
+      isRemote: isRemote
     },
   });
   const eventJSon = await generateCourseCalendar(courseId);
@@ -217,25 +217,25 @@ export const addCourseEvent = async (req, res) => {
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
-  const {courseId, begDate, endDate, newDaysOfWeek } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
   let beg = spacetime(begDate);
   let indices = [];
-  newDaysOfWeek.forEach((dow) => {
+  daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
   });
   indices.sort();
   const calendarEvents = [];
-  i = indices.indexOf(begDate.toNativeDate().getDay());
+  let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    courseInfo = {courseId, agendaDescrip, additionalInfo, location, date:begDate.toNativeDate()};
+    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: "", date:beg.toNativeDate()};
     calendarEvents.push(courseInfo);
-    diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
       diff += 7;
     };
-    begDate = begDate.add(diff, 'day');
+    beg = beg.add(diff, 'day');
   }
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
@@ -245,12 +245,7 @@ export const addRecurringCourseEvent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
-
-// manually add new recurring date ????
 // edit all classes for a course
-// cancel class?
 // get a specific course day
 // delete all events for a course
-// remote
-// isCancelled
-// location
+// delete  events for a course on certain day
