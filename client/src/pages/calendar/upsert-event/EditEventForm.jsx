@@ -11,6 +11,10 @@ import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import { useState } from "react";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const BUTTONS = [
   {
@@ -56,9 +60,11 @@ const BUTTONS = [
  */
 function EditEventForm() {
   const start = useStoreEvent((state) => state.start);
+  const oldEndDate = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
   const recurring = useStoreEvent((state) => state.recurring);
+  const [editType, setEditType] = useState("all");
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -101,7 +107,7 @@ function EditEventForm() {
           endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate(start, {
+          endDateOldOfficeHour: DateTime.fromJSDate((editType === "all" ? oldEndDate : start), {
             zone: "utc",
           }).toFormat("MM-dd-yyyy"),
           editAfterDate: true,
@@ -139,6 +145,25 @@ function EditEventForm() {
               control={control}
               label="Recurring event"
             />
+          )}
+          {recurringEvent && (
+            <RadioGroup
+              value={editType}
+              onChange={(event) => setEditType(event.target.value)}
+            >
+              <Stack direction="row" sx={{ width: "100%" }} spacing={1}>
+              <FormControlLabel
+                value="all"
+                control={<Radio />}
+                label="This event and future events"
+              />
+              <FormControlLabel
+                value="futureOnly"
+                control={<Radio />}
+                label="Future events only"
+              />
+              </Stack>
+            </RadioGroup>
           )}
           <FormInputText
             name="startDate"
