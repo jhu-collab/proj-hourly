@@ -187,7 +187,7 @@ router.post(
     "Please specify a location for your office hours"
   ).notEmpty(),
   body("isRemote", "Please specify if the event is remote").notEmpty().isBoolean(),
-  body("date", "Date is required").notEmpty(), //Should this be .notEmpty() or .optional()
+  body("date", "Date is required").notEmpty(), 
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.isOfficeHourHostOrInstructor,

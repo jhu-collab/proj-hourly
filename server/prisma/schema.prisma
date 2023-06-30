@@ -25,6 +25,7 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
+  IssueToken        IssueToken[]   
 }
 
 enum Role {
@@ -48,6 +49,8 @@ model Course {
   iCalJson           Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
+  CourseToken        CourseToken[]
+  usesTokens         Boolean                 @default(false)
 }
 
 model OfficeHourTimeOptions {
@@ -110,4 +113,25 @@ model Topic {
   course        Course         @relation(fields: [courseId], references: [id])
   courseId      Int
   registrations Registration[] @relation("withTopics")
+}
+
+model CourseToken {
+  //relations to the course
+  id                     Int                   @id @default(autoincrement())
+  course                 Course                @relation(fields: [courseId], references:[id])
+  title                  String
+  description            String                @default("")
+  courseId               Int
+  tokenLimit             Int
+  IssueToken             IssueToken[] 
+}
+
+model IssueToken {
+  //relation to student
+  id                     Int                   @id @default(autoincrement())
+  datesUsed              DateTime[]
+  account                Account               @relation(fields: [accountId], references: [id])
+  accountId              Int
+  CourseToken            CourseToken           @relation(fields: [courseTokenId], references: [id])
+  courseTokenId          Int
 }
