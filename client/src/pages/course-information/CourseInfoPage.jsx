@@ -4,7 +4,7 @@ import RemoveCourseAction from "./RemoveCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import LectureEventForm from "./LectureEventForm";
+import CourseCalendarEventForm from "./CourseCalendarEventForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
@@ -35,7 +35,7 @@ function CourseInfoPage() {
       </MainCard>
       {courseType === "Instructor" && 
         <MainCard title="Course Calendar Event Information" sx={{ padding: 0 }} content={true}>
-          <LectureEventForm />
+          <CourseCalendarEventForm />
         </MainCard>
       }
     </>
