@@ -1,4 +1,3 @@
-import { createEventSchema } from "../../utils/validators";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
@@ -14,6 +13,8 @@ import useMutationCreateOfficeHour from "../../hooks/useMutationCreateOfficeHour
 import useStoreToken from "../../hooks/useStoreToken";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
+import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
+import { createEventSchema } from "../../utils/validators";
 
 const DAYS = [
   "Sunday",
@@ -68,12 +69,11 @@ const BUTTONS = [
  * @returns A component representing the LectureEvent form.
  */
 
-function LectureEventForm() {
+function CourseCalendarEventForm() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
   const course = useStoreCourse((state) => state.course);
-
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
@@ -81,18 +81,38 @@ function LectureEventForm() {
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       recurringEvent: true,
+      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
+      endDate: end ? DateTime.fromJSDate(end).toFormat("yyyy-MM-dd") : "",
+      location: location || "",
     },
-    resolver: yupResolver(createEventSchema),
+    /*resolver: yupResolver(createEventSchema),*/
   });
 
   const recurring = watch("recurringEvent");
 
-  // CHANGE LATER:
-  const { mutate, isLoading } = useMutationCreateOfficeHour();
+  const { mutate, isLoading } = useMutationCreateCourseCalendarEvent();
+
+  // TODO: UPDATE THIS
+  const onSubmit = (data) => {
+    const start = new Date(data.startDate);
+    start.setHours(0);
+    start.setMinutes(0);
+    const end = new Date(data.endDate);
+    end.setHours(0);
+    end.setMinutes(0);
+    mutate({
+      courseId: course.id,
+      /*recurringEvent: data.recurringEvent,*/
+      begDate: start.toISOString(),
+      endDate: end.toISOString(),
+      /*location: data.location,*/
+      daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
+    });
+  };
 
   return (
     <>
-      <Form /*onSubmit={handleSubmit(onSubmit)}*/>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" spacing={3} alignItems="center">
             <FormCheckbox
@@ -149,4 +169,4 @@ function LectureEventForm() {
   );
 }
 
-export default LectureEventForm;
+export default CourseCalendarEventForm;
