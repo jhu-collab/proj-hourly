@@ -21,8 +21,8 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("begDate", "Please specify the start day of this event").notEmpty().isDate(),
-  body("endDate", "Please specify the end day of this event").notEmpty().isDate(),
+  body("begDate", "Please specify the start day of this event").notEmpty(),
+  body("endDate", "Please specify the end day of this event").notEmpty(),
   body("daysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
   // body("date", "Please specify the day of this event").notEmpty().isDate(),
   // body("agendaDescrip", "Please specify topic of the course event").notEmpty().isString(),
