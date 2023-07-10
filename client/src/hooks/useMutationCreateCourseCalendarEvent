@@ -50,7 +50,7 @@ function useMutationCreateCourseCalendarEvent() {
 
   const mutation = useMutation(createCourseCalendarEvent, {
     onSuccess: (data) => {
-      const courseEvent = data.courseCalendar;
+      const courseEvent = data;
 
       //queryClient.invalidateQueries([""]); // TODO: CHANGE THIS
 
