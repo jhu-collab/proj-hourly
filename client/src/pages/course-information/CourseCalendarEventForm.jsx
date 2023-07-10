@@ -97,14 +97,18 @@ function CourseCalendarEventForm() {
     const start = new Date(data.startDate);
     start.setHours(0);
     start.setMinutes(0);
+    console.log(typeof start.toISOString());
     const end = new Date(data.endDate);
     end.setHours(0);
     end.setMinutes(0);
+    console.log(typeof end.toISOString());
     mutate({
       courseId: course.id,
       /*recurringEvent: data.recurringEvent,*/
-      begDate: start.toISOString(),
-      endDate: end.toISOString(),
+      /*begDate: start.toISOString(),
+      endDate: end.toISOString(),*/
+      begDate: start,
+      endDate: end,
       /*location: data.location,*/
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
     });
