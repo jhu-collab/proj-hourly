@@ -15,6 +15,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
 import { createEventSchema } from "../../utils/validators";
+import { createCourseEventSchema } from "../../utils/validators";
 
 const DAYS = [
   "Sunday",
@@ -82,10 +83,10 @@ function CourseCalendarEventForm() {
     defaultValues: {
       recurringEvent: true,
       startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
-      endDate: end ? DateTime.fromJSDate(end).toFormat("yyyy-MM-dd") : "",
+      endDate: "",
       location: location || "",
     },
-    /*resolver: yupResolver(createEventSchema),*/ // TODO
+    resolver: yupResolver(createCourseEventSchema),
   });
 
   const recurring = watch("recurringEvent");
@@ -93,20 +94,17 @@ function CourseCalendarEventForm() {
   const { mutate, isLoading } = useMutationCreateCourseCalendarEvent();
 
   const onSubmit = (data) => {
+    console.log(data);
     const start = new Date(data.startDate);
-    // start.setHours(4); // TODO CHANGE THIS
-    // start.setMinutes(0);
     console.log(start);
     const end = new Date(data.endDate);
-    // end.setHours(4); // TODO CHANGE THIS
-    // end.setMinutes(0);
     console.log(end);
     mutate({
       courseId: course.id,
       /*recurringEvent: data.recurringEvent,*/
-      begDate: start.toISOString().split('T')[0],
-      endDate: end.toISOString().split('T')[0],
-      /*location: data.location,*/
+      begDate: start.toISOString()/*.split('T')[0]*/,
+      endDate: end.toISOString(),
+      location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
     });
   };
