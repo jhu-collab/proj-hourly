@@ -218,12 +218,67 @@ export const topicSchema = yup.object({
 
 export const editLocationSchema = yup.object({
   location: yup.string().required("Location is required"),
-  remote: yup.boolean()
+  remote: yup.boolean(),
 });
 
-export const courseIdSchema = z
-  .number({
-    required_error: "Course ID must be provided",
-    invalid_type_error: "Course ID must be a number",
-  })
-  .positive({message: "Course ID must be a positive integer"});
+// export const courseIdSchema = yup.object({
+//   number({
+//     required_error: "Course ID must be provided",
+//     invalid_type_error: "Course ID must be a number",
+//   }),
+//   positive({message: "Course ID must be a positive integer"}
+// });
+
+export const createCourseEventSchema = yup.object().shape({
+  startDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  recurringEvent: yup.boolean(),
+  endDate: yup
+    .date()
+    .nullable()
+    .when("recurringEvent", {
+      is: true,
+      then: yup
+        .date()
+        .typeError("Please enter a valid date")
+        .required("Date is required")
+        .test(
+          "is-greater",
+          "End date must be after start date",
+          function (value) {
+            const { startDate } = this.parent;
+            return DateTime.fromJSDate(value) > DateTime.fromJSDate(startDate);
+          }
+        ),
+    }),
+  days: yup
+    .array()
+    .nullable()
+    .when("recurringEvent", {
+      is: true,
+      then: yup
+        .array()
+        .typeError("Please select at least one recurring day")
+        .min(1, "Please select at least one recurring day")
+        .test(
+          "start-date-matches-recurring-day",
+          "One of the recurring days must match the start date",
+          function (value) {
+            const { startDate } = this.parent;
+            const startDay = startDate.getDay();
+
+            for (let i = 0; i < value.length; i++) {
+              if (startDay === getDayNum(value[i])) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        ),
+    }),
+  location: yup.string().required("Location is required"),
+});
