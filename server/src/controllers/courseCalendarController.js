@@ -130,6 +130,7 @@ export const editEvent = async (req, res) => {
       isCancelled: isCancelled,
       isRemote: isRemote,
       location: location,
+      allDay: true,
     },
   });
   debug("calendar event is updated");
@@ -208,7 +209,8 @@ export const addCourseEvent = async (req, res) => {
       additionalInfo: additionalInfo,
       location: location,
       isCancelled: false,
-      isRemote: isRemote
+      isRemote: isRemote,
+      allDay: true,
     },
   });
   const eventJSon = await generateCourseCalendar(courseId);
