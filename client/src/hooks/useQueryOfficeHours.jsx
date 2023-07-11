@@ -6,7 +6,7 @@ import Debug from "debug";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
 
-const debug = new Debug(`hourly:hooks:useQueryOfficeHours.js`);
+const debug = new Debug(`hourly:hooks:useQueryOfficeHours.jsx`);
 
 function useQueryOfficeHours() {
   const queryKey = ["officeHours"];
