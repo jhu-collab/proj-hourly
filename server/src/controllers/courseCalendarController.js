@@ -29,6 +29,7 @@ export const create = async (req, res) => {
   });
   indices.sort();
   const calendarEvents = [];
+  console.log(beg.toNativeDate());
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
     let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: "", date:beg.toNativeDate()};
