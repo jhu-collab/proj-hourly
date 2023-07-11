@@ -85,28 +85,27 @@ function CourseCalendarEventForm() {
       endDate: end ? DateTime.fromJSDate(end).toFormat("yyyy-MM-dd") : "",
       location: location || "",
     },
-    /*resolver: yupResolver(createEventSchema),*/
+    /*resolver: yupResolver(createEventSchema),*/ // TODO
   });
 
   const recurring = watch("recurringEvent");
 
   const { mutate, isLoading } = useMutationCreateCourseCalendarEvent();
 
-  // TODO: UPDATE THIS
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
-    start.setHours(0);
-    start.setMinutes(0);
-    console.log(typeof start.toISOString());
+    // start.setHours(4); // TODO CHANGE THIS
+    // start.setMinutes(0);
+    console.log(start);
     const end = new Date(data.endDate);
-    end.setHours(0);
-    end.setMinutes(0);
-    console.log(typeof end.toISOString());
+    // end.setHours(4); // TODO CHANGE THIS
+    // end.setMinutes(0);
+    console.log(end);
     mutate({
       courseId: course.id,
       /*recurringEvent: data.recurringEvent,*/
-      begDate: start.toISOString(),
-      endDate: end.toISOString(),
+      begDate: start.toISOString().split('T')[0],
+      endDate: end.toISOString().split('T')[0],
       /*location: data.location,*/
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
     });
