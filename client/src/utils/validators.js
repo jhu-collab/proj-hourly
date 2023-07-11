@@ -219,4 +219,11 @@ export const topicSchema = yup.object({
 export const editLocationSchema = yup.object({
   location: yup.string().required("Location is required"),
   remote: yup.boolean()
-})
+});
+
+export const courseIdSchema = z
+  .number({
+    required_error: "Course ID must be provided",
+    invalid_type_error: "Course ID must be a number",
+  })
+  .positive({message: "Course ID must be a positive integer"});
