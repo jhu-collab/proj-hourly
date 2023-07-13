@@ -33,7 +33,7 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date:beg.toNativeDate()};
+    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date: beg.toNativeDate()};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
