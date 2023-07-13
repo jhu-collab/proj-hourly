@@ -19,10 +19,12 @@ export const weekday = [
 ];
 
 export const create = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, location } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
+  end = end.hour(23 - end.toNativeDate().getUTCHours());
   let beg = spacetime(begDate);
+  beg = beg.hour(23 - beg.toNativeDate().getUTCHours());
   let indices = [];
   daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
@@ -31,7 +33,7 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: "", date:beg.toNativeDate()};
+    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date:beg.toNativeDate()};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
@@ -115,16 +117,18 @@ export const editEvent = async (req, res) => {
     return res;
   }
   const { date, agendaDescrip, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
+  const newDateObj = new Date(newDate);
+  const dateObj = new Date(date);
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.update({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: dateObj,
       },
     },
     data: {
-      date: new Date(newDate),
+      date: newDateObj,
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       isCancelled: isCancelled,
@@ -219,10 +223,12 @@ export const addCourseEvent = async (req, res) => {
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, location } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
+  end = end.hour(23 - end.toNativeDate().getUTCHours());
   let beg = spacetime(begDate);
+  beg = beg.hour(23 - beg.toNativeDate().getUTCHours());
   let indices = [];
   daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
@@ -231,7 +237,7 @@ export const addRecurringCourseEvent = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: "", date:beg.toNativeDate()};
+    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date:beg.toNativeDate()};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
