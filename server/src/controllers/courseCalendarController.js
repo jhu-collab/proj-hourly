@@ -22,9 +22,9 @@ export const create = async (req, res) => {
   const {courseId, begDate, endDate, daysOfWeek, location } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
-  end = end.hour(23 - end.toNativeDate().getUTCHours());
+  end = end.add(23 - end.toNativeDate().getUTCHours(), "hours");
   let beg = spacetime(begDate);
-  beg = beg.hour(23 - beg.toNativeDate().getUTCHours());
+  beg = beg.add(23 - beg.toNativeDate().getUTCHours(), "hours");
   let indices = [];
   daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
