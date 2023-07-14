@@ -405,3 +405,37 @@ export const NewDateNotOldDate = async (req, res, next) => {
       .json({ msg: "Course already exists on this day" });
   }
 };
+
+export const isUTC0 = async (req, res, next) => {
+  debug("getting date");
+  const {date} = req.body;
+  let dateObj = spacetime(date);
+  let dateHours = dateObj.hour()
+  if (dateHours.toNativeDate() == 0) {
+    debug("UTC hour is 0");
+    next();
+  } else {
+    debug("UTC hour is not 0");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "UTC hour is not 0" });
+  }
+};
+
+export const isUTCTwo = async (req, res, next) => {
+  debug("getting dates");
+  const {date, newDate} = req.body;
+  let dateObj = spacetime(date);
+  let dateHours = dateObj.hour();
+  let newDateObj = spacetime(newDate);
+  let newDateHours = newDateObj.hour();
+  if (dateHours.toNativeDate() == 0 && newDateHours.toNativeDate() == 0) {
+    debug("UTC hour is 0");
+    next();
+  } else {
+    debug("UTC hour is not 0");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "UTC hour is not 0" });
+  };
+};

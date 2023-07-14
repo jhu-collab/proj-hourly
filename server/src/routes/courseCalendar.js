@@ -36,6 +36,7 @@ router.post(
   validator.areValidDOW,
   validator.startDateIsValidDOW,
   validator.doesNotHaveCourseEvents,
+  validator.isUTCTwo,
   controller.create
 );
 
@@ -51,6 +52,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.changeCancellation
 );
 
@@ -66,6 +68,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.changeRemote
 );
 
@@ -90,6 +93,7 @@ router.post(
   validator.isCourseInstructor,
   validator.isEventInFuture,
   validator.NewDateNotOldDate,
+  validator.isUTCTwo,
   controller.editEvent
 )
 
@@ -144,6 +148,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventNotExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.addCourseEvent
 )
 
@@ -165,6 +170,7 @@ router.post(
   validator.isCourseInstructor,
   validator.areValidDOW,
   validator.startDateIsValidDOW,
+  validator.isUTCTwo,
   controller.addRecurringCourseEvent
 )
 
@@ -199,6 +205,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isInCourse,
+  validator.isUTC0,
   controller.getEventOnDay
 )
 
@@ -227,6 +234,7 @@ router.delete(
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
   validator.isEventInFutureByIdParams,
+  validator.isUTC0,
   controller.deleteCourseOnDay
 )
 
