@@ -55,13 +55,14 @@ export const changeCancellation = async (req, res) => {
     return res;
   }
   const { courseId, date } = req.body;
-  const dateObj = new Date(date);
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("cancelling or uncancelling calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.toNativeDate(),
       }
     }
   });
@@ -69,7 +70,7 @@ export const changeCancellation = async (req, res) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.toNativeDate(),
       },
     },
     data: {
@@ -86,13 +87,14 @@ export const changeRemote = async (req, res) => {
     return res;
   }
   const { courseId, date, isRemote } = req.body;
-  const dateObj = new Date(date);
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("making calendar event remote or in person calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.toNativeDate(),
       },
     },
   });
@@ -100,7 +102,7 @@ export const changeRemote = async (req, res) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.toNativeDate(),
       },
     },
     data: {
@@ -117,18 +119,20 @@ export const editEvent = async (req, res) => {
     return res;
   }
   const { date, agendaDescrip, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
-  const newDateObj = new Date(newDate);
-  const dateObj = new Date(date);
+  let newDateObj = spacetime(newDate);
+  newDateObj = newDateObj.add(23 - newDateObj.toNativeDate().getUTCHours(), "hours");
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.update({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.toNativeDate(),
       },
     },
     data: {
-      date: newDateObj,
+      date: newDateObj.toNativeDate(),
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       isCancelled: isCancelled,
@@ -203,12 +207,13 @@ export const addCourseEvent = async (req, res) => {
     return res;
   }
   const {courseId, date, agendaDescrip, additionalInfo, location, isRemote } = req.body;
-  const dateObj = new Date(date);
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("adding new calendar event")
   const calendarEvent = await prisma.calendarEvent.create({
     data: {
       courseId,
-      date: dateObj,
+      date: dateObj.toNativeDate(),
       agendaDescrip: agendaDescrip,
       additionalInfo: additionalInfo,
       location: location,
@@ -284,12 +289,14 @@ export const getEventOnDay = async (req, res) => {
   }
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("finding event");
   const calendarEvents = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: dateObj.toNativeDate(),
       },
     },
   });
@@ -319,12 +326,14 @@ export const deleteCourseOnDay = async (req, res) => {
   }
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("deleting all events for course on date");
   const calendarEvents = await prisma.calendarEvent.delete({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: dateObj.toNativeDate(),
       },
     },
   });
