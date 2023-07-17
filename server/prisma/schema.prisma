@@ -117,7 +117,7 @@ model Topic {
 model CalendarEvent {
   course         Course   @relation(fields: [courseId], references: [id])
   courseId       Int
-  date           DateTime @db.Date()
+  date           DateTime // @db.Date()
   agendaDescrip  String   @default("")
   additionalInfo String?
   isCancelled    Boolean  @default(false)

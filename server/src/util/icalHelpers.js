@@ -407,7 +407,8 @@ export const generateSingleEventJsonCourse = (calendarEvent, i) => {
       additionalInfo: calendarEvent.additionalInfo,
       isCancelled: calendarEvent.isCancelled,
       isRemote: calendarEvent.isRemote,
-      location: calendarEvent.location
+      location: calendarEvent.location,
+      allDay: calendarEvent.allDay
     },
   };
 };

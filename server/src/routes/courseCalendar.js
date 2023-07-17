@@ -24,7 +24,8 @@ router.post(
   body("begDate", "Please specify the start day of this event").notEmpty(),
   body("endDate", "Please specify the end day of this event").notEmpty(),
   body("daysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
-  // body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("location", "Please specify location").notEmpty().isString(),
+  // body("date", "Please specify the day of this event").notEmpty(),
   // body("agendaDescrip", "Please specify topic of the course event").notEmpty().isString(),
   // body("additionalInfo", "Please include additional information as a string").optional().isString(),
   accountValidator.isAccountValidHeader,
@@ -35,6 +36,7 @@ router.post(
   validator.areValidDOW,
   validator.startDateIsValidDOW,
   validator.doesNotHaveCourseEvents,
+  validator.isUTCTwo,
   controller.create
 );
 
@@ -45,11 +47,12 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("date", "Please specify the day of this event").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.changeCancellation
 );
 
@@ -60,11 +63,12 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("date", "Please specify the day of this event").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.changeRemote
 );
 
@@ -75,8 +79,8 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("date", "Please specify the day of this event").notEmpty().isDate(),
-  body("newDate", "Please specify the day of this event").notEmpty().isDate(),
+  body("date", "Please specify the day of this event").notEmpty(),
+  body("newDate", "Please specify the day of this event").notEmpty(),
   body("agendaDescrip", "Agenda is required").notEmpty().isString(),
   body("additionalInfo", "Please specify additionalInfo").optional().isString(),
   body("isCancelled", "Please specify whether cancelled or not").notEmpty().isBoolean(),
@@ -89,6 +93,7 @@ router.post(
   validator.isCourseInstructor,
   validator.isEventInFuture,
   validator.NewDateNotOldDate,
+  validator.isUTCTwoNewDate,
   controller.editEvent
 )
 
@@ -138,11 +143,12 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("date", "Please specify the day of this event").notEmpty().isDate(),
+  body("date", "Please specify the day of this event").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventNotExist,
   validator.isCourseInstructor,
+  validator.isUTC0,
   controller.addCourseEvent
 )
 
@@ -153,9 +159,10 @@ router.post(
     next();
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
-  body("begDate", "Please specify the start day of this event").notEmpty().isDate(),
-  body("endDate", "Please specify the end day of this event").notEmpty().isDate(),
+  body("begDate", "Please specify the start day of this event").notEmpty(),
+  body("endDate", "Please specify the end day of this event").notEmpty(),
   body("daysOfWeek", "Please specify the days of the week where this course occurs").notEmpty().isArray(),
+  body("location", "Please specify location").notEmpty().isString(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.endAfterStart,
@@ -163,6 +170,7 @@ router.post(
   validator.isCourseInstructor,
   validator.areValidDOW,
   validator.startDateIsValidDOW,
+  validator.isUTCTwo,
   controller.addRecurringCourseEvent
 )
 
@@ -193,10 +201,11 @@ router.get(
     next();
   },
   param("courseId", "Course ID is required").notEmpty().isInt(),
-  param("date", "Date is required").notEmpty().isDate(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isInCourse,
+  validator.isUTC0,
   controller.getEventOnDay
 )
 
@@ -220,11 +229,12 @@ router.delete(
     next();
   },
   param("courseId", "Course ID is required").notEmpty().isInt(),
-  param("date", "Date is required").notEmpty().isDate(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
   validator.isEventInFutureByIdParams,
+  validator.isUTC0,
   controller.deleteCourseOnDay
 )
 
