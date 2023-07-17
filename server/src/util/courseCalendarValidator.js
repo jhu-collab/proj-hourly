@@ -178,7 +178,6 @@ export const isCourseInstructor = async (req, res, next) => {
       },
     },
   });
-  console.log(course)
   if (course.instructors.length === 0) {
     return res.status(StatusCodes.FORBIDDEN).json({
       msg: "ERROR: must be instructor",
@@ -203,7 +202,6 @@ export const isCourseInstructorParams = async (req, res, next) => {
       },
     },
   });
-  console.log(course)
   if (course.instructors.length === 0) {
     return res.status(StatusCodes.FORBIDDEN).json({
       msg: "ERROR: must be instructor",
@@ -410,8 +408,28 @@ export const isUTC0 = async (req, res, next) => {
   debug("getting date");
   const {date} = req.body;
   let dateObj = spacetime(date);
-  let dateHours = dateObj.hour()
-  if (dateHours.toNativeDate() == 0) {
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  const checkDate = new Date();
+  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+    debug("UTC hour is 23");
+    next();
+  } else {
+    debug("UTC hour is not 23");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "UTC hour is not 23" });
+  }
+};
+
+export const isUTCTwo = async (req, res, next) => {
+  debug("getting dates");
+  const {begDate, endDate} = req.body;
+  let dateObj = spacetime(begDate);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let newDateObj = spacetime(endDate);
+  let newDateHours = newDateObj.toNativeDate().getUTCHours();
+  const checkDate = new Date();
+  if (dateHours == checkDate.getTimezoneOffset() / 60 && newDateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 0");
     next();
   } else {
@@ -419,17 +437,18 @@ export const isUTC0 = async (req, res, next) => {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "UTC hour is not 0" });
-  }
+  };
 };
 
-export const isUTCTwo = async (req, res, next) => {
+export const isUTCTwoNewDate = async (req, res, next) => {
   debug("getting dates");
   const {date, newDate} = req.body;
   let dateObj = spacetime(date);
-  let dateHours = dateObj.hour();
+  let dateHours = dateObj.toNativeDate().getUTCHours();
   let newDateObj = spacetime(newDate);
-  let newDateHours = newDateObj.hour();
-  if (dateHours.toNativeDate() == 0 && newDateHours.toNativeDate() == 0) {
+  let newDateHours = newDateObj.toNativeDate().getUTCHours();
+  const checkDate = new Date();
+  if (dateHours == checkDate.getTimezoneOffset() / 60 && newDateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 0");
     next();
   } else {

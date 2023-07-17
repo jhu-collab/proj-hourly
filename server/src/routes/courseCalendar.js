@@ -93,7 +93,7 @@ router.post(
   validator.isCourseInstructor,
   validator.isEventInFuture,
   validator.NewDateNotOldDate,
-  validator.isUTCTwo,
+  validator.isUTCTwoNewDate,
   controller.editEvent
 )
 
