@@ -2,11 +2,8 @@ import express from "express";
 import * as express_validator from "express-validator";
 import * as accountValidator from "../util/accountValidator.js";
 import * as courseValidator from "../util/courseValidator.js";
-import * as timeValidator from "../util/timeValidator.js";
-import * as dateValidator from "../util/dateValidator.js";
 import { checkToken } from "../util/middleware.js";
 import { factory } from "../util/debug.js";
-import router from "./officeHours.js";
 import * as validator from "../util/courseTokenValidator.js"
 import * as controller from "../controllers/courseTokenController.js"
 
@@ -57,7 +54,7 @@ router.post(
     },
     body("title", "Please indicate what the title should be changed to.").notEmpty(),
     body("description", "Please indicate what the description should be changed to.").notEmpty(),
-    body("tokenLimit", "Please indicate the new token limit.").isInt(),
+    body("tokenLimit", "Please indicate the new token limit.").notEmpty().isInt(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
@@ -155,6 +152,8 @@ router.delete(
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
     courseValidator.isCourseStaffOrInstructor,
-    validator.isCourseToken,
+    //validator.isCourseToken,
     controller.deleteAll
 )
+
+export default router;

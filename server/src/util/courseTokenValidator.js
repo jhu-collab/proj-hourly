@@ -1,6 +1,9 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
+import validate from "../util/checkValidation.js";
+
+const debug = factory(import.meta.url);
 
 export const isCourseUsingTokens = async (req, res, next) => {
     const courseId = parseInt(req.params.courseId, 10);
@@ -51,13 +54,17 @@ export const tokenLimitReached = async (req, res, next) => {
             id: courseTokenId
         },
     });
-    const issueToken = await prisma.issueToken.findUnique({
+    const issueToken = await prisma.issueToken.findFirst({
         where: {
             accountId: studentId,
             courseTokenId
         }
     });
-    if (issueToken.datesUsed.length >= courseToken.tokenLimit) {
+    const dates = issueToken.datesUsed;
+    if (dates === null) {
+        next()
+    }
+    if (dates.length >= courseToken.tokenLimit) {
         return res
             .status(StatusCodes.BAD_REQUEST)
             .json({ msg: "Student has used all their tokens" });

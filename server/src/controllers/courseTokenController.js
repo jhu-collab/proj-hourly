@@ -7,6 +7,9 @@ import { computeDiff, handleUTCDateChange } from "../util/helpers.js";
 import { weekday } from "../util/officeHourValidator.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
+import validate from "../util/checkValidation.js";
+
+const debug = factory(import.meta.url);
 
 export const optIn = async (req, res) => {
     if (validate(req, res)) {
@@ -46,7 +49,9 @@ export const createToken = async (req, res) => {
             title: title,
             description: description,
             course: {
-                connect: courseId
+                connect: {
+                    id: courseId
+                }
             },
             tokenLimit: tokenLimit,
         }
@@ -87,10 +92,16 @@ export const usedToken = async (req, res) => {
     const { date } = req.body;
     const dateObj = spacetime(date);
 
-    const updateIssueToken = await prisma.issueToken.update({
+    const issueToken = await prisma.issueToken.findFirst({
         where: {
             accountId: studentId,
             courseTokenId
+        }
+    })
+
+    const updateIssueToken = await prisma.issueToken.update({
+        where: {
+            id: issueToken.id
         },
         data: {
             datesUsed: {
@@ -107,17 +118,18 @@ export const undoUsedToken = async (req, res) => {
     const { date } = req.body;
     const dateObj = spacetime(date);
 
-    const issueToken = await prisma.issueToken.findUnique({
+    const issueToken = await prisma.issueToken.findFirst({
         where: {
             accountId: studentId,
             courseTokenId
         }
     })
-    const updatedDatesUsed = issueToken.datesUsed.filter(dateTime => !dateTime.isEqual(dateObj.toNativeDate()));
+    const updatedDatesUsed = issueToken.datesUsed.filter(
+        dateTime => !new Date(dateTime).toISOString().startsWith(dateObj.format('iso').slice(0, 10))
+      );
     const updateIssueToken = await prisma.issueToken.update({
         where: {
-            accountId: studentId,
-            courseTokenId
+            id: issueToken.id
         },
         data: {
             datesUsed: updatedDatesUsed
@@ -137,7 +149,7 @@ export const getRemainingTokens = async (req, res) => {
             id: courseTokenId
         },
     });
-    const issueToken = await prisma.issueToken.findUnique({
+    const issueToken = await prisma.issueToken.findFirst({
         where: {
             accountId: id,
             courseTokenId
@@ -157,7 +169,7 @@ export const getUsedTokens = async (req, res) => {
     const courseTokenId = parseInt(req.params.courseTokenId, 10);
     const id = req.id; 
 
-    const issueToken = await prisma.issueToken.findUnique({
+    const issueToken = await prisma.issueToken.findFirst({
         where: {
             accountId: id,
             courseTokenId
@@ -191,9 +203,20 @@ export const deleteAll = async (req, res) => {
         return res;
     }
     const courseId = parseInt(req.params.courseId, 10);
+    const courseTokenId = [];
+    const courseTokens = await prisma.courseToken.findMany({
+        where: {
+            courseId: courseId
+        }
+    })
+    for (let courseToken of courseTokens) {
+        courseTokenId.push(courseToken.id)
+    }
     const issueToken = await prisma.issueToken.deleteMany({
         where: {
-            courseTokenId
+            courseTokenId: {
+                in: courseTokenId
+            }
         }
     });
     const courseToken = await prisma.courseToken.deleteMany({
