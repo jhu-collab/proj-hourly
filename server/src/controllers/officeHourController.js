@@ -917,6 +917,7 @@ export const editLocationRecurringDay = async(req, res) => {
   const { officeHourId, location, isRemote, date } = req.body;
   const dateObj = spacetime(date);
   const dateToEnd = spacetime(date);
+  debug("Finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -930,21 +931,8 @@ export const editLocationRecurringDay = async(req, res) => {
       account: true,
     },
   });
-
-  // /////*
-  // const { officeHourId } = req.body;
-  // const dateToEnd = spacetime(req.body.date);
-  // debug("finding registrations...");
-  // const registrations = await prisma.registration.findMany({
-  //   where: {
-  //     officeHourId: officeHourId,
-  //     isCancelled: false,
-  //     date: {
-  //       gte: dateToEnd.toNativeDate(),
-  //     },
-  //   },
-  // });
-  // /////
+  debug("Registrations found...");
+  debug("Finding office hour...")
   const officeHour = await prisma.officeHour.findUnique({
     where: {
       id: officeHourId,
@@ -954,8 +942,8 @@ export const editLocationRecurringDay = async(req, res) => {
       hosts: true,
     },
   });
-  debug("office hour is found");
-
+  debug("Office hour is found...");
+  debug("Updating office hour...")
   const officeHourUpdate = await prisma.officeHour.update({
     where: {
       id: officeHourId,
@@ -964,11 +952,12 @@ export const editLocationRecurringDay = async(req, res) => {
       isCancelledOn: [...officeHour.isCancelledOn, dateObj.toNativeDate()],
     }
   });
+  debug("Office hour updated...")
   const endDate = officeHour.endDate;
   const newEndDate = new Date(date);
   newEndDate.setHours(endDate.getHours());
   newEndDate.setMinutes(endDate.getMinutes());
-
+  debug("Creating new office hour...")
   const newOfficeHour = await prisma.officeHour.create({
     data: {
       startDate: new Date(date),
@@ -984,6 +973,7 @@ export const editLocationRecurringDay = async(req, res) => {
       isRemote
     },
   });
+  debug("Office hour created...")
   let hostArr = [];
   debug("connecting hosts...");
   officeHour.hosts.forEach((account) => {
@@ -1009,10 +999,13 @@ export const editLocationRecurringDay = async(req, res) => {
       officeHour: newOfficeHour
     },
   });
-
+  debug("Office hour updated...")
+  debug("Senfing emails that location has been changed...")
   sendEmailForEachRegistrationWhenLocationChanged(registrations, newOfficeHour)
-
+  debug("Emails sent...")
+  debug("Generating calendar...")
   const calendar = await generateCalendar(officeHour.course.id);
+  debug("Calendar generated...")
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
@@ -1022,6 +1015,7 @@ export const editLocationSingleDay = async(req, res) => {
   }
   const { officeHourId, location, isRemote } = req.body;
   const dateToEnd = spacetime(req.body.date);
+  debug("Finding registrations...");
   const registrations = await prisma.registration.findMany({
     where: {
       officeHourId: officeHourId,
@@ -1035,7 +1029,8 @@ export const editLocationSingleDay = async(req, res) => {
       account: true,
     },
   });
-  
+  debug("Found registrations...");
+  debug("Updating office hour...");
   const officeHour = await prisma.officeHour.update( {
     where: {
       id: officeHourId
@@ -1048,8 +1043,13 @@ export const editLocationSingleDay = async(req, res) => {
       course: true
     }
   });
-  sendEmailForEachRegistrationWhenLocationChanged(registrations, officeHour)
+  debug("Office hour updated...");
+  debug("Sending emails for location change...");
+  sendEmailForEachRegistrationWhenLocationChanged(registrations, officeHour);
+  debug("Sent emails for location change...");
+  debug("Generating calendar...");
   const calendar = await generateCalendar(officeHour.course.id);
+  debug("Calendar generated...");
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 
