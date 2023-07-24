@@ -31,12 +31,12 @@ export const create = async (req, res) => {
   });
   indices.sort();
   const calendarEvents = [];
-  console.log(beg.toNativeDate());
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
     let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date: beg.toNativeDate()};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    i++;
     if (diff <= 0) {
       diff += 7;
     };
@@ -246,6 +246,7 @@ export const addRecurringCourseEvent = async (req, res) => {
     let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date:beg.toNativeDate()};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    i++;
     if (diff <= 0) {
       diff += 7;
     };
