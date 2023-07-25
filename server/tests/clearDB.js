@@ -5,6 +5,8 @@ const debug = require("debug");
 export async function setup() {
   debug.disable();
   console.log("Database Cleared!");
+  await prisma.issueToken.deleteMany();
+  await prisma.courseToken.deleteMany();
   await prisma.registration.deleteMany();
   await prisma.topic.deleteMany();
   await prisma.officeHour.deleteMany();

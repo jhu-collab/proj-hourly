@@ -104,6 +104,7 @@ router.get(
         next();
     },
     accountValidator.isAccountValidHeader,
+    courseValidator.isCourseIdParams,
     accountValidator.isAccountStudent,
     courseValidator.isCourseIdParams,
     courseValidator.isInCourseFromHeader,
@@ -120,6 +121,7 @@ router.get(
         next();
     },
     accountValidator.isAccountValidHeader,
+    courseValidator.isCourseIdParams,
     accountValidator.isAccountStudent,
     courseValidator.isCourseIdParams,
     courseValidator.isInCourseFromHeader,
@@ -152,7 +154,6 @@ router.delete(
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
     courseValidator.isCourseStaffOrInstructor,
-    //validator.isCourseToken,
     controller.deleteAll
 )
 
