@@ -47,10 +47,12 @@ model Course {
   officeHourOptions  OfficeHourTimeOptions[] @relation("isCourseTimeOption")
   topics             Topic[]
   iCalJson           Json?
+  iCalJsonCalEvent   Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
   CourseToken        CourseToken[]
   usesTokens         Boolean                 @default(false)
+  calendarEvents     CalendarEvent[]
 }
 
 model OfficeHourTimeOptions {
@@ -134,4 +136,16 @@ model IssueToken {
   accountId              Int
   CourseToken            CourseToken           @relation(fields: [courseTokenId], references: [id])
   courseTokenId          Int
+}
+model CalendarEvent {
+  course         Course   @relation(fields: [courseId], references: [id])
+  courseId       Int
+  date           DateTime @db.Date()
+  agendaDescrip  String   @default("")
+  additionalInfo String?
+  isCancelled    Boolean  @default(false)
+  isRemote       Boolean  @default(false)
+  location       String
+
+  @@unique([courseId, date])
 }

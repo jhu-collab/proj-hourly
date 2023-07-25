@@ -14,6 +14,7 @@ import useMutationCancelRegistration from "../../hooks/useMutationCancelRegistra
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
+import useMutationChangeNoShowStatus from "../../hooks/useMutationChangeNoShowStatus";
 
 /**
  * Represents a single Registration card.
@@ -24,13 +25,15 @@ import useStoreToken from "../../hooks/useStoreToken";
  * @returns a single Registration component.
  */
 function Registration({ registration, type }) {
-  const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
-    registration.id || -1
-  );
+  // cancel and no-show will never be options as the same time
+  const { mutate, isLoading: isLoadingMutate } = type === 0 ? 
+    useMutationCancelRegistration(registration.id || -1) : 
+    useMutationChangeNoShowStatus(registration.id || -1);
 
   const courseType = useStoreLayout((state) => state.courseType);
   const token = useStoreToken((state) => state.token);
   let isHost = false;
+  const isNoShow = registration.isNoShow;
 
   const { id } = decodeToken(token);
 
@@ -38,9 +41,15 @@ function Registration({ registration, type }) {
     isHost = true;
   }
 
-  const onClick = () => {
+  const onCancelClick = () => {
     confirmDialog("Do you really want to cancel this registration?", () =>
       mutate()
+    );
+  };
+
+  const onNoShowClick = () => {
+    confirmDialog("Do you really want to change this registration's no-show status?", () =>
+    mutate()
     );
   };
 
@@ -56,13 +65,13 @@ function Registration({ registration, type }) {
         >
           {/* Date and Time */}
           <Stack direction="row" spacing={5}>
-            <Typography fontWeight={600}>
+            <Typography fontWeight={600} color={isNoShow ? "error.main" : "text.primary"}>
               {DateTime.fromISO(
                 registration.date.substring(0, 10) +
                   registration.startTime.substring(10)
               ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
             </Typography>
-            <Typography fontWeight={600}>
+            <Typography fontWeight={600} color={isNoShow ? "error.main" : "text.primary"}>
               {DateTime.fromISO(registration.startTime).toLocaleString(
                 DateTime.TIME_SIMPLE
               )}{" "}
@@ -84,7 +93,7 @@ function Registration({ registration, type }) {
               </Typography>
             )}
             {(courseType === "Instructor" || courseType === "Staff") && (
-              <Typography>
+              <Typography color={isNoShow ? "error.main" : "text.primary"}>
                 Student:{" "}
                 <strong>
                   {registration.account.firstName}{" "}
@@ -126,6 +135,20 @@ function Registration({ registration, type }) {
               <Typography marginBottom={4}>{registration.question}</Typography>
             </>
           )}
+          {type === 2 && 
+            (isHost || courseType === "Instructor") && (
+              <>
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={onNoShowClick}
+                >
+                  {isNoShow ? "Mark as Present" : "Mark as No-Show"}
+                </Button>
+                <ConfirmPopup />
+              </>
+            )}
           {type === 0 &&
             (isHost ||
               courseType === "Student" ||
@@ -135,7 +158,7 @@ function Registration({ registration, type }) {
                   variant="contained"
                   size="large"
                   fullWidth
-                  onClick={onClick}
+                  onClick={onCancelClick}
                 >
                   Cancel
                 </Button>

@@ -265,7 +265,6 @@ export const getAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ accounts });
 };
 
-/* c8 ignore start */
 export const promoteToAdmin = async (req, res) => {
   debug("promoting to admin...");
   const id = parseInt(req.params.id, 10);
@@ -280,4 +279,3 @@ export const promoteToAdmin = async (req, res) => {
   debug("promoted to admin...");
   return res.status(StatusCodes.ACCEPTED).json(account);
 };
-/* c8 ignore end */
