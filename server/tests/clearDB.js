@@ -13,9 +13,17 @@ export async function setup() {
   await prisma.officeHourTimeOptions.deleteMany();
   await prisma.course.deleteMany();
   await prisma.account.deleteMany();
-};
+}
 
 export async function teardown() {
   debug.enable();
+  await prisma.issueToken.deleteMany();
+  await prisma.courseToken.deleteMany();
+  await prisma.registration.deleteMany();
+  await prisma.topic.deleteMany();
+  await prisma.officeHour.deleteMany();
+  await prisma.officeHourTimeOptions.deleteMany();
+  await prisma.course.deleteMany();
+  await prisma.account.deleteMany();
   await generateFakeData();
 }

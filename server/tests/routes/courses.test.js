@@ -266,6 +266,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const { student, staff, instructor } = JSON.parse(response.text);
+      console.log(student);
       expect(student.length).toBe(1);
       expect(staff.length).toBe(0);
       expect(instructor.length).toBe(0);
