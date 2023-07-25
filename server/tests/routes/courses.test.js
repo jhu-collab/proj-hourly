@@ -1386,7 +1386,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes);
       expect(response.status).toBe(400);
     });
-    it("Return 409 when option is not for course", async () => {
+    it("Return 403 when option is not for course", async () => {
       const attributes = {
         length: 15,
         title: "title",
@@ -1395,7 +1395,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1/update`)
         .set("Authorization", "bearer " + users[2].token)
         .send(attributes);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
     it("Return 202 when time option is updated", async () => {
       const attributes = {
@@ -1469,7 +1469,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(timeOption.duration).toBe(timeOptions.duration);
       expect(timeOption.courseId).toBe(timeOptions.courseId);
     });
-    it("Return 403 when it is the only time option remaining", async () => {
+    it("Return 400 when it is the only time option remaining", async () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
         where: {
           duration: 10,
@@ -1480,7 +1480,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
         )
         .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
   });
 
