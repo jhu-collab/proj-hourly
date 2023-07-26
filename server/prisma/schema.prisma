@@ -53,6 +53,8 @@ model Course {
   CourseToken        CourseToken[]
   usesTokens         Boolean                 @default(false)
   calendarEvents     CalendarEvent[]
+  isPaused           Boolean                 @default(false)
+  isArchived           Boolean               @default(false)
 }
 
 model OfficeHourTimeOptions {

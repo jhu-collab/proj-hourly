@@ -33,6 +33,29 @@ export const sendEmail = async (req) => {
 
 export default sendEmail;
 
+// export const sendEmailForEachRegistrationWhenCancelledBatch = async (registrations) => {
+//   debug("sendEmailForEachRegistrationWhenCancelledBatch called!");
+//   const emailPromises = registrations.map(async (registration) => {
+//     const account = await prisma.Account.findFirst({
+//       where: {
+//         id: registration.accountId,
+//       },
+//     });
+//     const text = `The office hours that you have registered for on ${registration.date} has been cancelled`;
+//     const cancellationNotification = (email) => {
+//       return {
+//         email: email,
+//         subject: `Office Hour Cancelled!`,
+//         text,
+//         html: "<p> " + text + " </p>",
+//       };
+//     };
+//     await sendEmail(cancellationNotification(account.email));
+//   });
+//   await Promise.all(emailPromises);
+//   debug("sendEmailForEachRegistrationWhenCancelled done!");
+// };
+
 export const sendEmailForEachRegistrationWhenCancelled = (registrations) => {
   debug("sendEmailForEachRegistrationWhenCancelled called!");
   registrations.forEach(async (registration) => {

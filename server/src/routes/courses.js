@@ -46,6 +46,7 @@ router.post(
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,
+  validator.isCourseArchivedCourseCode,
   controller.register
 );
 
@@ -66,6 +67,7 @@ router.delete(
   },
   validator.isCourseIdUrlValid,
   accountValidator.isAccountStudent,
+  validator.isCourseArchived,
   controller.leaveCourse
 );
 
@@ -78,6 +80,7 @@ router.delete(
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
+  validator.isCourseArchived,
   controller.removeStaff
 );
 
@@ -90,6 +93,7 @@ router.delete(
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStudent,
+  validator.isCourseArchived,
   controller.removeStudent
 );
 
@@ -155,6 +159,7 @@ router.post(
   validator.isCourseId,
   accountValidator.isAccountInstructorBody,
   validator.isNotDuplicateTopic,
+  validator.isCourseArchived,
   controller.createTopic
 );
 
@@ -172,6 +177,7 @@ router.post(
   accountValidator.isAccountInstructorBody,
   validator.doesTopicIdExist,
   validator.isNotDuplicateTopic,
+  validator.isCourseArchived,
   controller.editTopic
 );
 
@@ -184,6 +190,7 @@ router.delete(
   },
   accountValidator.isAccountValidHeader,
   validator.isAccountInstructorForTopic,
+  validator.isCourseArchivedTopicId,
   controller.deleteTopic
 );
 
@@ -256,6 +263,7 @@ router.delete(
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
+  validator.isCourseArchived,
   controller.deleteCourse
 );
 
@@ -272,6 +280,7 @@ router.post(
   validator.isCourseIdParams,
   validator.isLengthMultipleOf5,
   accountValidator.isAccountInstructor,
+  validator.isCourseArchived,
   controller.createTimeLength
 );
 
@@ -304,6 +313,7 @@ router.post(
   //validator.doesTimeLengthExist,
   validator.isLengthMultipleOf5,
   validator.isTimeLengthForCourse,
+  validator.isCourseArchived,
   controller.editTimeLength
 );
 
@@ -320,6 +330,7 @@ router.delete(
   validator.doesTimeLengthExist,
   validator.isTimeLengthForCourse,
   validator.isNotOnlyTimeLengthForCourse,
+  validator.isCourseArchived,
   controller.deleteTimeLength
 );
 
@@ -342,6 +353,7 @@ router.post(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForPromotionTo,
+  validator.isCourseArchived,
   controller.promote
 );
 
@@ -364,6 +376,7 @@ router.post(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForDemotionTo,
+  validator.isCourseArchived,
   controller.demote
 );
 
@@ -396,6 +409,7 @@ router.post(
   accountValidator.isAccountInstructor,
   validator.startAndEndArePositive,
   validator.startIsGreaterThanEnd,
+  validator.isCourseArchived,
   controller.updateRegistrationConstraints
 );
 
@@ -421,6 +435,30 @@ router.get(
   validator.isValidFilterForRole,
   validator.isValidFilterValue,
   controller.getRegistrationWithFilter
-)
+);
+
+router.post(
+  "/:courseId/pauseCourse",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.pauseCourse
+);
+
+router.post(
+  "/:courseId/archiveCourse",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.archiveCourse
+);
 
 export default router;
