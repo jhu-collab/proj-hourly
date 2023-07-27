@@ -1317,6 +1317,7 @@ export const pauseCourse = async(req, res) => {
     }
   });
   debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
 };
 
 export const archiveCourse = async(req, res) => {
@@ -1334,8 +1335,9 @@ export const archiveCourse = async(req, res) => {
       id: courseId
     },
     data: {
-      isArchived: !course.isPaused
+      isArchived: !course.isArchived
     }
   });
   debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
 };
