@@ -13,6 +13,9 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreToken from "../../../hooks/useStoreToken";
 import { decodeToken } from "react-jwt";
 import CourseEventDetails from "./CourseEventDetails";
+import CourseEventEditAction from "./CourseEventEditAction";
+import CourseEventDeleteAction from "./CourseEventDeleteAction";
+import CourseEventEditLocationAction from "./CourseEventEditLocationAction";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -59,9 +62,12 @@ function EventPopover() {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            {(isHost || isInstructor) && <EditAction />}
-            {(isHost || isInstructor) && <DeleteAction />}
-            {(isHost || isInstructor) && <EditLocation />}
+            {(allDay && isInstructor) && <CourseEventEditAction />}
+            {(allDay && isInstructor) && <CourseEventDeleteAction />}
+            {(allDay && isInstructor) && <CourseEventEditLocationAction />}
+            {(!allDay && (isHost || isInstructor)) && <EditAction />}
+            {(!allDay && (isHost || isInstructor)) && <DeleteAction />}
+            {(!allDay && (isHost || isInstructor)) && <EditLocation />}
             <IconButton
               sx={{ fontSize: "20px" }}
               onClick={() => setAnchorEl(null)}
