@@ -12,6 +12,7 @@ import useStoreLayout from "../../../hooks/useStoreLayout";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreToken from "../../../hooks/useStoreToken";
 import { decodeToken } from "react-jwt";
+import CourseEventDetails from "./CourseEventDetails";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -26,10 +27,13 @@ function EventPopover() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
+  const allDay = useStoreEvent((state) => state.allDay);
+
   const isInstructor = courseType === "Instructor";
   const isHost = hosts.some((host) => host.id === id);
 
   return (
+    <>
     <Popover
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
@@ -50,7 +54,8 @@ function EventPopover() {
         sx={{ padding: 2, pr: 1 }}
       >
         <Grid item xs={8} sx={{ mt: 0.5 }}>
-          <EventDetails />
+          {allDay && <CourseEventDetails />}
+          {!allDay && <EventDetails />}
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
@@ -66,8 +71,9 @@ function EventPopover() {
           </Stack>
         </Grid>
       </Grid>
-      {courseType === "Student" && <StudentDetails />}
+      {(!allDay && courseType === "Student") && <StudentDetails />}
     </Popover>
+    </>
   );
 }
 
