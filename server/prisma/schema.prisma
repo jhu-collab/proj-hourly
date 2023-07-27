@@ -118,7 +118,7 @@ model CalendarEvent {
   course         Course   @relation(fields: [courseId], references: [id])
   courseId       Int
   date           DateTime // @db.Date()
-  agendaDescrip  String   @default("")
+  title          String   @default("")
   additionalInfo String?
   isCancelled    Boolean  @default(false)
   isRemote       Boolean  @default(false)
