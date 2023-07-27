@@ -3,7 +3,8 @@ import nodemailer from "nodemailer";
 export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST, // hostname
   secureConnection: false, // TLS requires secureConnection to be false
-  port: 587, // port for secure SMTP
+  // port: 587, // port for secure SMTP
+  port: 465,
   tls: {
     ciphers: "SSLv3",
   },

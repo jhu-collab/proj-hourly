@@ -12,6 +12,7 @@ import {
 } from "../util/notificationUtil.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
+import { createHash } from "crypto";
 
 const debug = factory(import.meta.url);
 
@@ -372,10 +373,31 @@ export const register = async (req, res) => {
     "The Hourly Team\n\n" +
     donotreply;
 
+  const uid = createHash('sha256', process.env.JWT_SECRET).update((registration.id).toString()).digest('hex');
+  const content = 'BEGIN:VCALENDAR\r\n'
+  +'PRODID:-//Hourly\r\n'
+  +'VERSION:2.0\r\n'
+  +'METHOD:REQUEST\r\n'
+  +'BEGIN:VEVENT\r\n'
+  +'DTSTAMP:'+today+'\r\n'
+  +'DTSTART:'+emailStartTime+'\r\n'
+  +'DTEND:'+emailEndTime+'\r\n'
+  +'SUMMARY:'+subject+'\r\n'
+  +'UID:'+ uid +'\r\n'
+  +'LOCATION:'+location+'\r\n'
+  +'ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN='+userEmail+';X-NUM-GUESTS=0:mailto:'+userEmail+'\r\n'
+  +'ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN='+officeHour.hosts[0].email+';X-NUM-GUESTS=0:mailto:'+officeHour.hosts[0].email+'\r\n'
+  +'SEQUENCE:0\r\n'
+  +'STATUS:CONFIRMED\r\n'
+  +'END:VEVENT\r\n'
+  +'END:VCALENDAR\r\n';
+
   let emailReq = {
     email: userEmail,
     subject: subject,
     text: emailBody,
+    html: "alimadooei",
+    content: content,
   };
   debug("sending email to student...");
   sendEmail(emailReq);

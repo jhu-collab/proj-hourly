@@ -1,4 +1,3 @@
-import { NOT_ACCEPTABLE } from "http-status-codes";
 import nodemailer from "nodemailer";
 import prisma from "../../prisma/client.js";
 import { factory } from "./debug.js";
@@ -18,7 +17,15 @@ export const sendEmail = async (req) => {
     subject: req.subject, // Subject line
     text: req.text, // plaintext body
     html: req.html, // html body
+    icalEvent: {
+      filename: "invitation.ics",
+      method: 'request',
+      content: req.content
+    },
   };
+
+  console.log(mailOptions)
+
 
   // send mail with defined transport object
   debug("sending mail...");

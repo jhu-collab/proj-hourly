@@ -868,9 +868,9 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   debug("got registration");
   const startTimeObj = spacetime(registration.startTime);
-  const dateObj = spacetime(registration.date);
-  dateObj.hour(startTimeObj.hour());
-  dateObj.minute(startTimeObj.minute());
+  let dateObj = spacetime(registration.date);
+  dateObj = dateObj.add(startTimeObj.hour() + 1, "hour")
+  dateObj = dateObj.minute(startTimeObj.minute());
   if (dateObj.isAfter(spacetime.now())) {
     debug("registration is in future");
     next();
