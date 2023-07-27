@@ -52,7 +52,6 @@ function Calendar() {
 
   const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
   const { isLoading: isOfficeHoursLoading, error: officeHoursError, data: officeHoursData } = useQueryOfficeHours();
@@ -76,7 +75,8 @@ function Calendar() {
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
       hosts: info.event.extendedProps.hosts,
-      isRemote: info.event.extendedProps.isRemote
+      isRemote: info.event.extendedProps.isRemote,
+      allDay: info.event.allDay,
     });
   };
 
@@ -150,7 +150,6 @@ function Calendar() {
     }
 
     if (Array.isArray(courseEventsData?.calendarEvents) && courseEventsData && courseEventsData.calendarEvents && courseEventsData.calendarEvents.length !== 0) {
-      //data.concat(chosenData(courseEventsData));
       data = data.concat(courseEventsData.calendarEvents);
       console.log(data);
     }
@@ -208,7 +207,6 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={true}
-              /*events={Array.isArray(data?.calendar) ? chosenData(data) : []}*/
               events={allChosenData()}
               select={handleSelect}
               slotDuration="0:30:00"
@@ -235,7 +233,7 @@ function Calendar() {
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
-      {isOfficeHoursLoading && <Loader />}
+      {(isOfficeHoursLoading || isCourseEventsLoading) && <Loader />}
     </>
   );
 }
