@@ -25,7 +25,7 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
-  IssueToken        IssueToken[]   
+  IssueToken        IssueToken[]
 }
 
 enum Role {
@@ -119,29 +119,30 @@ model Topic {
 
 model CourseToken {
   //relations to the course
-  id                     Int                   @id @default(autoincrement())
-  course                 Course                @relation(fields: [courseId], references:[id])
-  title                  String
-  description            String                @default("")
-  courseId               Int
-  tokenLimit             Int
-  IssueToken             IssueToken[] 
+  id          Int          @id @default(autoincrement())
+  course      Course       @relation(fields: [courseId], references: [id])
+  title       String
+  description String       @default("")
+  courseId    Int
+  tokenLimit  Int
+  IssueToken  IssueToken[]
 }
 
 model IssueToken {
   //relation to student
-  id                     Int                   @id @default(autoincrement())
-  datesUsed              DateTime[]
-  account                Account               @relation(fields: [accountId], references: [id])
-  accountId              Int
-  CourseToken            CourseToken           @relation(fields: [courseTokenId], references: [id])
-  courseTokenId          Int
+  id            Int         @id @default(autoincrement())
+  datesUsed     DateTime[]
+  account       Account     @relation(fields: [accountId], references: [id])
+  accountId     Int
+  CourseToken   CourseToken @relation(fields: [courseTokenId], references: [id])
+  courseTokenId Int
 }
+
 model CalendarEvent {
   course         Course   @relation(fields: [courseId], references: [id])
   courseId       Int
   date           DateTime @db.Date()
-  agendaDescrip  String   @default("")
+  title          String   @default("")
   additionalInfo String?
   isCancelled    Boolean  @default(false)
   isRemote       Boolean  @default(false)
