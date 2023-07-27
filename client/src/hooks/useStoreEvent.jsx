@@ -10,8 +10,10 @@ export const useStoreEvent = create((set) => ({
   id: null,
   recurring: false,
   hosts: [],
+  allDay: false,
   setEvent: (event) =>
-    set({
+    { console.log(event);
+      set({
       title: event.title || "",
       start: event.start || null,
       end: event.end || null,
@@ -19,7 +21,8 @@ export const useStoreEvent = create((set) => ({
       id: event.id || null,
       recurring: event.recurring || false,
       hosts: event.hosts || [],
-    }),
+      allDay: event.allDay || false,
+    })},
 
   days: "",
   setDays: (days) =>
