@@ -1,59 +1,25 @@
+import { createEventSchema } from "../../../utils/validators";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Form from "../../../components/form-ui/Form";
+import FormInputText from "../../../components/form-ui/FormInputText";
+import Loader from "../../../components/Loader";
 import { DateTime } from "luxon";
-import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import { useState } from "react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-
-const BUTTONS = [
-  {
-    id: "0",
-    label: "Mon",
-    value: "Monday",
-  },
-  {
-    id: "1",
-    label: "Tue",
-    value: "Tuesday",
-  },
-  {
-    id: "2",
-    label: "Wed",
-    value: "Wednesday",
-  },
-  {
-    id: "3",
-    label: "Thu",
-    value: "Thursday",
-  },
-  {
-    id: "4",
-    label: "Fri",
-    value: "Friday",
-  },
-  {
-    id: "5",
-    label: "Sat",
-    value: "Saturday",
-  },
-  {
-    id: "6",
-    label: "Sun",
-    value: "Sunday",
-  },
-];
 
 /**
  * Component that represents the form that is used to edit a course event.
  * @returns A component representing the Edit Course Event form.
  */
 function EditCourseEventForm() {
-  const title = useStoreEvent((state) => state.title); 
+  const title = useStoreEvent((state) => state.title);
   const date = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
-  const additionalResources = useStoreEvent((state) => state.location);
+  const resources = useStoreEvent((state) => state.location);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -65,7 +31,7 @@ function EditCourseEventForm() {
     resolver: yupResolver(createEventSchema), // TODO: UPDATE THIS
   });
 
-  const { mutate, isLoading } = useMutationEditEvent(recurringEvent); // TODO: UPDATE THIS
+  //const { mutate, isLoading } = useMutationEditEvent(recurringEvent); // TODO: UPDATE THIS
 
   // TODO: UPDATE THIS
   const onSubmit = (data) => {
@@ -81,32 +47,35 @@ function EditCourseEventForm() {
     end.setHours(endTime[0]);
     end.setMinutes(endTime[1]);
 
-    recurringEvent
+    /*recurringEvent
       ? mutate({
           startDate: start.toISOString(),
           endDate: end.toISOString(),
           location: data.location,
           daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate((editType === "all" ? oldEndDate : start), {
-            zone: "utc",
-          }).toFormat("MM-dd-yyyy"),
+          endDateOldOfficeHour: DateTime.fromJSDate(
+            editType === "all" ? oldEndDate : start,
+            {
+              zone: "utc",
+            }
+          ).toFormat("MM-dd-yyyy"),
           editAfterDate: true,
         })
       : mutate({
           startDate: start.toISOString(),
           endDate: end.toISOString(),
           location: data.location,
-        });
+        });*/
   };
 
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" alignItems="center" spacing={3}>
-          <FormInputText 
-            name="title" 
-            control={control} 
-            label="Agenda Description" 
+          <FormInputText
+            name="title"
+            control={control}
+            label="Agenda Description"
           />
           <FormInputText
             name="date"
@@ -115,11 +84,7 @@ function EditCourseEventForm() {
             type="date"
             InputLabelProps={{ shrink: true }}
           />
-          <FormInputText 
-            name="location" 
-            control={control} 
-            label="Location" 
-          />
+          <FormInputText name="location" control={control} label="Location" />
           <FormInputText
             name="resources"
             control={control}
@@ -130,14 +95,14 @@ function EditCourseEventForm() {
           <Button
             type="submit"
             variant="contained"
-            disabled={isLoading}
+            /*disabled={isLoading}*/ // TODO
             fullWidth
           >
             Update
           </Button>
         </Stack>
       </Form>
-      {isLoading && <Loader />}
+      // TODO: ADD IS LOADING & LOADER BACK IN
     </>
   );
 }
