@@ -398,12 +398,11 @@ const generateRRule = (officeHour) => {
 export const generateSingleEventJsonCourse = (calendarEvent, i) => {
   return {
     id: i,
-    title: calendarEvent.agendaDescrip,
+    title: calendarEvent.title,
     start: getIsoDate(calendarEvent.date),
     end: getIsoDate(calendarEvent.date),
     extendedProps: {
       courseId: calendarEvent.course.id,
-      agendaDescrip: calendarEvent.agendaDescrip,
       additionalInfo: calendarEvent.additionalInfo,
       isCancelled: calendarEvent.isCancelled,
       isRemote: calendarEvent.isRemote,
