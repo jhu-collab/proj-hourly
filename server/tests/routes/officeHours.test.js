@@ -172,6 +172,18 @@ async function setup() {
     },
   });
 
+  await prisma.officeHourTimeOptions.create({
+    data: {
+      course: {
+        connect: {
+          id: course.id,
+        },
+      },
+      duration: 10,
+      title: "test option",
+    },
+  });
+
   // Create topics
   await prisma.topic.createMany({
     data: [
@@ -238,6 +250,12 @@ async function setup() {
   // Create registrations
   const regEndTime = new Date(startDate);
   regEndTime.setMinutes(10);
+  const timeOption = await prisma.officeHourTimeOptions.findFirst({
+    where: {
+      courseId: course.id,
+      duration: 10,
+    },
+  });
   const registration = await prisma.registration.create({
     data: {
       startTime: startDate,
@@ -245,6 +263,11 @@ async function setup() {
       date: startDate,
       officeHour: { connect: { id: officeHour.id } },
       account: { connect: { id: students[0].id } },
+      officeHourTimeOptions: {
+        connect: {
+          id: timeOption.id,
+        },
+      },
     },
   });
 
@@ -333,6 +356,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       recurringEvent: true,
       timeInterval: 10,
       location: "zoom",
+      remote: true,
     };
 
     beforeAll(async () => {
@@ -371,7 +395,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/create`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text);
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
       updateIds("officeHours", [id]);
@@ -644,6 +667,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let students = [];
     let officeHour = {};
     let topics = [];
+    let timeOption = {};
     let baseAttributes = {
       startTime: "12:40:00",
       endTime: "12:50:00",
@@ -660,11 +684,19 @@ describe(`Test endpoint ${endpoint}`, () => {
         .split(" ")[0]
         .split("/");
 
+      timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 10,
+          courseId: officeHour.courseId,
+        },
+      });
+
       baseAttributes = {
         ...baseAttributes,
         officeHourId: officeHour.id,
         TopicIds: topics.map((topic) => topic.id),
         date: mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",", ""),
+        timeOptionId: timeOption.id,
       };
     });
 
@@ -1003,7 +1035,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       staff = params.staff;
       course = params.course;
       const date = new Date(officeHour.startDate);
-      date.setDate(date.getDate() + 9); // should cancel 2 office hours
+      date.setDate(date.getDate() + 14); // should cancel 2 office hours
       const dateString = date
         .toLocaleDateString("en-US", { hour12: false })
         .replaceAll("/", "-");
@@ -1037,7 +1069,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token)
         .set("id", staff[0].id);
-      console.log(response.text);
       expect(response.status).toBe(202);
       const id = response.body.officeHourUpdate.id;
       const officeHour = await prisma.officeHour.findUniqueOrThrow({

@@ -22,12 +22,14 @@ export const sendEmail = async (req) => {
 
   // send mail with defined transport object
   debug("sending mail...");
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return "stop";
-    }
-  });
+  if (!process.env.test) {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return "stop";
+      }
+    });
+  }
   debug("sendEmail done!");
 };
 
