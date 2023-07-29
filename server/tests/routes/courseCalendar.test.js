@@ -341,6 +341,21 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
+    it("Return 201 when isCancelled is true", async () => {
+      const attributes = { ...baseAttributes, isCancelled: true };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(201);
+      const id = response.body.calendarEvent.id;
+      updateIds("calendarEvents", [id]);
+      const calendarEvent = await prisma.calendarEvent.findUniqueOrThrow({
+        where: { id },
+      });
+      expect(calendarEvent).toBeDefined();
+    });
+
     it("Return 201 when daysOfWeek is a singleton", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: ["Monday"] };
       const response = await request
@@ -368,6 +383,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let instructor = {};
     let courses = {};
     let calendarEvents = [];
+    let baseAttributes = {};
 
     beforeAll(async () => {
       const params = await setup();
@@ -460,6 +476,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let instructor = {};
     let courses = {};
     let calendarEvents = [];
+    let baseAttributes = {};
 
     beforeAll(async () => {
       const params = await setup();
@@ -549,6 +566,160 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   describe(`Test POST: ${endpoint}/edit`, async () => {
+    let students = [];
+    let instructor = {};
+    let course = {};
+    let calendarEvent = {};
+
+    let baseAttributes = {
+      title: "title",
+      additionalInfo: "description",
+      isCancelled: false,
+      isRemote: true,
+      location: "zoom",
+    };
+
+    beforeAll(async () => {
+      const params = await setup();
+      students = params.students;
+      instructor = params.instructor;
+      course = params.course;
+      calendarEvent = params.calendarEvents;
+
+      const newDate = new Date(calendarEvent.date);
+      newDate.setDay(newDate.getDay() + 1);
+      baseAttributes = {
+        ...baseAttributes,
+        newDate: newDate,
+        date: calendarEvent.date,
+      };
+    });
+
+    afterAll(async() => {
+      await teardown();
+    });
+
+    it("Return 201 with all valid parameters", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      console.log(response.text);
+      expect(response.status).toBe(201);
+      const id = response.body.calendarEvent.id;
+      updateIds("calendarEvents", [id]);
+      const calendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { id } });
+      expect(calendarEvent).toBeDefined();
+    });
+
+    it("Return 400 when course ID is invalid and nonzero", async () => {
+      const attributes = { ...baseAttributes, courseId: courses.id * 2 };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when course ID is 0", async () => {
+      const attributes = { ...baseAttributes, courseId: 0 };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when Course ID < 0", async () => {
+      const attributes = { ...baseAttributes, courseId: -courses.id };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date now", async () => {
+      const attributes = {
+        ...baseAttributes,
+        date: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date in the past", async () => {
+      const attributes = {
+        ...baseAttributes,
+        begDate: "2002-11-05T04:00:00.000",
+      };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when newDate is a date now", async () => {
+      const attributes = {
+        ...baseAttributes,
+        newDate: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when newDate is a date in the past", async () => {
+      const attributes = {
+        ...baseAttributes,
+        newDate: "2002-11-05T04:00:00.000",
+      };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when title is empty", async () => {
+      const attributes = { ...baseAttributes, title: "", };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when location is empty", async () => {
+      const attributes = { ...baseAttributes, location: "", };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 201 when isCancelled is true", async () => {
+      const attributes = { ...baseAttributes, isCancelled: true };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(201);
+      const id = response.body.calendarEvent.id;
+      updateIds("calendarEvents", [id]);
+      const calendarEvent = await prisma.calendarEvent.findUniqueOrThrow({
+        where: { id },
+      });
+      expect(calendarEvent).toBeDefined();
+    });
   });
 
   describe(`Test GET: ${endpoint}/getAllEventsForCourse/:courseId`, async () => {
