@@ -19,7 +19,7 @@ export const weekday = [
 ];
 
 export const create = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, title, additionalInfo, location } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, title, additionalInfo, location, isRemote } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
   let beg = spacetime(begDate);
@@ -31,7 +31,7 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate()};
+    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate(), isRemote: isRemote};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
@@ -217,7 +217,7 @@ export const addCourseEvent = async (req, res) => {
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, title, additionalInfo, location } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, title, additionalInfo, location, isRemote } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
   let beg = spacetime(begDate);
@@ -229,7 +229,7 @@ export const addRecurringCourseEvent = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate()};
+    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate(), isRemote: isRemote};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
