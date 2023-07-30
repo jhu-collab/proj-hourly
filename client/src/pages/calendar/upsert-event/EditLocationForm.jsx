@@ -10,6 +10,13 @@ import FormToggleButtonGroup from "../../../components/form-ui/FormToggleButtonG
 import { DateTime } from "luxon";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+
+import IconButton from "@mui/material/IconButton";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import ConfirmPopup, { confirmDialog } from "../../../components/ConfirmPopup";
+import { useState } from "react";
 import useMutationEditLocation from "../../../hooks/useMutationEditLocation";
 
 const BUTTONS = [
@@ -55,8 +62,11 @@ const BUTTONS = [
  * @returns A component representing the Edit Event form.
  */
 function EditLocationForm() {
+  const start = useStoreEvent((state) => state.start);
+  const recurring = useStoreEvent((state) => state.recurring);
   const location = useStoreEvent((state) => state.location);
   const isRemote = useStoreEvent((state) => state.isRemote);
+  const [editType, setEditType] = useState("this");
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -66,13 +76,20 @@ function EditLocationForm() {
     resolver: yupResolver(editLocationSchema),
   });
 
-  const { mutate, isLoading } = useMutationEditLocation();
+  const recurringEvent = watch("recurringEvent");
+  const { mutate, isLoading } = useMutationEditLocation(editType);
 
   const onSubmit = (data) => {
+    recurring ?
     mutate({
+        date: start.toISOString(),
         location: data.location,
         isRemote: data.isRemote
-    });
+    })
+    : mutate({
+        location: data.location,
+        isRemote: data.isRemote
+    })
   };
 
   return (
@@ -81,7 +98,27 @@ function EditLocationForm() {
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
           </Stack>
+          {recurring && (
+            <RadioGroup
+              value={editType}
+              onChange={(event) => setEditType(event.target.value)}
+            >
+              <Stack direction="row" sx={{ width: "100%" }} spacing={1}>
+              <FormControlLabel
+                value="this"
+                control={<Radio />}
+                label="This event only"
+              />
+              <FormControlLabel
+                value="all"
+                control={<Radio />}
+                label="All events"
+              />
+              </Stack>
+            </RadioGroup>
+          )}
           <FormInputText name="location" control={control} label="Location" />
+          
           <FormCheckbox
               name="isRemote"
               control = {control}
@@ -97,7 +134,7 @@ function EditLocationForm() {
           </Button>
         </Stack>
       </Form>
-      {isLoading && <Loader />}
+      <Loader />
     </>
   );
 }

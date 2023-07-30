@@ -22,12 +22,14 @@ export const sendEmail = async (req) => {
 
   // send mail with defined transport object
   debug("sending mail...");
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return "stop";
-    }
-  });
+  if (!process.env.test) {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return "stop";
+      }
+    });
+  }
   debug("sendEmail done!");
 };
 
@@ -90,3 +92,29 @@ export const sendEmailForEachRegistrationWhenChanged = (
   });
   debug("sendEmailForEachRegistrationWhenChanged done!");
 };
+
+export const sendEmailForEachRegistrationWhenLocationChanged = 
+(registrations, editedOfficeHour) => {
+  const accounts = [];
+  registrations.forEach((registration) => {
+    accounts.push(registration.account);
+  });
+  accounts.forEach(async (account) => {
+    const text = `The office hours starting on ${new Date(
+      editedOfficeHour.startDate
+    ).toLocaleString()} to ${new Date(
+      editedOfficeHour.endDate
+    ).toLocaleString()} will now take place at ${
+      editedOfficeHour.location
+    }.`;
+    const changeNotification = (email) => {
+      return {
+        email: email,
+        subject: `Office Hour Location Changed!`,
+        text,
+        html: "<p> " + text + " </p>",
+      };
+    };
+    await sendEmail(changeNotification(account.email));
+  });
+}

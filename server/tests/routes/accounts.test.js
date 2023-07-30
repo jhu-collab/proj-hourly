@@ -258,11 +258,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it("Return 403 when providing a user token", async () => {
+    it("Return 401 when providing a user token", async () => {
       const response = await request
         .post(`${endpoint}/${user.id}`)
         .set("Authorization", "Bearer " + user.token);
-      expect(response.statusCode).toBe(403);
+      expect(response.statusCode).toBe(401);
     });
   });
 });
