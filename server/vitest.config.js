@@ -1,11 +1,12 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ["text", "json", "html"],
     },
     globalSetup: "./tests/clearDB.js",
-    testTimeout: 2000
+    testTimeout: 2000,
+    threads: false,
   },
-})
+});

@@ -847,7 +847,7 @@ export const checkOptionalDateBody = async (req, res, next) => {
       const newEnd = spacetime(date).goto("America/New_York");
       newEnd.hour(end.hour());
       newEnd.minute(end.minute());
-      newEnd.setUTCSeconds(0);
+      newEnd.second(0);
       req.body.date = newEnd.toNativeDate().toISOString();
       next();
     }
@@ -1128,7 +1128,7 @@ export const isRegistrationInPast = async (req, res, next) => {
   dateObj.setUTCHours(registrationEnd.getUTCHours());
   dateObj.setUTCMinutes(registrationEnd.getUTCMinutes());
   debug("checking if registration has ended");
-  if (dateObj >= (current)) {
+  if (dateObj >= current) {
     debug("registration has not ended");
     return res
       .status(StatusCodes.CONFLICT)
@@ -1139,7 +1139,7 @@ export const isRegistrationInPast = async (req, res, next) => {
   }
 };
 
-export const isRegistrationId = async (req, res, next) =>  {
+export const isRegistrationId = async (req, res, next) => {
   debug("checking if registration exists");
   const { registrationId } = req.body;
   debug("getting registration...");
@@ -1159,7 +1159,7 @@ export const isRegistrationId = async (req, res, next) =>  {
   next();
 };
 
-export const isNotCancelled = async (req, res, next) =>  {
+export const isNotCancelled = async (req, res, next) => {
   debug("checking if registration is cancelled");
   const { registrationId } = req.body;
   debug("getting registration...");
@@ -1169,7 +1169,7 @@ export const isNotCancelled = async (req, res, next) =>  {
     },
   });
   debug("checking if registration is not cancelled");
-  if(registration.isCancelled || registration.isCancelledStaff) {
+  if (registration.isCancelled || registration.isCancelledStaff) {
     debug("registration has been cancelled");
     return res
       .status(StatusCodes.CONFLICT)
@@ -1186,8 +1186,8 @@ export const isRegistrationHostOrInstructor = async (req, res, next) => {
   const registration = await prisma.registration.findUnique({
     where: {
       id: registrationId,
-    }
-  })
+    },
+  });
   const officeHour = await prisma.officeHour.findFirst({
     where: {
       id: registration.officeHourId,

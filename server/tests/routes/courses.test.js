@@ -1473,6 +1473,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
         where: {
           duration: 10,
+          courseId: courses[0].id,
         },
       });
       const response = await request
@@ -1869,6 +1870,12 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: courses[0].id,
         },
       });
+      const timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          courseId: courses[0].id,
+          duration: 10,
+        },
+      });
       await prisma.registration.create({
         data: {
           startTime: new Date(1970, 0, 1, 17),
@@ -1887,6 +1894,11 @@ describe(`Test endpoint ${endpoint}`, () => {
           topics: {
             connect: {
               id: topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: timeOption.id,
             },
           },
         },
@@ -2048,6 +2060,12 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: courses[0].id,
         },
       });
+      const timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          courseId: courses[0].id,
+          duration: 10,
+        },
+      });
       await prisma.registration.create({
         data: {
           startTime: new Date(1970, 0, 1, 17),
@@ -2066,6 +2084,11 @@ describe(`Test endpoint ${endpoint}`, () => {
           topics: {
             connect: {
               id: topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: timeOption.id,
             },
           },
         },

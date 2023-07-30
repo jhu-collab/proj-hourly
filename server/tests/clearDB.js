@@ -25,5 +25,5 @@ export async function teardown() {
   await prisma.officeHourTimeOptions.deleteMany();
   await prisma.course.deleteMany();
   await prisma.account.deleteMany();
-  await generateFakeData();
+  //await generateFakeData();
 }
