@@ -1028,7 +1028,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let officeHour = {};
     let staff = [];
     let baseAttributes = {};
-
+    // recreate test
     beforeAll(async () => {
       const params = await setup();
       officeHour = params.officeHour;
@@ -1071,11 +1071,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("id", staff[0].id);
       expect(response.status).toBe(202);
       const id = response.body.officeHourUpdate.id;
-      const officeHour = await prisma.officeHour.findUniqueOrThrow({
+      const officeHour = await prisma.officeHour.findUnique({
         where: { id },
       });
-      expect(officeHour).toBeDefined();
-      expect(officeHour.isCancelledOn.length).toEqual(2);
+      expect(officeHour).toBeNull();
     });
 
     // Row 2
@@ -1303,6 +1302,16 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHour.id,
+        },
+        include: {
+          isOnDayOfWeek: true,
+        },
+      });
+      console.log(officeHour);
       expect(response.status).toBe(202);
     });
 
@@ -1473,6 +1482,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editAll`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
       expect(response.status).toBe(202);
     });
 

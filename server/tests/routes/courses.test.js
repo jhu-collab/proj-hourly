@@ -1473,6 +1473,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
         where: {
           duration: 10,
+          courseId: courses[0].id,
         },
       });
       const response = await request
@@ -1480,7 +1481,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
         )
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.text);
       expect(response.status).toBe(400);
     });
   });
