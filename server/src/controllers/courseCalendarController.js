@@ -19,7 +19,7 @@ export const weekday = [
 ];
 
 export const create = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, location } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
   end = end.add(23 - end.toNativeDate().getUTCHours(), "hours");
@@ -33,7 +33,7 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date: beg.toNativeDate()};
+    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date: beg.toNativeDate(), isRemote: isRemote};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     i++;
@@ -119,7 +119,7 @@ export const editEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { date, agendaDescrip, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
+  const { date, title, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
   let newDateObj = spacetime(newDate);
   newDateObj = newDateObj.add(23 - newDateObj.toNativeDate().getUTCHours(), "hours");
   let dateObj = spacetime(date);
@@ -134,7 +134,7 @@ export const editEvent = async (req, res) => {
     },
     data: {
       date: newDateObj.toNativeDate(),
-      agendaDescrip: agendaDescrip,
+      title: title,
       additionalInfo: additionalInfo,
       isCancelled: isCancelled,
       isRemote: isRemote,
@@ -207,7 +207,7 @@ export const addCourseEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const {courseId, date, agendaDescrip, additionalInfo, location, isRemote } = req.body;
+  const {courseId, date, title, additionalInfo, location, isRemote } = req.body;
   let dateObj = spacetime(date);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("adding new calendar event")
@@ -215,7 +215,7 @@ export const addCourseEvent = async (req, res) => {
     data: {
       courseId,
       date: dateObj.toNativeDate(),
-      agendaDescrip: agendaDescrip,
+      title: title,
       additionalInfo: additionalInfo,
       location: location,
       isCancelled: false,
@@ -229,7 +229,7 @@ export const addCourseEvent = async (req, res) => {
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, location } = req.body;
+  const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
   debug("creating calendar events for course...");
   let end = spacetime(endDate);
   end = end.hour(23 - end.toNativeDate().getUTCHours());
@@ -243,7 +243,7 @@ export const addRecurringCourseEvent = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, agendaDescrip: "", additionalInfo: "", location: location, date:beg.toNativeDate()};
+    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate(), isRemote: isRemote};
     calendarEvents.push(courseInfo);
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     i++;
@@ -264,7 +264,7 @@ export const editAllEvents = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { agendaDescrip, additionalInfo, location, isCancelled, isRemote, courseId } = req.body;
+  const { title, additionalInfo, location, isCancelled, isRemote, courseId } = req.body;
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.updateMany({
     where: {
@@ -273,7 +273,7 @@ export const editAllEvents = async (req, res) => {
       },
     },
     data: {
-      agendaDescrip: agendaDescrip,
+      title: title,
       additionalInfo: additionalInfo,
       isCancelled: isCancelled,
       isRemote: isRemote,
