@@ -249,6 +249,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // expect(calendarEvent).toBeDefined();
     });
 
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$create`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$create`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = { ...baseAttributes, courseId: course.id * 2 };
       const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -376,6 +386,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // expect(calendarEvent).toBeDefined();
     });
 
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = { ...baseAttributes, courseId: course.id * 2 };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -450,6 +470,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // updateIds("calendarEvents", [id]);
       // const calendarEvent = await prisma.calendarEvent.findUniqueOrThrow({ where: { id } });
       // expect(calendarEvent).toBeDefined();
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -528,6 +558,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // updateIds("calendarEvents", [id]);
       // const calendarEvent = await prisma.calendarEvent.findUniqueOrThrow({ where: { id } });
       // expect(calendarEvent).toBeDefined();
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$edit`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$edit`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -639,6 +679,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // expect(calendarEvent).toBeDefined();
     });
 
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$createEvent`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = { ...baseAttributes, courseId: course.id * 2 };
       const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -748,6 +798,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       // expect(calendarEvent).toBeDefined();
     });
 
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = { ...baseAttributes, courseId: course.id * 2 };
       const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -838,9 +898,78 @@ describe(`Test endpoint ${endpoint}`, () => {
   });
 
   describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId`, async () => {
+    let instructor = {};
+    let course = {};
+    let calendarEvents = [];
+
+    beforeAll(async () => {
+      const params = await setup();
+      instructor = params.instructor;
+      course = params.course;
+      calendarEvents = params.calendarEvents;
+    });
+
+    afterAll(async() => {
+      await teardown();
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}`);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}`).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 when course events are deleted", async () => {
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(202);
+      // don't really understand how this test works... but should be tested for, right?
+    });
   });
 
   describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId/date/:date`, async () => {
+    let instructor = {};
+    let course = {};
+    let calendarEvents = [];
+
+    beforeAll(async () => {
+      const params = await setup();
+      instructor = params.instructor;
+      course = params.course;
+      calendarEvents = params.calendarEvents;
+    });
+
+    afterAll(async() => {
+      await teardown();
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 when course event is deleted", async () => {
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
   });
 
   describe(`Test GET: ${endpoint}/getAllEventsForCourse/:courseId`, async () => {
