@@ -77,6 +77,7 @@ function Calendar() {
       hosts: info.event.extendedProps.hosts,
       isRemote: info.event.extendedProps.isRemote,
       allDay: info.event.allDay,
+      resources: info.event.extendedProps.additionalInfo,
     });
   };
 
