@@ -1,6 +1,5 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { DateTime } from "luxon";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 
 /**
@@ -11,13 +10,14 @@ function CourseEventDetails() {
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
+  const resources = useStoreEvent((state) => state.resources);
 
   const date = start.toDateString();
   
   return (
     <Stack direction="column" spacing={1}>
-      {/*<Typography variant="h4">{title}</Typography>*/}
-      <Typography variant="h4">Agenda Description Goes Here</Typography>
+      <Typography variant="h4">{title}</Typography>
+      {/*<Typography variant="h4">Agenda Description Goes Here</Typography>*/}
       <Typography>
         <strong>Date: </strong>
         {date}
@@ -28,7 +28,7 @@ function CourseEventDetails() {
       </Typography>
       <Typography>
         <strong>Additional Resources: </strong>
-        {location}
+        {resources}
       </Typography>
     </Stack>
   );
