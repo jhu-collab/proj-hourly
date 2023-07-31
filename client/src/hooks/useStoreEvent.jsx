@@ -11,6 +11,7 @@ export const useStoreEvent = create((set) => ({
   recurring: false,
   hosts: [],
   allDay: false,
+  resources: "",
   setEvent: (event) =>
     { console.log(event);
       set({
@@ -22,6 +23,7 @@ export const useStoreEvent = create((set) => ({
       recurring: event.recurring || false,
       hosts: event.hosts || [],
       allDay: event.allDay || false,
+      resources: event.resources || "",
     })},
 
   days: "",
