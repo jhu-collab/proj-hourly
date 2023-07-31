@@ -44,7 +44,6 @@ function EditCourseEventForm() {
   // TODO: UPDATE THIS
   const onSubmit = (data) => {
     const newDate = new Date(data.newDate);
-    console.log(date.toISOString().split('T')[0]);
 
     mutate({
       courseId: course.id,
