@@ -103,7 +103,7 @@ function CourseCalendarEventForm() {
     mutate({
       courseId: course.id,
       /*recurringEvent: data.recurringEvent,*/
-      begDate: start.toISOString()/*.split('T')[0]*/,
+      begDate: start.toISOString(),
       endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
