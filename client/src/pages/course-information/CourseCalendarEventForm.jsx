@@ -76,8 +76,8 @@ function CourseCalendarEventForm() {
 
   const course = useStoreCourse((state) => state.course);
   const start = useStoreEvent((state) => state.start);
-  const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
+  const resources = useStoreEvent((state) => state.resources);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -85,6 +85,7 @@ function CourseCalendarEventForm() {
       startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
       endDate: "",
       location: location || "",
+      resources: resources || "",
     },
     resolver: yupResolver(createCourseEventSchema),
   });
@@ -106,6 +107,9 @@ function CourseCalendarEventForm() {
       endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
+      additionalInfo: data.resources,
+      title: "Lecture Event- Change This", // TODO: CHANGE THIS
+      isRemote: false, // TODO: CHANGE THIS
     });
   };
 
