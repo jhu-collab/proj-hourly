@@ -7,65 +7,55 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import Loader from "../../../components/Loader";
 import { DateTime } from "luxon";
-import useMutationEditEvent from "../../../hooks/useMutationEditEvent";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import { useState } from "react";
+import useStoreToken from "../../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
+import useStoreCourse from "../../../hooks/useStoreCourse";
+import useMutationEditCourseCalendarEvent from "../../../hooks/useMutationEditCourseCalendarEvent";
 
 /**
  * Component that represents the form that is used to edit a course event.
  * @returns A component representing the Edit Course Event form.
  */
 function EditCourseEventForm() {
+  
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+  const course = useStoreCourse((state) => state.course);
+  
   const title = useStoreEvent((state) => state.title);
   const date = useStoreEvent((state) => state.start);
+  const newDate = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
-  const resources = useStoreEvent((state) => state.location);
+  const resources = useStoreEvent((state) => state.resources);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       title: title || "",
-      date: date ? DateTime.fromJSDate(date).toFormat("yyyy-MM-dd") : "",
+      newDate: newDate ? DateTime.fromJSDate(newDate).toFormat("yyyy-MM-dd") : "",
       location: location || "",
-      additionalResources: resources || "",
+      resources: resources || "",
     },
-    resolver: yupResolver(createEventSchema), // TODO: UPDATE THIS
+    /*resolver: yupResolver(createEventSchema),*/ // TODO: UPDATE THIS
   });
 
-  //const { mutate, isLoading } = useMutationEditEvent(recurringEvent); // TODO: UPDATE THIS
+  const { mutate, isLoading } = useMutationEditCourseCalendarEvent(false);
 
   // TODO: UPDATE THIS
   const onSubmit = (data) => {
-    const start = new Date(data.startDate);
-    const startTime = data.startTime.split(":");
-    start.setHours(startTime[0]);
-    start.setMinutes(startTime[1]);
-    let end = new Date(data.startDate);
-    if (data.endDate !== null) {
-      end = new Date(data.endDate);
-    }
-    const endTime = data.endTime.split(":");
-    end.setHours(endTime[0]);
-    end.setMinutes(endTime[1]);
+    const newDate = new Date(data.newDate);
+    console.log(date.toISOString().split('T')[0]);
 
-    /*recurringEvent
-      ? mutate({
-          startDate: start.toISOString(),
-          endDate: end.toISOString(),
-          location: data.location,
-          daysOfWeek: data.days,
-          endDateOldOfficeHour: DateTime.fromJSDate(
-            editType === "all" ? oldEndDate : start,
-            {
-              zone: "utc",
-            }
-          ).toFormat("MM-dd-yyyy"),
-          editAfterDate: true,
-        })
-      : mutate({
-          startDate: start.toISOString(),
-          endDate: end.toISOString(),
-          location: data.location,
-        });*/
+    mutate({
+      courseId: course.id,
+      date: date.toISOString().split('T')[0],
+      newDate: newDate.toISOString(),
+      title: data.title,
+      additionalInfo: data.resources,
+      isCancelled: false,
+      isRemote: false, // TODO
+      location: data.location,
+    });
   };
 
   return (
@@ -78,7 +68,7 @@ function EditCourseEventForm() {
             label="Agenda Description"
           />
           <FormInputText
-            name="date"
+            name="newDate"
             control={control}
             label="Date"
             type="date"
@@ -95,14 +85,14 @@ function EditCourseEventForm() {
           <Button
             type="submit"
             variant="contained"
-            /*disabled={isLoading}*/ // TODO
+            disabled={isLoading}
             fullWidth
           >
             Update
           </Button>
         </Stack>
       </Form>
-      // TODO: ADD IS LOADING & LOADER BACK IN
+      {isLoading && <Loader />}
     </>
   );
 }
