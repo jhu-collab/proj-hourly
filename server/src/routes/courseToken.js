@@ -24,7 +24,6 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     courseValidator.isCourseArchived,
     controller.optIn
 )
@@ -42,7 +41,6 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseUsingTokens,
     courseValidator.isCourseArchived,
     controller.createToken
@@ -60,7 +58,6 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
     courseValidator.isCourseArchived,
     controller.editCourseToken
@@ -77,7 +74,6 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
     validator.tokenLimitReached,
     courseValidator.isCoursePaused,
@@ -96,7 +92,6 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
     courseValidator.isCoursePaused,
     courseValidator.isCourseArchived,
@@ -146,7 +141,6 @@ router.delete(
     },
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
     courseValidator.isCourseArchived,
     controller.deleteSingle
@@ -161,7 +155,6 @@ router.delete(
     },
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     courseValidator.isCourseArchived,
     controller.deleteAll
 )

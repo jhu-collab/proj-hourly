@@ -17,16 +17,21 @@ export const optIn = async (req, res) => {
     }
     const courseId = parseInt(req.params.courseId, 10);
     debug("Updating course to use tokens...");
-    const course = await prisma.course.update({
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    });
+    const courseUpdate = await prisma.course.update({
         where: {
             id: courseId
         },
         data: {
-            usesTokens: true
+            usesTokens: !course.usesTokens
         }
     });
     debug("Updated course to use tokens...");
-    return res.status(StatusCodes.ACCEPTED).json({ course });
+    return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
 }
 
 export const createToken = async (req, res) => {

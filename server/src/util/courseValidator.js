@@ -1077,9 +1077,9 @@ export const isCourseArchivedOfficeHourId = async (req, res, next) => {
   if (course.isArchived === true) {
     return res
     .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: Course is paused" });
+    .json({ msg: "ERROR: Course is archived" });
   } else {
-    debug("Course is not paused.");
+    debug("Course is not archived.");
     next();
   }
 };
@@ -1099,15 +1099,15 @@ export const isCourseArchivedRegistrationId = async (req, res, next) => {
   });
   const course = await prisma.course.findUnique({
     where: {
-      id: officeHour.courseId
+      id: registration.officeHour.courseId
     }
   });
   if (course.isArchived === true) {
     return res
     .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: Course is paused" });
+    .json({ msg: "ERROR: Course is archived" });
   } else {
-    debug("Course is not paused.");
+    debug("Course is not archived.");
     next();
   }
 }
@@ -1130,9 +1130,9 @@ export const isCourseArchivedTopicId = async (req, res, next) => {
   if (course.isArchived === true) {
     return res
     .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: Course is paused" });
+    .json({ msg: "ERROR: Course is archived" });
   } else {
-    debug("Course is not paused.");
+    debug("Course is not archived.");
     next();
   }
 }
@@ -1147,9 +1147,9 @@ export const isCourseArchivedCourseCode = async (req, res, next) => {
   if (course.isArchived === true) {
     return res
     .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: Course is paused" });
+    .json({ msg: "ERROR: Course is archived" });
   } else {
-    debug("Course is not paused.");
+    debug("Course is not archived.");
     next();
   }
 }

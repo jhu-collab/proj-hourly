@@ -63,7 +63,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarYear: 2023,
         courseNumber: "123.456",
         code: "ABCZYX",
-        usesTokens: true,
+        usesTokens: false,
         instructors: {
           connect: {
             id: users[2].id
@@ -85,6 +85,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
   });
+
   describe("HTTP Post request: optIn", () => {
     it("Return 401 when no authorization toke is provided", async () => {
       const response = await request.post(`${endpoint}/${courses[0].id}/optIn`);
@@ -107,12 +108,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/optIn`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
-      const course = await prisma.course.findFirst({
+      const course = await prisma.course.findUnique({
         where: {
           id: courses[0].id
         }
       });
-      expect(courses[0].usesTokens).toBe(true);
+      expect(course.usesTokens).toBe(true);
     });
   });
   describe("HTTP POST request: createToken", () => {
@@ -251,7 +252,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    if ("Return 400 when course token token limit is not integer", async () => {
+    it ("Return 400 when course token token limit is not integer", async () => {
       const attributes = {
         title: "title",
         description: "This is a description",
@@ -263,9 +264,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    if ("Return 201 when course token successfully edited", async () => {
+    it ("Return 202 when course token successfully edited", async () => {
       const attributes = {
-        title: "not title",
+        title: "not a title",
         description: "not a description",
         tokenLimit: 10,
       };
@@ -278,7 +279,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           id: courseTokens[0].id
         }
       })
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(202);
       expect(courseToken.title).toBe("not a title");
       expect(courseToken.description).toBe("not a description");
       expect(courseToken.tokenLimit).toBe(10);
@@ -335,7 +336,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     //     .set("Authorization", "bearer " + users[2].token);
     //   expect(response.status).toBe(400);
     // });
-    if ("Return 201 when course token successfully used", async () => {
+    it ("Return 202 when course token successfully used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString()
       };
@@ -343,16 +344,15 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      const issueToken = await prisma.courseToken.findFirst({
+      const issueToken = await prisma.issueToken.findFirst({
         where: {
           courseTokenId: courseTokens[0].id,
           accountId: users[0].id
         }
       });
-      const date =  new Date(Date.now()).toISOString();
-      expect(response.status).toBe(201);
+      const date = new Date(Date.now()).toISOString();
+      expect(response.status).toBe(202);
       expect(issueToken.datesUsed.length).toBe(1);
-      expect(issueToken.datesUsed[0]).toBe(date);
     });
   });
   describe("HTTP POST request - undo use token", () => {
@@ -406,7 +406,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     //     .set("Authorization", "bearer " + users[2].token);
     //   expect(response.status).toBe(400);
     // });
-    if ("Return 201 when course token successfully removed", async () => {
+    it ("Return 202 when course token successfully removed", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString()
       };
@@ -414,13 +414,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      const issueToken = await prisma.courseToken.findFirst({
+      const issueToken = await prisma.issueToken.findFirst({
         where: {
           courseTokenId: courseTokens[0].id,
           accountId: users[0].id
         }
       });
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(202);
       expect(issueToken.datesUsed.length).toBe(0);
     });
   });
