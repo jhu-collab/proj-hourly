@@ -2114,6 +2114,67 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(JSON.parse(response.text).registrations.length).toBe(1);
     });
   });
+  describe("HTTP POST pause course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/${courses[0].id}/pauseCourse`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const response = await request
+        .post(`${endpoint}/-1/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id
+        }
+      });
+      expect(course.isPaused).toBe(true);
+    });
+  });
+
+  describe("HTTP POST archive course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/${courses[0].id}/archiveCourse`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const response = await request
+        .post(`${endpoint}/-1/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id
+        }
+      });
+      expect(course.isArchived).toBe(true);
+    });
+  });
 
   afterAll(async () => {
     const userIds = users.map((user) => user.id);
