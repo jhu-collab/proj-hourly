@@ -5,7 +5,6 @@ import prisma from "../../prisma/client.js";
 import { weekday } from "../../src/util/courseCalendarValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
-import { create } from "domain";
 
 const request = supertest(app);
 const endpoint = "/api/calendarEvent";
