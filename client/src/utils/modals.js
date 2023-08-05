@@ -8,6 +8,7 @@ import CreateTopic from "../pages/topics/CreateTopic";
 import CreateCourse from "../pages/my-courses/create-course/CreateCourse";
 import JoinCourse from "../pages/my-courses/join-course/JoinCourse";
 import ChangeRole from "../pages/roster/ChangeRole";
+import CreateToken from "../pages/courseTokens/CreateToken";
 
 NiceModal.register("create-course", CreateCourse);
 NiceModal.register("join-course", JoinCourse);
@@ -18,3 +19,4 @@ NiceModal.register("sign-out", SignOutPopup);
 NiceModal.register("change-user-role", ChangeRole);
 NiceModal.register("create-registration-type", CreateRegistrationType);
 NiceModal.register("create-topic", CreateTopic);
+NiceModal.register("create-token", CreateToken);

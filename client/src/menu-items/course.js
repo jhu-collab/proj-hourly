@@ -4,6 +4,7 @@ import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlin
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
 import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
+import DollarOutlined from "@ant-design/icons/DollarOutlined";
 const icons = {
   CalendarOutlined,
   TeamOutlined,
@@ -11,6 +12,7 @@ const icons = {
   InfoCircleOutlined,
   BulbOutlined,
   BarChartOutlined,
+  DollarOutlined,
 };
 
 export const course = (currentCourse, courseType) => {
@@ -49,6 +51,14 @@ export const course = (currentCourse, courseType) => {
       type: "item",
       url: "/topics",
       icon: icons.BulbOutlined,
+      breadcrumbs: false,
+    });
+    children.push({
+      id: "tokens",
+      title: "course tokens",
+      type: "item",
+      url: "/tokens",
+      icon: icons.DollarOutlined,
       breadcrumbs: false,
     });
   }

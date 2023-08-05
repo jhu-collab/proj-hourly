@@ -25,6 +25,9 @@ const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))
 );
 const Topics = Loadable(lazy(() => import("./pages/topics/Topics")));
+const CourseTokens = Loadable(
+  lazy(() => import("./pages/courseTokens/CourseTokens"))
+);
 const Statistics = Loadable(
   lazy(() => import("./pages/statistics/Statistics"))
 );
@@ -43,6 +46,7 @@ function App() {
               <Route path="/" element={<CourseWrapper />}>
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/registrations" element={<Registrations />} />
+                <Route path="/tokens" element={<CourseTokens />} />
                 <Route path="/courseinformation" element={<CourseInfoPage />} />
                 <Route path="" element={<StaffOnlyRoute />}>
                   <Route path="/roster" element={<Roster />} />

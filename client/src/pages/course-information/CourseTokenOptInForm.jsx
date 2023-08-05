@@ -58,7 +58,7 @@ function CourseTokenOptInForm() {
             disabled={isLoading}
             fullWidth
           >
-            Update
+            Submit
           </Button>
         </Stack>
       </Form>
