@@ -125,8 +125,8 @@ export const eventContent = (arg) => {
             borderRadius: "0px 15px 0px 0px",
           }}
         >
-          <Typography fontWeight={400} color="white">
-            {arg.timeText}
+          <Typography fontWeight={400} color="white" /* TODO: UPDATE THIS */>
+            {!arg.event.allDay ? arg.timeText : "Lecture"}
           </Typography>
         </Box>
         <Box

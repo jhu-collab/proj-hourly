@@ -14,6 +14,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 
@@ -51,10 +52,10 @@ function Calendar() {
 
   const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
-  const { isLoading, error, data } = useQueryOfficeHours();
+  const { isLoading: isOfficeHoursLoading, error: officeHoursError, data: officeHoursData } = useQueryOfficeHours();
+  const { isLoading: isCourseEventsLoading, error: courseEventsError, data: courseEventsData } = useQueryCourseEvents(); // TODO: CHANGE THIS
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
@@ -74,7 +75,9 @@ function Calendar() {
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
       hosts: info.event.extendedProps.hosts,
-      isRemote: info.event.extendedProps.isRemote
+      isRemote: info.event.extendedProps.isRemote,
+      allDay: info.event.allDay,
+      resources: info.event.extendedProps.additionalInfo,
     });
   };
 
@@ -138,6 +141,23 @@ function Calendar() {
     }
   }
 
+  const allChosenData = () => {
+    let data = [];
+
+    if (Array.isArray(officeHoursData?.calendar)) {
+      data = data.concat(chosenData(officeHoursData));
+      console.log(chosenData(officeHoursData));
+      console.log(data);
+    }
+
+    if (Array.isArray(courseEventsData?.calendarEvents) && courseEventsData && courseEventsData.calendarEvents && courseEventsData.calendarEvents.length !== 0) {
+      data = data.concat(courseEventsData.calendarEvents);
+      console.log(data);
+    }
+
+    return data;
+  }
+
   return (
     <>
       <Stack
@@ -188,7 +208,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={true}
-              events={Array.isArray(data?.calendar) ? chosenData(data) : []}
+              events={allChosenData()}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{
@@ -200,7 +220,7 @@ function Calendar() {
               slotEventOverlap={false}
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
-              allDaySlot={false}
+              allDaySlot={true}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
               {...(!matchUpSm && { headerToolbar: { 
@@ -214,7 +234,7 @@ function Calendar() {
       </Stack>
       {matchUpSm && <EventPopover />}
       {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
-      {isLoading && <Loader />}
+      {(isOfficeHoursLoading || isCourseEventsLoading) && <Loader />}
     </>
   );
 }

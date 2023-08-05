@@ -6,18 +6,18 @@ import Debug from "debug";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
 
-const debug = new Debug(`hourly:hooks:useQueryOfficeHours.jsx`);
+const debug = new Debug(`hourly:hooks:useQueryCourseEvents.jsx`);
 
-function useQueryOfficeHours() {
-  const queryKey = ["officeHours"];
+function useQueryCourseEvents() {
+  const queryKey = ["courseEvents"];
   const token = useStoreToken((state) => state.token);
   const course = useStoreCourse((state) => state.course);
 
-  const getOfficeHours = async () => {
+  const getCourseEvents = async () => {
     try {
-      debug("Getting office hours for this course from backend.");
+      debug("Getting course calendar events for this course from backend.");
       const res = await axios.get(
-        `${BASE_URL}/api/course/${course.id}/officeHours`,
+        `${BASE_URL}/api/calendarEvent/getAllEventsForCourse/${course.id}`,
         getConfig(token)
       );
       return res.data;
@@ -28,8 +28,8 @@ function useQueryOfficeHours() {
   };
 
   return {
-    ...useQuery(queryKey, getOfficeHours),
+    ...useQuery(queryKey, getCourseEvents),
   };
 }
 
-export default useQueryOfficeHours;
+export default useQueryCourseEvents;
