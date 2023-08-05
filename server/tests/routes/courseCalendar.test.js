@@ -825,7 +825,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 403 when newDate is a date now", async () => {
+    it("Return 400 when newDate is a date now", async () => {
       const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
@@ -841,10 +841,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };      
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
 
-    it("Return 403 when newDate is a date in the past", async () => {
+    it("Return 400 when newDate is a date in the past", async () => {
       let pastDate = new Date();
       pastDate.setMonth(pastDate.getMonth() - 3);
       const date = new Date(calendarEvents[1].start);
@@ -860,7 +860,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };      
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
 
     it("Return 400 when title is empty", async () => {
