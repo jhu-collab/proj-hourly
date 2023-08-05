@@ -404,12 +404,12 @@ export const NewDateNotOldDate = async (req, res, next) => {
   }
 };
 
-export const isUTC0 = async (req, res, next) => {
+export const isUTCDate = async (req, res, next) => {
   debug("getting date");
   const {date} = req.body;
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
-  const checkDate = new Date();
+  let checkDate = new Date(date);
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
@@ -421,40 +421,100 @@ export const isUTC0 = async (req, res, next) => {
   }
 };
 
-export const isUTCTwo = async (req, res, next) => {
-  debug("getting dates");
-  const {begDate, endDate} = req.body;
-  let dateObj = spacetime(begDate);
+export const isUTCNew = async (req, res, next) => {
+  debug("getting date");
+  const {newDate} = req.body;
+  let dateObj = spacetime(newDate);
   let dateHours = dateObj.toNativeDate().getUTCHours();
-  let newDateObj = spacetime(endDate);
-  let newDateHours = newDateObj.toNativeDate().getUTCHours();
-  const checkDate = new Date();
-  if (dateHours == checkDate.getTimezoneOffset() / 60 && newDateHours == checkDate.getTimezoneOffset() / 60) {
-    debug("UTC hour is 0");
+  let checkDate = new Date(newDate);
+  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+    debug("UTC hour is 23");
     next();
   } else {
-    debug("UTC hour is not 0");
+    debug("UTC hour is not 23");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "UTC hour is not 0" });
-  };
+      .json({ msg: "UTC hour is not 23" });
+  }
 };
 
-export const isUTCTwoNewDate = async (req, res, next) => {
-  debug("getting dates");
-  const {date, newDate} = req.body;
-  let dateObj = spacetime(date);
+export const isUTCBeg = async (req, res, next) => {
+  debug("getting date");
+  const {begDate} = req.body;
+  let dateObj = spacetime(begDate);
   let dateHours = dateObj.toNativeDate().getUTCHours();
-  let newDateObj = spacetime(newDate);
-  let newDateHours = newDateObj.toNativeDate().getUTCHours();
-  const checkDate = new Date();
-  if (dateHours == checkDate.getTimezoneOffset() / 60 && newDateHours == checkDate.getTimezoneOffset() / 60) {
-    debug("UTC hour is 0");
+  let checkDate = new Date(begDate);
+  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+    debug("UTC hour is 23");
     next();
   } else {
-    debug("UTC hour is not 0");
+    debug("UTC hour is not 23");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "UTC hour is not 0" });
-  };
+      .json({ msg: "UTC hour is not 23" });
+  }
 };
+
+export const isUTCEnd = async (req, res, next) => {
+  debug("getting date");
+  const {endDate} = req.body;
+  let dateObj = spacetime(endDate);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let checkDate = new Date(endDate);
+  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+    debug("UTC hour is 23");
+    next();
+  } else {
+    debug("UTC hour is not 23");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "UTC hour is not 23" });
+  }
+};
+
+export const newDateInFuture = async (req, res, next) => {
+  const {date, newDate} = req.body;
+  const nowDate = (new Date()).getTime();
+  let dateObj = spacetime(date);
+  let newDateObj = spacetime(newDate);
+  if (dateObj.toNativeDate().getTime() <= nowDate|| newDateObj.toNativeDate().getTime() <= nowDate) {
+    debug("dates are not in the future");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "dates are not in the future" });
+  } else {
+    debug("dates are in the future")
+    next();
+  }
+}
+
+export const begDateInFuture = async (req, res, next) => {
+  const {begDate, endDate} = req.body;
+  const nowDate = (new Date()).getTime();
+  let begDateObj = spacetime(begDate);
+  let endDateObj = spacetime(endDate);
+  if (begDateObj.toNativeDate().getTime() <= nowDate || endDateObj.toNativeDate().getTime() <= nowDate) {
+    debug("dates are not in the future");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "dates are not in the future" });
+  } else {
+    debug("dates are in the future")
+    next();
+  }
+}
+
+export const dateInFuture = async (req, res, next) => {
+  const {date} = req.body;
+  const nowDate = (new Date()).getTime();
+  let dateObj = spacetime(date);
+  if (dateObj.toNativeDate().getTime() <= nowDate) {
+    debug("date is not in the future");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "date is not in the future" });
+  } else {
+    debug("date is in the future")
+    next();
+  }
+}
