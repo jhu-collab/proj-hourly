@@ -9,10 +9,12 @@ const request = supertest(app);
 const endpoint = "/api/course";
 
 describe(`Test endpoint ${endpoint}`, () => {
+  let archivedCourses = [];
   let courses = [];
   let users = [];
   let userInCourse = [];
   let topics = [];
+  let archivedTopics = [];
   beforeAll(async () => {
     // create the users
     await prisma.account.createMany({
@@ -45,6 +47,13 @@ describe(`Test endpoint ${endpoint}`, () => {
           role: Role.Admin,
           userName: "user4",
         },
+        {
+          //student
+          //name: "Test User V",
+          email: "user5@test.io",
+          role: Role.User,
+          userName: "user5",
+        },
       ],
       skipDuplicates: true,
     });
@@ -61,6 +70,47 @@ describe(`Test endpoint ${endpoint}`, () => {
       token: createToken({ user }),
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
+
+    const archivedCourse = await prisma.course.create({
+      data: {
+        title: "hello",
+        semester: "Fall",
+        calendarYear: 2023,
+        courseNumber: "235.631",
+        code: "PALWEL",
+        isArchived: true,
+        instructors: {
+          connect: [
+            { id: users[2].id },
+            { id: users[3].id },
+          ],
+        },
+        students: {
+          connect: {
+            id: users[0].id
+          }
+        },
+        courseStaff: {
+          connect: {
+            id: users[4].id
+          }
+        },
+
+      }
+    })
+    archivedCourses.push(archivedCourse);
+    
+    const topicArchived = await prisma.topic.create({
+      data: {
+        value: "HW9",
+        course: {
+          connect: {
+            id: archivedCourses[0].id,
+          },
+        },
+      },
+    });
+    archivedTopics.push(topicArchived);
   });
 
   describe("HTTP POST request", () => {
@@ -247,6 +297,16 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(409);
     });
+    it("Return 409 when student tries to register for archived course", async () => {
+      const attributes = {
+        code: archivedCourses[0].code,
+      };
+      const response = await request
+        .post(`${endpoint}/signup`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(409);
+    });
   });
 
   describe("HTTP Get request", () => {
@@ -352,6 +412,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Return 409 user tries to leave archived course", async () => {
+      const response = await request
+        .delete(`${endpoint}/leave/${archivedCourses[0].id}`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("HTTP Delete Request - delete course", () => {
@@ -414,6 +480,12 @@ describe(`Test endpoint ${endpoint}`, () => {
           },
         },
       });
+    });
+    it("Return 400 when archived course is deleted", async () => {
+      let response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+        expect(response.status).toBe(400);
     });
   });
 
@@ -478,6 +550,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
+    it("Return 400 when staff of archived course is deleted", async () => {
+      const response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}/removeStaff/${users[4].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("HTTP Delete Request - remove student from course", () => {
@@ -540,6 +618,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
+    });
+    it("Return 400 when student of archived course is deleted", async () => {
+      const response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}/removeStudent/${users[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -791,6 +875,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
     });
+    it("Return 400 when topic for archived course is created", async () => {
+      const attributes = {
+        value: "HW10",
+        courseId: archivedCourses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("HTTP POST request - edit topic", () => {
@@ -918,6 +1013,18 @@ describe(`Test endpoint ${endpoint}`, () => {
       const topic = JSON.parse(response.text);
       expect(topic.value).toBe("Midterms");
       topics[0] = topic;
+    });
+    it("Return 400 when archived course topic is edited", async () => {
+      const attributes = {
+        value: "HW9",
+        courseId: archivedCourses[0].id,
+        topicId: archivedTopics[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/editTopic`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(409);
     });
   });
 
@@ -2180,6 +2287,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     const userIds = users.map((user) => user.id);
     const courseIds = courses.map((course) => course.id);
     const topicIds = topics.map((topic) => topic.id);
+    const courseArchivedIds = archivedCourses.map((course) => course.id);
+    const topicArchivedIds = archivedTopics.map((topic) => topic.id);
+    // const archivedCourseId = archivedCourses[0].id;
+    // const archivedTopicId = archivedTopics[0].id;
     const deleteRegistrations = prisma.registration.deleteMany({
       where: {
         accountId: {
@@ -2231,13 +2342,38 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       },
     });
+    const deleteArchivedTopic = prisma.topic.deleteMany({
+      where: {
+        OR: [
+          {
+            id: {
+              in: topicArchivedIds,
+            },
+          },
+          {
+            courseId: {
+              in: courseArchivedIds,
+            },
+          },
+        ],
+      },
+    });
+    const deleteArchivedCourse = prisma.course.deleteMany({
+      where: {
+        id: {
+          in: courseArchivedIds
+        }
+      }
+    });
+    
     await prisma.$transaction([deleteRegistrations]);
     await prisma.$transaction([deleteOfficeHours]);
     await prisma.$transaction([deleteUsers]);
     await prisma.$transaction([deleteTopics]);
     await prisma.$transaction([deleteTimeOptions]);
     await prisma.$transaction([deleteCourses]);
-
+    await prisma.$transaction([deleteArchivedCourse]);
+    await prisma.$transaction([deleteArchivedTopic]);
     await prisma.$disconnect();
     // Tear down the test database by `yarn docker:down`
   });
