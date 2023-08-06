@@ -16,13 +16,15 @@ export const weekday = [
 
 export const doesEventExist =  async (req, res, next) => {
   debug("checking whether calendar event exists");
-  const {courseId, date} = req.body;
+  let {courseId, date} = req.body;
+  date = new Date(date);
+  date.setUTCHours(23);
   debug("getting calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: date,
       },
     },
   });
@@ -105,13 +107,15 @@ export const doesEventNotExist =  async (req, res, next) => {
 
 export const isEventNotCancelled =  async (req, res, next) => {
   debug("checking whether calendar event exists");
-  const {courseId, date} = req.body;
+  let {courseId, date} = req.body;
+  date = new Date(date);
+  date.setUTCHours(23);
   debug("getting calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: date,
       },
     },
   });
@@ -269,13 +273,15 @@ export const doesNotHaveCourseEvents = async (req, res, next) => {
 export const isEventInFutureByIdParams = async (req, res, next) => {
   debug("checking if event is in future");
   const courseId = parseInt(req.params.courseId, 10);
-  const date = req.params.date;
+  let date = req.params.date;
+  date = new Date(date);
+  date.setUTCHours(23);
   debug("getting course event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: date,
       },
     },
   });
