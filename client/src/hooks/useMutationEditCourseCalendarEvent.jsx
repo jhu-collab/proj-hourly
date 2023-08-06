@@ -57,10 +57,10 @@ function useMutationEditCourseCalendarEvent(recurringEvent) {
   };
 
   const mutation = useMutation(
-    recurringEvent ? editCourseEventAll: editCourseEventOnDate,
+    recurringEvent ? editCourseEventAll : editCourseEventOnDate,
     {
       onSuccess: (data) => {
-        // queryClient.invalidateQueries(["officeHours"]); // TODO?
+        queryClient.invalidateQueries(["courseEvents"]);
         NiceModal.hide("upsert-event");
         matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
