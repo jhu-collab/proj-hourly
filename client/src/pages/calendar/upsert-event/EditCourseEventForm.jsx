@@ -48,7 +48,7 @@ function EditCourseEventForm() {
     mutate({
       courseId: course.id,
       date: date.toISOString().split('T')[0],
-      newDate: newDate.toISOString(),
+      newDate: newDate.toISOString().split('T')[0],
       title: data.title,
       additionalInfo: data.resources,
       isCancelled: false,
