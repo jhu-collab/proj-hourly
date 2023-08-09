@@ -23,7 +23,7 @@ export const doesEventExist =  async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj.setUTCHours(23),
+        date: new Date(dateObj.setUTCHours(23)),
       },
     },
   });
@@ -88,7 +88,7 @@ export const doesEventNotExist =  async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj.setUTCHours(23),
+        date: new Date(dateObj.setUTCHours(23)),
       },
     },
   });
@@ -114,7 +114,7 @@ export const isEventNotCancelled =  async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj.setUTCHours(23),
+        date: new Date(dateObj.setUTCHours(23)),
       },
     },
   });
@@ -279,7 +279,7 @@ export const isEventInFutureByIdParams = async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj.setUTCHours(23),
+        date: new Date(dateObj.setUTCHours(23)),
       },
     },
   });
@@ -305,7 +305,7 @@ export const isEventInFuture = async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj.setUTCHours(23),
+        date: new Date(dateObj.setUTCHours(23)),
       },
     },
   });
@@ -391,7 +391,7 @@ export const NewDateNotOldDate = async (req, res, next) => {
     where: {
       courseId_date: {
         courseId: courseId,
-        date: newDateObj.setUTCHours(23),
+        date: new Date(newDateObj.setUTCHours(23)),
       },
     },
   });
@@ -415,8 +415,9 @@ export const isUTCDate = async (req, res, next) => {
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(date);
-  checkDate.setUTCHours(23)
-  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+  checkDate.setUTCHours(23);
+  const checkDateObj = new Date(checkDate);
+  if (dateHours == checkDateObj.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
   } else {
@@ -434,7 +435,8 @@ export const isUTCNew = async (req, res, next) => {
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(newDate);
   checkDate.setUTCHours(23);
-  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+  const checkDateObj = new Date(checkDate);
+  if (dateHours == checkDateObj.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
   } else {
@@ -452,7 +454,8 @@ export const isUTCBeg = async (req, res, next) => {
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(begDate);
   checkDate.setUTCHours(23);
-  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+  const checkDateObj = new Date(checkDate);
+  if (dateHours == checkDateObj.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
   } else {
@@ -470,7 +473,8 @@ export const isUTCEnd = async (req, res, next) => {
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(endDate);
   checkDate.setUTCHours(23);
-  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+  const checkDateObj = new Date(checkDate);
+  if (dateHours == checkDateObj.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
   } else {
