@@ -19,12 +19,11 @@ export const doesEventExist =  async (req, res, next) => {
   const {courseId, date} = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.setUTCHours(23),
       },
     },
   });
@@ -54,7 +53,7 @@ export const doesEventExistRecurring =  async (req, res, next) => {
   const newDays = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    newDays.push(beg.toNativeDate().setUTCHours(23));
+    newDays.push(beg.toNativeDate());
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
     if (diff <= 0) {
       diff += 7;
@@ -85,12 +84,11 @@ export const doesEventNotExist =  async (req, res, next) => {
   const {courseId, date} = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.setUTCHours(23),
       },
     },
   });
@@ -112,12 +110,11 @@ export const isEventNotCancelled =  async (req, res, next) => {
   const {courseId, date} = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.setUTCHours(23),
       },
     },
   });
@@ -155,7 +152,7 @@ export const doesCourseBeginOnDay = async (req, res, next) => {
   const dateObj = spacetime(begDate);
   let isValid = false;
   daysOfWeek.forEach((dow) => {
-    if((dateObj.toNativeDate().setUTCHours(23).getDay() == weekday.indexOf(dow))) {
+    if((dateObj.toNativeDate().getDay() == weekday.indexOf(dow))) {
       isValid = true;
     }
   });
@@ -277,13 +274,12 @@ export const isEventInFutureByIdParams = async (req, res, next) => {
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
   debug("getting course event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.setUTCHours(23),
       },
     },
   });
@@ -305,12 +301,11 @@ export const isEventInFuture = async (req, res, next) => {
   const { date, courseId } = req.body;
   debug("getting event...");
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: dateObj,
+        date: dateObj.setUTCHours(23),
       },
     },
   });
@@ -390,14 +385,13 @@ export const isInCourse = async (req, res, next) => {
 export const NewDateNotOldDate = async (req, res, next) => {
   const { newDate, courseId, date } = req.body;
   const newDateObj = new Date(newDate);
-  newDateObj.setUTCHours(23);
   const oldDateObj = new Date(date);
-  oldDateObj.setUTCHours(23);
+  oldDateObj;
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: newDateObj,
+        date: newDateObj.setUTCHours(23),
       },
     },
   });
@@ -419,9 +413,9 @@ export const isUTCDate = async (req, res, next) => {
   debug("getting date");
   const {date} = req.body;
   let dateObj = spacetime(date);
-  let dateHours = dateObj.toNativeDate().setUTCHours(23).getUTCHours();
+  let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(date);
-  checkDate.setUTCHours(23);
+  checkDate.setUTCHours(23)
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
@@ -437,7 +431,7 @@ export const isUTCNew = async (req, res, next) => {
   debug("getting date");
   const {newDate} = req.body;
   let dateObj = spacetime(newDate);
-  let dateHours = dateObj.toNativeDate().setUTCHours(23).getUTCHours();
+  let dateHours = dateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(newDate);
   checkDate.setUTCHours(23);
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
@@ -455,8 +449,8 @@ export const isUTCBeg = async (req, res, next) => {
   debug("getting date");
   const {begDate} = req.body;
   let dateObj = spacetime(begDate);
-  let dateHours = dateObj.toNativeDate().setUTCHours(23).getUTCHours();
-  let checkDate = new Date(newDate);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let checkDate = new Date(begDate);
   checkDate.setUTCHours(23);
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
@@ -473,8 +467,8 @@ export const isUTCEnd = async (req, res, next) => {
   debug("getting date");
   const {endDate} = req.body;
   let dateObj = spacetime(endDate);
-  let dateHours = dateObj.toNativeDate().setUTCHours(23).getUTCHours();
-  let checkDate = new Date(newDate);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let checkDate = new Date(endDate);
   checkDate.setUTCHours(23);
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
@@ -492,7 +486,7 @@ export const newDateInFuture = async (req, res, next) => {
   const nowDate = (new Date()).getTime();
   let dateObj = spacetime(date);
   let newDateObj = spacetime(newDate);
-  if (dateObj.toNativeDate().setUTCHours(23).getTime() <= nowDate|| newDateObj.toNativeDate().setUTCHours(23).getTime() <= nowDate) {
+  if (dateObj.toNativeDate().getTime() <= nowDate|| newDateObj.toNativeDate().getTime() <= nowDate) {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.FORBIDDEN)
@@ -508,7 +502,7 @@ export const begDateInFuture = async (req, res, next) => {
   const nowDate = (new Date()).getTime();
   let begDateObj = spacetime(begDate);
   let endDateObj = spacetime(endDate);
-  if (begDateObj.toNativeDate().setUTCHours(23).getTime() <= nowDate || endDateObj.toNativeDate().setUTCHours(23).getTime() <= nowDate) {
+  if (begDateObj.toNativeDate().getTime() <= nowDate || endDateObj.toNativeDate().getTime() <= nowDate) {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.FORBIDDEN)
@@ -523,7 +517,7 @@ export const dateInFuture = async (req, res, next) => {
   const {date} = req.body;
   const nowDate = (new Date()).getTime();
   let dateObj = spacetime(date);
-  if (dateObj.toNativeDate().setUTCHours(23).getTime() <= nowDate) {
+  if (dateObj.toNativeDate().getTime() <= nowDate) {
     debug("date is not in the future");
     return res
       .status(StatusCodes.FORBIDDEN)

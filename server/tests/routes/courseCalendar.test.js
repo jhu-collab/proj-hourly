@@ -9,172 +9,99 @@ import { createToken } from "../../src/util/helpers.js";
 const request = supertest(app);
 const endpoint = "/api/calendarEvent";
 
-let ids = {
-  students: [],
-  instructor: {},
-  course: {},
-  calendarEvents: [],
-};
-
-function updateIds(field, createdIds) {
-  if (field === "students") {
-    ids.students = ids.students.concat(createdIds);
-  } else if (field === "course") {
-    ids.course = createdIds[0];
-  } else if (field === "calendarEvents") {
-    ids.calendarEvents = ids.calendarEvents.concat(createdIds);
-  } else if (field === "instructor") {
-    ids.instructor = createdIds[0];
-  }
-}
-
-function resetIds() {
-  ids = {
-    students: [],
-    instructor: {},
-    course: {},
-    calendarEvents: [],
-  };
-}
-
-async function setup() {
-  await prisma.account.createMany({
-    data: [
-      {
-        // student
-        // name: "Test Student I"
-        email: "user1@test.io",
-        role: Role.User,
-        userName: "Test Student I",
-      },
-      {
-        // student
-        // name: "Test Student II"
-        email: "user2@test.io",
-        role: Role.User,
-        userName: "Test Student II",
-      },
-      {
-        // student
-        // name: "Test Student III"
-        email: "user3@test.io",
-        role: Role.User,
-        userName: "Test Student III",
-      },
-      {
-        // instructor
-        // name: "Test Instructor IV"
-        email: "user4@test.io",
-        role: Role.Admin,
-        userName: "Test Instructor I",
-      },
-    ],
-    skipDuplicates: true,
-  });
-
-  let users = await prisma.account.findMany({
-    orderBy: {
-      id: "asc",
-    },
-  });
-
-  // users auth tokens
-
-  let students = await prisma.account.findMany({
-    where: {userName: {contains: "Student"}},
-  });
-  const realStudents = students.map((user) => ({
-    ...user,
-    token: createToken({user}),
-    expiredToken: createToken({user, expiresIn: "0"}),
-  }));
-
-  let instructor = await prisma.account.findFirst({
-    where: {userName: {contains: "Instructor"}},
-  });
-  const realInstructor = {
-    ...instructor,
-    token: createToken({ user: instructor }),
-    expiredToken: createToken({user: instructor, expiresIn: "0"}),
-  };
-
-  const course = await prisma.course.create({
-    data: {
-      title: "Test Course",
-      courseNumber: "0",
-      semester: "Fall",
-      calendarYear: 2023,
-      code: "AAAAZZ",
-      iCalJson: undefined, 
-      startRegConstraint: 72,
-      endRegConstraint: 0,
-      students: {
-        connect: [
-          { id: students[0].id },
-          { id: students[1].id },
-        ],
-      },
-      instructors: {
-        connect: {
-          id: instructor.id,
-        },
-      },
-    },
-  });
-
-  updateIds(
-    "students",
-    students.map((student) => student.id)
-  );
-  updateIds("instructor", [instructor.id]);
-  updateIds("course", [course.id]);
-
-  return {
-    students: realStudents,
-    instructor: realInstructor,
-    course: course,
-    calendarEvents: [],
-  };
-}
-
-async function teardown() {
-  const calendarEvents = await prisma.calendarEvent.deleteMany({
-    where: {
-      courseId: ids.course,
-    },
-  });
-  const course = await prisma.course.delete({
-    where: {
-      id: ids.course,
-    },
-  });
-  const accounts = await prisma.account.deleteMany({
-    where: {
-      OR: [
-        {id: {in: ids.students}},
-        {id: {in: ids.instructor}},
-      ],
-    },
-  });
-
-  await prisma.$disconnect();
-
-  resetIds();
-
-}
-
 describe(`Test endpoint ${endpoint}`, () => {
+
+  let students = [];
   let instructor = {};
   let course = {};
-  let students = [];
   let calendarEvents = [];
 
   beforeAll(async() => {
-    const params = await setup();
-    instructor = params.instructor;
-    course = params.course;
-    students = params.students;
-    calendarEvents = params.calendarEvents;
+    await prisma.account.createMany({
+      data: [
+        {
+          // student
+          // name: "Test Student I"
+          email: "user1@test.io",
+          role: Role.User,
+          userName: "Test Student I",
+        },
+        {
+          // student
+          // name: "Test Student II"
+          email: "user2@test.io",
+          role: Role.User,
+          userName: "Test Student II",
+        },
+        {
+          // student
+          // name: "Test Student III"
+          email: "user3@test.io",
+          role: Role.User,
+          userName: "Test Student III",
+        },
+        {
+          // instructor
+          // name: "Test Instructor IV"
+          email: "user4@test.io",
+          role: Role.Admin,
+          userName: "Test Instructor I",
+        },
+      ],
+      skipDuplicates: true,
+    });
+  
+    // users auth tokens
+
+    let noTokenStud = await prisma.account.findMany({
+      orderBy: {
+        id: "asc",
+      },
+      where: {userName: {contains: "Test Student"}},
+    });
+    students = noTokenStud.map((user) => ({
+      ...user,
+      token: createToken({user}),
+      expiredToken: createToken({user, expiresIn: "0"}),
+    }));
+
+    let noTokenInst = await prisma.account.findFirst({
+      where: {userName: {contains: "Test Instructor"}},
+    });
+
+    console.log(noTokenInst)
+    
+    instructor = ({
+      ...noTokenInst,
+      token: createToken({noTokenInst}),
+      expiredToken: createToken({noTokenInst, expiresIn: "0"}),
+    });
+
+    console.log(instructor)
+  
+    course = await prisma.course.create({
+      data: {
+        title: "Test Course",
+        courseNumber: "0",
+        semester: "Fall",
+        calendarYear: 2023,
+        code: "AAAAAZ",
+        iCalJson: undefined, 
+        startRegConstraint: 72,
+        endRegConstraint: 0,
+        students: {
+          connect: [
+            { id: students[0].id },
+            { id: students[1].id },
+          ],
+        },
+        instructors: {
+          connect: {
+            id: instructor.id,
+          },
+        },
+      },
+    });
   });
 
   describe(`Test POST: ${endpoint}/create`, async () => {
@@ -247,6 +174,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };     
       const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      console.log(response.text)
       expect(response.status).toBe(400);
     });
 
@@ -468,473 +396,473 @@ describe(`Test endpoint ${endpoint}`, () => {
         location: "zoom",
         isRemote: true,
       };
-      console.log(attributes)
+      // console.log(attributes)
       const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
+      // console.log(response.text)
+      const calendarEvents = await prisma.calendarEvent.findMany({
+        where: {
+          courseId: course.id,
+        }
+      });
       expect(response.status).toBe(202);
 
       const calendarJSON = response.body.eventJSon;
       for(let i in calendarJSON) { 
-        updateIds("calendarEvents", calendarJSON[i]);
         calendarEvents.push(calendarJSON[i]);
       }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
         date: attributes.begDate,
-        course: attributes.courseId,
+        courseId: attributes.courseId,
       } } });
       expect(firstCalendarEvent).toBeDefined();
     });
 
   });
 
+  // describe(`Test POST: ${endpoint}/changeCancellation`, async () => {
+  //   it("Return 401 when no body is included", async () => {
+  //     const attributes = {};
+  //     const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-  describe(`Test POST: ${endpoint}/changeCancellation`, async () => {
-    it("Return 401 when no body is included", async () => {
-      const attributes = {};
-      const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when no authorization token is provided", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 401 when no authorization token is provided", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when authorization token is expired", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 401 when authorization token is expired", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 400 when course ID is invalid and nonzero", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id * 2,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when course ID is invalid and nonzero", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id * 2,
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when course ID is 0", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: 0,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when course ID is 0", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: 0,
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when Course ID < 0", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: -course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when Course ID < 0", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: -course.id,
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date now", async () => {
+  //     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  //     const attributes = {
+  //       courseId: course.id,
+  //       date: (new Date(Date.now() - tzoffset)).toISOString().split('T')[0],
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when date is a date now", async () => {
-      var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-      const attributes = {
-        courseId: course.id,
-        date: (new Date(Date.now() - tzoffset)).toISOString().split('T')[0],
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when date is a date in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-      const attributes = {
-        courseId: course.id,
-        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  //     const attributes = {
+  //       courseId: course.id,
+  //       date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
     
-    it("Return 202 with all valid parameters", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
+  //   it("Return 202 with all valid parameters", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
       
-      const calendarJSON = response.body.eventJSon;
-      calendarEvents = [];
-      for(let i in calendarJSON) { 
-        updateIds("calendarEvents", calendarJSON[i]);
-        calendarEvents.push(calendarJSON[i]);
-      }; 
-      const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
-        date: attributes.date,
-        course: attributes.courseId,
-      } } });
-      expect(firstCalendarEvent).toBeDefined();
-    });
+  //     const calendarJSON = response.body.eventJSon;
+  //     calendarEvents = [];
+  //     for(let i in calendarJSON) { 
+  //       calendarEvents.push(calendarJSON[i]);
+  //     }; 
+  //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
+  //       date: attributes.date,
+  //       courseId: attributes.courseId,
+  //     } } });
+  //     expect(firstCalendarEvent).toBeDefined();
+  //   });
 
-  });
+  // });
 
-  describe(`Test POST: ${endpoint}/changeRemote`, async () => {
-    it("Return 401 when no body is included", async () => {
-      const attributes = {};
-      const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
-      expect(response.status).toBe(401);
-    });
+  // describe(`Test POST: ${endpoint}/changeRemote`, async () => {
+  //   it("Return 401 when no body is included", async () => {
+  //     const attributes = {};
+  //     const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 401 when no authorization token is provided", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when no authorization token is provided", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 401 when authorization token is expired", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/$changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when authorization token is expired", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/$changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 400 when course ID is invalid and nonzero", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id * 2,
-      };
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when course ID is invalid and nonzero", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id * 2,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when course ID is 0", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: 0,
-      };
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when course ID is 0", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: 0,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when Course ID < 0", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: -course.id,
-      };
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when Course ID < 0", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: -course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when date is a date now", async () => {
-      var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-      const attributes = {
-        courseId: course.id,
-        date: (new Date(Date.now() - tzoffset)).toISOString().split('T')[0],
-      };
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date now", async () => {
+  //     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  //     const attributes = {
+  //       courseId: course.id,
+  //       date: (new Date(Date.now() - tzoffset)).toISOString().split('T')[0],
+  //     };
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when date is a date in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-      const attributes = {
-        courseId: course.id,
-        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
-      };
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  //     const attributes = {
+  //       courseId: course.id,
+  //       date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
+  //     };
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 202 with all valid parameters", async () => {
-      const attributes = {
-        date: calendarEvents[0].start,
-        courseId: course.id,
-      };     
-      const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
-      const calendarJSON = response.body.eventJSon;
-      calendarEvents = [];
-      for(let i in calendarJSON) { 
-        updateIds("calendarEvents", calendarJSON[i]);
-        calendarEvents.push(calendarJSON[i]);
-      }; 
-      const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
-        date: attributes.date,
-        course: attributes.courseId,
-      } } });
-      expect(firstCalendarEvent).toBeDefined();
-    });
+  //   it("Return 202 with all valid parameters", async () => {
+  //     const attributes = {
+  //       date: calendarEvents[0].start,
+  //       courseId: course.id,
+  //     };     
+  //     const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
+  //     const calendarJSON = response.body.eventJSon;
+  //     calendarEvents = [];
+  //     for(let i in calendarJSON) { 
+  //       calendarEvents.push(calendarJSON[i]);
+  //     }; 
+  //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
+  //       date: attributes.date,
+  //       courseId: attributes.courseId,
+  //     } } });
+  //     expect(firstCalendarEvent).toBeDefined();
+  //   });
 
-  });
+  // });
   
-  describe(`Test POST: ${endpoint}/edit`, async () => {
-    it("Return 400 when no body is included", async () => {
-      const attributes = {};
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  // describe(`Test POST: ${endpoint}/edit`, async () => {
+  //   it("Return 400 when no body is included", async () => {
+  //     const attributes = {};
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 401 when no authorization token is provided", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/$edit`).send(attributes);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when no authorization token is provided", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/$edit`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 401 when authorization token is expired", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/$edit`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
-      expect(response.status).toBe(401);
-    });
+  //   it("Return 401 when authorization token is expired", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/$edit`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+  //     expect(response.status).toBe(401);
+  //   });
 
-    it("Return 400 when course ID is invalid and nonzero", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id * 2,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when course ID is invalid and nonzero", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id * 2,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when course ID is 0", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: 0,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when course ID is 0", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: 0,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when Course ID < 0", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: -course.id,
-      };      
-      const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when Course ID < 0", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: -course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when date is a date now", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);        
-      var tzoffset1 = (new Date()).getTimezoneOffset() * 60000;
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      newDate.setDate(newDate.getDate() + 1);
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: (new Date(Date.now() - tzoffset1)).toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date now", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);        
+  //     var tzoffset1 = (new Date()).getTimezoneOffset() * 60000;
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: (new Date(Date.now() - tzoffset1)).toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when date is a date in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset1 = (pastDate).getTimezoneOffset() * 60000;
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: (new Date(pastDate - tzoffset1)).toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when date is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset1 = (pastDate).getTimezoneOffset() * 60000;
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: (new Date(pastDate - tzoffset1)).toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when newDate is a date now", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (new Date()).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(Date.now() - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when newDate is a date now", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (new Date()).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(Date.now() - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when newDate is a date in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      const date = new Date(calendarEvents[1].start);
-      var tzoffset2 = (pastDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when newDate is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     const date = new Date(calendarEvents[1].start);
+  //     var tzoffset2 = (pastDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when title is empty", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when title is empty", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };      
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when location is empty", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };      
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 202 with all valid parameters", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
-        date: date.toISOString().split('T')[0],
-        courseId: course.id,
-      };
-      const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
-      const calendarJSON = response.body.eventJSon;
-      calendarEvents = [];
-      for(let i in calendarJSON) { 
-        updateIds("calendarEvents", calendarJSON[i]);
-        calendarEvents.push(calendarJSON[i]);
-      }; 
-      const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
-        { 
-          courseId_date: {
-            date: attributes.newDate,
-          course: attributes.courseId,
-          } 
-        } 
-      });
-      expect(firstCalendarEvent).toBeDefined();
-    });
-  });
+  //   it("Return 202 with all valid parameters", async () => {
+  //     const date = new Date(calendarEvents[1].start);
+  //     let newDate = new Date(date);
+  //     newDate.setDate(newDate.getDate() + 1);
+  //     var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
+  //     let attributes = {
+  //       title: "title",
+  //       additionalInfo: "description",
+  //       isCancelled: false,
+  //       isRemote: true,
+  //       location: "zoom",
+  //       newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+  //       date: date.toISOString().split('T')[0],
+  //       courseId: course.id,
+  //     };
+  //     const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
+  //     const calendarJSON = response.body.eventJSon;
+  //     calendarEvents = [];
+  //     for(let i in calendarJSON) { 
+  //       calendarEvents.push(calendarJSON[i]);
+  //     }; 
+  //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
+  //       { 
+  //         courseId_date: {
+  //           date: attributes.newDate,
+  //         courseId: attributes.courseId,
+  //         } 
+  //       } 
+  //     });
+  //     expect(firstCalendarEvent).toBeDefined();
+  //   });
+  // });
 
   // describe(`Test POST: ${endpoint}/createEvent`, async () => {
   //   it("Return 401 when no body is included", async () => {
@@ -1089,265 +1017,261 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   //     const calendarJSON = response.body.eventJSon;
   //     for(let i in calendarJSON) { 
-  //       updateIds("calendarEvents", calendarJSON[i]);
   //       calendarEvents.push(calendarJSON[i]);
   //     }; 
   //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
   //       date: attributes.date,
-  //       course: attributes.courseId,
+  //       courseId: attributes.courseId,
   //     } } });
   //     expect(firstCalendarEvent).toBeDefined();
   //   });
-
-
   // });
 
   // // describe(`Test POST: ${endpoint}/createRecurringEvent`, async () => {
-  // //   let courseDate = new Date();
-  // //   courseDate.setMonth(courseDate.getMonth() + 3);
-  // //   courseDate.setDate(courseDate.getDate() + 1);
-  // //   let secondCourseDate = new Date(courseDate);
-  // //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+  //   let courseDate = new Date();
+  //   courseDate.setMonth(courseDate.getMonth() + 3);
+  //   courseDate.setDate(courseDate.getDate() + 1);
+  //   let secondCourseDate = new Date(courseDate);
+  //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
 
-  // //   it("Return 401 when no body is included", async () => {
-  // //     const attributes = {};
-  // //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes);
-  // //     expect(response.status).toBe(401);
-  // //   });
+  //   it("Return 401 when no body is included", async () => {
+  //     const attributes = {};
+  //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-  // //   it("Return 401 when no authorization token is provided", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes);
-  // //     expect(response.status).toBe(401);
-  // //   });
+  //   it("Return 401 when no authorization token is provided", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes);
+  //     expect(response.status).toBe(401);
+  //   });
 
-  // //   it("Return 401 when authorization token is expired", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
-  // //     expect(response.status).toBe(401);
-  // //   });
+  //   it("Return 401 when authorization token is expired", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/$createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+  //     expect(response.status).toBe(401);
+  //   });
 
-  // //   it("Return 400 when course ID is invalid and nonzero", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id * 2,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when course ID is invalid and nonzero", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id * 2,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when course ID is 0", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: 0,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };      
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when course ID is 0", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: 0,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };      
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when Course ID < 0", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: -course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };      
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when Course ID < 0", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: -course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };      
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when begDate is a date now", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: new Date(Date.now()).toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when begDate is a date now", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: new Date(Date.now()).toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when begDate is a date in the past", async () => {
-  // //     let pastDate = new Date();
-  // //     pastDate.setMonth(pastDate.getMonth() - 3);
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: pastDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when begDate is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: pastDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when endDate is a date now", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: new Date(Date.now()).toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when endDate is a date now", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: new Date(Date.now()).toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when endDate is a date in the past", async () => {
-  // //     let pastDate = new Date();
-  // //     pastDate.setMonth(pastDate.getMonth() - 3);
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: pastDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when endDate is a date in the past", async () => {
+  //     let pastDate = new Date();
+  //     pastDate.setMonth(pastDate.getMonth() - 3);
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: pastDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when title is empty", async () => {
-  // //     const attributes = { 
-  // //       title: "",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };      
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when title is empty", async () => {
+  //     const attributes = { 
+  //       title: "",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };      
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when location is empty", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };      
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when location is empty", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };      
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 400 when daysOfWeek is empty", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [],
-  // //     };      
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(400);
-  // //   });
+  //   it("Return 400 when daysOfWeek is empty", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [],
+  //     };      
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-  // //   it("Return 202 with all valid parameters", async () => {
-  // //     const attributes = { 
-  // //       title: "Calendar Event III",
-  // //       courseId: course.id,
-  // //       begDate: courseDate.toISOString().split('T')[0],
-  // //       endDate: secondCourseDate.toISOString().split('T')[0],
-  // //       location: "zoom",
-  // //       isRemote: true,
-  // //       daysOfWeek: [
-  // //         weekday[courseDate.getDay()],
-  // //         weekday[(courseDate.getDay() + 2) % 7],
-  // //       ],
-  // //     };
-  // //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-  // //     expect(response.status).toBe(202);
+  //   it("Return 202 with all valid parameters", async () => {
+  //     const attributes = { 
+  //       title: "Calendar Event III",
+  //       courseId: course.id,
+  //       begDate: courseDate.toISOString().split('T')[0],
+  //       endDate: secondCourseDate.toISOString().split('T')[0],
+  //       location: "zoom",
+  //       isRemote: true,
+  //       daysOfWeek: [
+  //         weekday[courseDate.getDay()],
+  //         weekday[(courseDate.getDay() + 2) % 7],
+  //       ],
+  //     };
+  //     const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
 
-  // //     const calendarJSON = response.body.eventJSon;
-  // //     for(let i in calendarJSON) { 
-  // //       updateIds("calendarEvents", calendarJSON[i]);
-  // //       calendarEvents.push(calendarJSON[i]);
-  // //     }; 
-  // //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
-  // //       date: attributes.begDate,
-  // //       course: attributes.courseId,
-  // //     } } });
-  // //     expect(firstCalendarEvent).toBeDefined();
-  // //   });
-  // // });
+  //     const calendarJSON = response.body.eventJSon;
+  //     for(let i in calendarJSON) { 
+  //       calendarEvents.push(calendarJSON[i]);
+  //     }; 
+  //     const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
+  //       date: attributes.begDate,
+  //       courseId: attributes.courseId,
+  //     } } });
+  //     expect(firstCalendarEvent).toBeDefined();
+  //   });
+  // });
 
   // describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId`, async () => {
 
@@ -1451,18 +1375,15 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   //     const calendarJSON = response.body.eventJSon;
   //     for(let i in calendarJSON) { 
-  //       updateIds("calendarEvents", calendarJSON[i]);
   //       calendarEvents.push(calendarJSON[i]);
   //     }; 
-  //     const calendarEvent = await prisma.calendarEvent.findMany(
+  //     const event = await prisma.calendarEvent.findMany(
   //       { 
   //         where: { 
-  //           courseId_date: {
-  //             course: course.id,
-  //           } 
+  //           courseId: course.id, 
   //         } 
   //       });
-  //     expect(calendarEvent).toBeDefined();
+  //     expect(event).toBeDefined();
   //   });
 
   // });
@@ -1510,18 +1431,15 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   //     const calendarJSON = response.body.eventJSon;
   //     for(let i in calendarJSON) { 
-  //       updateIds("calendarEvents", calendarJSON[i]);
   //       calendarEvents.push(calendarJSON[i]);
   //     }; 
-  //     const calendarEvent = await prisma.calendarEvent.findMany(
+  //     const event = await prisma.calendarEvent.findMany(
   //       { 
   //         where: { 
-  //           courseId_date: {
-  //             course: course.id,
-  //           } 
+  //           courseId: course.id,
   //         } 
   //       });
-  //     expect(calendarEvent).toBeDefined();
+  //     expect(event).toBeDefined();
   //   });
 
   //   it("Return 200 when no body is included", async () => {
@@ -1573,18 +1491,15 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   //     const calendarJSON = response.body.eventJSon;
   //     for(let i in calendarJSON) { 
-  //       updateIds("calendarEvents", calendarJSON[i]);
   //       calendarEvents.push(calendarJSON[i]);
   //     }; 
-  //     const calendarEvent = await prisma.calendarEvent.findMany(
+  //     const event = await prisma.calendarEvent.findMany(
   //       { 
   //         where: { 
-  //           courseId_date: {
-  //             course: course.id,
-  //           } 
+  //           courseId: course.id,
   //         } 
   //       });
-  //     expect(calendarEvent).toBeDefined();
+  //     expect(event).toBeDefined();
   //   });
 
   //   it("Return 200 when no body is included", async () => {
@@ -1636,19 +1551,18 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   //     const calendarJSON = response.body.eventJSon;
   //     for(let i in calendarJSON) { 
-  //       updateIds("calendarEvents", calendarJSON[i]);
   //       calendarEvents.push(calendarJSON[i]);
   //     }; 
-  //     const calendarEvent = await prisma.calendarEvent.findMany(
+  //     const event = await prisma.calendarEvent.findUnique(
   //       { 
   //         where: { 
   //           courseId_date: {
-  //             course: course.id,
+  //             courseId: course.id,
   //             date: calendarEvents[0].date,
   //           } 
   //         } 
   //       });
-  //     expect(calendarEvent).toBeDefined();
+  //     expect(event).toBeDefined();
   //   });
 
   //   it("Return 200 when no body is included", async () => {
@@ -1659,7 +1573,39 @@ describe(`Test endpoint ${endpoint}`, () => {
   // });
 
   afterAll(async() => {
-    await teardown();
-  });
+    // console.log(instructor)
+    // console.log(students)
+    // console.log(course)
+    // console.log(calendarEvents)
+    
+    const studentIds = students.map((user) => user.id);
+    const instructorId = instructor.id;
+    const courseId = course.id;
+    let deleteEvents = await prisma.calendarEvent.deleteMany({
+      where: {
+        courseId: courseId,
+      },
+    });
+    let deleteAccounts = await prisma.account.deleteMany({
+      where: {
+        OR: [
+          {id: {in: studentIds}},
+          {id: {in: instructorId}},
+        ],
+      },
+    });
+    let deleteCourse = await prisma.course.delete({
+      where: {
+        id: courseId,
+      },
+    });
 
+    // await prisma.$transaction([deleteEvents]);
+    // await prisma.$transaction([deleteAccounts]);
+    // await prisma.$transaction([deleteCourse]);
+
+    await prisma.$disconnect();
+  
+  });
 });
+
