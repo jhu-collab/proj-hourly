@@ -103,6 +103,24 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when archived course opted in", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/optIn`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 202 when course successfully opted in", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/optIn`)
@@ -171,6 +189,30 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of archived test is created", async () => {
+      const attributes = {
+        title: "title",
+        description: "This is a description",
+        tokenLimit: 5,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/createToken`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 201 when course token is created", async () => {
       const attributes = {
         title: "title",
@@ -196,7 +238,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           }
         },
       });
-
       courseTokens.push(courseToken);
       expect(response.status).toBe(201);
       expect(courseToken.title).toBe("title");
@@ -264,6 +305,30 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it ("Return 400 when course token of archived course edited", async () => {
+      const attributes = {
+        title: "not a title",
+        description: "not a description",
+        tokenLimit: 10,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it ("Return 202 when course token successfully edited", async () => {
       const attributes = {
         title: "not a title",
@@ -326,16 +391,28 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    // it("Return 400 when student token id is invalid", async () => {
-    //   const attributes = {
-    //     date: new Date(Date.now()).toISOString()
-    //   };
-    //   const response = await request
-    //     .post(`${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/-1`)
-    //     .send(attributes)
-    //     .set("Authorization", "bearer " + users[2].token);
-    //   expect(response.status).toBe(400);
-    // });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it ("Return 400 when course token of archived course used", async () => {
+      const attributes = {
+        date: new Date(Date.now()).toISOString()
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it ("Return 202 when course token successfully used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString()
@@ -396,16 +473,28 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    // it("Return 400 when student token id is invalid", async () => {
-    //   const attributes = {
-    //     date: new Date(Date.now()).toISOString()
-    //   };
-    //   const response = await request
-    //     .post(`${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/-1`)
-    //     .send(attributes)
-    //     .set("Authorization", "bearer " + users[2].token);
-    //   expect(response.status).toBe(400);
-    // });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it ("Return 400 when course token of archived course removed", async () => {
+      const attributes = {
+        date: new Date(Date.now()).toISOString()
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it ("Return 202 when course token successfully removed", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString()
@@ -536,6 +625,24 @@ describe(`Test endpoint ${endpoint}`, () => {
         );
       expect(response.status).toBe(403);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when no body is included", async () => {
+      let response = await request
+        .delete(`${endpoint}/${courses[0].id}/deleteSingle/${courseTokens[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 200 when no body is included", async () => {
       let response = await request
         .delete(`${endpoint}/${courses[0].id}/deleteSingle/${courseTokens[0].id}`)
@@ -617,6 +724,24 @@ describe(`Test endpoint ${endpoint}`, () => {
       courseTokens.push(courseToken);
       expect(response.status).toBe(201);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when archived course tokens is deleted", async () => {
+      let response = await request
+        .delete(`${endpoint}/${courses[0].id}/deleteAll`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 200 when no body is included", async () => {
       let response = await request
         .delete(`${endpoint}/${courses[0].id}/deleteAll`)
@@ -639,7 +764,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courseTokens.length).toBe(0);
     });
   });
-  
   afterAll(async () => {
     const userIds = users.map((user) => user.id);
     const courseIds = courses.map((course) => course.id);

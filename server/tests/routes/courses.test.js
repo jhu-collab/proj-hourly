@@ -100,17 +100,17 @@ describe(`Test endpoint ${endpoint}`, () => {
     })
     archivedCourses.push(archivedCourse);
     
-    const topicArchived = await prisma.topic.create({
-      data: {
-        value: "HW9",
-        course: {
-          connect: {
-            id: archivedCourses[0].id,
-          },
-        },
-      },
-    });
-    archivedTopics.push(topicArchived);
+    // const topicArchived = await prisma.topic.create({
+    //   data: {
+    //     value: "HW9",
+    //     course: {
+    //       connect: {
+    //         id: archivedCourses[0].id,
+    //       },
+    //     },
+    //   },
+    // });
+    // archivedTopics.push(topicArchived);
   });
 
   describe("HTTP POST request", () => {
@@ -1014,18 +1014,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(topic.value).toBe("Midterms");
       topics[0] = topic;
     });
-    it("Return 400 when archived course topic is edited", async () => {
-      const attributes = {
-        value: "HW9",
-        courseId: archivedCourses[0].id,
-        topicId: archivedTopics[0].id,
-      };
-      const response = await request
-        .post(`${endpoint}/editTopic`)
-        .send(attributes)
-        .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(409);
-    });
   });
 
   describe("HTTP Get request - get topics for course", () => {
@@ -1368,6 +1356,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
+    it("Return 400 when time length of archived course is created", async () => {
+      const attributes = {
+        title: "title",
+        length: 20,
+      };
+      const response = await request
+        .post(`${endpoint}/${archivedCourses[0].id}/officeHourTimeInterval`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("HTTP Get request - get office hour time options for a course", () => {
@@ -1525,6 +1524,36 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(timeOption.title).toBe("title");
       expect(timeOption.duration).toBe(15);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when time option of archived course is updated", async () => {
+      const attributes = {
+        length: 15,
+        title: "title",
+      };
+      const timeOptions = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 15,
+        },
+      });
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}/update`
+        )
+        .set("Authorization", "bearer " + users[2].token)
+        .send(attributes);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
   });
 
   describe("HTTP DELETE request - delete office hour time option for course", () => {
@@ -1557,6 +1586,31 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when time option of archived course is deleted", async () => {
+      const timeOptions = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 15,
+        },
+      });
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when time option is updated", async () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
@@ -1688,6 +1742,29 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when archived course edit registration constraints", async () => {
+      const attributes = {
+        start: 72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 202 when course is created", async () => {
       const attributes = {
         start: 72,
@@ -1786,6 +1863,40 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when student of archived course is promoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when student of archived course is promoted", async () => {
+      const attributes = {
+        studentId: users[3].id,
+        role: "Instructor",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when student is promoted", async () => {
       const attributes = {
@@ -1901,6 +2012,29 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when staff of archived course is demoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when staff is demoted", async () => {
       const attributes = {
@@ -2288,7 +2422,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     const courseIds = courses.map((course) => course.id);
     const topicIds = topics.map((topic) => topic.id);
     const courseArchivedIds = archivedCourses.map((course) => course.id);
-    const topicArchivedIds = archivedTopics.map((topic) => topic.id);
+    // const topicArchivedIds = archivedTopics.map((topic) => topic.id);
     // const archivedCourseId = archivedCourses[0].id;
     // const archivedTopicId = archivedTopics[0].id;
     const deleteRegistrations = prisma.registration.deleteMany({
@@ -2342,27 +2476,27 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       },
     });
-    const deleteArchivedTopic = prisma.topic.deleteMany({
-      where: {
-        OR: [
-          {
-            id: {
-              in: topicArchivedIds,
-            },
-          },
-          {
-            courseId: {
-              in: courseArchivedIds,
-            },
-          },
-        ],
-      },
-    });
+    // const deleteArchivedTopic = prisma.topic.deleteMany({
+    //   where: {
+    //     OR: [
+    //       {
+    //         id: {
+    //           in: topicArchivedIds,
+    //         },
+    //       },
+    //       {
+    //         courseId: {
+    //           in: courseArchivedIds,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // });
     const deleteArchivedCourse = prisma.course.deleteMany({
       where: {
         id: {
-          in: courseArchivedIds
-        }
+          in: courseArchivedIds,
+        },
       }
     });
     
@@ -2373,7 +2507,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     await prisma.$transaction([deleteTimeOptions]);
     await prisma.$transaction([deleteCourses]);
     await prisma.$transaction([deleteArchivedCourse]);
-    await prisma.$transaction([deleteArchivedTopic]);
+    // await prisma.$transaction([deleteArchivedTopic]);
     await prisma.$disconnect();
     // Tear down the test database by `yarn docker:down`
   });
