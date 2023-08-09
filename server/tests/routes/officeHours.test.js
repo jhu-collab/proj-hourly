@@ -762,6 +762,38 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Return 202 when course successfully paused", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        }
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/pauseCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when all parameters are valid for paused course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        }
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/pauseCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
