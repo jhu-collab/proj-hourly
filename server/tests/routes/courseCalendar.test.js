@@ -932,6 +932,294 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe(`Test POST: ${endpoint}/editTitle`, async () => {
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };    
+      const response = await request.post(`${endpoint}/$editTitle`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/$editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 403 when invalid user", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/$editTitle`).send(attributes).set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 400 when course ID is invalid and nonzero", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id * 2,
+      };    
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when course ID is 0", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: 0,
+      };
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when Course ID < 0", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: -course.id,
+      };      
+      const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date now", async () => {
+      const date = new Date();
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };   
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date in the past", async () => {
+      let date = new Date(calendarEvents[1].date);
+      date = date.setMonth(date.getMonth() - 3);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };    
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when title is empty", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 with all valid parameters", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        title: "title",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };
+      const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(202);
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
+      const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
+        { 
+          courseId_date: {
+            date: attributes.newDate,
+          courseId: attributes.courseId,
+          },
+          title: "title", 
+        } 
+      });
+      expect(firstCalendarEvent).toBeDefined();
+    });
+  });
+
+  describe(`Test POST: ${endpoint}/editLocation`, async () => {
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 401 when no authorization token is provided", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };    
+      const response = await request.post(`${endpoint}/$editLocation`).send(attributes);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/$editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 403 when invalid user", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/$editLocation`).send(attributes).set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 400 when course ID is invalid and nonzero", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id * 2,
+      };    
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when course ID is 0", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: 0,
+      };
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when Course ID < 0", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: -course.id,
+      };      
+      const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date now", async () => {
+      const date = new Date();
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };   
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is a date in the past", async () => {
+      let date = new Date(calendarEvents[1].date);
+      date = date.setMonth(date.getMonth() - 3);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };    
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when location is empty", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };     
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 with all valid parameters", async () => {
+      const date = new Date(calendarEvents[1].date);
+      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let attributes = {
+        location: "location",
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
+        courseId: course.id,
+      };
+      const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(202);
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
+      const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
+        { 
+          courseId_date: {
+            date: attributes.newDate,
+            courseId: attributes.courseId,
+          },
+          location: "location",
+        } 
+      });
+      expect(firstCalendarEvent).toBeDefined();
+    });
+  });
+
   describe(`Test POST: ${endpoint}/createEvent`, async () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
