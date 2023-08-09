@@ -1066,7 +1066,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
         { 
           courseId_date: {
-            date: attributes.newDate,
+            date: attributes.date,
           courseId: attributes.courseId,
           },
           title: "title", 
@@ -1210,7 +1210,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
         { 
           courseId_date: {
-            date: attributes.newDate,
+            date: attributes.date,
             courseId: attributes.courseId,
           },
           location: "location",
