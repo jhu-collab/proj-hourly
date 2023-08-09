@@ -195,6 +195,35 @@ export const getRemainingTokens = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
+export const getAllRemainingTokens = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseId = parseInt(req.params.courseId, 10);
+  const id = req.id;
+  debug("Finding courseToken...");
+  const courseTokens = await prisma.courseToken.findMany({
+    where: {
+      id: courseId,
+    },
+  });
+  debug("Found courseTokens...");
+  const courseTokenIds = courseTokens.map((courseToken) => courseToken.id);
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      accountId: id,
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+    include: {
+      CourseToken: true,
+    },
+  });
+  debug("Found issueToken...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+};
+
 export const getUsedTokens = async (req, res) => {
   if (validate(req, res)) {
     return res;
@@ -270,4 +299,26 @@ export const deleteAll = async (req, res) => {
   });
   debug("All course tokens deleted...");
   return res.status(StatusCodes.ACCEPTED).json({ courseToken });
+};
+
+export const getTokensForStudent = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const accountId = parseInt(req.params.accountId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Finding issue tokens for student...");
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      CourseToken: {
+        courseId,
+      },
+      accountId,
+    },
+    include: {
+      CourseToken: true,
+    },
+  });
+  debug("Found issue tokens for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
 };

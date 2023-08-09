@@ -154,6 +154,34 @@ router.get(
   controller.getRemainingTokens
 );
 
+//
+router.get(
+  "/:courseId/tokensRemaining",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  //   accountValidator.isAccountStudent,
+  courseValidator.isCourseIdParams,
+  courseValidator.isInCourseFromHeader,
+  controller.getAllRemainingTokens
+);
+
+router.get(
+  "/:courseId/tokensRemainingForStudent/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseStaffOrInstructor,
+  courseValidator.isAccountStudentParams,
+  controller.getTokensForStudent
+);
+
 //allows instructor to delete a single course token
 router.delete(
   "/:courseId/deleteSingle/:courseTokenId",

@@ -35,6 +35,14 @@ export const course = (currentCourse, courseType) => {
     icon: icons.SafetyCertificateOutlined,
     breadcrumbs: false,
   });
+  children.push({
+    id: "tokens",
+    title: "course tokens",
+    type: "item",
+    url: "/tokens",
+    icon: icons.DollarOutlined,
+    breadcrumbs: false,
+  });
 
   if (courseType === "Staff" || courseType === "Instructor") {
     children.push({
@@ -51,14 +59,6 @@ export const course = (currentCourse, courseType) => {
       type: "item",
       url: "/topics",
       icon: icons.BulbOutlined,
-      breadcrumbs: false,
-    });
-    children.push({
-      id: "tokens",
-      title: "course tokens",
-      type: "item",
-      url: "/tokens",
-      icon: icons.DollarOutlined,
       breadcrumbs: false,
     });
   }

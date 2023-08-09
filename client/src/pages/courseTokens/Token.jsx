@@ -93,8 +93,15 @@ function Token({ token }) {
                 control={control}
                 sx={{ width: 230 }}
               />
+            ) : courseType !== "Student" ? (
+              <Typography variant="h5">
+                Token Limit: {token.tokenLimit}
+              </Typography>
             ) : (
-              <Typography variant="h5">{token.tokenLimit}</Typography>
+              <Typography variant="h5">
+                Token Balance: {token.tokenLimit - token.datesUsed.length}/
+                {token.tokenLimit}
+              </Typography>
             )}
             {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
