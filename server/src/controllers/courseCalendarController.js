@@ -87,7 +87,7 @@ export const changeRemote = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { courseId, date, isRemote } = req.body;
+  const { courseId, date } = req.body;
   let dateObj = spacetime(date);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("making calendar event remote or in person calendar event...");

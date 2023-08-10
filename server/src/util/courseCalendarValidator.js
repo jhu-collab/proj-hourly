@@ -39,6 +39,32 @@ export const doesEventExist =  async (req, res, next) => {
   }
 }
 
+export const doesEventExistParams =  async (req, res, next) => {
+  debug("checking whether calendar event exists");
+  const courseId = parseInt(req.params.courseId, 10);
+  const date = req.params.date;
+  debug("getting calendar event...");
+  let dateObj = new Date(date);
+  const calendarEvent = await prisma.calendarEvent.findUnique({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: new Date(dateObj.setUTCHours(23)),
+      },
+    },
+  });
+  debug("got calendar event");
+  if (calendarEvent === null || calendarEvent === undefined) {
+    debug("calendar event does not exist");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: calendar event does not exist" });
+  } else {
+    debug("calendar event exists");
+    next();
+  }
+}
+
 export const doesEventExistRecurring =  async (req, res, next) => {
   debug("checking whether calendar events exist");
   const {courseId, daysOfWeek, begDate, endDate } = req.body;
@@ -55,6 +81,7 @@ export const doesEventExistRecurring =  async (req, res, next) => {
   while (!beg.isAfter(end)) {
     newDays.push(beg.toNativeDate());
     let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    i++;
     if (diff <= 0) {
       diff += 7;
     };
@@ -269,55 +296,33 @@ export const doesNotHaveCourseEvents = async (req, res, next) => {
   }
 };
 
-export const isEventInFutureByIdParams = async (req, res, next) => {
-  debug("checking if event is in future");
-  const courseId = parseInt(req.params.courseId, 10);
+export const isDateInFutureByIdParams = async (req, res, next) => {
+  debug("checking if date is in future");
   const date = req.params.date;
   let dateObj = new Date(date);
-  debug("getting course event...");
-  const calendarEvent = await prisma.calendarEvent.findUnique({
-    where: {
-      courseId_date: {
-        courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
-      },
-    },
-  });
-  debug("got course event");
-  const spaceDate = spacetime(date);
-  if (spaceDate.isAfter(spacetime.now())) {
-    debug("event is in future");
+  if (dateObj > new Date()) {
+    debug("date is in future");
     next();
   } else {
-    debug("event is not in future");
+    debug("date is not in future");
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ msg: "ERROR: event has already passed" });
   }
 };
 
-export const isEventInFuture = async (req, res, next) => {
-  debug("checking if event is in future");
-  const { date, courseId } = req.body;
-  debug("getting event...");
+export const isDateInFuture = async (req, res, next) => {
+  debug("checking if date is in future");
+  const { date } = req.body;
   let dateObj = new Date(date);
-  const calendarEvent = await prisma.calendarEvent.findUnique({
-    where: {
-      courseId_date: {
-        courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
-      },
-    },
-  });
-  debug("got event");
   if (dateObj > new Date()) {
-    debug("event is in future");
+    debug("date is in future");
     next();
   } else {
-    debug("event is not in future");
+    debug("date is not in future");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "ERROR: event has already passed" });
+      .json({ msg: "ERROR: date has already passed" });
   }
 };
 
@@ -412,10 +417,15 @@ export const NewDateNotOldDate = async (req, res, next) => {
 export const isUTCDate = async (req, res, next) => {
   debug("getting date");
   const {date} = req.body;
+  console.log(date)
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
+  console.log(dateObj.toNativeDate())
+  console.log(dateHours)
   let checkDate = new Date(date);
   const checkDateObj = new Date(checkDate);
+  console.log(checkDate)
+  console.log(checkDateObj.getTimezoneOffset() / 60)
   if (dateHours == checkDateObj.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
