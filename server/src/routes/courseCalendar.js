@@ -259,8 +259,8 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isInCourse,
-  validator.isUTCDate,
-  validator.dateInFuture,
+  validator.isUTCDateParams,
+  validator.dateInFutureParams,
   controller.getEventOnDay
 )
 
@@ -289,8 +289,8 @@ router.delete(
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
   validator.isEventInFutureByIdParams,
-  validator.isUTCDate,
-  validator.dateInFuture,
+  validator.isUTCDateParams,
+  validator.dateInFutureParams,
   controller.deleteCourseOnDay
 )
 
