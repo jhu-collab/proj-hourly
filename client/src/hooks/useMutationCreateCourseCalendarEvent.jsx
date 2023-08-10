@@ -2,12 +2,10 @@ import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { errorToast } from "../utils/toasts";
 import { getConfig } from "./helper";
-import NiceModal from "@ebay/nice-modal-react";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import useTheme from "@mui/material/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreLayout from "./useStoreLayout";
 import Debug from "debug";
@@ -34,7 +32,7 @@ function useMutationCreateCourseCalendarEvent() {
     } catch (err) {
       throw err;
     }
-  }
+  };
 
   // const createRecurringCourseCalendarEvent = async (courseEvent) => {
   //   try {
@@ -52,11 +50,15 @@ function useMutationCreateCourseCalendarEvent() {
     onSuccess: (data) => {
       const courseEvent = data;
 
-      //queryClient.invalidateQueries([""]); // TODO: CHANGE THIS
+      queryClient.invalidateQueries(["courseEvents"]);
 
-      toast.success("Created recurring course calendar event!") // TODO: CHANGE THIS
+      toast.success("Created recurring course calendar event!"); // TODO: CHANGE THIS
       console.log(courseEvent);
-    }
+    },
+    onError: (error) => {
+      debug({ error });
+      errorToast(error);
+    },
   });
 
   return {
