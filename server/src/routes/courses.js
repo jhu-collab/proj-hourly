@@ -64,6 +64,7 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountStudent,
   controller.leaveCourse
@@ -75,6 +76,8 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("staffId", "Please enter a valid staff id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
@@ -87,6 +90,8 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStudent,
@@ -99,6 +104,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -125,6 +131,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -137,6 +144,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -193,6 +201,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -205,6 +214,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -217,6 +227,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -229,6 +240,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -241,6 +253,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -253,6 +266,7 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -309,6 +323,7 @@ router.post(
 
 router.delete(
   "/:courseId/officeHourTimeInterval/:id",
+  param("courseId", "Please enter a valid course id").isInt(),
   param("id", "Param must have id").isInt(),
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
@@ -373,6 +388,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("id", "Please enter a valid id").isInt(),
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountValidParams,
   validator.isCourseIdParams,
@@ -383,6 +400,7 @@ router.get(
 
 router.post(
   "/:courseId/registrationConstraints",
+  param("courseId", "Please enter a valid course id").isInt(),
   body("start", "Please include a start constraint in hoyrs")
     .notEmpty()
     .isInt(),
@@ -406,6 +424,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   param("filterType", "filterType is required").isIn([
     "date",
     "officeHourId",

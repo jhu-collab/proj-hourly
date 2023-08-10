@@ -11,6 +11,7 @@ import * as controller from "../controllers/courseTokenController.js"
 const debug = factory(import.meta.url);
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -21,6 +22,7 @@ router.post(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
@@ -35,6 +37,7 @@ router.post(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
     body("title", "Please enter a title for this course token").notEmpty(),
     body("description", "Please enter a description for this course token").notEmpty(),
     body("tokenLimit", "Please enter a token limit for this course token").isInt(),
@@ -52,6 +55,8 @@ router.post(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
     body("title", "Please indicate what the title should be changed to.").notEmpty(),
     body("description", "Please indicate what the description should be changed to.").notEmpty(),
     body("tokenLimit", "Please indicate the new token limit.").notEmpty().isInt(),
@@ -70,6 +75,9 @@ router.post(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
+    param("studentId", "Please enter a valid student id").isInt(),
     body("date", "Please specify when this token was used").notEmpty(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
@@ -87,6 +95,9 @@ router.post(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
+    param("studentId", "Please enter a valid student id").isInt(),
     body("date", "Please specify when this token was used").notEmpty(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
@@ -103,6 +114,8 @@ router.get(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountStudent,
@@ -120,6 +133,8 @@ router.get(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountStudent,
@@ -137,6 +152,8 @@ router.delete(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
+    param("courseTokenId", "Please enter a valid course token id").isInt(),
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
     courseValidator.isCourseStaffOrInstructor,
@@ -151,6 +168,7 @@ router.delete(
         debug(`${req.method} ${req.path} called...`);
         next();
     },
+    param("courseId", "Please enter a valid course id").isInt(),
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
     courseValidator.isCourseStaffOrInstructor,
