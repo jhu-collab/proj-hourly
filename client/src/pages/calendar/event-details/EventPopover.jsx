@@ -16,6 +16,8 @@ import CourseEventDetails from "./CourseEventDetails";
 import CourseEventEditAction from "./CourseEventEditAction";
 import CourseEventDeleteAction from "./CourseEventDeleteAction";
 import CourseEventEditLocationAction from "./CourseEventEditLocationAction";
+import CourseEventEditTitleAction from "./CourseEventEditTitleAction";
+import CourseEventCancelAction from "./CourseEventCancelAction";
 
 /**
  * The popover the is rendered when a calendar event is clicked on
@@ -65,6 +67,8 @@ function EventPopover() {
             {(allDay && isInstructor) && <CourseEventEditAction />}
             {(allDay && isInstructor) && <CourseEventDeleteAction />}
             {(allDay && isInstructor) && <CourseEventEditLocationAction />}
+            {(allDay && isInstructor) && <CourseEventEditTitleAction />}
+            {(allDay && isInstructor) && <CourseEventCancelAction />}
             {(!allDay && (isHost || isInstructor)) && <EditAction />}
             {(!allDay && (isHost || isInstructor)) && <DeleteAction />}
             {(!allDay && (isHost || isInstructor)) && <EditLocation />}
