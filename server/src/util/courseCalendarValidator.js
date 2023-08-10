@@ -296,36 +296,6 @@ export const doesNotHaveCourseEvents = async (req, res, next) => {
   }
 };
 
-export const isDateInFutureByIdParams = async (req, res, next) => {
-  debug("checking if date is in future");
-  const date = req.params.date;
-  let dateObj = new Date(date);
-  if (dateObj > new Date()) {
-    debug("date is in future");
-    next();
-  } else {
-    debug("date is not in future");
-    return res
-      .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "ERROR: event has already passed" });
-  }
-};
-
-export const isDateInFuture = async (req, res, next) => {
-  debug("checking if date is in future");
-  const { date } = req.body;
-  let dateObj = new Date(date);
-  if (dateObj > new Date()) {
-    debug("date is in future");
-    next();
-  } else {
-    debug("date is not in future");
-    return res
-      .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "ERROR: date has already passed" });
-  }
-};
-
 export const isInCourse = async (req, res, next) => {
   debug("isInCourse is called!");
   debug("Retrieving course id from url...");

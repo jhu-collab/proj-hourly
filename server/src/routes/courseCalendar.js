@@ -95,7 +95,7 @@ router.post(
   validator.doesEventExist,
   validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isDateInFuture,
+  validator.dateInFuture,
   validator.NewDateNotOldDate,
   // validator.isUTCDate,
   // validator.isUTCNew,
@@ -117,7 +117,7 @@ router.post(
   validator.doesEventExist,
   validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isDateInFuture,
+  validator.dateInFuture,
   // validator.isUTCDate,
   controller.editEventTitle
 )
@@ -136,7 +136,7 @@ router.post(
   validator.doesEventExist,
   validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isDateInFuture,
+  validator.dateInFuture,
   // validator.isUTCDate,
   controller.editEventLocation
 )
@@ -288,7 +288,7 @@ router.delete(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
-  validator.isDateInFutureByIdParams,
+  validator.dateInFutureParams,
   validator.doesEventExistParams,
   // validator.isUTCDateParams,
   validator.dateInFutureParams,
