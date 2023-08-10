@@ -97,6 +97,44 @@ router.post(
   controller.editEvent
 )
 
+router.post(
+  "/editTitle",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty(),
+  body("title", "Agenda is required").notEmpty().isString(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.doesEventExist,
+  validator.isEventNotCancelled,
+  validator.isCourseInstructor,
+  validator.isEventInFuture,
+  validator.isUTC0,
+  controller.editEventTitle
+)
+
+router.post(
+  "/editLocation",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("courseId", "Course ID is required").notEmpty().isInt(),
+  body("date", "Please specify the day of this event").notEmpty(),
+  body("location", "Please specify location").notEmpty().isString(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseId,
+  validator.doesEventExist,
+  validator.isEventNotCancelled,
+  validator.isCourseInstructor,
+  validator.isEventInFuture,
+  validator.isUTC0,
+  controller.editEventLocation
+)
+
 router.get(
   "/getAllEventsForCourse/:courseId",
   async (req, res, next) => {

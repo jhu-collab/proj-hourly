@@ -147,6 +147,54 @@ export const editEvent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+export const editEventTitle = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { date, title, courseId } = req.body;
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
+  debug("updating calendar event");
+  const edited = await prisma.calendarEvent.update({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj.toNativeDate(),
+      },
+    },
+    data: {
+      title: title,
+    },
+  });
+  debug("calendar event is updated");
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
+export const editEventLocation = async (req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { date, location, courseId } = req.body;
+  let dateObj = spacetime(date);
+  dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
+  debug("updating calendar event");
+  const edited = await prisma.calendarEvent.update({
+    where: {
+      courseId_date: {
+        courseId: courseId,
+        date: dateObj.toNativeDate(),
+      },
+    },
+    data: {
+      location: location,
+    },
+  });
+  debug("calendar event is updated");
+  const eventJSon = await generateCourseCalendar(courseId);
+  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+};
+
 export const getAllEventsForCourse = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -260,30 +308,30 @@ export const addRecurringCourseEvent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
-export const editAllEvents = async (req, res) => {
-  if (checkValidation(req, res)) {
-    return res;
-  }
-  const { title, additionalInfo, location, isCancelled, isRemote, courseId } = req.body;
-  debug("updating calendar event");
-  const edited = await prisma.calendarEvent.updateMany({
-    where: {
-      courseId_date: {
-        courseId: courseId,
-      },
-    },
-    data: {
-      title: title,
-      additionalInfo: additionalInfo,
-      isCancelled: isCancelled,
-      isRemote: isRemote,
-      location: location,
-    },
-  });
-  debug("calendar event is updated");
-  const eventJSon = await generateCourseCalendar(courseId);
-  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
-};
+// export const editAllEvents = async (req, res) => {
+//   if (checkValidation(req, res)) {
+//     return res;
+//   }
+//   const { title, additionalInfo, location, isCancelled, isRemote, courseId } = req.body;
+//   debug("updating calendar event");
+//   const edited = await prisma.calendarEvent.updateMany({
+//     where: {
+//       courseId_date: {
+//         courseId: courseId,
+//       },
+//     },
+//     data: {
+//       title: title,
+//       additionalInfo: additionalInfo,
+//       isCancelled: isCancelled,
+//       isRemote: isRemote,
+//       location: location,
+//     },
+//   });
+//   debug("calendar event is updated");
+//   const eventJSon = await generateCourseCalendar(courseId);
+//   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+// };
 
 export const getEventOnDay = async (req, res) => {
   if (checkValidation(req, res)) {
