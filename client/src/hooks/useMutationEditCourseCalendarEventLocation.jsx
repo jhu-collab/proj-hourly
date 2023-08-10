@@ -13,51 +13,52 @@ import useStoreEvent from "./useStoreEvent";
 import useStoreLayout from "./useStoreLayout";
 import Debug from "debug";
 
-const debug = new Debug(`hourly:hooks:useMutationEditCourseCalendarEventLocation.jsx`);
+const debug = new Debug(
+  `hourly:hooks:useMutationEditCourseCalendarEventLocation.jsx`
+);
 
 function useMutationEditCourseCalendarEventLocation() {
-    const { token } = useStoreToken();
-    const queryClient = useQueryClient();
-  
-    const id = useStoreEvent((state) => state.id);
-  
-    const theme = useTheme();
-    const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-  
-    const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
+  const { token } = useStoreToken();
+  const queryClient = useQueryClient();
 
-    const editLocation = async (courseEvent) => {
-      try {
-        debug("Sending course calendar event to edit one occurrence to the backend...");
-        const endpoint = `${BASE_URL}/api/calendarEvent/editLocation`;
-        const res = await axios.post(endpoint, courseEvent, getConfig(token));
-        debug("Successful! Returning result data...");
-        return res.data;
-      } catch (err) {
-        throw err;
-      }
-    };
-  
-    const mutation = useMutation(
-      editLocation,
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries(["courseEvents"]);
-          NiceModal.hide("upsert-event");
-          matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
-  
-          toast.success(`Successfully edited course event location!`);
-        },
-        onError: (error) => {
-          debug( {error} );
-          errorToast(error);
-        },
-      }
-    );
-  
-    return {
-      ...mutation,
-    };
-  }
-  
-  export default useMutationEditCourseCalendarEventLocation;
+  const id = useStoreEvent((state) => state.id);
+
+  const theme = useTheme();
+  const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
+
+  const editLocation = async (courseEvent) => {
+    try {
+      debug(
+        "Sending course calendar event to edit one occurrence to the backend..."
+      );
+      const endpoint = `${BASE_URL}/api/calendarEvent/editLocation`;
+      const res = await axios.post(endpoint, courseEvent, getConfig(token));
+      debug("Successful! Returning result data...");
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const mutation = useMutation(editLocation, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["courseEvents"]);
+      NiceModal.hide("upsert-event");
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+
+      toast.success(`Successfully edited course event location!`);
+    },
+    onError: (error) => {
+      debug({ error });
+      errorToast(error);
+    },
+  });
+
+  return {
+    ...mutation,
+  };
+}
+
+export default useMutationEditCourseCalendarEventLocation;
