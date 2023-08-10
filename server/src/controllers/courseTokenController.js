@@ -204,7 +204,7 @@ export const getAllRemainingTokens = async (req, res) => {
   debug("Finding courseToken...");
   const courseTokens = await prisma.courseToken.findMany({
     where: {
-      id: courseId,
+      courseId: courseId,
     },
   });
   debug("Found courseTokens...");

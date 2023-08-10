@@ -13,7 +13,6 @@ function useQueryRemainingTokensPerStudent(accountId, courseId) {
   const queryKey = ["remainingTokensPerStudent"];
   const token = useStoreToken((state) => state.token);
   const course = useStoreCourse((state) => state.course);
-  console.log(accountId, courseId, course);
   const getTokens = async () => {
     try {
       const res = await axios.get(
@@ -21,7 +20,6 @@ function useQueryRemainingTokensPerStudent(accountId, courseId) {
         getConfig(token)
       );
       debug("Getting all tokens.");
-      console.log(res.data);
       return res.data.issueTokens;
     } catch (err) {
       errorToast(err);

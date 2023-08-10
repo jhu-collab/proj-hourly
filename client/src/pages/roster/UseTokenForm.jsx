@@ -9,6 +9,7 @@ import FormInputDropdown from "../../components/form-ui/FormInputDropdown";
 import Form from "../../components/form-ui/Form";
 import { useForm } from "react-hook-form";
 import useQueryRemainingTokensPerStudent from "../../hooks/useQueryGetRemainingTokensPerStudent";
+import useMutationUseToken from "../../hooks/useMutationUseToken";
 import useStoreCourse from "../../hooks/useStoreCourse";
 
 const getTokenOptions = (tokens) => {
@@ -32,6 +33,8 @@ function UseTokenForm(props) {
     data: queriedTokens,
   } = useQueryRemainingTokensPerStudent(params.id, course.id);
 
+  const { mutate } = useMutationUseToken(params.id, course.id);
+
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       token: "",
@@ -39,12 +42,17 @@ function UseTokenForm(props) {
   });
 
   const tokens = getTokenOptions(queriedTokens || []);
-  console.log(tokens);
 
   //   const { mutate } = useMutationChangeRole(params, role);
   const onSubmit = (e) => {
-    e.preventDefault();
-    //mutate();
+    //e.preventDefault();
+    let selectedToken = undefined;
+    queriedTokens.forEach((token) => {
+      if (token.CourseToken.title === e.token) {
+        selectedToken = token.CourseToken.id;
+      }
+    });
+    mutate(selectedToken);
   };
 
   // tokens with students count

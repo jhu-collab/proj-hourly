@@ -97,7 +97,6 @@ router.post(
   body("date", "Please specify when this token was used").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
-  accountValidator.isAccountInstructor,
   courseValidator.isCourseStaffOrInstructor,
   validator.isCourseToken,
   validator.tokenLimitReached,
