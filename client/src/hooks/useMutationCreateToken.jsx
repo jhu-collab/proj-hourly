@@ -41,7 +41,7 @@ function useMutationCreateToken() {
       queryClient.invalidateQueries(["tokens"]);
       queryClient.invalidateQueries(["tokenCounts"]);
       NiceModal.hide("create-topic");
-      toast.success(`Successfully created the "${token.name}" token!`);
+      toast.success(`Successfully created the "${token.title}" token!`);
     },
     onError: (err) => {
       debug({ err });

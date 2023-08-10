@@ -9,6 +9,7 @@ import CourseWrapper from "./layouts/CourseWrapper";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import StaffOnlyRoute from "./layouts/StaffOnlyRoute";
+import CourseTokenEnabledRoute from "./layouts/CourseTokenEnabledRoute";
 
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const MyCourses = Loadable(lazy(() => import("./pages/my-courses/MyCourses")));
@@ -46,7 +47,9 @@ function App() {
               <Route path="/" element={<CourseWrapper />}>
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/registrations" element={<Registrations />} />
-                <Route path="/tokens" element={<CourseTokens />} />
+                <Route path="" element={<CourseTokenEnabledRoute />}>
+                  <Route path="/tokens" element={<CourseTokens />} />
+                </Route>
                 <Route path="/courseinformation" element={<CourseInfoPage />} />
                 <Route path="" element={<StaffOnlyRoute />}>
                   <Route path="/roster" element={<Roster />} />

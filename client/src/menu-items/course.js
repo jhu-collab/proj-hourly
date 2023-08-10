@@ -17,7 +17,6 @@ const icons = {
 
 export const course = (currentCourse, courseType) => {
   const children = [];
-
   children.push({
     id: "calendar",
     title: "calendar",
@@ -35,14 +34,16 @@ export const course = (currentCourse, courseType) => {
     icon: icons.SafetyCertificateOutlined,
     breadcrumbs: false,
   });
-  children.push({
-    id: "tokens",
-    title: "course tokens",
-    type: "item",
-    url: "/tokens",
-    icon: icons.DollarOutlined,
-    breadcrumbs: false,
-  });
+  if (currentCourse.usesTokens) {
+    children.push({
+      id: "tokens",
+      title: "course tokens",
+      type: "item",
+      url: "/tokens",
+      icon: icons.DollarOutlined,
+      breadcrumbs: false,
+    });
+  }
 
   if (courseType === "Staff" || courseType === "Instructor") {
     children.push({

@@ -16,7 +16,6 @@ function useMutationDeleteToken() {
   const deleteTopic = async (params) => {
     try {
       debug("Sending token to be deleted to the backend...");
-      console.log(params);
       const endpoint = `${BASE_URL}/api/courseToken/${params.courseId}/deleteSingle/${params.courseTokenId}`;
       const res = await axios.delete(endpoint, getConfig(token));
       debug("Successful! Returning result data...");
@@ -30,7 +29,9 @@ function useMutationDeleteToken() {
     onSuccess: (data) => {
       queryClient.invalidateQueries(["tokens"]);
       queryClient.invalidateQueries(["tokenCounts"]);
-      toast.success(`Successfully deleted the "${data.title}" token!`);
+      toast.success(
+        `Successfully deleted the "${data.courseToken.title}" token!`
+      );
     },
     onError: (err) => {
       debug({ err });
