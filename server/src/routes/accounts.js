@@ -41,7 +41,7 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  param("id", "Please enter valid id"),
+  param("id", "Please enter valid id").isInt(),
   controller.deleteAccount
 );
 
@@ -61,7 +61,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  param("id", "Please enter valid id"),
+  param("id", "Please enter valid id").isInt(),
   validator.isAdmin,
   validator.isAccountValidParams,
   controller.promoteToAdmin
