@@ -45,20 +45,14 @@ function CourseTokenOptInForm() {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" alignItems="center" spacing={3}>
-          <Stack direction="row" spacing={3} alignItems="center">
-            <FormCheckbox
-              name="optIn"
-              control={control}
-              label="Enable Course Tokens"
-            />
-          </Stack>
+          <Stack direction="row" spacing={3} alignItems="center"></Stack>
           <Button
             type="submit"
             variant="contained"
             disabled={isLoading}
             fullWidth
           >
-            Submit
+            {course.usesTokens ? "Opt-out" : "Opt-in"}
           </Button>
         </Stack>
       </Form>

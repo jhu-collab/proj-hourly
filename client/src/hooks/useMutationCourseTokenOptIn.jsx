@@ -53,7 +53,6 @@ function useMutationCourseTokeOptIn() {
       queryClient.invalidateQueries(["myRole"]);
       queryClient.invalidateQueries(["officeHours"]);
       queryClient.invalidateQueries(["courses"]);
-      window.location.reload();
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
       toast.success(`Successfully enabled course tokens`);
