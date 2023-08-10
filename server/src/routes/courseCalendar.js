@@ -279,7 +279,7 @@ router.delete(
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
   validator.isEventInFutureByIdParams,
-  validator.isUTC0,
+  /*validator.isUTC0,*/
   controller.deleteCourseOnDay
 )
 
