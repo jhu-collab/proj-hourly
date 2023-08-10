@@ -52,7 +52,7 @@ function useMutationCreateCourseCalendarEvent() {
 
       queryClient.invalidateQueries(["courseEvents"]);
 
-      toast.success("Created recurring course calendar event!"); // TODO: CHANGE THIS
+      toast.success("Created recurring course calendar event!");
       console.log(courseEvent);
     },
     onError: (error) => {
