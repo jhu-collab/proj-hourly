@@ -7,6 +7,7 @@ import { factory } from "../util/debug.js";
 
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 const debug = factory(import.meta.url);
 
 router.post(
@@ -40,6 +41,7 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("id", "Please enter valid id"),
   controller.deleteAccount
 );
 
@@ -59,6 +61,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("id", "Please enter valid id"),
   validator.isAdmin,
   validator.isAccountValidParams,
   controller.promoteToAdmin
