@@ -7,14 +7,21 @@ import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
 import Loader from "../../../components/Loader";
 import FormCheckbox from "../../../components/form-ui/FormCheckbox";
+import useMutationEditCourseCalendarEventLocation from "../../../hooks/useMutationEditCourseCalendarEventLocation";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-import useMutationEditLocation from "../../../hooks/useMutationEditLocation";
+import useStoreToken from "../../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
+import useStoreCourse from "../../../hooks/useStoreCourse";
 
 /**
  * Component that represents the form that is used to edit a course event's location.
  * @returns A component representing the Edit Course Event Location form.
  */
 function EditCourseEventLocationForm() {
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+  const course = useStoreCourse((state) => state.course);
+  const date = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
   const isRemote = useStoreEvent((state) => state.isRemote);
 
@@ -26,12 +33,14 @@ function EditCourseEventLocationForm() {
     resolver: yupResolver(editLocationSchema), // TODO: CHANGE THIS?
   });
 
-  const { mutate, isLoading } = useMutationEditLocation(); // TODO: CHANGE THIS
+  const { mutate, isLoading } = useMutationEditCourseCalendarEventLocation(); // TODO: CHANGE THIS
 
   const onSubmit = (data) => {
     mutate({
-        location: data.location,
-        isRemote: data.isRemote
+      courseId: course.id,
+      date: date.toISOString().split('T')[0],
+      location: data.location,
+      /*isRemote: data.isRemote*/
     });
   };
 
