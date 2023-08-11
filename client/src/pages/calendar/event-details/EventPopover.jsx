@@ -66,13 +66,13 @@ function EventPopover() {
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
             {(allDay && !isCancelled && isInstructor) && <CourseEventEditAction />}
-            {(allDay && isInstructor) && <CourseEventDeleteAction />}
             {(allDay && !isCancelled && isInstructor) && <CourseEventEditLocationAction />}
             {(allDay && !isCancelled && isInstructor) && <CourseEventEditTitleAction />}
             {(allDay && isInstructor) && <CourseEventCancelAction />}
+            {(allDay && isInstructor) && <CourseEventDeleteAction />}
             {(!allDay && (isHost || isInstructor)) && <EditAction />}
-            {(!allDay && (isHost || isInstructor)) && <DeleteAction />}
             {(!allDay && (isHost || isInstructor)) && <EditLocation />}
+            {(!allDay && (isHost || isInstructor)) && <DeleteAction />}
             <IconButton
               sx={{ fontSize: "20px" }}
               onClick={() => setAnchorEl(null)}
