@@ -175,7 +175,7 @@ export const editEventLocation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { date, location, courseId } = req.body;
+  const { date, location, courseId, isRemote } = req.body;
   let dateObj = spacetime(date);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("updating calendar event");
@@ -188,6 +188,7 @@ export const editEventLocation = async (req, res) => {
     },
     data: {
       location: location,
+      isRemote: isRemote,
     },
   });
   debug("calendar event is updated");
