@@ -95,11 +95,8 @@ function CourseCalendarEventForm() {
   const { mutate, isLoading } = useMutationCreateCourseCalendarEvent();
 
   const onSubmit = (data) => {
-    console.log(data);
     const start = new Date(data.startDate);
-    console.log(start);
     const end = new Date(data.endDate);
-    console.log(end);
     mutate({
       courseId: course.id,
       /*recurringEvent: data.recurringEvent,*/
@@ -108,7 +105,7 @@ function CourseCalendarEventForm() {
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       additionalInfo: data.resources,
-      title: "Lecture Event- Change This", // TODO: CHANGE THIS
+      title: course.title + " Lecture",
       isRemote: false, // TODO: CHANGE THIS
     });
   };
