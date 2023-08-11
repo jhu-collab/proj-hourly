@@ -109,7 +109,7 @@ export const eventContent = (arg) => {
 
   if (arg.view.type === "timeGridWeek" || arg.view.type === "timeGridDay") {
     if (arg.event.allDay) {
-      arg.backgroundColor = "rgba(88, 183, 191, 0.5)";
+      arg.backgroundColor = arg.event.extendedProps.isCancelled ? "rgb(128 , 128, 128, 0.5)" : "rgba(88, 183, 191, 0.5)";
       return (
         <Stack justifyContent="center" alignItems="center" spacing={1}>
           <Box
