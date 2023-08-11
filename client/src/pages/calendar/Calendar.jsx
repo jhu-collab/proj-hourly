@@ -78,6 +78,7 @@ function Calendar() {
       isRemote: info.event.extendedProps.isRemote,
       allDay: info.event.allDay,
       resources: info.event.extendedProps.additionalInfo,
+      isCancelled: info.event.extendedProps.isCancelled,
     });
   };
 
@@ -146,13 +147,10 @@ function Calendar() {
 
     if (Array.isArray(officeHoursData?.calendar)) {
       data = data.concat(chosenData(officeHoursData));
-      console.log(chosenData(officeHoursData));
-      console.log(data);
     }
 
     if (Array.isArray(courseEventsData?.calendarEvents) && courseEventsData && courseEventsData.calendarEvents && courseEventsData.calendarEvents.length !== 0) {
       data = data.concat(courseEventsData.calendarEvents);
-      console.log(data);
     }
 
     return data;
