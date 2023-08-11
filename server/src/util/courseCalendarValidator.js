@@ -300,19 +300,20 @@ export const isEventInFutureByIdParams = async (req, res, next) => {
 
 export const isEventInFuture = async (req, res, next) => {
   debug("checking if event is in future");
-  const { date, courseId } = req.body;
+  let { date, courseId } = req.body;
+  date = new Date(date);
+  date.setUTCHours(23);
   debug("getting event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(date),
+        date: date,
       },
     },
   });
   debug("got event");
-  const dateObj = new Date(date);
-  if (dateObj > new Date()) {
+  if (date > new Date()) {
     debug("event is in future");
     next();
   } else {
