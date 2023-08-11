@@ -1099,6 +1099,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: course.id,
       };  
@@ -1110,6 +1111,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: course.id,
       };  
@@ -1121,6 +1123,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: course.id,
       };
@@ -1132,6 +1135,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: -course.id,
       };
@@ -1143,6 +1147,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: 0,
       };
@@ -1154,6 +1159,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: -course.id,
       };     
@@ -1166,6 +1172,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (date).getTimezoneOffset() * 60000;
       let attributes = {
         location: "location",
+        isRemote: true,
         date: (new Date(date - tzoffset)),
         courseId: course.id,
       };   
@@ -1179,6 +1186,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       let attributes = {
         location: "location",
+        isRemote: true,
         date: (new Date(pastDate - tzoffset)),
         courseId: course.id,
       };    
@@ -1190,6 +1198,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "",
+        isRemote: true,
         date: dateObj,
         courseId: course.id,
       };   
@@ -1201,6 +1210,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
+        isRemote: true,
         date: dateObj,
         courseId: course.id,
       };
@@ -1221,6 +1231,7 @@ describe(`Test endpoint ${endpoint}`, () => {
             courseId: attributes.courseId,
           },
           location: "location",
+          isRemote: true,
         } 
       });
       expect(firstCalendarEvent).toBeDefined();
