@@ -22,9 +22,6 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  let date = useStoreEvent((state) => state.start);
-  date = date.toISOString().split("T")[0];
-
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -34,6 +31,8 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
   const id = course.id;
 
   const deleteOnDate = async () => {
+    let date = useStoreEvent((state) => state.start);
+    date = date.toISOString().split("T")[0];
     try {
       debug("Sending course calendar event to be deleted to the backend...");
       const endpoint = `${BASE_URL}/api/calendarEvent/deleteCourse/${id}/date/${date}`;
@@ -63,7 +62,9 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
     deleteType === "this" ? deleteOnDate : deleteAll,
     {
       onSuccess: (data) => {
-        date = DateTime.fromISO(date).toLocaleString(DateTime.DATE_SHORT);
+        if (deleteType === "this") {
+          date = DateTime.fromISO(date).toLocaleString(DateTime.DATE_SHORT);
+        }
 
         queryClient.invalidateQueries(["courseEvents"]);
 
