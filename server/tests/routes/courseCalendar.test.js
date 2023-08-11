@@ -5,6 +5,7 @@ import prisma from "../../prisma/client.js";
 import { weekday } from "../../src/util/courseCalendarValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
+import spacetime from "spacetime";
 
 const request = supertest(app);
 const endpoint = "/api/calendarEvent";
@@ -434,10 +435,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { 
         courseId_date: {
           date: attributes.begDate,
@@ -445,7 +447,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         } 
       } });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
     });
 
   });
@@ -460,7 +461,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no authorization token is provided", async () => {
 
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes);
@@ -469,7 +470,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 401 when authorization token is expired", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
@@ -478,7 +479,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 404 when invalid user", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeCancellation`).send(attributes).set("Authorization", "Bearer " + students[0].token);
@@ -487,7 +488,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id * 2,
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -496,7 +497,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course ID is 0", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: 0,
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -505,7 +506,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when Course ID < 0", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: -course.id,
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -536,24 +537,22 @@ describe(`Test endpoint ${endpoint}`, () => {
     
     it("Return 202 with all valid parameters", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // calendarEvents = [];
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
         date: attributes.date,
         courseId: attributes.courseId,
       } } });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
-      console.log(response.body.eventJSon)
     });
 
   });
@@ -567,7 +566,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 401 when no authorization token is provided", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeRemote`).send(attributes);
@@ -576,7 +575,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 401 when authorization token is expired", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
@@ -585,7 +584,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 404 when invalid user", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/$changeRemote`).send(attributes).set("Authorization", "Bearer " + students[0].token);
@@ -594,7 +593,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id * 2,
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -603,7 +602,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course ID is 0", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: 0,
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -612,7 +611,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when Course ID < 0", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: -course.id,
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -643,17 +642,18 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 202 with all valid parameters", async () => {
       const attributes = {
-        date: calendarEvents[0].date,
+        date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };     
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
-      // const calendarJSON = response.body.eventJSon;
-      // calendarEvents = [];
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
+
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ 
         where: { 
           courseId_date: {
@@ -663,7 +663,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         } 
       });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
 
     });
 
@@ -677,7 +676,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when no authorization token is provided", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -696,7 +695,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -715,7 +714,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 404 when invalid user", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -734,7 +733,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -753,7 +752,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course ID is 0", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -772,7 +771,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when Course ID < 0", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -791,7 +790,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when date is a date now", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);        
       var tzoffset1 = (new Date()).getTimezoneOffset() * 60000;
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -813,7 +812,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when date is a date in the past", async () => {
       let pastDate = new Date();
       pastDate.setMonth(pastDate.getMonth() - 3);
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset1 = (pastDate).getTimezoneOffset() * 60000;
@@ -833,28 +832,27 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when newDate is a date now", async () => {
-      const date = new Date(calendarEvents[1].date);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = (new Date()).getTimezoneOffset() * 60000;
+      const date = new Date(calendarEvents[1].start);
+      let newDate = new Date();
+      var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       let attributes = {
         title: "title",
         additionalInfo: "description",
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(Date.now() - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)),
         date: date,
         courseId: course.id,
-      };      
+      };
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when newDate is a date in the past", async () => {
+      const date = new Date(calendarEvents[1].start);
       let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      const date = new Date(calendarEvents[1].date);
+      pastDate.setMonth(pastDate.getMonth() - 5);
       var tzoffset2 = (pastDate).getTimezoneOffset() * 60000;
       let attributes = {
         title: "title",
@@ -865,13 +863,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         newDate: (new Date(pastDate - tzoffset2)),
         date: date,
         courseId: course.id,
-      };      
+      };
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when title is empty", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -890,7 +888,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -909,7 +907,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 with all valid parameters", async () => {
-      const date = new Date(calendarEvents[1].date);
+      const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setMonth(newDate.getMonth() + 5);
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -924,13 +922,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
-      // const calendarJSON = response.body.eventJSon;
-      // calendarEvents = [];
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
         { 
           courseId_date: {
@@ -940,7 +938,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         } 
       });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
 
     });
   });
@@ -953,73 +950,73 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when no authorization token is provided", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };    
+      };
+  
       const response = await request.post(`${endpoint}/$editTitle`).send(attributes);
       expect(response.status).toBe(401);
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };
+  
       const response = await request.post(`${endpoint}/$editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
     it("Return 404 when invalid user", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };
+ 
       const response = await request.post(`${endpoint}/$editTitle`).send(attributes).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(404);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id * 2,
-      };    
+      };
+   
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course ID is 0", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: 0,
       };
+
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when Course ID < 0", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: -course.id,
-      };      
+      };
+ 
       const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
@@ -1037,12 +1034,12 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when date is a date in the past", async () => {
-      let date = new Date(calendarEvents[1].date);
-      date = date.setMonth(date.getMonth() - 3);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let pastDate = new Date();
+      pastDate.setMonth(pastDate.getMonth() - 3);
+      var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: (new Date(pastDate - tzoffset)),
         courseId: course.id,
       };    
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1050,33 +1047,32 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when title is empty", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };
+
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 202 with all valid parameters", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
       };
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
-      // const calendarJSON = response.body.eventJSon;
-      // calendarEvents = [];
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
         { 
           courseId_date: {
@@ -1087,7 +1083,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         } 
       });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
   });
@@ -1100,59 +1096,54 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when no authorization token is provided", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };    
+      };  
       const response = await request.post(`${endpoint}/$editLocation`).send(attributes);
       expect(response.status).toBe(401);
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };  
       const response = await request.post(`${endpoint}/$editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
     it("Return 404 when invalid user", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };
       const response = await request.post(`${endpoint}/$editLocation`).send(attributes).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(404);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
-        courseId: course.id * 2,
-      };    
+        date: dateObj,
+        courseId: -course.id,
+      };
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course ID is 0", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: 0,
       };
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1160,13 +1151,12 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when Course ID < 0", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: -course.id,
-      };      
+      };     
       const response = await request.post(`${endpoint}/create`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
@@ -1184,12 +1174,12 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when date is a date in the past", async () => {
-      let date = new Date(calendarEvents[1].date);
-      date = date.setMonth(date.getMonth() - 3);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      let pastDate = new Date();
+      pastDate.setMonth(pastDate.getMonth() - 3);
+      var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: (new Date(pastDate - tzoffset)),
         courseId: course.id,
       };    
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1197,33 +1187,33 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
-      };     
+      };   
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 202 with all valid parameters", async () => {
-      const date = new Date(calendarEvents[1].date);
-      var tzoffset = (date).getTimezoneOffset() * 60000;
+      const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
-        date: (new Date(date - tzoffset)),
+        date: dateObj,
         courseId: course.id,
       };
+
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
+      
       expect(response.status).toBe(202);
-      // const calendarJSON = response.body.eventJSon;
-      // calendarEvents = [];
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: 
         { 
           courseId_date: {
@@ -1234,7 +1224,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         } 
       });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
   });
@@ -1247,9 +1237,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when no authorization token is provided", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1263,9 +1253,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1279,9 +1269,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 404 when invalid user", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1295,9 +1285,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1310,9 +1300,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course ID is 0", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1325,9 +1315,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when Course ID < 0", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1339,7 +1329,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 403 when date is a date now", async () => {
+    it("Return 400 when date is a date now", async () => {
       var tzoffset2 = (new Date()).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1349,10 +1339,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
 
-    it("Return 403 when date is a date in the past", async () => {
+    it("Return 400 when date is a date in the past", async () => {
       let pastDate = new Date();
       pastDate.setMonth(pastDate.getMonth() - 3);
       var tzoffset2 = (pastDate).getTimezoneOffset() * 60000;
@@ -1364,13 +1354,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
 
     it("Return 400 when title is empty", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "",
@@ -1384,9 +1374,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1400,9 +1390,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 with all valid parameters", async () => {
-      const date = new Date(calendarEvents[0].date);
+      const date = new Date(new Date(calendarEvents[0].start));
       let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);  
+      newDate.setFullYear(newDate.getFullYear() + 1);  
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event II",
@@ -1412,19 +1402,19 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
         date: attributes.date,
         courseId: attributes.courseId,
       } } });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
   });
@@ -1593,7 +1583,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset3 = (new Date()).getTimezoneOffset() * 60000; 
       var tzoffset2 = (secondCourseDate).getTimezoneOffset() * 60000; 
-      var tzoffset3 = (new Date()).getTimezoneOffset() * 60000;
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
@@ -1758,13 +1747,11 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 202 with all valid parameters", async () => {
       let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
+      courseDate.setFullYear(courseDate.getFullYear() + 2);
       let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
+      secondCourseDate.setMonth(courseDate.getMonth() + 2);
       var tzoffset = (courseDate).getTimezoneOffset() * 60000; 
       var tzoffset2 = (secondCourseDate).getTimezoneOffset() * 60000; 
-  
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
@@ -1780,16 +1767,17 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+      const calendarJSON = response.body.eventJSon;
+      calendarEvents = [];
+      for(let i in calendarJSON) { 
+        calendarEvents.push(calendarJSON[i]);
+      }; 
       const firstCalendarEvent = prisma.calendarEvent.findUniqueOrThrow({ where: { courseId_date: {
         date: attributes.begDate,
         courseId: attributes.courseId,
       } } });
       expect(firstCalendarEvent).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
   });
@@ -1798,7 +1786,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 when no body is included", async () => {
       const response = await request.get(`${endpoint}/getAllEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
-      console.log(calendarEvents)
+      
 
     });
 
@@ -1818,7 +1806,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getAllEventsForCourse/0`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getAllEventsForCourse/${0}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
@@ -1835,13 +1823,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 with all valid parameters", async () => {
       const response = await request.get(`${endpoint}/getAllEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
-      console.log(calendarEvents)
+      
 
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
       const event = await prisma.calendarEvent.findMany(
         { 
           where: { 
@@ -1871,7 +1855,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getAllNotCancelledEventsForCourse/0`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getAllNotCancelledEventsForCourse/${0}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
@@ -1889,10 +1873,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request.get(`${endpoint}/getAllNotCancelledEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
       const event = await prisma.calendarEvent.findMany(
         { 
           where: { 
@@ -1900,7 +1880,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           } 
         });
       expect(event).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
   });
@@ -1923,7 +1903,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getAllCancelledEventsForCourse/0`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getAllCancelledEventsForCourse/${0}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
@@ -1941,10 +1921,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request.get(`${endpoint}/getAllCancelledEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
 
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
       const event = await prisma.calendarEvent.findMany(
         { 
           where: { 
@@ -1952,14 +1928,14 @@ describe(`Test endpoint ${endpoint}`, () => {
           } 
         });
       expect(event).toBeDefined();
-      console.log(calendarEvents)
+      
 
     });
 
     it("Return 200 when no body is included", async () => {
       const response = await request.get(`${endpoint}/getAllCancelledEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
-      console.log(calendarEvents)
+      
 
     });
 
@@ -1967,45 +1943,40 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe(`Test GET: ${endpoint}/getEventOnDay/:courseId/date/:date`, async () => {
     it("Return 401 when no authorization token is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${calendarEvents[0].date}`);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`);
       expect(response.status).toBe(401);
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[0].expiredToken);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].expiredToken);
       expect(response.status).toBe(401);
     });
 
     it("Return 400 when invalid, nonzero course id is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id * 2}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id * 2}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/0/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${0}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id < 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/-${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/-${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
     it("Return 403 when user is not in course", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[2].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[2].token);
       expect(response.status).toBe(403);
     });
 
     it("Return 202 with all valid parameters", async () => {
       const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${calendarEvents[0].start}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
-      console.log(calendarEvents)
-
-
-      // const calendarJSON = response.body.eventJSon;
-      // for(let i in calendarJSON) { 
-      //   calendarEvents.push(calendarJSON[i]);
-      // }; 
+      
+ 
       const event = await prisma.calendarEvent.findUnique(
         { 
           where: { 
@@ -2018,6 +1989,57 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(event).toBeDefined();
     });
 
+  });
+
+  describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId/date/:date`, async () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.expiredToken);
+      expect(response.status).toBe(401);
+    });
+
+    it("Return 403 when invalid user", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id * 2}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when course id < 0 is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when course id = 0 is provided", async () => {
+      const response = await request.delete(`${endpoint}/deleteCourse/${0}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is in the past", async () => {
+      let pastDate = new Date();
+      pastDate.setMonth(pastDate.getMonth() - 3);        
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${pastDate}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when date is now", async () => {
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${Date.now()}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 when course event is deleted", async () => {
+      console.log(calendarEvents[0])
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      console.log(response.text)
+      expect(response.status).toBe(202);
+    });
   });
 
   describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId`, async () => {
@@ -2045,60 +2067,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course events are deleted", async () => {
       let response = await request.delete(`${endpoint}/deleteCourse/${course.id}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(202);
-      console.log(calendarEvents)
-
-    });
-  });
-
-  describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId/date/:date`, async () => {
-    it("Return 401 when no authorization token is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`);
-      expect(response.status).toBe(401);
-    });
-
-    it("Return 401 when authorization token is expired", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.expiredToken);
-      expect(response.status).toBe(401);
-    });
-
-    it("Return 403 when invalid user", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(403);
-    });
-
-    it("Return 400 when invalid course id is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id * 2}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when course id < 0 is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${0}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 403 when date is in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);        
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${pastDate}`).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
-    });
-
-    it("Return 403 when date is now", async () => {
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${Date.now()}`).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(403);
-    });
-
-    it("Return 202 when course event is deleted", async () => {
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${calendarEvents[0].date}`).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
-      expect(response.status).toBe(202);
-      console.log(calendarEvents)
-
     });
   });
 
