@@ -13,6 +13,7 @@ export const useStoreEvent = create((set) => ({
   allDay: false,
   resources: "",
   isCancelled: false,
+  isRemote: false,
   setEvent: (event) =>
     set({
       title: event.title || "",
@@ -25,6 +26,7 @@ export const useStoreEvent = create((set) => ({
       allDay: event.allDay || false,
       resources: event.resources || "",
       isCancelled: event.isCancelled || false,
+      isRemote: event.isRemote || false,
     }),
 
   days: "",
