@@ -282,4 +282,5 @@ export const createCourseEventSchema = yup.object().shape({
     }),
   location: yup.string().required("Location is required"),
   resources: yup.string(),
+  isRemote: yup.boolean(),
 });
