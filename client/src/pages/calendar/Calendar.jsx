@@ -55,7 +55,7 @@ function Calendar() {
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
   const { isLoading: isOfficeHoursLoading, error: officeHoursError, data: officeHoursData } = useQueryOfficeHours();
-  const { isLoading: isCourseEventsLoading, error: courseEventsError, data: courseEventsData } = useQueryCourseEvents(); // TODO: CHANGE THIS
+  const { isLoading: isCourseEventsLoading, error: courseEventsError, data: courseEventsData } = useQueryCourseEvents();
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
