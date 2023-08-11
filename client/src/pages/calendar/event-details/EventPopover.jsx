@@ -33,6 +33,7 @@ function EventPopover() {
   const { id } = decodeToken(token);
 
   const allDay = useStoreEvent((state) => state.allDay);
+  const isCancelled = useStoreEvent((state) => state.isCancelled);
 
   const isInstructor = courseType === "Instructor";
   const isHost = hosts.some((host) => host.id === id);
@@ -64,10 +65,10 @@ function EventPopover() {
         </Grid>
         <Grid item xs={4}>
           <Stack direction="row" justifyContent="flex-end">
-            {(allDay && isInstructor) && <CourseEventEditAction />}
+            {(allDay && !isCancelled && isInstructor) && <CourseEventEditAction />}
             {(allDay && isInstructor) && <CourseEventDeleteAction />}
-            {(allDay && isInstructor) && <CourseEventEditLocationAction />}
-            {(allDay && isInstructor) && <CourseEventEditTitleAction />}
+            {(allDay && !isCancelled && isInstructor) && <CourseEventEditLocationAction />}
+            {(allDay && !isCancelled && isInstructor) && <CourseEventEditTitleAction />}
             {(allDay && isInstructor) && <CourseEventCancelAction />}
             {(!allDay && (isHost || isInstructor)) && <EditAction />}
             {(!allDay && (isHost || isInstructor)) && <DeleteAction />}
