@@ -12,9 +12,9 @@ export const useStoreEvent = create((set) => ({
   hosts: [],
   allDay: false,
   resources: "",
+  isCancelled: false,
   setEvent: (event) =>
-    { console.log(event);
-      set({
+    set({
       title: event.title || "",
       start: event.start || null,
       end: event.end || null,
@@ -24,7 +24,8 @@ export const useStoreEvent = create((set) => ({
       hosts: event.hosts || [],
       allDay: event.allDay || false,
       resources: event.resources || "",
-    })},
+      isCancelled: event.isCancelled || false,
+    }),
 
   days: "",
   setDays: (days) =>
