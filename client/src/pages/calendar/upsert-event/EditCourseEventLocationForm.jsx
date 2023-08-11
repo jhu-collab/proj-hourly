@@ -27,20 +27,20 @@ function EditCourseEventLocationForm() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      isRemote: isRemote,
+      remote: isRemote,
       location: location || "",
     },
-    resolver: yupResolver(editLocationSchema), // TODO: CHANGE THIS?
+    resolver: yupResolver(editLocationSchema),
   });
 
-  const { mutate, isLoading } = useMutationEditCourseCalendarEventLocation(); // TODO: CHANGE THIS
+  const { mutate, isLoading } = useMutationEditCourseCalendarEventLocation();
 
   const onSubmit = (data) => {
     mutate({
       courseId: course.id,
       date: date.toISOString().split('T')[0],
       location: data.location,
-      /*isRemote: data.isRemote*/
+      isRemote: data.isRemote,
     });
   };
 
@@ -56,8 +56,8 @@ function EditCourseEventLocationForm() {
             label="Location" 
           />
           <FormCheckbox
-              name="isRemote"
-              control = {control}
+              name="remote"
+              control={control}
               label="Remote"
             />
           <Button
