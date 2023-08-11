@@ -400,7 +400,7 @@ export const isUTCDate = async (req, res, next) => {
   debug("getting date");
   const {date} = req.body;
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
+  dateObj.setUTCHours(23); 
   let spaceDate = spacetime(dateObj);
   let dateHours = spaceDate.toNativeDate().getUTCHours();
   let checkDate = new Date(dateObj);
@@ -437,11 +437,18 @@ export const isUTCDateParams = async (req, res, next) => {
 export const isUTCNew = async (req, res, next) => {
   debug("getting date");
   const {newDate} = req.body;
+  console.log(newDate)
   let dateObj = new Date(newDate);
+  console.log(dateObj)
   dateObj.setUTCHours(23); 
+  console.log(dateObj)
   let newDateObj = spacetime(dateObj);
   let dateHours = newDateObj.toNativeDate().getUTCHours();
+  console.log(newDateObj.toNativeDate())
+  console.log(dateHours)
   let checkDate = new Date(dateObj);
+  console.log(checkDate)
+  console.log(checkDate.getTimezoneOffset() / 60)
   if (dateHours == checkDate.getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
@@ -457,7 +464,7 @@ export const isUTCBeg = async (req, res, next) => {
   debug("getting date");
   const {begDate} = req.body;
   let dateObj = new Date(begDate);
-  dateObj.setUTCHours(23); 
+  dateObj.setUTCHours(23);  
   let begDateObj = spacetime(dateObj);
   let dateHours = begDateObj.toNativeDate().getUTCHours();
   let checkDate = new Date(dateObj);

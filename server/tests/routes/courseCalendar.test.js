@@ -2046,9 +2046,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 when course event is deleted", async () => {
-      console.log(calendarEvents[0])
       let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
     });
   });
@@ -2081,21 +2079,16 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
-  afterAll(async() => {
-    console.log(instructor)
-    console.log(students)
-    console.log(course)
-    console.log(calendarEvents)
-    
+  afterAll(async() => {    
     const studentIds = students.map((user) => user.id);
     const instructorId = instructor.id;
     const courseId = course.id;
-    let deleteEvents = await prisma.calendarEvent.deleteMany({
+    const deleteEvents = await prisma.calendarEvent.deleteMany({
       where: {
         courseId: courseId,
       },
     });
-    let deleteAccounts = await prisma.account.deleteMany({
+    const deleteAccounts = await prisma.account.deleteMany({
       where: {
         OR: [
           {id: {in: studentIds}},
@@ -2103,7 +2096,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         ],
       },
     });
-    let deleteCourse = await prisma.course.delete({
+    const deleteCourse = await prisma.course.delete({
       where: {
         id: courseId,
       },

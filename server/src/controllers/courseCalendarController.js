@@ -21,9 +21,11 @@ export const weekday = [
 export const create = async (req, res) => {
   const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
   debug("creating calendar events for course...");
-  let end = spacetime(endDate);
+  let thisEnd = new Date(endDate)
+  let thisBeg = new Date(begDate);
+  let end = spacetime(thisEnd);
   end = end.add(23 - end.toNativeDate().getUTCHours(), "hours");
-  let beg = spacetime(begDate);
+  let beg = spacetime(thisBeg);
   beg = beg.add(23 - beg.toNativeDate().getUTCHours(), "hours");
   let indices = [];
   daysOfWeek.forEach((dow) => {
@@ -56,7 +58,8 @@ export const changeCancellation = async (req, res) => {
     return res;
   }
   const { courseId, date } = req.body;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date)
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("cancelling or uncancelling calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
@@ -88,7 +91,8 @@ export const changeRemote = async (req, res) => {
     return res;
   }
   const { courseId, date } = req.body;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("making calendar event remote or in person calendar event...");
   const calendarEvent = await prisma.calendarEvent.findUnique({
@@ -120,9 +124,11 @@ export const editEvent = async (req, res) => {
     return res;
   }
   const { date, title, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
-  let newDateObj = spacetime(newDate);
+  let thisNew = new Date(newDate);
+  let newDateObj = spacetime(thisNew);
   newDateObj = newDateObj.add(23 - newDateObj.toNativeDate().getUTCHours(), "hours");
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.update({
@@ -152,7 +158,8 @@ export const editEventTitle = async (req, res) => {
     return res;
   }
   const { date, title, courseId } = req.body;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.update({
@@ -176,7 +183,8 @@ export const editEventLocation = async (req, res) => {
     return res;
   }
   const { date, location, courseId, isRemote } = req.body;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("updating calendar event");
   const edited = await prisma.calendarEvent.update({
@@ -257,7 +265,8 @@ export const addCourseEvent = async (req, res) => {
     return res;
   }
   const {courseId, date, title, additionalInfo, location, isRemote } = req.body;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("adding new calendar event")
   const calendarEvent = await prisma.calendarEvent.create({
@@ -280,9 +289,11 @@ export const addCourseEvent = async (req, res) => {
 export const addRecurringCourseEvent = async (req, res) => {
   const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
   debug("creating calendar events for course...");
-  let end = spacetime(endDate);
+  let thisEnd = new Date(endDate);
+  let end = spacetime(thisEnd);
   end = end.hour(23 - end.toNativeDate().getUTCHours());
-  let beg = spacetime(begDate);
+  let thisBeg = new Date(begDate);
+  let beg = spacetime(thisBeg);
   beg = beg.hour(23 - beg.toNativeDate().getUTCHours());
   let indices = [];
   daysOfWeek.forEach((dow) => {
@@ -340,7 +351,8 @@ export const getEventOnDay = async (req, res) => {
   }
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date);
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("finding event");
   const calendarEvents = await prisma.calendarEvent.findUnique({
@@ -377,7 +389,8 @@ export const deleteCourseOnDay = async (req, res) => {
   }
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
-  let dateObj = spacetime(date);
+  let thisDate = new Date(date)
+  let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("deleting all events for course on date");
   const calendarEvents = await prisma.calendarEvent.delete({
