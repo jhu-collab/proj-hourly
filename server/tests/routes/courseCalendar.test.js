@@ -551,7 +551,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course is not on date", async () => {
       let newDate = new Date(calendarEvents[0].start)
-      newDate.setDate(newDate.getDate() + 1);
+      newDate.setFullYear(newDate.getFullYear() + 10);
       var tzoffset = (newDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
@@ -687,7 +687,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course is not on date", async () => {
       let newDate = new Date(calendarEvents[0].start);
-      newDate.setDate(newDate.getDate() + 1);
+      newDate.setFullYear(newDate.getFullYear() + 10);
       var tzoffset = (newDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
@@ -882,7 +882,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course is not on date", async () => {
       let date = new Date(calendarEvents[1].start);
-      date.setDate(date.getDate() + 1);
+      date.setFullYear(date.getFullYear() + 10);
       let newDate = new Date(date);        
       var tzoffset1 = (date).getTimezoneOffset() * 60000;
       var tzoffset2 = (newDate).getTimezoneOffset() * 60000;
@@ -1042,8 +1042,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarEvents.push(calendarJSON[i]);
       }; 
       const createdEvents = prisma.calendarEvent.findUnique({ where: { 
-        courseId: attributes.courseId,
-        date: attributes.newDate,
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.newDate,
+        },
       } });
       console.log(createdEvents)
       expect(createdEvents).toBeDefined();
@@ -1078,8 +1080,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarEvents.push(calendarJSON[i]);
       }; 
       const createdEvents = prisma.calendarEvent.findUnique({ where: { 
-        courseId: attributes.courseId,
-        date: attributes.newDate,
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.newDate,
+        },
       } });
       console.log(createdEvents)
       expect(createdEvents).toBeDefined();
@@ -1177,7 +1181,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course is not on date", async () => {
       let date = new Date(calendarEvents[1].start);
-      date.setDate(date.getDate() + 1);
+      date.setFullYear(date.getFullYear() + 10);
       var tzoffset = (date).getTimezoneOffset() * 60000;
       let attributes = {
         title: "title",
@@ -1233,10 +1237,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
 
-      const event = await prisma.calendarEvent.findUnique({ where : {
-        courseId: attributes.courseId,
-        date: attributes.date,
-      }});
+      const event = await prisma.calendarEvent.findUnique({ where: { 
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.date,
+        },
+      } });
 
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(202);
@@ -1248,8 +1254,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       }; 
 
       const createdEvents = prisma.calendarEvent.findUnique({ where: { 
-        courseId: attributes.courseId,
-        date: attributes.date,
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.date,
+        },
       } });
       console.log(createdEvents)
       expect(createdEvents).toBeDefined();
@@ -1358,7 +1366,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when course is not on date", async () => {
       const date = new Date(calendarEvents[1].start);
-      date.setDate(date.getDate() + 1);
+      date.setFullYear(date.getFullYear() + 10);
       var tzoffset = (date).getTimezoneOffset() * 60000;
       let attributes = {
         location: "location",
@@ -1405,10 +1413,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
 
-      const event = await prisma.calendarEvent.findUnique({ where : {
-        courseId: attributes.courseId,
-        date: attributes.date,
-      }});
+      const event = await prisma.calendarEvent.findUnique({ where: { 
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.date,
+        },
+      } });
 
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       
@@ -1421,8 +1431,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       }; 
 
       const createdEvents = prisma.calendarEvent.findUnique({ where: { 
-        courseId: attributes.courseId,
-        date: attributes.date,
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.date,
+        },
       } });
       console.log(createdEvents)
       expect(createdEvents).toBeDefined();
@@ -1631,8 +1643,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarEvents.push(calendarJSON[i]);
       }; 
       const createdEvents = prisma.calendarEvent.findUnique({ where: { 
-        courseId: attributes.courseId,
-        date: attributes.date,
+        courseId_date: {
+          courseId: attributes.courseId,
+          date: attributes.date,
+        },
       } });
       console.log(createdEvents)
       expect(createdEvents).toBeDefined();
@@ -2294,7 +2308,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when date is a date in the past", async () => {
       let date = new Date();
       date.setMonth(date.getMonth() - 3);
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${pastDate}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${date}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
