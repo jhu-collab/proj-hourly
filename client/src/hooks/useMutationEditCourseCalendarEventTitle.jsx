@@ -52,7 +52,7 @@ function useMutationEditCourseCalendarEventTitle() {
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
       toast.success(
-        `Successfully edited course calendar event title on ${date}!`
+        `Successfully edited course calendar agenda description!`
       );
     },
     onError: (error) => {

@@ -23,7 +23,7 @@ function useMutationEditCourseCalendarEventLocation() {
 
   const start = useStoreEvent((state) => state.start);
   const date = DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
-    "MM-dd-yyyy"
+    "MM/dd/yyyy"
   );
 
   const theme = useTheme();

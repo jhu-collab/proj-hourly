@@ -36,7 +36,7 @@ function AgendaTopic({ topic, date }) {
     defaultValues: {
       title: topic,
     },
-    resolver: yupResolver(topicSchema),
+    /*resolver: yupResolver(topicSchema),*/
   });
 
   const onSubmit = (data) => {
