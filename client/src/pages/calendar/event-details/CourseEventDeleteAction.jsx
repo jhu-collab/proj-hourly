@@ -15,13 +15,8 @@ import { DateTime } from "luxon";
  */
 function CourseEventDeleteAction() {
   const course = useStoreCourse((state) => state.course);
-
   const date = useStoreEvent((state) => state.start);
-  const recurring = useStoreEvent((state) => state.recurring);
-  const [deleteType, setDeleteType] = useState("this");
-
-  const { mutate, isLoading } =
-    useMutationDeleteCourseCalendarEvent(deleteType);
+  const { mutate, isLoading } = useMutationDeleteCourseCalendarEvent("this");
 
   return (
     <>
@@ -31,15 +26,7 @@ function CourseEventDeleteAction() {
           confirmDialog(
             "Do you really want to delete this lecture event?",
             () =>
-              deleteType === "this"
-                ? mutate({
-                    courseId: course.id,
-                    date: DateTime.fromJSDate(date, { zone: "utc" }).toFormat(
-                      "MM-dd-yyyy"
-                    ),
-                  })
-                : mutate({ courseId: course.id })
-          );
+              mutate({ date }));
         }}
       >
         <DeleteOutlined />
