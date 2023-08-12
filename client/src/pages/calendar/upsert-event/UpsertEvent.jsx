@@ -31,7 +31,7 @@ const UpsertEvent = NiceModal.create(({ type }) => {
         } else if (type === "courseLocation") {
           return "Edit Course Calendar Event Location"
         } else if (type === "courseTitle") {
-          return "Edit Course Calendar Event Title"
+          return "Edit Course Calendar Event Agenda Description"
         }
       })()}
     >
