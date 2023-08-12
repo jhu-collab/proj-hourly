@@ -9,12 +9,12 @@ import FormToggleButtonGroup from "../../components/form-ui/FormToggleButtonGrou
 import { DateTime } from "luxon";
 import FormCheckbox from "../../components/form-ui/FormCheckbox";
 import { decodeToken } from "react-jwt";
-import useMutationCreateOfficeHour from "../../hooks/useMutationCreateOfficeHour";
 import useStoreToken from "../../hooks/useStoreToken";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
 import { createCourseEventSchema } from "../../utils/validators";
+import { createCourseEventAlternateSchema } from "../../utils/validators";
 import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Typography } from "@mui/material";
@@ -74,44 +74,42 @@ const BUTTONS = [
 
 function CourseCalendarEventForm() {
   const token = useStoreToken((state) => state.token);
-  const { id } = decodeToken(token);
 
   const course = useStoreCourse((state) => state.course);
-  const start = useStoreEvent((state) => state.start);
-  const location = useStoreEvent((state) => state.location);
-  const resources = useStoreEvent((state) => state.resources);
-  const isRemote = useStoreEvent((state) => state.isRemote);
+  let recurring = true;
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       recurringEvent: true,
-      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
-      endDate: "",
-      location: location || "",
-      resources: resources || "",
-      isRemote: isRemote || false,
+      isRemote: false,
+      startDate: "",
+      endDate: null,
+      location: "",
+      resources: "",
     },
-    resolver: yupResolver(createCourseEventSchema),
+    resolver: recurring
+      ? yupResolver(createCourseEventSchema)
+      : yupResolver(createCourseEventAlternateSchema),
   });
 
-  const recurring = watch("recurringEvent");
+  recurring = watch("recurringEvent");
 
   const { mutate: createMutate, isLoading: createIsLoading } =
     useMutationCreateCourseCalendarEvent();
   const { mutate: deleteMutate, isLoading: deleteIsLoading } =
     useMutationDeleteCourseCalendarEvent("all");
   const {
-    isLoading: isCourseEventsLoading,
+    isLoading: courseEventsIsLoading,
     error: courseEventsError,
     data: courseEventsData,
   } = useQueryCourseEvents();
 
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
+    const end = recurring ? new Date(data.endDate) : new Date(data.startDate);
+
     createMutate({
       courseId: course.id,
-      /*recurringEvent: data.recurringEvent,*/
       begDate: start.toISOString(),
       endDate: end.toISOString(),
       location: data.location,
@@ -215,7 +213,9 @@ function CourseCalendarEventForm() {
           </Button>
         </Stack>
       )}
-      {(createIsLoading || deleteIsLoading) && <Loader />}
+      {(createIsLoading || deleteIsLoading || courseEventsIsLoading) && (
+        <Loader />
+      )}
     </>
   );
 }
