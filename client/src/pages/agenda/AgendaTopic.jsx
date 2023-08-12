@@ -17,11 +17,11 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
 
 /**
- * Represents a single CourseTopic card.
- * @param {*} courseTopic topic object
- * @returns a single CourseTopic component.
+ * Represents a single AgendaTopic card.
+ * @param {*} AgendaTopic topic object
+ * @returns a single AgendaTopic component.
  */
-function CourseTopic({ topic, date }) {
+function AgendaTopic({ topic, date }) {
   const [edit, setEdit] = useState(false);
 
   const { mutate: mutateEdit } = useMutationEditCourseCalendarEventTitle();
@@ -35,7 +35,7 @@ function CourseTopic({ topic, date }) {
     defaultValues: {
       title: topic,
     },
-    /*resolver: yupResolver(topicSchema),*/
+    resolver: yupResolver(topicSchema),
   });
 
   const onSubmit = (data) => {
@@ -112,13 +112,14 @@ function CourseTopic({ topic, date }) {
                     color="error"
                     onClick={() => {
                       confirmDialog(
-                        `Do you really want to change the cancellation status of the "${topic}" course event?`,
-                        () => mutateCancel({ 
-                          courseId: course.id,
-                          date: DateTime.fromJSDate(new Date(date), { zone: "utc" }).toFormat(
-                            "MM-dd-yyyy"
-                          ), 
-                        })
+                        `Do you really want to change the cancellation status of the "${topic}" course calendar event?`,
+                        () =>
+                          mutateCancel({
+                            courseId: course.id,
+                            date: DateTime.fromJSDate(new Date(date), {
+                              zone: "utc",
+                            }).toFormat("MM-dd-yyyy"),
+                          })
                       );
                     }}
                   >
@@ -131,7 +132,7 @@ function CourseTopic({ topic, date }) {
                     color="error"
                     onClick={() => {
                       confirmDialog(
-                        `Do you really want to delete the "${topic}" course event?`,
+                        `Do you really want to delete the "${topic}" course calendar event?`,
                         () => mutateDelete({ date: new Date(date) })
                       );
                     }}
@@ -149,4 +150,4 @@ function CourseTopic({ topic, date }) {
   );
 }
 
-export default CourseTopic;
+export default AgendaTopic;
