@@ -24,8 +24,6 @@ function useMutationEditCourseCalendarEvent(recurringEvent) {
     "MM-dd-yyyy"
   );
 
-  const id = useStoreEvent((state) => state.id);
-
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 

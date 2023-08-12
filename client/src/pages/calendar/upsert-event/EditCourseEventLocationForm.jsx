@@ -14,12 +14,11 @@ import { decodeToken } from "react-jwt";
 import useStoreCourse from "../../../hooks/useStoreCourse";
 
 /**
- * Component that represents the form that is used to edit a course event's location.
+ * Component that represents the form that is used to edit a course calendar event's location.
  * @returns A component representing the Edit Course Event Location form.
  */
 function EditCourseEventLocationForm() {
   const token = useStoreToken((state) => state.token);
-  const { id } = decodeToken(token);
   const course = useStoreCourse((state) => state.course);
   const date = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
@@ -38,7 +37,7 @@ function EditCourseEventLocationForm() {
   const onSubmit = (data) => {
     mutate({
       courseId: course.id,
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
       location: data.location,
       isRemote: data.isRemote,
     });
@@ -48,18 +47,9 @@ function EditCourseEventLocationForm() {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" alignItems="center" spacing={3}>
-          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
-          </Stack>
-          <FormInputText 
-            name="location" 
-            control={control} 
-            label="Location" 
-          />
-          <FormCheckbox
-              name="remote"
-              control={control}
-              label="Remote"
-            />
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}></Stack>
+          <FormInputText name="location" control={control} label="Location" />
+          <FormCheckbox name="remote" control={control} label="Remote" />
           <Button
             type="submit"
             variant="contained"

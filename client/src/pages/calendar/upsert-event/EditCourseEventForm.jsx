@@ -4,38 +4,42 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Form from "../../../components/form-ui/Form";
 import FormInputText from "../../../components/form-ui/FormInputText";
+import FormCheckbox from "../../../components/form-ui/FormCheckbox";
 import Loader from "../../../components/Loader";
 import { DateTime } from "luxon";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreToken from "../../../hooks/useStoreToken";
-import { decodeToken } from "react-jwt";
 import useStoreCourse from "../../../hooks/useStoreCourse";
 import useMutationEditCourseCalendarEvent from "../../../hooks/useMutationEditCourseCalendarEvent";
+import { editCourseEventSchema } from "../../../utils/validators";
 
 /**
- * Component that represents the form that is used to edit a course event.
+ * Component that represents the form that is used to edit a course calendar event.
  * @returns A component representing the Edit Course Event form.
  */
 function EditCourseEventForm() {
-  
   const token = useStoreToken((state) => state.token);
-  const { id } = decodeToken(token);
   const course = useStoreCourse((state) => state.course);
-  
+
   const title = useStoreEvent((state) => state.title);
   const date = useStoreEvent((state) => state.start);
   const newDate = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
   const resources = useStoreEvent((state) => state.resources);
+  const remote = useStoreEvent((state) => state.isRemote);
+  const isCancelled = useStoreEvent((state) => state.isCancelled);
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       title: title || "",
-      newDate: newDate ? DateTime.fromJSDate(newDate).toFormat("yyyy-MM-dd") : "",
+      newDate: newDate
+        ? DateTime.fromJSDate(newDate).toFormat("yyyy-MM-dd")
+        : "",
       location: location || "",
+      remote: remote || false,
       resources: resources || "",
     },
-    /*resolver: yupResolver(createEventSchema),*/ // TODO: UPDATE THIS
+    resolver: yupResolver(editCourseEventSchema),
   });
 
   const { mutate, isLoading } = useMutationEditCourseCalendarEvent(false);
@@ -45,12 +49,12 @@ function EditCourseEventForm() {
 
     mutate({
       courseId: course.id,
-      date: date.toISOString().split('T')[0],
-      newDate: newDate.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
+      newDate: newDate.toISOString().split("T")[0],
       title: data.title,
       additionalInfo: data.resources,
-      isCancelled: false,
-      isRemote: false, // TODO
+      isCancelled: isCancelled,
+      isRemote: data.remote,
       location: data.location,
     });
   };
@@ -72,6 +76,7 @@ function EditCourseEventForm() {
             InputLabelProps={{ shrink: true }}
           />
           <FormInputText name="location" control={control} label="Location" />
+          <FormCheckbox name="remote" control={control} label="Remote" />
           <FormInputText
             name="resources"
             control={control}
