@@ -126,7 +126,6 @@ function CourseCalendarEventForm() {
   };
 
   const doEventsExist = () => {
-    console.log(courseEventsData);
     if (
       Array.isArray(courseEventsData?.calendarEvents) &&
       courseEventsData &&
