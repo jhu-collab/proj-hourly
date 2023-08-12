@@ -13,11 +13,10 @@ function CourseEventDetails() {
   const resources = useStoreEvent((state) => state.resources);
 
   const date = start.toDateString();
-  
+
   return (
     <Stack direction="column" spacing={1}>
       <Typography variant="h4">{title}</Typography>
-      {/*<Typography variant="h4">Agenda Description Goes Here</Typography>*/}
       <Typography>
         <strong>Date: </strong>
         {date}

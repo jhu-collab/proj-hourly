@@ -109,7 +109,9 @@ export const eventContent = (arg) => {
 
   if (arg.view.type === "timeGridWeek" || arg.view.type === "timeGridDay") {
     if (arg.event.allDay) {
-      arg.backgroundColor = arg.event.extendedProps.isCancelled ? "rgb(128 , 128, 128, 0.5)" : "rgba(88, 183, 191, 0.5)";
+      arg.backgroundColor = arg.event.extendedProps.isCancelled
+        ? "rgb(128 , 128, 128, 0.5)"
+        : "rgba(88, 183, 191, 0.5)";
       return (
         <Stack justifyContent="center" alignItems="center" spacing={1}>
           <Box
@@ -132,7 +134,12 @@ export const eventContent = (arg) => {
               alignItems="center"
               width="80%"
             >
-              <Typography fontWeight={400} color="white" whiteSpace="pre-wrap" margin="7px">
+              <Typography
+                fontWeight={400}
+                color="white"
+                whiteSpace="pre-wrap"
+                margin="7px"
+              >
                 {arg.event.title}
               </Typography>
             </Box>

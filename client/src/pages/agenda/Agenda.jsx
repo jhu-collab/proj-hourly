@@ -3,19 +3,18 @@ import Typography from "@mui/material/Typography";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Grid } from "@mui/material";
-import CourseTopic from "./CourseTopic";
-import { DateTime } from "luxon";
+import AgendaTopic from "./AgendaTopic";
 
 function Agenda() {
   const { isLoading, error, data } = useQueryCourseEvents();
   const courseType = useStoreLayout((state) => state.courseType);
 
   if (isLoading) {
-    return <Alert severity="warning">Retrieving lecture topics ...</Alert>;
+    return <Alert severity="warning">Retrieving course calendar event topics ...</Alert>;
   }
 
   if (error) {
-    return <Alert severity="error">Unable to retrieve lecture topics</Alert>;
+    return <Alert severity="error">Unable to retrieve course calendar event topics</Alert>;
   }
 
   return (
@@ -30,7 +29,7 @@ function Agenda() {
               return (
                 <Grid item xs={12} key={calendarEvent.date}>
                   <Grid item xs={12} key={calendarEvent.date}>
-                    <CourseTopic
+                    <AgendaTopic
                       topic={calendarEvent.title}
                       date={calendarEvent.date}
                     />

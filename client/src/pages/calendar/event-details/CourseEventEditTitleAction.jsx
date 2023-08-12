@@ -1,10 +1,9 @@
 import IconButton from "@mui/material/IconButton";
-import UnorderedListOutlined from "@ant-design/icons/UnorderedListOutlined"
+import UnorderedListOutlined from "@ant-design/icons/UnorderedListOutlined";
 import NiceModal from "@ebay/nice-modal-react";
 
-
 /**
- * Represents the Title Location IconButton on the CourseEventPopover component
+ * Represents the Title Location IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
  * @returns Course event edit title action button and popup.
  */

@@ -20,6 +20,7 @@ function useQueryCourseEvents() {
         `${BASE_URL}/api/calendarEvent/getAllEventsForCourse/${course.id}`,
         getConfig(token)
       );
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       debug({ err });

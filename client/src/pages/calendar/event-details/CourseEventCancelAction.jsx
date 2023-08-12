@@ -5,7 +5,6 @@ import Loader from "../../../components/Loader";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useMutationCancelCourseCalendarEvent from "../../../hooks/useMutationCancelCourseCalendarEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
-import { useState } from "react";
 import { DateTime } from "luxon";
 
 /**
@@ -24,7 +23,7 @@ function CourseEventCancelAction() {
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog(
-            "Do you really want to cancel this lecture event?",
+            "Do you really want to cancel this course calendar event?",
             () =>
               mutate({
                 courseId: course.id,

@@ -1,4 +1,3 @@
-import { createEventSchema } from "../../../utils/validators";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
@@ -41,7 +40,6 @@ function EditCourseEventForm() {
 
   const { mutate, isLoading } = useMutationEditCourseCalendarEvent(false);
 
-  // TODO: UPDATE THIS
   const onSubmit = (data) => {
     const newDate = new Date(data.newDate);
 

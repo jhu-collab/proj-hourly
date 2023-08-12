@@ -5,8 +5,6 @@ import Loader from "../../../components/Loader";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useMutationDeleteCourseCalendarEvent from "../../../hooks/useMutationDeleteCourseCalendarEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
-import { useState } from "react";
-import { DateTime } from "luxon";
 
 /**
  * Represents the Trash IconButton on the EventPopover component
@@ -14,7 +12,6 @@ import { DateTime } from "luxon";
  * @returns Delete action button and confirmation popup.
  */
 function CourseEventDeleteAction() {
-  const course = useStoreCourse((state) => state.course);
   const date = useStoreEvent((state) => state.start);
   const { mutate, isLoading } = useMutationDeleteCourseCalendarEvent("this");
 
@@ -24,7 +21,7 @@ function CourseEventDeleteAction() {
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog(
-            "Do you really want to delete this lecture event?",
+            "Do you really want to delete this course calendar event?",
             () =>
               mutate({ date }));
         }}

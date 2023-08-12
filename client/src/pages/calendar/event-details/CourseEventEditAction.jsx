@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import NiceModal from "@ebay/nice-modal-react";
 
 /**
- * Represents the Edit IconButton on the CourseEventPopover component
+ * Represents the Edit IconButton on the EventPopover component
  * and the associated ConfirmPopup component.
  * @returns Course event edit action button and popup.
  */

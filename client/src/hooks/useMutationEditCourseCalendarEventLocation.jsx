@@ -20,7 +20,10 @@ function useMutationEditCourseCalendarEventLocation() {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
-  const id = useStoreEvent((state) => state.id);
+  const start = useStoreEvent((state) => state.start);
+  const date = DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
+    "MM-dd-yyyy"
+  );
 
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -47,7 +50,9 @@ function useMutationEditCourseCalendarEventLocation() {
       NiceModal.hide("upsert-event");
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      toast.success(`Successfully edited course event location!`);
+      toast.success(
+        `Successfully edited course calendar event location on ${date}!`
+      );
     },
     onError: (error) => {
       debug({ error });

@@ -69,8 +69,10 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
         matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
         deleteType === "all"
-          ? toast.success("Successfully deleted all course calendar events")
-          : toast.success(`Successfully deleted course calendar event on ${date}`);
+          ? toast.success("Successfully deleted all course calendar events!")
+          : toast.success(
+              `Successfully deleted course calendar event on ${date}`
+            );
       },
       onError: (error) => {
         debug({ error });

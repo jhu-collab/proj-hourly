@@ -7,7 +7,9 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import Debug from "debug";
 
-const debug = new Debug(`hourly:hooks:useMutationCreateCourseCalendarEvent.jsx`);
+const debug = new Debug(
+  `hourly:hooks:useMutationCreateCourseCalendarEvent.jsx`
+);
 
 function useMutationCreateCourseCalendarEvent() {
   const { token } = useStoreToken();
@@ -32,7 +34,7 @@ function useMutationCreateCourseCalendarEvent() {
 
       queryClient.invalidateQueries(["courseEvents"]);
 
-      toast.success("Created course calendar events!");
+      toast.success("Successfully created course calendar events!");
       console.log(courseEvent);
     },
     onError: (error) => {

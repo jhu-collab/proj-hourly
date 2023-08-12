@@ -46,7 +46,7 @@ function useMutationCancelCourseCalendarEvent() {
       queryClient.invalidateQueries(["courseEvents"]);
       matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-      toast.success(`Successfully changed course event cancellation status!`);
+      toast.success(`Successfully changed course calendar event cancellation status!`);
     },
     onError: (error) => {
       debug({ error });
