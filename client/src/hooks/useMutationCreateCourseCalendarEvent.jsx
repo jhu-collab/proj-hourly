@@ -16,7 +16,6 @@ function useMutationCreateCourseCalendarEvent() {
   const queryClient = useQueryClient();
 
   const createCourseCalendarEvent = async (courseEvent) => {
-    console.log(courseEvent);
     try {
       debug("Sending course calendar event to be created to the backend...");
       const endpoint = `${BASE_URL}/api/calendarEvent/create`;
@@ -35,7 +34,6 @@ function useMutationCreateCourseCalendarEvent() {
       queryClient.invalidateQueries(["courseEvents"]);
 
       toast.success("Successfully created course calendar events!");
-      console.log(courseEvent);
     },
     onError: (error) => {
       debug({ error });
