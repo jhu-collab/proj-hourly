@@ -9,38 +9,36 @@ import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
-import useMutationDeleteTopic from "../../hooks/useMutationDeleteTopic";
-import useMutationEditTopic from "../../hooks/useMutationEditTopic";
+import useMutationEditCourseCalendarEventTitle from "../../hooks/useMutationEditCourseCalendarEventTitle";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import { topicSchema } from "../../utils/validators";
+import { DateTime } from "luxon";
 
 /**
  * Represents a single CourseTopic card.
  * @param {*} courseTopic topic object
  * @returns a single CourseTopic component.
  */
-function CourseTopic({ courseTopic }) {
+function CourseTopic({ topic, date }) {
   const [edit, setEdit] = useState(false);
 
-  const { mutate } = useMutationEditTopic();
-  const { mutate: mutateDelete } = useMutationDeleteTopic();
+  const { mutate } = useMutationEditCourseCalendarEventTitle();
 
   const course = useStoreCourse((state) => state.course);
   const courseType = useStoreLayout((state) => state.courseType);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      name: courseTopic.value,
+      title: topic,
     },
-    resolver: yupResolver(topicSchema),
+    /*resolver: yupResolver(topicSchema),*/
   });
 
   const onSubmit = (data) => {
     mutate({
       courseId: course.id,
-      topicId: courseTopic.id,
-      value: data.name,
+      date: date.split("T")[0],
+      title: data.title,
     });
     setEdit(false);
   };
@@ -65,14 +63,19 @@ function CourseTopic({ courseTopic }) {
             alignItems="center"
             spacing={2}
           >
+            <Typography variant="h5">
+              {DateTime.fromISO(date).toLocaleString(
+                DateTime.DATE_MED_WITH_WEEKDAY
+              )}
+            </Typography>
             {edit && courseType === "Instructor" ? (
               <FormInputText
-                name="name"
+                name="title"
                 control={control}
                 sx={{ width: 230 }}
               />
             ) : (
-              <Typography variant="h5">{topic.value}</Typography>
+              <Typography variant="h5">{topic}</Typography>
             )}
             {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
@@ -97,22 +100,6 @@ function CourseTopic({ courseTopic }) {
                 <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>
                     Edit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      confirmDialog(
-                        `Do you really want to delete the "${topic.value}" topic?`,
-                        () => {
-                          mutateDelete(topic.id);
-                        }
-                      );
-                    }}
-                  >
-                    Delete
                   </Button>
                 </AnimateButton>
               </Stack>
