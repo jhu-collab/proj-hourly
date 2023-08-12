@@ -10,6 +10,8 @@ import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
 import MainCard from "../../components/MainCard";
 import useMutationEditCourseCalendarEventTitle from "../../hooks/useMutationEditCourseCalendarEventTitle";
+import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
+import useMutationCancelCourseCalendarEvent from "../../hooks/useMutationCancelCourseCalendarEvent";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
@@ -22,7 +24,9 @@ import { DateTime } from "luxon";
 function CourseTopic({ topic, date }) {
   const [edit, setEdit] = useState(false);
 
-  const { mutate } = useMutationEditCourseCalendarEventTitle();
+  const { mutate: mutateEdit } = useMutationEditCourseCalendarEventTitle();
+  const { mutate: mutateCancel } = useMutationCancelCourseCalendarEvent();
+  const { mutate: mutateDelete } = useMutationDeleteCourseCalendarEvent("this");
 
   const course = useStoreCourse((state) => state.course);
   const courseType = useStoreLayout((state) => state.courseType);
@@ -35,7 +39,7 @@ function CourseTopic({ topic, date }) {
   });
 
   const onSubmit = (data) => {
-    mutate({
+    mutateEdit({
       courseId: course.id,
       date: date.split("T")[0],
       title: data.title,
@@ -100,6 +104,39 @@ function CourseTopic({ topic, date }) {
                 <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>
                     Edit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      confirmDialog(
+                        `Do you really want to change the cancellation status of the "${topic}" course event?`,
+                        () => mutateCancel({ 
+                          courseId: course.id,
+                          date: DateTime.fromJSDate(new Date(date), { zone: "utc" }).toFormat(
+                            "MM-dd-yyyy"
+                          ), 
+                        })
+                      );
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      confirmDialog(
+                        `Do you really want to delete the "${topic}" course event?`,
+                        () => mutateDelete({ date: new Date(date) })
+                      );
+                    }}
+                  >
+                    Delete
                   </Button>
                 </AnimateButton>
               </Stack>
