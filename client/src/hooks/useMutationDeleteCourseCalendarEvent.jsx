@@ -29,13 +29,15 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
 
   const course = useStoreCourse((state) => state.course);
   const id = course.id;
+  let date;
 
-  const deleteOnDate = async () => {
-    let date = useStoreEvent((state) => state.start);
-    date = date.toISOString().split("T")[0];
+  const deleteOnDate = async (givenDate) => {
+    date = givenDate.date.toLocaleDateString(DateTime.DATE_SHORT);
+    givenDate = givenDate.date.toISOString().split("T")[0];
+
     try {
       debug("Sending course calendar event to be deleted to the backend...");
-      const endpoint = `${BASE_URL}/api/calendarEvent/deleteCourse/${id}/date/${date}`;
+      const endpoint = `${BASE_URL}/api/calendarEvent/deleteCourse/${id}/date/${givenDate}`;
       const res = await axios.delete(endpoint, getConfig(token));
       debug("Successful! Returning result data...");
       return res.data;
@@ -59,13 +61,9 @@ function useMutationDeleteCourseCalendarEvent(deleteType) {
   };
 
   const mutation = useMutation(
-    deleteType === "this" ? deleteOnDate : deleteAll,
+    deleteType === "all" ? deleteAll : deleteOnDate,
     {
       onSuccess: (data) => {
-        if (deleteType === "this") {
-          date = DateTime.fromISO(date).toLocaleString(DateTime.DATE_SHORT);
-        }
-
         queryClient.invalidateQueries(["courseEvents"]);
 
         matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
