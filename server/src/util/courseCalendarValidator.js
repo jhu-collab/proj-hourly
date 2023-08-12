@@ -385,15 +385,18 @@ export const isInCourse = async (req, res, next) => {
   }
 };
 
-export const NewDateNotOldDate = async (req, res, next) => {
+export const newDateNotOldDate = async (req, res, next) => {
   const { newDate, courseId, date } = req.body;
-  const newDateObj = new Date(newDate);
-  const oldDateObj = new Date(date);
+  let newDateObj = new Date(newDate);
+  newDateObj.setUTCHours(23);
+  console.log(newDateObj);
+  let oldDateObj = new Date(date);
+  oldDateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(newDate),
+        date: newDateObj,
       },
     },
   });
