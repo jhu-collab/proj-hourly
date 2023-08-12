@@ -389,7 +389,6 @@ export const newDateNotOldDate = async (req, res, next) => {
   const { newDate, courseId, date } = req.body;
   let newDateObj = new Date(newDate);
   newDateObj.setUTCHours(23);
-  console.log(newDateObj);
   let oldDateObj = new Date(date);
   oldDateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
