@@ -15,6 +15,7 @@ import useMutationCancelCourseCalendarEvent from "../../hooks/useMutationCancelC
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
+import { topicSchema } from "../../utils/validators"
 
 /**
  * Represents a single AgendaTopic card.
