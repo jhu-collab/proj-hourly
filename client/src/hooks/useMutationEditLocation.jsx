@@ -15,12 +15,14 @@ import Debug from "debug";
 
 const debug = new Debug(`hourly:hooks:useMutationEditLocation.jsx`);
 
-function useMutationEditLocation() {
+function useMutationEditLocation(editType) {
     const { token } = useStoreToken();
     const queryClient = useQueryClient();
   
     const id = useStoreEvent((state) => state.id);
   
+    const recurring = useStoreEvent((state) => state.recurring);
+
     const theme = useTheme();
     const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
   
@@ -38,9 +40,22 @@ function useMutationEditLocation() {
         throw err;
       }
     };
+
+    const editLocationRecurring = async (officeHour) => {
+      try {
+        debug("Sending office hour to edit one occurrence to the backend...");
+        console.log(officeHour);
+        const endpoint = `${BASE_URL}/api/officeHour/editLocationRecurringDay`;
+        const res = await axios.post(endpoint, { officeHourId: id, ...officeHour}, getConfig(token));
+        debug("Successful! Returning result data...");
+        return res.data;
+      } catch (err) {
+        throw err;
+      }
+    };
   
     const mutation = useMutation(
-      editLocation,
+      recurring && editType === "this" ? editLocationRecurring : editLocation,
       {
         onSuccess: (data) => {
           queryClient.invalidateQueries(["officeHours"]);
