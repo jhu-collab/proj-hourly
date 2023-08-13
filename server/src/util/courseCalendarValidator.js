@@ -469,3 +469,57 @@ export const dateInFutureParams = async (req, res, next) => {
     next();
   }
 }
+
+export const isUTC0 = async (req, res, next) => {
+  debug("getting date");
+  const { date } = req.body;
+  let dateObj = spacetime(date);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  if (dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60) {
+    debug("UTC hour is 23");
+    next();
+  } else {
+    debug("UTC hour is not 23");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "UTC hour is not 23" });
+  }
+};
+
+export const isUTCTwo = async (req, res, next) => {
+  debug("getting dates");
+  const { begDate, endDate } = req.body;
+  let dateObj = spacetime(begDate);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let newDateObj = spacetime(endDate);
+  let newDateHours = newDateObj.toNativeDate().getUTCHours();
+  if (
+    dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60 &&
+    newDateHours == newDateObj.toNativeDate().getTimezoneOffset() / 60
+  ) {
+    debug("UTC hour is 0");
+    next();
+  } else {
+    debug("UTC hour is not 0");
+    return res.status(StatusCodes.FORBIDDEN).json({ msg: "UTC hour is not 0" });
+  }
+};
+
+export const isUTCTwoNewDate = async (req, res, next) => {
+  debug("getting dates");
+  const { date, newDate } = req.body;
+  let dateObj = spacetime(date);
+  let dateHours = dateObj.toNativeDate().getUTCHours();
+  let newDateObj = spacetime(newDate);
+  let newDateHours = newDateObj.toNativeDate().getUTCHours();
+  if (
+    dateHours == dateObj.getTimezoneOffset() / 60 &&
+    newDateHours == newDateObj.getTimezoneOffset() / 60
+  ) {
+    debug("UTC hour is 0");
+    next();
+  } else {
+    debug("UTC hour is not 0");
+    return res.status(StatusCodes.FORBIDDEN).json({ msg: "UTC hour is not 0" });
+  }
+};
