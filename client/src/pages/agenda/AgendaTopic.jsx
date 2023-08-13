@@ -16,13 +16,14 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
 import { topicSchema } from "../../utils/validators"
+import { Chip } from "@mui/material";
 
 /**
  * Represents a single AgendaTopic card.
  * @param {*} AgendaTopic topic object
  * @returns a single AgendaTopic component.
  */
-function AgendaTopic({ topic, date }) {
+function AgendaTopic({ topic, date, isCancelled, isRemote }) {
   const [edit, setEdit] = useState(false);
 
   const { mutate: mutateEdit } = useMutationEditCourseCalendarEventTitle();
@@ -36,7 +37,7 @@ function AgendaTopic({ topic, date }) {
     defaultValues: {
       title: topic,
     },
-    /*resolver: yupResolver(topicSchema),*/
+    resolver: yupResolver(topicSchema),
   });
 
   const onSubmit = (data) => {
@@ -68,7 +69,7 @@ function AgendaTopic({ topic, date }) {
             alignItems="center"
             spacing={2}
           >
-            <Typography variant="h5">
+            <Typography variant="h5" color={isCancelled ? "error.main" : "text.primary"}>
               {DateTime.fromISO(date).toLocaleString(
                 DateTime.DATE_MED_WITH_WEEKDAY
               )}
@@ -80,7 +81,15 @@ function AgendaTopic({ topic, date }) {
                 sx={{ width: 230 }}
               />
             ) : (
-              <Typography variant="h5">{topic}</Typography>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+              >
+                <Typography variant="h5" color={isCancelled ? "error.main" : "text.primary"}>{topic}</Typography>
+                {isRemote && <Chip label="Remote" />}
+              </Stack>
             )}
             {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
