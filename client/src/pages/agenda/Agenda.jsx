@@ -32,6 +32,8 @@ function Agenda() {
                     <AgendaTopic
                       topic={calendarEvent.title}
                       date={calendarEvent.date}
+                      isCancelled={calendarEvent.isCancelled}
+                      isRemote={calendarEvent.isRemote}
                     />
                   </Grid>
                 </Grid>
