@@ -418,7 +418,7 @@ export const isUTC0 = async (req, res, next) => {
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
   const checkDate = new Date();
-  if (dateHours == checkDate.getTimezoneOffset() / 60) {
+  if (dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60) {
     debug("UTC hour is 23");
     next();
   } else {
