@@ -996,3 +996,160 @@ export const isValidFilterValue = async (req, res, next) => {
     next();
   }
 }
+
+export const isCoursePaused = async (req, res, next) => {
+  let {courseId} = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    }
+  });
+  if (course.isPaused === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived." });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCoursePausedOfficeHourId = async (req, res, next) => {
+  let { officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    }
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    }
+  });
+  if (course.isPaused === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is paused" });
+  } else {
+    debug("Course is not paused.");
+    next();
+  }
+};
+
+export const isCourseArchived = async (req, res, next) => {
+  let {courseId} = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    }
+  });
+  if (course.isArchived === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived." });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedOfficeHourId = async (req, res, next) => {
+  let { officeHourId } = req.body;
+  if (officeHourId === undefined || officeHourId === null) {
+    officeHourId = parseInt(req.params.officeHourId, 10);
+  }
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    }
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    }
+  });
+  if (course.isArchived === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedRegistrationId = async (req, res, next) => {
+  let { registrationId } = req.body;
+  if (registrationId === undefined || registrationId === null) {
+    registrationId = parseInt(req.params.registrationId, 10);
+  }
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId
+    },
+    include: {
+      officeHour: true
+    }
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: registration.officeHour.courseId
+    }
+  });
+  if (course.isArchived === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+}
+
+export const isCourseArchivedTopicId = async (req, res, next) => {
+  let { topicId } = req.body;
+  if (topicId === undefined || topicId === null) {
+    topicId = parseInt(req.params.topicId, 10);
+  }
+  const topic = await prisma.topic.findUnique({
+    where: {
+      id: topicId
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: topic.courseId
+    }
+  });
+  if (course.isArchived === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+}
+
+export const isCourseArchivedCourseCode = async (req, res, next) => {
+  let { code } = req.body;
+  const course = await prisma.course.findUnique({
+    where: {
+      code: code
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+}

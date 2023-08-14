@@ -26,7 +26,7 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
+    courseValidator.isCourseArchived,
     controller.optIn
 )
 
@@ -44,8 +44,8 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseUsingTokens,
+    courseValidator.isCourseArchived,
     controller.createToken
 )
 
@@ -63,8 +63,8 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
+    courseValidator.isCourseArchived,
     controller.editCourseToken
 )
 
@@ -82,9 +82,10 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
     validator.tokenLimitReached,
+    courseValidator.isCoursePaused,
+    courseValidator.isCourseArchived,
     controller.usedToken
 )
 
@@ -102,8 +103,9 @@ router.post(
     accountValidator.isAccountValidHeader,
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
+    courseValidator.isCoursePaused,
+    courseValidator.isCourseArchived,
     controller.undoUsedToken
 )
 
@@ -156,8 +158,8 @@ router.delete(
     param("courseTokenId", "Please enter a valid course token id").isInt(),
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
     validator.isCourseToken,
+    courseValidator.isCourseArchived,
     controller.deleteSingle
 )
 
@@ -171,7 +173,7 @@ router.delete(
     param("courseId", "Please enter a valid course id").isInt(),
     courseValidator.isCourseIdParams,
     accountValidator.isAccountInstructor,
-    courseValidator.isCourseStaffOrInstructor,
+    courseValidator.isCourseArchived,
     controller.deleteAll
 )
 

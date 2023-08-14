@@ -52,6 +52,7 @@ router.post(
   //timeValidator.isTime,
   //validator.areValidDOW,
   // validator.noConflictsWithHosts,
+  courseValidator.isCourseArchived,
   controller.create
 );
 
@@ -84,6 +85,8 @@ router.post(
   validator.isTimeLengthForCourse,
   validator.isTimeCorrectInterval,
   courseValidator.isWithinRegisterConstraint,
+  courseValidator.isCoursePausedOfficeHourId,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.register
 );
 
@@ -102,6 +105,7 @@ router.post(
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegun,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.cancelOnDate
 );
 
@@ -120,6 +124,7 @@ router.post(
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegunCancelAll,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.cancelAll
 );
 
@@ -159,6 +164,7 @@ router.post(
   validator.isInFuture,
   dateValidator.endIsAfterStart,
   validator.durationIsMultipleof5,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.rescheduleSingleOfficeHour
 );
 
@@ -177,6 +183,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.isOfficeHourHostOrInstructor,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editLocationSingleDay
 )
 
@@ -196,6 +203,7 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.isOfficeHourHostOrInstructor,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editLocationRecurringDay
 )
 
@@ -230,6 +238,7 @@ router.post(
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
   validator.durationIsMultipleof5,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editAll
 );
 
@@ -244,6 +253,7 @@ router.post(
   validator.doesRegistrationExistParams,
   validator.isRegisteredOrIsStaffBody,
   validator.isRegistrationInFutureByIdParams,
+  courseValidator.isCourseArchivedRegistrationId,
   controller.cancelRegistration
 );
 
@@ -321,6 +331,7 @@ router.post(
   validator.isTimeLengthForCourse,
   validator.isTimeCorrectInterval,
   courseValidator.isWithinRegisterConstraint,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editRegistration
 );
 
@@ -336,6 +347,7 @@ router.post(
   validator.isRegistrationHostOrInstructor,
   validator.isRegistrationInPast,
   validator.isNotCancelled,
+  courseValidator.isCourseArchivedRegistrationId,
   controller.editRegistrationNoShow
 )
 

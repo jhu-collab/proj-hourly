@@ -1296,4 +1296,48 @@ const getRegistrationInstructor = async(req, res, courseId) => {
   const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
   debug("done filtering registration for instructor...");
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
-}
+};
+
+export const pauseCourse = async(req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Finding course...");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId
+    }
+  });
+  debug("Course found...")
+  debug("Updating course...");
+  const courseUpdate = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      isPaused: !course.isPaused,
+    }
+  });
+  debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
+};
+
+export const archiveCourse = async(req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Finding course...")
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId
+    }
+  });
+  debug("Course found...");
+  debug("Updating course...");
+  const courseUpdate = await prisma.course.update({
+    where: {
+      id: courseId
+    },
+    data: {
+      isArchived: !course.isArchived
+    }
+  });
+  debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
+};
