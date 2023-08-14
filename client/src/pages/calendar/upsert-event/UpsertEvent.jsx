@@ -5,6 +5,7 @@ import EditEventForm from "./EditEventForm";
 import EditLocationForm from "./EditLocationForm";
 import EditCourseEventForm from "./EditCourseEventForm";
 import EditCourseEventLocationForm from "./EditCourseEventLocationForm"
+import EditCourseEventTitleForm from "./EditCourseEventTitleForm";
 
 /**
  * Parent component for the UpsertForm component.
@@ -26,9 +27,11 @@ const UpsertEvent = NiceModal.create(({ type }) => {
         } else if (type === "location") {
           return "Edit Event Location"
         } else if (type === "courseEdit") {
-          return "Edit Lecture Event" 
+          return "Edit Course Calendar Event" 
         } else if (type === "courseLocation") {
-          return "Edit Lecture Event Location"
+          return "Edit Course Calendar Event Location"
+        } else if (type === "courseTitle") {
+          return "Edit Course Calendar Event Agenda Description"
         }
       })()}
     >
@@ -43,6 +46,8 @@ const UpsertEvent = NiceModal.create(({ type }) => {
           return <EditCourseEventForm />
         } else if (type === "courseLocation") {
           return <EditCourseEventLocationForm />
+        } else if (type === "courseTitle") {
+          return <EditCourseEventTitleForm />
         }
       })()}
     </Popup>

@@ -14,7 +14,7 @@ export const weekday = [
   "Saturday",
 ];
 
-export const doesEventExist =  async (req, res, next) => {
+export const doesEventExist = async (req, res, next) => {
   debug("checking whether calendar event exists");
   const {courseId, date} = req.body;
   debug("getting calendar event...");
@@ -63,11 +63,11 @@ export const doesEventExistParams =  async (req, res, next) => {
     debug("calendar event exists");
     next();
   }
-}
+};
 
-export const doesEventExistRecurring =  async (req, res, next) => {
+export const doesEventExistRecurring = async (req, res, next) => {
   debug("checking whether calendar events exist");
-  const {courseId, daysOfWeek, begDate, endDate } = req.body;
+  const { courseId, daysOfWeek, begDate, endDate } = req.body;
   debug("getting calendar event...");
   let begDateObj = new Date(begDate);
   begDateObj.setUTCHours(23);
@@ -84,15 +84,15 @@ export const doesEventExistRecurring =  async (req, res, next) => {
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
     newDays.push(beg.toNativeDate());
-    let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    let diff = indices[(i + 1) % indices.length] - indices[i % indices.length];
     i++;
     if (diff <= 0) {
       diff += 7;
-    };
-    beg = beg.add(diff, 'day');
+    }
+    beg = beg.add(diff, "day");
   }
   const calendarEvents = await prisma.calendarEvent.findMany({
-    where : {
+    where: {
       courseId: courseId,
       date: {
         in: newDays,
@@ -108,11 +108,11 @@ export const doesEventExistRecurring =  async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: calendar event exists on days" });
   }
-}
+};
 
-export const doesEventNotExist =  async (req, res, next) => {
+export const doesEventNotExist = async (req, res, next) => {
   debug("checking whether calendar event exists");
-  const {courseId, date} = req.body;
+  const { courseId, date } = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
   const calendarEvent = await prisma.calendarEvent.findUnique({
@@ -133,10 +133,9 @@ export const doesEventNotExist =  async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: calendar event exists" });
   }
-}
+};
 
-
-export const isEventNotCancelled =  async (req, res, next) => {
+export const isEventNotCancelled = async (req, res, next) => {
   debug("checking whether calendar event exists");
   const {courseId, date} = req.body;
   debug("getting calendar event...");
@@ -159,7 +158,7 @@ export const isEventNotCancelled =  async (req, res, next) => {
     debug("calendar event is not cancelled");
     next();
   }
-}
+};
 
 export const endAfterStart = async (req, res, next) => {
   debug("Checking that end date is after start date");
@@ -179,7 +178,7 @@ export const endAfterStart = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: end date is before beginning date" });
   }
-}
+};
 
 export const doesCourseBeginOnDay = async (req, res, next) => {
   debug("checking whether course begins on beginning day");
@@ -189,19 +188,19 @@ export const doesCourseBeginOnDay = async (req, res, next) => {
   const dateObj = spacetime(begDateObj);
   let isValid = false;
   daysOfWeek.forEach((dow) => {
-    if((dateObj.toNativeDate().getDay() == weekday.indexOf(dow))) {
+    if (dateObj.toNativeDate().getDay() == weekday.indexOf(dow)) {
       isValid = true;
     }
   });
   if (isValid) {
-    debug("course occurs on this day")
-    next(); 
+    debug("course occurs on this day");
+    next();
   } else {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: course does not occur on this day" });
   }
-}
+};
 
 export const isCourseInstructor = async (req, res, next) => {
   const { courseId } = req.body;
@@ -296,7 +295,7 @@ export const doesNotHaveCourseEvents = async (req, res, next) => {
   const calendarEvents = await prisma.calendarEvent.findMany({
     where: {
       courseId: courseId,
-    }
+    },
   });
   if (calendarEvents.length === 0) {
     debug("course has no events");
@@ -369,7 +368,7 @@ export const isInCourse = async (req, res, next) => {
   }
 };
 
-export const NewDateNotOldDate = async (req, res, next) => {
+export const newDateNotOldDate = async (req, res, next) => {
   const { newDate, courseId, date } = req.body;
   const newDateObj = new Date(newDate);
   const oldDateObj = new Date(date);
@@ -385,7 +384,7 @@ export const NewDateNotOldDate = async (req, res, next) => {
   if (newDateObj.getTime() === oldDateObj.getTime()) {
     debug("edited course date is not changing");
     next();
-  } else if ((calendarEvent === null || calendarEvent === undefined)) {
+  } else if (calendarEvent === null || calendarEvent === undefined) {
     debug("course does not exist on this day");
     next();
   } else {
@@ -491,7 +490,7 @@ export const isUTC0 = async (req, res, next) => {
 
 export const isUTCTwo = async (req, res, next) => {
   debug("getting dates");
-  const { begDate, endDate } = req.body;
+  const {  begDate, endDate  } = req.body;
   let dateObj = spacetime(begDate);
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let newDateObj = spacetime(endDate);
@@ -510,7 +509,7 @@ export const isUTCTwo = async (req, res, next) => {
 
 export const isUTCTwoNewDate = async (req, res, next) => {
   debug("getting dates");
-  const { date, newDate } = req.body;
+  const {  date, newDate  } = req.body;
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
   let newDateObj = spacetime(newDate);

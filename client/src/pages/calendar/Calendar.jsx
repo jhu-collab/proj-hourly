@@ -54,15 +54,23 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
-  const { isLoading: isOfficeHoursLoading, error: officeHoursError, data: officeHoursData } = useQueryOfficeHours();
-  const { isLoading: isCourseEventsLoading, error: courseEventsError, data: courseEventsData } = useQueryCourseEvents(); // TODO: CHANGE THIS
+  const {
+    isLoading: isOfficeHoursLoading,
+    error: officeHoursError,
+    data: officeHoursData,
+  } = useQueryOfficeHours();
+  const {
+    isLoading: isCourseEventsLoading,
+    error: courseEventsError,
+    data: courseEventsData,
+  } = useQueryCourseEvents();
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
 
   useEffect(() => {
-      setTimeout(() => calendarRef.current.getApi().updateSize(), 500);
+    setTimeout(() => calendarRef.current.getApi().updateSize(), 500);
   }, [openSidebar]);
 
   const handleEventClick = (info) => {
@@ -78,6 +86,7 @@ function Calendar() {
       isRemote: info.event.extendedProps.isRemote,
       allDay: info.event.allDay,
       resources: info.event.extendedProps.additionalInfo,
+      isCancelled: info.event.extendedProps.isCancelled,
     });
   };
 
@@ -108,7 +117,7 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
-      isRemote: info.event.extendedProps.isRemote
+      isRemote: info.event.extendedProps.isRemote,
     });
     NiceModal.show("upsert-event", { type: "edit" });
     info.revert();
@@ -125,8 +134,8 @@ function Calendar() {
       return false;
     });
     return filtered;
-  }
-  
+  };
+
   const chosenData = (data) => {
     if (!data || !data.calendar || data.calendar.length === 0) {
       return [];
@@ -139,24 +148,26 @@ function Calendar() {
         return [];
       }
     }
-  }
+  };
 
   const allChosenData = () => {
     let data = [];
 
     if (Array.isArray(officeHoursData?.calendar)) {
       data = data.concat(chosenData(officeHoursData));
-      console.log(chosenData(officeHoursData));
-      console.log(data);
     }
 
-    if (Array.isArray(courseEventsData?.calendarEvents) && courseEventsData && courseEventsData.calendarEvents && courseEventsData.calendarEvents.length !== 0) {
+    if (
+      Array.isArray(courseEventsData?.calendarEvents) &&
+      courseEventsData &&
+      courseEventsData.calendarEvents &&
+      courseEventsData.calendarEvents.length !== 0
+    ) {
       data = data.concat(courseEventsData.calendarEvents);
-      console.log(data);
     }
 
     return data;
-  }
+  };
 
   return (
     <>
@@ -164,12 +175,16 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
           <StyleWrapper>
-          {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} setMaxEventsStacked={setMaxEventsStacked}/>
-          )}
+            {matchUpSm && (
+              <CalendarMenu
+                calendarRef={calendarRef}
+                isStaff={isStaff}
+                setFiltered={setFiltered}
+                setMaxEventsStacked={setMaxEventsStacked}
+              />
+            )}
             <FullCalendar
               plugins={[
                 rrulePlugin,
@@ -223,17 +238,25 @@ function Calendar() {
               allDaySlot={true}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
-              {...(!matchUpSm && { headerToolbar: { 
-                start: "mobileCalMenu",
-                center: "prev title next",
-                end: ""} })}
+              {...(!matchUpSm && {
+                headerToolbar: {
+                  start: "mobileCalMenu",
+                  center: "prev title next",
+                  end: "",
+                },
+              })}
             />
           </StyleWrapper>
-          
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
+      {!matchUpSm && (
+        <MobileCalendarMenu
+          calendarRef={calendarRef}
+          isStaff={isStaff}
+          setFiltered={setFiltered}
+        />
+      )}
       {(isOfficeHoursLoading || isCourseEventsLoading) && <Loader />}
     </>
   );

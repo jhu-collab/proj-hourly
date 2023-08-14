@@ -282,4 +282,33 @@ export const createCourseEventSchema = yup.object().shape({
     }),
   location: yup.string().required("Location is required"),
   resources: yup.string(),
+  isRemote: yup.boolean(),
+});
+
+export const createCourseEventAlternateSchema = yup.object().shape({
+  startDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  recurringEvent: yup.boolean(),
+  location: yup.string().required("Location is required"),
+  resources: yup.string(),
+  isRemote: yup.boolean(),
+});
+
+export const editCourseEventSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
+  newDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  location: yup.string().required("Location is required"),
+  isRemote: yup.boolean(),
+  resources: yup.string(),
+});
+
+export const editTitleSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
 });

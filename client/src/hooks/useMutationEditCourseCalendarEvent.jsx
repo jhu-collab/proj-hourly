@@ -21,32 +21,19 @@ function useMutationEditCourseCalendarEvent(recurringEvent) {
 
   const start = useStoreEvent((state) => state.start);
   const date = DateTime.fromJSDate(start, { zone: "utc" }).toFormat(
-    "MM-dd-yyyy"
+    "MM/dd/yyyy"
   );
-
-  const id = useStoreEvent((state) => state.id);
 
   const theme = useTheme();
   const matchUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
-  
-  // DISABLED ON BACKEND RN
-  const editCourseEventAll = async (courseEvent) => {
-    try {
-      debug("Sending course calendar event to edit all occurrences to the backend...");
-      const endpoint = `${BASE_URL}/api/calendarEvent/editAllEventsForCourse`;
-      const res = await axios.post(endpoint, courseEvent, getConfig(token));
-      debug("Successful! Returning result data...");
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
-  };
 
   const editCourseEventOnDate = async (courseEvent) => {
     try {
-      debug("Sending course calendar event to edit one occurrence to the backend...");
+      debug(
+        "Sending course calendar event to edit one occurrence to the backend..."
+      );
       const endpoint = `${BASE_URL}/api/calendarEvent/edit`;
       const res = await axios.post(endpoint, courseEvent, getConfig(token));
       debug("Successful! Returning result data...");
@@ -56,22 +43,19 @@ function useMutationEditCourseCalendarEvent(recurringEvent) {
     }
   };
 
-  const mutation = useMutation(
-    recurringEvent ? editCourseEventAll : editCourseEventOnDate,
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(["courseEvents"]);
-        NiceModal.hide("upsert-event");
-        matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
+  const mutation = useMutation(editCourseEventOnDate, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["courseEvents"]);
+      NiceModal.hide("upsert-event");
+      matchUpSm ? setAnchorEl() : NiceModal.hide("mobile-event-popup");
 
-        toast.success(`Successfully edited course calendar event`);
-      },
-      onError: (error) => {
-        debug( {error} );
-        errorToast(error);
-      },
-    }
-  );
+      toast.success(`Successfully edited course calendar event on ${date}!`);
+    },
+    onError: (error) => {
+      debug({ error });
+      errorToast(error);
+    },
+  });
 
   return {
     ...mutation,

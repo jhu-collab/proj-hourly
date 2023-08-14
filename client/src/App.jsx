@@ -16,9 +16,7 @@ const Calendar = Loadable(lazy(() => import("./pages/calendar/Calendar")));
 const CourseInfoPage = Loadable(
   lazy(() => import("./pages/course-information/CourseInfoPage"))
 );
-const Agenda = Loadable(
-  lazy(() => import("./pages/agenda/Agenda"))
-);
+const Agenda = Loadable(lazy(() => import("./pages/agenda/Agenda")));
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))

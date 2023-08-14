@@ -95,7 +95,7 @@ router.post(
   validator.isEventNotCancelled,
   validator.isCourseInstructor,
   validator.dateInFuture,
-  validator.NewDateNotOldDate,
+  validator.newDateNotOldDate,
   validator.newDateInFuture,
   validator.isUTCTwoNewDate,
   controller.editEvent

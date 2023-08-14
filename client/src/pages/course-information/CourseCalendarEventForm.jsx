@@ -9,13 +9,15 @@ import FormToggleButtonGroup from "../../components/form-ui/FormToggleButtonGrou
 import { DateTime } from "luxon";
 import FormCheckbox from "../../components/form-ui/FormCheckbox";
 import { decodeToken } from "react-jwt";
-import useMutationCreateOfficeHour from "../../hooks/useMutationCreateOfficeHour";
 import useStoreToken from "../../hooks/useStoreToken";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
-import { createEventSchema } from "../../utils/validators";
 import { createCourseEventSchema } from "../../utils/validators";
+import { createCourseEventAlternateSchema } from "../../utils/validators";
+import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
+import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
+import { Typography } from "@mui/material";
 
 const DAYS = [
   "Sunday",
@@ -72,102 +74,147 @@ const BUTTONS = [
 
 function CourseCalendarEventForm() {
   const token = useStoreToken((state) => state.token);
-  const { id } = decodeToken(token);
 
   const course = useStoreCourse((state) => state.course);
-  const start = useStoreEvent((state) => state.start);
-  const location = useStoreEvent((state) => state.location);
-  const resources = useStoreEvent((state) => state.resources);
+  let recurring = true;
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       recurringEvent: true,
-      startDate: start ? DateTime.fromJSDate(start).toFormat("yyyy-MM-dd") : "",
-      endDate: "",
-      location: location || "",
-      resources: resources || "",
+      isRemote: false,
+      startDate: "",
+      endDate: null,
+      location: "",
+      resources: "",
     },
-    resolver: yupResolver(createCourseEventSchema),
+    resolver: recurring
+      ? yupResolver(createCourseEventSchema)
+      : yupResolver(createCourseEventAlternateSchema),
   });
 
-  const recurring = watch("recurringEvent");
+  recurring = watch("recurringEvent");
 
-  const { mutate, isLoading } = useMutationCreateCourseCalendarEvent();
+  const { mutate: createMutate, isLoading: createIsLoading } =
+    useMutationCreateCourseCalendarEvent();
+  const { mutate: deleteMutate, isLoading: deleteIsLoading } =
+    useMutationDeleteCourseCalendarEvent("all");
+  const {
+    isLoading: courseEventsIsLoading,
+    error: courseEventsError,
+    data: courseEventsData,
+  } = useQueryCourseEvents();
 
   const onSubmit = (data) => {
-    console.log(data);
     const start = new Date(data.startDate);
-    console.log(start);
-    const end = new Date(data.endDate);
-    console.log(end);
-    mutate({
+    const end = recurring ? new Date(data.endDate) : new Date(data.startDate);
+
+    createMutate({
       courseId: course.id,
-      /*recurringEvent: data.recurringEvent,*/
       begDate: start.toISOString(),
       endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       additionalInfo: data.resources,
-      title: "Lecture Event- Change This", // TODO: CHANGE THIS
-      isRemote: false, // TODO: CHANGE THIS
+      title: course.title + " Lecture",
+      isRemote: data.isRemote,
     });
+  };
+
+  const onDelete = (event) => {
+    event.preventDefault();
+    deleteMutate();
+  };
+
+  const doEventsExist = () => {
+    if (
+      Array.isArray(courseEventsData?.calendarEvents) &&
+      courseEventsData &&
+      courseEventsData.calendarEvents &&
+      courseEventsData.calendarEvents.length !== 0
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="column" alignItems="center" spacing={3}>
-          <Stack direction="row" spacing={3} alignItems="center">
-            <FormCheckbox
-              name="recurringEvent"
-              control={control}
-              label="Recurring event"
-            />
-          </Stack>
-          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
-            <FormInputText
-              name="startDate"
-              control={control}
-              label={recurring ? "Start Date" : "Date"}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-            {recurring && (
-              <FormInputText
-                name="endDate"
+      {!doEventsExist() && (
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Typography variant="h5" fontWeight={400}>
+            Create course calendar events using this form:
+          </Typography>
+          <Stack direction="column" alignItems="center" spacing={3}>
+            <Stack direction="row" spacing={3} alignItems="center">
+              <FormCheckbox
+                name="recurringEvent"
                 control={control}
-                label="End Date"
+                label="Recurring event"
+              />
+              <FormCheckbox name="isRemote" control={control} label="Remote" />
+            </Stack>
+            <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
+              <FormInputText
+                name="startDate"
+                control={control}
+                label={recurring ? "Start Date" : "Date"}
                 type="date"
                 InputLabelProps={{ shrink: true }}
               />
+              {recurring && (
+                <FormInputText
+                  name="endDate"
+                  control={control}
+                  label="End Date"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            </Stack>
+            {recurring && (
+              <FormToggleButtonGroup
+                name="days"
+                control={control}
+                buttons={BUTTONS}
+              />
             )}
-          </Stack>
-          {recurring && (
-            <FormToggleButtonGroup
-              name="days"
+            <FormInputText name="location" control={control} label="Location" />
+            <FormInputText
+              name="resources"
               control={control}
-              buttons={BUTTONS}
+              label="Additional Resources"
+              multiline
+              rows={4}
             />
-          )}
-          <FormInputText name="location" control={control} label="Location" /> 
-          <FormInputText
-            name="resources"
-            control={control}
-            label="Additional Resources"
-            multiline
-            rows={4}
-          />
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={createIsLoading}
+              fullWidth
+            >
+              Create
+            </Button>
+          </Stack>
+        </Form>
+      )}
+      {doEventsExist() && (
+        <Stack direction="column" spacing={3}>
+          <Typography variant="h5" fontWeight={400}>
+            Course calendar events already exist!
+          </Typography>
           <Button
-            type="submit"
+            onClick={onDelete}
             variant="contained"
-            disabled={isLoading}
+            disabled={deleteIsLoading}
             fullWidth
           >
-            Update
+            Delete
           </Button>
         </Stack>
-      </Form>
-      {isLoading && <Loader />}
+      )}
+      {(createIsLoading || deleteIsLoading || courseEventsIsLoading) && (
+        <Loader />
+      )}
     </>
   );
 }
