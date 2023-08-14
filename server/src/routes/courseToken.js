@@ -11,6 +11,7 @@ import * as controller from "../controllers/courseTokenController.js";
 const debug = factory(import.meta.url);
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -21,11 +22,52 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseStaffOrInstructor,
   controller.optIn
+);
+
+router.get(
+  "/:courseId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Course Id is required to be an int").isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isInCourseFromHeader,
+  controller.getTokens
+);
+
+router.get(
+  "/:courseId/tokensRemainingForStudent/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseStaffOrInstructor,
+  courseValidator.isAccountStudentParams,
+  controller.getTokensForStudent
+);
+
+router.get(
+  "/:courseId/tokensRemaining",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  //   accountValidator.isAccountStudent,
+  courseValidator.isCourseIdParams,
+  courseValidator.isInCourseFromHeader,
+  controller.getAllRemainingTokens
 );
 
 //handles creating a course token
@@ -35,6 +77,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   body("title", "Please enter a title for this course token").notEmpty(),
   body(
     "description",
@@ -52,24 +95,14 @@ router.post(
   controller.createToken
 );
 
-router.get(
-  "/:courseId",
-  async (req, res, next) => {
-    debug(`${req.method} ${req.path} called...`);
-    next();
-  },
-  accountValidator.isAccountValidHeader,
-  courseValidator.isCourseIdParams,
-  courseValidator.isInCourseFromHeader,
-  controller.getTokens
-);
-
 router.post(
   "/:courseId/editCourseToken/:courseTokenId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
   body(
     "title",
     "Please indicate what the title should be changed to."
@@ -94,9 +127,13 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
   body("date", "Please specify when this token was used").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
   courseValidator.isCourseStaffOrInstructor,
   validator.isCourseToken,
   validator.tokenLimitReached,
@@ -110,6 +147,9 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
   body("date", "Please specify when this token was used").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
@@ -126,6 +166,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   accountValidator.isAccountStudent,
@@ -143,6 +185,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   accountValidator.isAccountStudent,
@@ -153,34 +197,6 @@ router.get(
   controller.getRemainingTokens
 );
 
-//
-router.get(
-  "/:courseId/tokensRemaining",
-  async (req, res, next) => {
-    debug(`${req.method} ${req.path} called...`);
-    next();
-  },
-  accountValidator.isAccountValidHeader,
-  courseValidator.isCourseIdParams,
-  //   accountValidator.isAccountStudent,
-  courseValidator.isCourseIdParams,
-  courseValidator.isInCourseFromHeader,
-  controller.getAllRemainingTokens
-);
-
-router.get(
-  "/:courseId/tokensRemainingForStudent/:accountId",
-  async (req, res, next) => {
-    debug(`${req.method} ${req.path} called...`);
-    next();
-  },
-  accountValidator.isAccountValidHeader,
-  courseValidator.isCourseIdParams,
-  courseValidator.isCourseStaffOrInstructor,
-  courseValidator.isAccountStudentParams,
-  controller.getTokensForStudent
-);
-
 //allows instructor to delete a single course token
 router.delete(
   "/:courseId/deleteSingle/:courseTokenId",
@@ -188,6 +204,8 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseStaffOrInstructor,
@@ -202,6 +220,7 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseStaffOrInstructor,

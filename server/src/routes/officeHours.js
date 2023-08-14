@@ -13,6 +13,7 @@ const debug = factory(import.meta.url);
 
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -128,6 +129,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").isDate(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -142,6 +145,8 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").isDate(),
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").notEmpty(),
@@ -200,6 +205,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -233,6 +239,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("registrationId", "Please enter a valid registration id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
   validator.isRegisteredOrIsStaffBody,
@@ -246,6 +253,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").isDate(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -260,6 +269,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -272,6 +282,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").isDate(),
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
@@ -287,6 +299,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("registrationId", "Please enter a valid registration id").isInt(),
   body("officeHourId", "Office Hour is required").isInt(),
   body("startTime", "Please include a startTime").notEmpty(),
   body("endTime", "Please include an endtime").notEmpty(),
