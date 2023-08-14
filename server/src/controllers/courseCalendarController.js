@@ -49,7 +49,7 @@ export const create = async (req, res) => {
   });
   const eventJSon = await generateCourseCalendar(courseId);
   debug("calendar events are created");
-  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+  return res.status(StatusCodes.CREATED).json({ eventJSon });
 };
 // pass in list of topics? assign those to dates until list runs out?
 
@@ -283,7 +283,7 @@ export const addCourseEvent = async (req, res) => {
   });
   const eventJSon = await generateCourseCalendar(courseId);
   debug("made new calendar event...");
-  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+  return res.status(StatusCodes.CREATED).json({ eventJSon });
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
@@ -317,7 +317,7 @@ export const addRecurringCourseEvent = async (req, res) => {
   });
   const eventJSon = await generateCourseCalendar(courseId);
   debug("calendar events are created");
-  return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
+  return res.status(StatusCodes.CREATED).json({ eventJSon });
 };
 
 export const getEventOnDay = async (req, res) => {

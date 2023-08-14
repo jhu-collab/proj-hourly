@@ -473,16 +473,19 @@ export const dateInFutureParams = async (req, res, next) => {
 export const isUTC0 = async (req, res, next) => {
   debug("getting date");
   const { date } = req.body;
+  console.log(date)
   let dateObj = spacetime(date);
   let dateHours = dateObj.toNativeDate().getUTCHours();
+  console.log(dateHours)
+  console.log(dateObj.toNativeDate().getTimezoneOffset() / 60)
   if (dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60) {
-    debug("UTC hour is 23");
+    debug("UTC hour is 0");
     next();
   } else {
-    debug("UTC hour is not 23");
+    debug("UTC hour is not 0");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "UTC hour is not 23" });
+      .json({ msg: "UTC hour is not 0" });
   }
 };
 

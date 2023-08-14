@@ -5,7 +5,6 @@ import prisma from "../../prisma/client.js";
 import { weekday } from "../../src/util/courseCalendarValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
-import spacetime from "spacetime";
 
 const request = supertest(app);
 const endpoint = "/api/calendarEvent";
@@ -118,8 +117,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -140,8 +139,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -162,8 +161,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -184,8 +183,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id * 2,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -206,8 +205,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: 0,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -228,8 +227,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: -course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -250,8 +249,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(Date.now() - tzoffset2)),
-        endDate: (new Date(secondCourseDate - tzoffset)),
+        begDate: (new Date(new Date() - tzoffset2)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -275,8 +274,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(pastDate - tzoffset2)),
-        endDate: (new Date(secondCourseDate - tzoffset)),
+        begDate: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -297,8 +296,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(Date.now() - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(new Date() - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -321,8 +320,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(pastDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -343,8 +342,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -365,8 +364,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -386,8 +385,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [],
         location: "zoom",
         isRemote: true,
@@ -406,8 +405,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: ["Jamie"],
         location: "zoom",
         isRemote: true,
@@ -426,8 +425,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event I",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[(courseDate.getDay() + 1) % 7],
         ],
@@ -438,7 +437,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 202 when event is created", async () => {
+    it("Return 201 when event is created", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
       let secondCourseDate = new Date(courseDate);
@@ -448,8 +447,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         daysOfWeek: [
           weekday[courseDate.getDay()],
         ],
@@ -462,17 +461,16 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: course.id,
         }
       });
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(201);
 
       const calendarJSON = response.body.eventJSon;
       calendarEvents = [];
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const createdEvents = prisma.calendarEvent.findMany({ where: { 
+      const createdEvents = await prisma.calendarEvent.findMany({ where: { 
         courseId: attributes.courseId,
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       for(let i in createdEvents) {
         expect(createdEvents[i].title).toBe(attributes.title);
@@ -555,7 +553,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (newDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(newDate - tzoffset)),
+        date: (new Date(newDate - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -565,7 +563,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(Date.now() - tzoffset)),
+        date: (new Date(new Date() - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -577,7 +575,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(pastDate - tzoffset)),
+        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -598,6 +596,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       } });
 
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
+      console.log(attributes.date)
+      console.log(attributes.date.getUTCHours())
+      console.log(response.text)
       expect(response.status).toBe(202);
 
       const calendarJSON = response.body.eventJSon;
@@ -611,7 +612,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: attributes.courseId,
         },
       } });
-      console.log(changedEvent)
       expect(changedEvent).toBeDefined();
       expect(changedEvent.title).toBe(event.title);
       expect(changedEvent.date).toBe(event.begDate);
@@ -691,7 +691,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (newDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(newDate - tzoffset)),
+        date: (new Date(newDate - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -701,7 +701,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(Date.now() - tzoffset)),
+        date: (new Date(new Date() - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -713,7 +713,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       const attributes = {
         courseId: course.id,
-        date: (new Date(pastDate - tzoffset)),
+        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
       };
       const response = await request.post(`${endpoint}/changeRemote`).send(attributes).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
@@ -777,7 +777,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };      
@@ -796,7 +796,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };      
@@ -815,7 +815,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };      
@@ -834,7 +834,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id * 2,
       };      
@@ -853,7 +853,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: 0,
       };      
@@ -872,7 +872,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: -course.id,
       };      
@@ -893,8 +893,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
-        date: (new Date(date - tzoffset1)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+        date: (new Date(date - tzoffset1)).toISOString().split('T')[0],
         courseId: course.id,
       };      
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -913,8 +913,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
-        date: (new Date(Date.now() - tzoffset1)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+        date: (new Date(new Date() - tzoffset1)).toISOString().split('T')[0],
         courseId: course.id,
       };      
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -935,8 +935,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
-        date: (new Date(pastDate - tzoffset1)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
+        date: (new Date(pastDate - tzoffset1)).toISOString().split('T')[0],
         courseId: course.id,
       };      
       const response = await request.post(`${endpoint}/edit`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -953,7 +953,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };
@@ -972,7 +972,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(pastDate - tzoffset2)),
+        newDate: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };
@@ -991,7 +991,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };      
@@ -1010,7 +1010,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };      
@@ -1029,7 +1029,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: (new Date(newDate - tzoffset2)),
+        newDate: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         date: date,
         courseId: course.id,
       };
@@ -1041,7 +1041,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const createdEvents = prisma.calendarEvent.findUnique({ where: { 
+      const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
           date: attributes.newDate,
@@ -1079,7 +1079,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const createdEvents = prisma.calendarEvent.findUnique({ where: { 
+      const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
           date: attributes.newDate,
@@ -1185,7 +1185,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (date).getTimezoneOffset() * 60000;
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };   
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1197,7 +1197,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (date).getTimezoneOffset() * 60000;
       let attributes = {
         title: "title",
-        date: (new Date(date - tzoffset)),
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };   
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1210,7 +1210,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       var tzoffset = (pastDate).getTimezoneOffset() * 60000; 
       let attributes = {
         title: "title",
-        date: (new Date(pastDate - tzoffset)),
+        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };    
       const response = await request.post(`${endpoint}/editTitle`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1253,7 +1253,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarEvents.push(calendarJSON[i]);
       }; 
 
-      const createdEvents = prisma.calendarEvent.findUnique({ where: { 
+      const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
           date: attributes.date,
@@ -1357,7 +1357,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       let attributes = {
         location: "location",
         isRemote: true,
-        date: (new Date(date - tzoffset)),
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };   
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1371,7 +1371,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       let attributes = {
         location: "location",
         isRemote: true,
-        date: (new Date(date - tzoffset)),
+        date: (new Date(date - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };   
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1385,7 +1385,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       let attributes = {
         location: "location",
         isRemote: true,
-        date: (new Date(pastDate - tzoffset)),
+        date: (new Date(pastDate - tzoffset)).toISOString().split('T')[0],
         courseId: course.id,
       };    
       const response = await request.post(`${endpoint}/editLocation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1430,7 +1430,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         calendarEvents.push(calendarJSON[i]);
       }; 
 
-      const createdEvents = prisma.calendarEvent.findUnique({ where: { 
+      const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
           date: attributes.date,
@@ -1464,7 +1464,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };
@@ -1480,7 +1480,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };    
@@ -1496,7 +1496,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };    
@@ -1512,7 +1512,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id * 2,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };      const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1527,7 +1527,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: 0,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };      const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1542,7 +1542,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: -course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };      const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
@@ -1567,7 +1567,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(Date.now() - tzoffset2)),
+        date: (new Date(new Date() - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };
@@ -1582,7 +1582,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(pastDate - tzoffset2)),
+        date: (new Date(pastDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };
@@ -1598,7 +1598,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };      
@@ -1614,7 +1614,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "",
         isRemote: true,
       };
@@ -1622,7 +1622,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 202 with all valid parameters", async () => {
+    it("Return 201 with all valid parameters", async () => {
       const date = new Date(calendarEvents[0].start);
       let newDate = new Date(date);
       newDate.setFullYear(newDate.getFullYear() + 1);  
@@ -1630,19 +1630,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event II",
         courseId: course.id,
-        date: (new Date(newDate - tzoffset2)),
+        date: (new Date(newDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
       };
       const response = await request.post(`${endpoint}/createEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(201);
 
       const calendarJSON = response.body.eventJSon;
       calendarEvents = [];
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const createdEvents = prisma.calendarEvent.findUnique({ where: { 
+      const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
           date: attributes.date,
@@ -1679,8 +1679,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1703,8 +1703,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1727,8 +1727,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1751,8 +1751,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id * 2,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1775,8 +1775,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: 0,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1799,8 +1799,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: -course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1820,8 +1820,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1843,8 +1843,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(Date.now() - tzoffset3)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(new Date() - tzoffset3)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1869,8 +1869,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(pastDate - tzoffset3)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(pastDate - tzoffset3)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1891,8 +1891,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(Date.now() - tzoffset3)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(new Date() - tzoffset3)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1914,8 +1914,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(pastDate - tzoffset3)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(pastDate - tzoffset3)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1938,8 +1938,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -1962,8 +1962,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "",
         isRemote: true,
         daysOfWeek: [
@@ -1986,8 +1986,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [],
@@ -2008,8 +2008,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: ["Jamie"],
@@ -2030,8 +2030,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -2042,7 +2042,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 202 with all valid parameters", async () => {
+    it("Return 201 with all valid parameters", async () => {
       let courseDate = new Date();
       courseDate.setFullYear(courseDate.getFullYear() + 2);
       let secondCourseDate = new Date(courseDate);
@@ -2052,8 +2052,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)),
-        endDate: (new Date(secondCourseDate - tzoffset2)),
+        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
         daysOfWeek: [
@@ -2061,14 +2061,14 @@ describe(`Test endpoint ${endpoint}`, () => {
         ],
       };
       const response = await request.post(`${endpoint}/createRecurringEvent`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(201);
 
       const calendarJSON = response.body.eventJSon;
       calendarEvents = [];
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const createdEvents = prisma.calendarEvent.findMany({ where: { 
+      const createdEvents = await prisma.calendarEvent.findMany({ where: { 
         courseId: attributes.courseId,
       } });
       console.log(createdEvents)
@@ -2308,7 +2308,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when date is a date in the past", async () => {
       let date = new Date();
       date.setMonth(date.getMonth() - 3);
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${date}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(date).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
@@ -2320,7 +2320,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 with all valid parameters: course event not on day", async () => {
       let date = new Date(calendarEvents[0].start)
       date.setDate(date.getDate() + 1);
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${date}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(date).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
  
       const calendarJSON = response.body.eventJSon;
@@ -2398,12 +2398,19 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when date is in the past", async () => {
       let pastDate = new Date();
       pastDate.setMonth(pastDate.getMonth() - 3);        
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${pastDate}`).set("Authorization", "Bearer " + instructor.token);
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(pastDate).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when date is now", async () => {
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${Date.now()}`).set("Authorization", "Bearer " + instructor.token);
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(new Date()).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when event doesn't exist", async () => {
+      let pastDate = new Date(calendarEvents[0].start);
+      pastDate.setDate(pastDate.getDate() - 1);        
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(pastDate).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
@@ -2487,4 +2494,3 @@ describe(`Test endpoint ${endpoint}`, () => {
   
   });
 });
-
