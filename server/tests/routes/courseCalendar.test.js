@@ -459,7 +459,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       calendarEvents = await prisma.calendarEvent.findMany({
         where: {
           courseId: course.id,
-        }
+        },
+        orderBy: {
+          date: "asc",
+        },
       });
       expect(response.status).toBe(201);
 
@@ -470,7 +473,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       }; 
       const createdEvents = await prisma.calendarEvent.findMany({ where: { 
         courseId: attributes.courseId,
-      } });
+        },
+        orderBy: {
+          date: "asc",
+        },
+      });
       expect(createdEvents).toBeDefined();
       for(let i in createdEvents) {
         expect(createdEvents[i].title).toBe(attributes.title);
@@ -588,7 +595,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
 
-      const event = prisma.calendarEvent.findUnique({ where: { 
+      const event = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           date: attributes.date,
           courseId: attributes.courseId,
@@ -596,9 +603,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       } });
 
       const response = await request.post(`${endpoint}/changeCancellation`).send(attributes).set("Authorization", "Bearer " + instructor.token);
-      console.log(attributes.date)
-      console.log(attributes.date.getUTCHours())
-      console.log(response.text)
       expect(response.status).toBe(202);
 
       const calendarJSON = response.body.eventJSon;
@@ -606,7 +610,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const changedEvent = prisma.calendarEvent.findUnique({ where: { 
+      const changedEvent = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           date: attributes.date,
           courseId: attributes.courseId,
@@ -614,7 +618,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } });
       expect(changedEvent).toBeDefined();
       expect(changedEvent.title).toBe(event.title);
-      expect(changedEvent.date).toBe(event.begDate);
+      expect(changedEvent.date).toStrictEqual(event.date);
       expect(changedEvent.location).toBe(event.location);
       expect(changedEvent.allDay).toBe(true);
       expect(changedEvent.isCancelled).toBe(!event.isCancelled);
@@ -725,7 +729,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };     
 
-      const event = prisma.calendarEvent.findUnique({ where: { 
+      const event = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           date: attributes.date,
           courseId: attributes.courseId,
@@ -740,16 +744,15 @@ describe(`Test endpoint ${endpoint}`, () => {
       for(let i in calendarJSON) { 
         calendarEvents.push(calendarJSON[i]);
       }; 
-      const changedEvent = prisma.calendarEvent.findUnique({ where: { 
+      const changedEvent = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           date: attributes.date,
           courseId: attributes.courseId,
         },
       } });
-      console.log(changedEvent)
       expect(changedEvent).toBeDefined();
       expect(changedEvent.title).toBe(event.title);
-      expect(changedEvent.date).toBe(event.begDate);
+      expect(changedEvent.date).toStrictEqual(event.date);
       expect(changedEvent.location).toBe(event.location);
       expect(changedEvent.allDay).toBe(true);
       expect(changedEvent.isCancelled).toBe(event.isCancelled);
@@ -1044,19 +1047,18 @@ describe(`Test endpoint ${endpoint}`, () => {
       const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
-          date: attributes.newDate,
+          date: new Date(attributes.newDate),
         },
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toBe(attributes.newDate);
+      expect(createdEvents.date).toStrictEqual(new Date(attributes.newDate));
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
       expect(createdEvents.isRemote).toBe(attributes.isRemote);
       expect(createdEvents.courseId).toBe(attributes.courseId);
-      expect(response.status).toBe(201);  
+      expect(response.status).toBe(202);  
     });
 
     it("Return 202 with all valid parameters: same date", async () => {
@@ -1085,17 +1087,16 @@ describe(`Test endpoint ${endpoint}`, () => {
           date: attributes.newDate,
         },
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toBe(attributes.newDate);
-      expect(createdEvents.date).toBe(attributes.date);
+      expect(createdEvents.date).toStrictEqual(attributes.newDate);
+      expect(createdEvents.date).toStrictEqual(attributes.date);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
       expect(createdEvents.isRemote).toBe(attributes.isRemote);
       expect(createdEvents.courseId).toBe(attributes.courseId);
-      expect(response.status).toBe(201);  
+      expect(response.status).toBe(202);  
     });
 
   });
@@ -1259,16 +1260,15 @@ describe(`Test endpoint ${endpoint}`, () => {
           date: attributes.date,
         },
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toBe(event.date);
+      expect(createdEvents.date).toStrictEqual(event.date);
       expect(createdEvents.location).toBe(event.location);
       expect(createdEvents.allDay).toBe(event.allDay);
       expect(createdEvents.isCancelled).toBe(event.isCancelled);
       expect(createdEvents.isRemote).toBe(event.isRemote);
       expect(createdEvents.courseId).toBe(event.courseId);
-      expect(response.status).toBe(201);  
+      expect(response.status).toBe(202);  
     });    
   });
 
@@ -1436,16 +1436,15 @@ describe(`Test endpoint ${endpoint}`, () => {
           date: attributes.date,
         },
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(event.title);
-      expect(createdEvents.date).toBe(event.date);
+      expect(createdEvents.date).toStrictEqual(event.date);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(event.allDay);
       expect(createdEvents.isCancelled).toBe(event.isCancelled);
       expect(createdEvents.isRemote).toBe(attributes.isRemote);
       expect(createdEvents.courseId).toBe(event.courseId);
-      expect(response.status).toBe(201);       
+      expect(response.status).toBe(202);       
     });
   });
 
@@ -1645,13 +1644,12 @@ describe(`Test endpoint ${endpoint}`, () => {
       const createdEvents = await prisma.calendarEvent.findUnique({ where: { 
         courseId_date: {
           courseId: attributes.courseId,
-          date: attributes.date,
+          date: new Date(attributes.date),
         },
       } });
-      console.log(createdEvents)
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toBe(attributes.date);
+      expect(createdEvents.date).toStrictEqual(new Date(attributes.date));
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
@@ -1820,7 +1818,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = { 
         title: "Calendar Event III",
         courseId: course.id,
-        begDate: (new Date(courseDate - tzoffset)).toISOString().split('T')[0],
+        begDate: courseDate,
         endDate: (new Date(secondCourseDate - tzoffset2)).toISOString().split('T')[0],
         location: "zoom",
         isRemote: true,
@@ -2070,12 +2068,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       }; 
       const createdEvents = await prisma.calendarEvent.findMany({ where: { 
         courseId: attributes.courseId,
-      } });
-      console.log(createdEvents)
+        title: attributes.title,
+        },
+        orderBy: {
+          date: "asc",
+        },
+      });
       expect(createdEvents).toBeDefined();
       for(let i in createdEvents) {
         expect(createdEvents[i].title).toBe(attributes.title);
-        // expect(createdEvents[i].date).toBe(attributes.begDate);
+        // expect(createdEvents[i].date).toStrictEqual(attributes.begDate);
         expect(createdEvents[i].location).toBe(attributes.location);
         expect(createdEvents[i].allDay).toBe(true);
         expect(createdEvents[i].isCancelled).toBe(false);
@@ -2119,11 +2121,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 with all valid parameters", async () => {
-
-      const events = await prisma.calendarEvents.findMany({
+      const events = await prisma.calendarEvent.findMany({
         where: {
           courseId: course.id,
-        }
+        },
+        orderBy: {
+          date: "asc",
+        },
       });
 
       const response = await request.get(`${endpoint}/getAllEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
@@ -2137,13 +2141,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(gottenEvents).toBeDefined();
       for(let i in gottenEvents) {
         expect(gottenEvents[i].title).toBe(events[i].title);
-        expect(gottenEvents[i].start).toBe(events[i].date);
+        expect(gottenEvents[i].start).toStrictEqual(events[i].date);
         expect(gottenEvents[i].location).toBe(events[i].location);
         expect(gottenEvents[i].allDay).toBe(events[i].allDay);
         expect(gottenEvents[i].isCancelled).toBe(events[i].isCancelled);
         expect(gottenEvents[i].isRemote).toBe(events[i].isRemote);
         expect(gottenEvents[i].courseId).toBe(events[i].courseId);
-        expect(response.status).toBe(201);  
+        expect(response.status).toBe(202);  
       }
     });
   });
@@ -2187,6 +2191,9 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: course.id,
           isCancelled: false,
         },
+        orderBy: {
+          date: "asc",
+        },
       });
 
       const response = await request.get(`${endpoint}/getAllNotCancelledEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
@@ -2200,13 +2207,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(gottenEvents).toBeDefined();
       for(let i in gottenEvents) {
         expect(gottenEvents[i].title).toBe(events[i].title);
-        expect(gottenEvents[i].start).toBe(events[i].date);
+        expect(gottenEvents[i].start).toStrictEqual(events[i].date);
         expect(gottenEvents[i].location).toBe(events[i].location);
         expect(gottenEvents[i].allDay).toBe(events[i].allDay);
         expect(gottenEvents[i].isCancelled).toBe(events[i].isCancelled);
         expect(gottenEvents[i].isRemote).toBe(events[i].isRemote);
         expect(gottenEvents[i].courseId).toBe(events[i].courseId);
-        expect(response.status).toBe(201);  
+        expect(response.status).toBe(202);  
       }
     });
   });
@@ -2250,6 +2257,9 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: course.id,
           isCancelled: true,
         },
+        orderBy: {
+          date: "asc",
+        },
       });
 
       const response = await request.get(`${endpoint}/getAllCancelledEventsForCourse/${course.id}`).set("Authorization", "Bearer " + students[0].token);
@@ -2263,20 +2273,21 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(gottenEvents).toBeDefined();
       for(let i in gottenEvents) {
         expect(gottenEvents[i].title).toBe(events[i].title);
-        expect(gottenEvents[i].start).toBe(events[i].date);
+        expect(gottenEvents[i].start).toStrictEqual(events[i].date);
         expect(gottenEvents[i].location).toBe(events[i].location);
         expect(gottenEvents[i].allDay).toBe(events[i].allDay);
         expect(gottenEvents[i].isCancelled).toBe(events[i].isCancelled);
         expect(gottenEvents[i].isRemote).toBe(events[i].isRemote);
         expect(gottenEvents[i].courseId).toBe(events[i].courseId);
-        expect(response.status).toBe(201);  
+        expect(response.status).toBe(202);  
       }
     });
   });
 
   describe(`Test GET: ${endpoint}/getEventOnDay/:courseId/date/:date`, async () => {
     it("Return 401 when no authorization token is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`);
+      const dateObj = new Date(calendarEvents[0].start);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${dateObj}`);
       expect(response.status).toBe(401);
     });
 
@@ -2318,9 +2329,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 with all valid parameters: course event not on day", async () => {
-      let date = new Date(calendarEvents[0].start)
-      date.setDate(date.getDate() + 1);
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(date).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
+      const dateObj = new Date(calendarEvents[0].start)
+      dateObj.setDate(dateObj.getDate() + 1);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(dateObj)}`).set("Authorization", "Bearer " + students[0].token);
+      console.log(response.text)
       expect(response.status).toBe(202);
  
       const calendarJSON = response.body.eventJSon;
@@ -2328,7 +2340,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       for(let i in calendarJSON) { 
         gottenEvents.push(calendarJSON[i]);
       }; 
-      expect(gottenEvents).toBe([]);
+      expect(gottenEvents).toStrictEqual([]);
     });
 
     it("Return 202 with all valid parameters", async () => {
@@ -2342,6 +2354,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
 
       const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      console.log(response.text)
       expect(response.status).toBe(202);
       
  
@@ -2353,13 +2366,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(gottenEvents).toBeDefined();
       for(let i in gottenEvents) {
         expect(gottenEvents[i].title).toBe(events[i].title);
-        expect(gottenEvents[i].start).toBe(events[i].date);
+        expect(gottenEvents[i].start).toStrictEqual(events[i].date);
         expect(gottenEvents[i].location).toBe(events[i].location);
         expect(gottenEvents[i].allDay).toBe(events[i].allDay);
         expect(gottenEvents[i].isCancelled).toBe(events[i].isCancelled);
         expect(gottenEvents[i].isRemote).toBe(events[i].isRemote);
         expect(gottenEvents[i].courseId).toBe(events[i].courseId);
-        expect(response.status).toBe(201);  
+        expect(response.status).toBe(202);  
       }
     });
   });
@@ -2415,17 +2428,19 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 when course event is deleted", async () => {
-      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      const dateObj = new Date(calendarEvents[0].start);
+      let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${dateObj}`).set("Authorization", "Bearer " + instructor.token);
+      console.log(response.text)
       expect(response.status).toBe(202);
       const event = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
             courseId: course.id,
-            date: new Date(calendarEvents[0].start)
+            date: dateObj,
           },
         },
       });
-      expect(event).toBe([]);
+      expect(event).toStrictEqual([]);
     });
   });
 
@@ -2458,8 +2473,11 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId: course.id,
         },
+        orderBy: {
+          date: "asc",
+        },
       });
-      expect(events).toBe([]);
+      expect(events).toStrictEqual([]);
     });
   });
 

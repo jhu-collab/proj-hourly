@@ -104,6 +104,7 @@ export const doesEventExistRecurring = async (req, res, next) => {
     debug("calendar event doesn't exist on proposed days");
     next();
   } else {
+    debug("calendar events exist on proposed days");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: calendar event exists on days" });
@@ -132,31 +133,6 @@ export const doesEventNotExist = async (req, res, next) => {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: calendar event exists" });
-  }
-};
-
-export const isEventNotCancelled = async (req, res, next) => {
-  debug("checking whether calendar event exists");
-  const {courseId, date} = req.body;
-  debug("getting calendar event...");
-  let dateObj = new Date(date);
-  const calendarEvent = await prisma.calendarEvent.findUnique({
-    where: {
-      courseId_date: {
-        courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
-      },
-    },
-  });
-  debug("got calendar event");
-  if (calendarEvent.isCancelled) {
-    debug("calendar event is cancelled");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event is cancelled" });
-  } else {
-    debug("calendar event is not cancelled");
-    next();
   }
 };
 
@@ -289,24 +265,6 @@ export const startDateIsValidDOW = (req, res, next) => {
   }
 };
 
-export const doesNotHaveCourseEvents = async (req, res, next) => {
-  debug("checkign if course has events");
-  const { courseId } = req.body;
-  const calendarEvents = await prisma.calendarEvent.findMany({
-    where: {
-      courseId: courseId,
-    },
-  });
-  if (calendarEvents.length === 0) {
-    debug("course has no events");
-    next();
-  } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: course has events" });
-  }
-};
-
 export const isInCourse = async (req, res, next) => {
   debug("isInCourse is called!");
   debug("Retrieving course id from url...");
@@ -360,7 +318,7 @@ export const isInCourse = async (req, res, next) => {
     debug("Error in isInCourse!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "User is not in course" });
+      .json({ msg: "ERROR: User is not in course" });
   } else {
     debug("Account is a course member!");
     debug("isInCourse is done!");
@@ -391,7 +349,7 @@ export const newDateNotOldDate = async (req, res, next) => {
     debug("Course already occurs on this day");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Course already exists on this day" });
+      .json({ msg: "ERROR: Course already exists on this day" });
   }
 };
 
@@ -408,7 +366,7 @@ export const newDateInFuture = async (req, res, next) => {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "dates are not in the future" });
+      .json({ msg: "ERROR: dates are not in the future" });
   } else {
     debug("dates are in the future")
     next();
@@ -428,7 +386,7 @@ export const begDateInFuture = async (req, res, next) => {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "dates are not in the future" });
+      .json({ msg: "ERROR: dates are not in the future" });
   } else {
     debug("dates are in the future")
     next();
@@ -445,7 +403,7 @@ export const dateInFuture = async (req, res, next) => {
     debug("date is not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "date is not in the future" });
+      .json({ msg: "ERROR: date is not in the future" });
   } else {
     debug("date is in the future")
     next();
@@ -462,7 +420,7 @@ export const dateInFutureParams = async (req, res, next) => {
     debug("date is not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "date is not in the future" });
+      .json({ msg: "ERROR: date is not in the future" });
   } else {
     debug("date is in the future")
     next();
@@ -472,56 +430,77 @@ export const dateInFutureParams = async (req, res, next) => {
 export const isUTC0 = async (req, res, next) => {
   debug("getting date");
   const { date } = req.body;
-  console.log(date)
-  let dateObj = spacetime(date);
-  let dateHours = dateObj.toNativeDate().getUTCHours();
-  console.log(dateHours)
-  console.log(dateObj.toNativeDate().getTimezoneOffset() / 60)
-  if (dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60) {
-    debug("UTC hour is 0");
+  const dateObj = spacetime(date);
+  const dateOffset = Math.abs(dateObj.timezone().current.offset);
+  const dateHours = dateObj.toNativeDate().getUTCHours();
+  if (dateOffset === dateHours) {
+    debug("UTC hour is the same");
     next();
   } else {
-    debug("UTC hour is not 0");
+    debug("UTC hour is not the same");
     return res
-      .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "UTC hour is not 0" });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: UTC hour is not the same" });
+  }
+};
+
+export const isUTC0Params = async (req, res, next) => {
+  debug("getting date");
+  const date = req.params.date;
+  const dateRight = new Date(date);
+  const dateObj = spacetime(dateRight);
+  const dateOffset = Math.abs(dateObj.timezone().current.offset);
+  const dateHours = dateObj.toNativeDate().getUTCHours();
+  console.log(dateObj.toNativeDate())
+  console.log(dateHours)
+  console.log(dateOffset)
+  if (dateOffset === dateHours) {
+    debug("UTC hour is the same");
+    next();
+  } else {
+    debug("UTC hour is not the same");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: UTC hour is not the same" });
   }
 };
 
 export const isUTCTwo = async (req, res, next) => {
   debug("getting dates");
-  const {  begDate, endDate  } = req.body;
-  let dateObj = spacetime(begDate);
-  let dateHours = dateObj.toNativeDate().getUTCHours();
-  let newDateObj = spacetime(endDate);
-  let newDateHours = newDateObj.toNativeDate().getUTCHours();
-  if (
-    dateHours == dateObj.toNativeDate().getTimezoneOffset() / 60 &&
-    newDateHours == newDateObj.toNativeDate().getTimezoneOffset() / 60
-  ) {
-    debug("UTC hour is 0");
+  const { begDate, endDate } = req.body;
+  const begDateObj = spacetime(begDate);
+  const endDateObj = spacetime(endDate);
+  const begOffset = Math.abs(begDateObj.timezone().current.offset);
+  const endOffset = Math.abs(endDateObj.timezone().current.offset);
+  const begHours = begDateObj.toNativeDate().getUTCHours();
+  const endHours = endDateObj.toNativeDate().getUTCHours();
+  if (begOffset === begHours && endOffset === endHours) {
+    debug("UTC hour is the same for both dates");
     next();
   } else {
-    debug("UTC hour is not 0");
-    return res.status(StatusCodes.FORBIDDEN).json({ msg: "UTC hour is not 0" });
+    debug("UTC hour is not the same for one or both dates");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: UTC hour is not the same for one or both dates" });
   }
 };
 
 export const isUTCTwoNewDate = async (req, res, next) => {
   debug("getting dates");
-  const {  date, newDate  } = req.body;
-  let dateObj = spacetime(date);
-  let dateHours = dateObj.toNativeDate().getUTCHours();
-  let newDateObj = spacetime(newDate);
-  let newDateHours = newDateObj.toNativeDate().getUTCHours();
-  if (
-    dateHours == dateObj.getTimezoneOffset() / 60 &&
-    newDateHours == newDateObj.getTimezoneOffset() / 60
-  ) {
-    debug("UTC hour is 0");
+  const { date, newDate } = req.body;
+  const dateObj = spacetime(date);
+  const newDateObj = spacetime(newDate);
+  const dateOffset = Math.abs(dateObj.timezone().current.offset);
+  const newOffset = Math.abs(newDateObj.timezone().current.offset);
+  const dateHours = dateObj.toNativeDate().getUTCHours();
+  const newHours = newDateObj.toNativeDate().getUTCHours();
+  if (dateOffset === dateHours && newOffset === newHours) {
+    debug("UTC hour is the same");
     next();
   } else {
-    debug("UTC hour is not 0");
-    return res.status(StatusCodes.FORBIDDEN).json({ msg: "UTC hour is not 0" });
+    debug("UTC hour is not the same");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: UTC hour is not the same for one or both dates" });
   }
 };
