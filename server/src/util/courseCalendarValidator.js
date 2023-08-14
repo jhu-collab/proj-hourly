@@ -447,13 +447,9 @@ export const isUTC0 = async (req, res, next) => {
 export const isUTC0Params = async (req, res, next) => {
   debug("getting date");
   const date = req.params.date;
-  const dateRight = new Date(date);
-  const dateObj = spacetime(dateRight);
+  const dateObj = spacetime(date);
   const dateOffset = Math.abs(dateObj.timezone().current.offset);
   const dateHours = dateObj.toNativeDate().getUTCHours();
-  console.log(dateObj.toNativeDate())
-  console.log(dateHours)
-  console.log(dateOffset)
   if (dateOffset === dateHours) {
     debug("UTC hour is the same");
     next();

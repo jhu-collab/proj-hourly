@@ -2292,22 +2292,22 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].expiredToken);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].expiredToken);
       expect(response.status).toBe(401);
     });
 
     it("Return 400 when invalid, nonzero course id is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id * 2}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id * 2}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${0}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${0}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id < 0 is provided", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/-${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/-${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
 
@@ -2324,15 +2324,14 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 403 when user is not in course", async () => {
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[2].token);
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[2].token);
       expect(response.status).toBe(403);
     });
 
     it("Return 202 with all valid parameters: course event not on day", async () => {
-      const dateObj = new Date(calendarEvents[0].start)
+      let dateObj = new Date(calendarEvents[0].start)
       dateObj.setDate(dateObj.getDate() + 1);
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(dateObj)}`).set("Authorization", "Bearer " + students[0].token);
-      console.log(response.text)
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(dateObj).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
  
       const calendarJSON = response.body.eventJSon;
@@ -2353,8 +2352,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         }
       });
 
-      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
-      console.log(response.text)
+      const response = await request.get(`${endpoint}/getEventOnDay/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
       
  
@@ -2379,32 +2377,32 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe(`Test DELETE: ${endpoint}/deleteCourse/:courseId/date/:date`, async () => {
     it("Return 401 when no authorization token is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`);
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`);
       expect(response.status).toBe(401);
     });
 
     it("Return 401 when authorization token is expired", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.expiredToken);
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
     it("Return 403 when invalid user", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + students[0].token);
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(403);
     });
 
     it("Return 400 when invalid course id is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${course.id * 2}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      const response = await request.delete(`${endpoint}/deleteCourse/${course.id * 2}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id < 0 is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      const response = await request.delete(`${endpoint}/deleteCourse/${-course.id}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
     it("Return 400 when course id = 0 is provided", async () => {
-      const response = await request.delete(`${endpoint}/deleteCourse/${0}/date/${new Date(calendarEvents[0].start)}`).set("Authorization", "Bearer " + instructor.token);
+      const response = await request.delete(`${endpoint}/deleteCourse/${0}/date/${(new Date(calendarEvents[0].start)).toISOString().split('T')[0]}`).set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
 
@@ -2428,19 +2426,18 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 when course event is deleted", async () => {
-      const dateObj = new Date(calendarEvents[0].start);
+      const dateObj = (new Date(calendarEvents[0].start)).toISOString().split('T')[0];
       let response = await request.delete(`${endpoint}/deleteCourse/${course.id}/date/${dateObj}`).set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text)
       expect(response.status).toBe(202);
       const event = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
             courseId: course.id,
-            date: dateObj,
+            date: new Date(dateObj),
           },
         },
       });
-      expect(event).toStrictEqual([]);
+      expect(event).toStrictEqual(null);
     });
   });
 
