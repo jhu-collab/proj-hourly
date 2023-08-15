@@ -16,7 +16,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
 import { agendaSchema } from "../../utils/validators";
-import { Chip } from "@mui/material";
+import { Chip, Grid } from "@mui/material";
 
 /**
  * Represents a single AgendaTopic card.
@@ -63,107 +63,114 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
-          >
-            <Typography
-              variant="h5"
-              color={isCancelled ? "error.main" : "text.primary"}
-            >
-              {DateTime.fromISO(date).toLocaleString(
-                DateTime.DATE_MED_WITH_WEEKDAY
-              )}
-            </Typography>
-            {edit && courseType === "Instructor" ? (
-              <FormInputText
-                name="title"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                spacing={2}
+          <Grid container spacing={2} columns={3} alignItems="center">
+            <Grid item xs={1} key={0}>
+              <Typography
+                variant="h5"
+                color={isCancelled ? "error.main" : "text.primary"}
               >
-                <Typography
-                  variant="h5"
-                  color={isCancelled ? "error.main" : "text.primary"}
+                {DateTime.fromISO(date).toLocaleString(
+                  DateTime.DATE_MED_WITH_WEEKDAY
+                )}
+              </Typography>
+            </Grid>
+            {edit && courseType === "Instructor" ? (
+              <Grid item xs={1} key={1}>
+                <FormInputText
+                  name="title"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              </Grid>
+            ) : (
+              <Grid item xs={1} key={2}>
+                <Stack
+                  direction="row"
+                  justifyContent="flex-start"
+                  alignItems="center"
+                  spacing={3}
                 >
-                  {topic}
-                </Typography>
-                {isRemote && <Chip label="Remote" />}
-              </Stack>
+                  <Typography
+                    variant="h5"
+                    color={isCancelled ? "error.main" : "text.primary"}
+                  >
+                    {topic}
+                  </Typography>
+                  {isRemote && <Chip label="Remote" />}
+                </Stack>
+              </Grid>
             )}
             {edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                  >
-                    Submit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-              </Stack>
+              <Grid item xs={1} key={3}>
+                <Stack direction="row" spacing={1} justifyContent="flex-end">
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              </Grid>
             )}
             {!edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                {!isCancelled && <AnimateButton>
-                  <Button variant="contained" onClick={handleOnClickEditBtn}>
-                    Edit
-                  </Button>
-                </AnimateButton>}
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      confirmDialog(
-                        `Do you really want to change the cancellation status of the "${topic}" course calendar event?`,
-                        () =>
-                          mutateCancel({
-                            courseId: course.id,
-                            date: DateTime.fromJSDate(new Date(date), {
-                              zone: "utc",
-                            }).toFormat("MM-dd-yyyy"),
-                          })
-                      );
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      confirmDialog(
-                        `Do you really want to delete the "${topic}" course calendar event?`,
-                        () => mutateDelete({ date: new Date(date) })
-                      );
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </AnimateButton>
-              </Stack>
+              <Grid item xs={1} key={4}>
+                <Stack direction="row" spacing={1} justifyContent="flex-end">
+                  {!isCancelled && (
+                    <AnimateButton>
+                      <Button
+                        variant="contained"
+                        onClick={handleOnClickEditBtn}
+                      >
+                        Edit
+                      </Button>
+                    </AnimateButton>
+                  )}
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to change the cancellation status of the "${topic}" course calendar event?`,
+                          () =>
+                            mutateCancel({
+                              courseId: course.id,
+                              date: DateTime.fromJSDate(new Date(date), {
+                                zone: "utc",
+                              }).toFormat("MM-dd-yyyy"),
+                            })
+                        );
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to delete the "${topic}" course calendar event?`,
+                          () => mutateDelete({ date: new Date(date) })
+                        );
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              </Grid>
             )}
-          </Stack>
+          </Grid>
         </Form>
       </MainCard>
       <ConfirmPopup />
