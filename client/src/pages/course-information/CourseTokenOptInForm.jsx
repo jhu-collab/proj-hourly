@@ -11,6 +11,7 @@ import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useMutationCourseTokenOptIn from "../../hooks/useMutationCourseTokenOptIn";
+import { useNavigate } from "react-router-dom";
 //import { optInCourseTokenSchema } from "../../utils/validators";
 
 /**
@@ -21,7 +22,7 @@ import useMutationCourseTokenOptIn from "../../hooks/useMutationCourseTokenOptIn
 function CourseTokenOptInForm() {
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
-
+  const navigate = useNavigate();
   const course = useStoreCourse((state) => state.course);
 
   const { control, handleSubmit, watch } = useForm({
@@ -39,6 +40,7 @@ function CourseTokenOptInForm() {
     mutate({
       courseId: course.id,
     });
+    navigate("/", { replace: false });
   };
 
   return (
