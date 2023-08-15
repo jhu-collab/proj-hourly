@@ -5,7 +5,6 @@ import { getConfig } from "./helper";
 import useStoreToken from "./useStoreToken";
 import Debug from "debug";
 
-
 const debug = new Debug(`hourly:hooks:useQueryCourses.js`);
 
 function useQueryCourses() {

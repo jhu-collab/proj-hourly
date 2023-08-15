@@ -4,33 +4,47 @@ import RemoveCourseAction from "./RemoveCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
+import CourseTokenOptInForm from "./CourseTokenOptInForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
   const courseType = useStoreLayout((state) => state.courseType);
   return (
-    <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
-      <Stack padding="16px" spacing={1}>
-        <Typography variant="h5" fontWeight={400}>
-          Course Name: <strong>{course.title}</strong>
-        </Typography>
-        <Typography variant="h5" fontWeight={400}>
-          Course Number: <strong>{course.courseNumber}</strong>
-        </Typography>
-        <Typography variant="h5" fontWeight={400}>
-          Semester: <strong>{course.semester}</strong>
-        </Typography>
-        <Typography variant="h5" fontWeight={400}>
-          Year: <strong>{course.calendarYear}</strong>
-        </Typography>
-        {(courseType === "Staff" || courseType === "Instructor") && (
+    <>
+      <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
+        <Stack padding="16px" spacing={1}>
           <Typography variant="h5" fontWeight={400}>
-            Code: <strong>{course.code}</strong>
+            Course Name: <strong>{course.title}</strong>
           </Typography>
+          <Typography variant="h5" fontWeight={400}>
+            Course Number: <strong>{course.courseNumber}</strong>
+          </Typography>
+          <Typography variant="h5" fontWeight={400}>
+            Semester: <strong>{course.semester}</strong>
+          </Typography>
+          <Typography variant="h5" fontWeight={400}>
+            Year: <strong>{course.calendarYear}</strong>
+          </Typography>
+          {(courseType === "Staff" || courseType === "Instructor") && (
+            <Typography variant="h5" fontWeight={400}>
+              Code: <strong>{course.code}</strong>
+            </Typography>
+          )}
+        </Stack>
+        {courseType === "Student" && (
+          <RemoveCourseAction courseId={course.id} />
         )}
-      </Stack>
-      {courseType === "Student" && <RemoveCourseAction courseId={course.id} />}
-    </MainCard>
+      </MainCard>
+      {courseType === "Instructor" && (
+        <MainCard
+          title="Course Token Option"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CourseTokenOptInForm />
+        </MainCard>
+      )}
+    </>
   );
 }
 
