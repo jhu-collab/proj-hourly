@@ -41,7 +41,6 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
   });
 
   const onSubmit = (data) => {
-    console.log("submitting");
     mutateEdit({
       courseId: course.id,
       date: date.split("T")[0],
@@ -49,10 +48,6 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
     });
     setEdit(false);
   };
-
-  const onInvalid = (data) => {
-    console.log(data);
-  }
 
   const handleOnClickCancelBtn = (e) => {
     e.preventDefault();
@@ -67,7 +62,7 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
   return (
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
-        <Form onSubmit={handleSubmit(onSubmit, onInvalid)}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
