@@ -33,37 +33,31 @@ function Agenda() {
       <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
         Agenda
       </Typography>
-      {courseType === "Instructor" && (
-        <>
-          <Grid container spacing={2}>
-            {data.calendarEvents.map((calendarEvent) => {
-              return (
-                <Grid item xs={12} key={calendarEvent.date}>
-                  <Grid item xs={12} key={calendarEvent.date}>
-                    <AgendaTopic
-                      topic={calendarEvent.title}
-                      date={calendarEvent.date}
-                      isCancelled={calendarEvent.isCancelled}
-                      isRemote={calendarEvent.isRemote}
-                    />
-                  </Grid>
-                </Grid>
-              );
-            })}
-          </Grid>
-          <Fab
-            color="primary"
-            onClick={() => NiceModal.show("create-course-calendar-event")}
-            sx={{
-              position: "fixed",
-              bottom: (theme) => theme.spacing(3),
-              right: (theme) => theme.spacing(3),
-            }}
-          >
-            <SpeedDialIcon />
-          </Fab>
-        </>
-      )}
+        <Grid container spacing={2}>
+          {data.calendarEvents.map((calendarEvent) => {
+            return (
+              <Grid item xs={12} key={calendarEvent.date}>
+                  <AgendaTopic
+                    topic={calendarEvent.title}
+                    date={calendarEvent.date}
+                    isCancelled={calendarEvent.isCancelled}
+                    isRemote={calendarEvent.isRemote}
+                  />
+              </Grid>
+            );
+          })}
+        </Grid>
+        <Fab
+          color="primary"
+          onClick={() => NiceModal.show("create-course-calendar-event")}
+          sx={{
+            position: "fixed",
+            bottom: (theme) => theme.spacing(3),
+            right: (theme) => theme.spacing(3),
+          }}
+        >
+          <SpeedDialIcon />
+        </Fab>
     </>
   );
 }
