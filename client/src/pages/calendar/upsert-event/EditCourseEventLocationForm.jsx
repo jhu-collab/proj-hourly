@@ -39,7 +39,7 @@ function EditCourseEventLocationForm() {
       courseId: course.id,
       date: date.toISOString().split("T")[0],
       location: data.location,
-      isRemote: data.isRemote,
+      isRemote: data.remote,
     });
   };
 
