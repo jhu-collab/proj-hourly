@@ -16,7 +16,7 @@ export const weekday = [
 
 export const doesEventExist = async (req, res, next) => {
   debug("checking whether calendar event exists");
-  const {courseId, date} = req.body;
+  const { courseId, date } = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
   dateObj.setUTCHours(23);
@@ -38,9 +38,9 @@ export const doesEventExist = async (req, res, next) => {
     debug("calendar event exists");
     next();
   }
-}
+};
 
-export const doesEventExistParams =  async (req, res, next) => {
+export const doesEventExistParams = async (req, res, next) => {
   debug("checking whether calendar event exists");
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
@@ -141,14 +141,14 @@ export const doesEventNotExist = async (req, res, next) => {
 
 export const endAfterStart = async (req, res, next) => {
   debug("Checking that end date is after start date");
-  const {begDate, endDate} = req.body;
+  const { begDate, endDate } = req.body;
   let begDateObj = new Date(begDate);
   begDateObj.setUTCHours(23);
   let endDateObj = new Date(endDate);
   endDateObj.setUTCHours(23);
   let end = spacetime(endDateObj);
   let beg = spacetime(begDateObj);
-  if(!beg.isAfter(end)) {
+  if (!beg.isAfter(end)) {
     debug("end date is after beginning date");
     next();
   } else {
@@ -357,50 +357,50 @@ export const newDateNotOldDate = async (req, res, next) => {
 };
 
 export const newDateInFuture = async (req, res, next) => {
-  const {date, newDate} = req.body;
+  const { date, newDate } = req.body;
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23); 
+  dateObj.setUTCHours(23);
   let newDateObj = new Date(newDate);
-  newDateObj.setUTCHours(23); 
-  const nowDate = spacetime((new Date()).setUTCHours(23));
+  newDateObj.setUTCHours(23);
+  const nowDate = spacetime(new Date().setUTCHours(23));
   let spaceDate = spacetime(dateObj);
-  let spaceNewDate = spacetime(newDateObj)
+  let spaceNewDate = spacetime(newDateObj);
   if (spaceDate.isBefore(nowDate) || spaceNewDate.isBefore(nowDate)) {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: dates are not in the future" });
   } else {
-    debug("dates are in the future")
+    debug("dates are in the future");
     next();
   }
-}
+};
 
 export const begDateInFuture = async (req, res, next) => {
-  const {begDate, endDate} = req.body;
+  const { begDate, endDate } = req.body;
   let begDateObj = new Date(begDate);
-  begDateObj.setUTCHours(23); 
+  begDateObj.setUTCHours(23);
   let endDateObj = new Date(endDate);
-  endDateObj.setUTCHours(23); 
-  const nowDate = spacetime((new Date()).setUTCHours(23));
+  endDateObj.setUTCHours(23);
+  const nowDate = spacetime(new Date().setUTCHours(23));
   let spaceBeg = spacetime(begDateObj);
-  let spaceEnd = spacetime(endDateObj)
+  let spaceEnd = spacetime(endDateObj);
   if (spaceBeg.isBefore(nowDate) || spaceEnd.isBefore(nowDate)) {
     debug("dates are not in the future");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: dates are not in the future" });
   } else {
-    debug("dates are in the future")
+    debug("dates are in the future");
     next();
   }
-}
+};
 
 export const dateInFuture = async (req, res, next) => {
-  const {date} = req.body;
+  const { date } = req.body;
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23); 
-  const nowDate = spacetime((new Date()).setUTCHours(23));
+  dateObj.setUTCHours(23);
+  const nowDate = spacetime(new Date().setUTCHours(23));
   let spaceDate = spacetime(dateObj);
   if (spaceDate.isBefore(nowDate)) {
     debug("date is not in the future");
@@ -408,16 +408,16 @@ export const dateInFuture = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: date is not in the future" });
   } else {
-    debug("date is in the future")
+    debug("date is in the future");
     next();
   }
-}
+};
 
 export const dateInFutureParams = async (req, res, next) => {
-  const date = req.params.date;  
+  const date = req.params.date;
   let dateObj = new Date(date);
-  dateObj.setUTCHours(23); 
-  const nowDate = spacetime((new Date()).setUTCHours(23));
+  dateObj.setUTCHours(23);
+  const nowDate = spacetime(new Date().setUTCHours(23));
   let spaceDate = spacetime(dateObj);
   if (spaceDate.isBefore(nowDate)) {
     debug("date is not in the future");
@@ -425,10 +425,10 @@ export const dateInFutureParams = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: date is not in the future" });
   } else {
-    debug("date is in the future")
+    debug("date is in the future");
     next();
   }
-}
+};
 
 export const isUTC0 = async (req, res, next) => {
   debug("getting date");
@@ -451,7 +451,7 @@ export const isUTC0Params = async (req, res, next) => {
   debug("getting date");
   const date = req.params.date;
   const dateObj = spacetime(date);
-  const dateOffset = Math.abs(dateObj.timezone().current.offset);
+  const dateOffset = Math.abs(dateObj.toNativeDate().getTimezoneOffset() / 60);
   const dateHours = dateObj.toNativeDate().getUTCHours();
   if (dateOffset === dateHours) {
     debug("UTC hour is the same");
@@ -467,10 +467,15 @@ export const isUTC0Params = async (req, res, next) => {
 export const isUTCTwo = async (req, res, next) => {
   debug("getting dates");
   const { begDate, endDate } = req.body;
+  console.log(begDate, endDate);
   const begDateObj = spacetime(begDate);
   const endDateObj = spacetime(endDate);
-  const begOffset = Math.abs(begDateObj.timezone().current.offset);
-  const endOffset = Math.abs(endDateObj.timezone().current.offset);
+  const begOffset = Math.abs(
+    begDateObj.toNativeDate().getTimezoneOffset() / 60
+  );
+  const endOffset = Math.abs(
+    endDateObj.toNativeDate().getTimezoneOffset() / 60
+  );
   const begHours = begDateObj.toNativeDate().getUTCHours();
   const endHours = endDateObj.toNativeDate().getUTCHours();
   if (begOffset === begHours && endOffset === endHours) {
@@ -489,8 +494,10 @@ export const isUTCTwoNewDate = async (req, res, next) => {
   const { date, newDate } = req.body;
   const dateObj = spacetime(date);
   const newDateObj = spacetime(newDate);
-  const dateOffset = Math.abs(dateObj.timezone().current.offset);
-  const newOffset = Math.abs(newDateObj.timezone().current.offset);
+  const dateOffset = Math.abs(dateObj.toNativeDate().getTimezoneOffset() / 60);
+  const newOffset = Math.abs(
+    newDateObj.toNativeDate().getTimezoneOffset() / 60
+  );
   const dateHours = dateObj.toNativeDate().getUTCHours();
   const newHours = newDateObj.toNativeDate().getUTCHours();
   if (dateOffset === dateHours && newOffset === newHours) {

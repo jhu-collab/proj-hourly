@@ -19,14 +19,24 @@ export const weekday = [
 ];
 
 export const create = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
+  const {
+    courseId,
+    begDate,
+    endDate,
+    daysOfWeek,
+    location,
+    title,
+    additionalInfo,
+    isRemote,
+  } = req.body;
   debug("creating calendar events for course...");
-  let thisEnd = new Date(endDate)
+  let thisEnd = new Date(endDate);
   let thisBeg = new Date(begDate);
   let end = spacetime(thisEnd);
   end = end.add(23 - end.toNativeDate().getUTCHours(), "hours");
   let beg = spacetime(thisBeg);
   beg = beg.add(23 - beg.toNativeDate().getUTCHours(), "hours");
+  console.log(beg.toNativeDate(), end.toNativeDate());
   let indices = [];
   daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
@@ -35,15 +45,23 @@ export const create = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date: beg.toNativeDate(), isRemote: isRemote};
+    let courseInfo = {
+      courseId,
+      title: title,
+      additionalInfo: additionalInfo,
+      location: location,
+      date: beg.toNativeDate(),
+      isRemote: isRemote,
+    };
     calendarEvents.push(courseInfo);
-    let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    let diff = indices[(i + 1) % indices.length] - indices[i % indices.length];
     i++;
     if (diff <= 0) {
       diff += 7;
-    };
-    beg = beg.add(diff, 'day');
+    }
+    beg = beg.add(diff, "day");
   }
+  console.log(calendarEvents);
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
   });
@@ -58,7 +76,7 @@ export const changeCancellation = async (req, res) => {
     return res;
   }
   const { courseId, date } = req.body;
-  let thisDate = new Date(date)
+  let thisDate = new Date(date);
   let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("cancelling or uncancelling calendar event...");
@@ -67,8 +85,8 @@ export const changeCancellation = async (req, res) => {
       courseId_date: {
         courseId: courseId,
         date: dateObj.toNativeDate(),
-      }
-    }
+      },
+    },
   });
   const newEvent = await prisma.calendarEvent.update({
     where: {
@@ -79,10 +97,10 @@ export const changeCancellation = async (req, res) => {
     },
     data: {
       isCancelled: !calendarEvent.isCancelled,
-    }
+    },
   });
   const eventJSon = await generateCourseCalendar(courseId);
-  debug("calendar event cancellation is changed")
+  debug("calendar event cancellation is changed");
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
@@ -112,7 +130,7 @@ export const changeRemote = async (req, res) => {
     },
     data: {
       isRemote: !calendarEvent.isRemote,
-    }
+    },
   });
   const eventJSon = await generateCourseCalendar(courseId);
   debug("made calendar event remote or in person calendar event...");
@@ -123,10 +141,22 @@ export const editEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const { date, title, additionalInfo, newDate, location, isCancelled, isRemote, courseId } = req.body;
+  const {
+    date,
+    title,
+    additionalInfo,
+    newDate,
+    location,
+    isCancelled,
+    isRemote,
+    courseId,
+  } = req.body;
   let thisNew = new Date(newDate);
   let newDateObj = spacetime(thisNew);
-  newDateObj = newDateObj.add(23 - newDateObj.toNativeDate().getUTCHours(), "hours");
+  newDateObj = newDateObj.add(
+    23 - newDateObj.toNativeDate().getUTCHours(),
+    "hours"
+  );
   let thisDate = new Date(date);
   let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
@@ -264,11 +294,12 @@ export const addCourseEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
-  const {courseId, date, title, additionalInfo, location, isRemote } = req.body;
+  const { courseId, date, title, additionalInfo, location, isRemote } =
+    req.body;
   let thisDate = new Date(date);
   let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
-  debug("adding new calendar event")
+  debug("adding new calendar event");
   const calendarEvent = await prisma.calendarEvent.create({
     data: {
       courseId,
@@ -287,7 +318,16 @@ export const addCourseEvent = async (req, res) => {
 };
 
 export const addRecurringCourseEvent = async (req, res) => {
-  const {courseId, begDate, endDate, daysOfWeek, location, title, additionalInfo, isRemote } = req.body;
+  const {
+    courseId,
+    begDate,
+    endDate,
+    daysOfWeek,
+    location,
+    title,
+    additionalInfo,
+    isRemote,
+  } = req.body;
   debug("creating calendar events for course...");
   let thisEnd = new Date(endDate);
   let end = spacetime(thisEnd);
@@ -303,14 +343,21 @@ export const addRecurringCourseEvent = async (req, res) => {
   const calendarEvents = [];
   let i = indices.indexOf(beg.toNativeDate().getDay());
   while (!beg.isAfter(end)) {
-    let courseInfo = {courseId, title: title, additionalInfo: additionalInfo, location: location, date:beg.toNativeDate(), isRemote: isRemote};
+    let courseInfo = {
+      courseId,
+      title: title,
+      additionalInfo: additionalInfo,
+      location: location,
+      date: beg.toNativeDate(),
+      isRemote: isRemote,
+    };
     calendarEvents.push(courseInfo);
-    let diff = indices[(i+1) % indices.length] - indices[i % indices.length];
+    let diff = indices[(i + 1) % indices.length] - indices[i % indices.length];
     i++;
     if (diff <= 0) {
       diff += 7;
-    };
-    beg = beg.add(diff, 'day');
+    }
+    beg = beg.add(diff, "day");
   }
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
@@ -353,7 +400,7 @@ export const deleteCourse = async (req, res) => {
       courseId: courseId,
     },
   });
-  debug("course events deleted")
+  debug("course events deleted");
   const eventJSon = await generateCourseCalendar(courseId);
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
@@ -364,7 +411,7 @@ export const deleteCourseOnDay = async (req, res) => {
   }
   const courseId = parseInt(req.params.courseId, 10);
   const date = req.params.date;
-  let thisDate = new Date(date)
+  let thisDate = new Date(date);
   let dateObj = spacetime(thisDate);
   dateObj = dateObj.add(23 - dateObj.toNativeDate().getUTCHours(), "hours");
   debug("deleting all events for course on date");
@@ -376,7 +423,7 @@ export const deleteCourseOnDay = async (req, res) => {
       },
     },
   });
-  debug("course event deleted")
+  debug("course event deleted");
   const eventJSon = await generateCourseCalendar(courseId);
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };

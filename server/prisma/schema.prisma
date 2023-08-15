@@ -140,7 +140,7 @@ model IssueToken {
 model CalendarEvent {
   course         Course   @relation(fields: [courseId], references: [id])
   courseId       Int
-  date           DateTime @db.Date()
+  date           DateTime //@db.Date()
   title  String   @default("")
   additionalInfo String?
   isCancelled    Boolean  @default(false)
