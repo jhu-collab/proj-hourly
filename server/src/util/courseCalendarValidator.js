@@ -467,7 +467,6 @@ export const isUTC0Params = async (req, res, next) => {
 export const isUTCTwo = async (req, res, next) => {
   debug("getting dates");
   const { begDate, endDate } = req.body;
-  console.log(begDate, endDate);
   const begDateObj = spacetime(begDate);
   const endDateObj = spacetime(endDate);
   const begOffset = Math.abs(

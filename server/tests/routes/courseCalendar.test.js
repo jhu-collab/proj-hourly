@@ -687,7 +687,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       for (let i in calendarJSON) {
         calendarEvents.push(calendarJSON[i]);
       }
-      targetDate.setUTCHours(23);
       const changedEvent = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
@@ -835,11 +834,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
 
       const event = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
-            date: attributes.date,
+            date: targetDate,
             courseId: attributes.courseId,
           },
         },
@@ -859,14 +860,14 @@ describe(`Test endpoint ${endpoint}`, () => {
       const changedEvent = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
-            date: attributes.date,
+            date: targetDate,
             courseId: attributes.courseId,
           },
         },
       });
       expect(changedEvent).toBeDefined();
       expect(changedEvent.title).toBe(event.title);
-      expect(changedEvent.date).toStrictEqual(event.date);
+      expect(changedEvent.date).toStrictEqual(targetDate);
       expect(changedEvent.location).toBe(event.location);
       expect(changedEvent.allDay).toBe(true);
       expect(changedEvent.isCancelled).toBe(event.isCancelled);
@@ -1185,9 +1186,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
         location: "zoom",
         newDate: new Date(newDate - tzoffset2).toISOString().split("T")[0],
-        date: date,
+        date: date.toISOString().split("T")[0],
         courseId: course.id,
       };
+
+      const targetDate = new Date(attributes.newDate);
+      targetDate.setUTCHours(23);
+
       const response = await request
         .post(`${endpoint}/edit`)
         .send(attributes)
@@ -1203,13 +1208,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: new Date(attributes.newDate),
+            date: targetDate,
           },
         },
       });
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toStrictEqual(new Date(attributes.newDate));
+      expect(createdEvents.date).toStrictEqual(targetDate);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
@@ -1226,10 +1231,14 @@ describe(`Test endpoint ${endpoint}`, () => {
         isCancelled: false,
         isRemote: true,
         location: "zoom",
-        newDate: date,
-        date: date,
+        newDate: date.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0],
         courseId: course.id,
       };
+
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
       const response = await request
         .post(`${endpoint}/edit`)
         .send(attributes)
@@ -1245,14 +1254,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: attributes.newDate,
+            date: targetDate,
           },
         },
       });
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toStrictEqual(attributes.newDate);
-      expect(createdEvents.date).toStrictEqual(attributes.date);
+      expect(createdEvents.date).toStrictEqual(targetDate);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
@@ -1431,11 +1439,14 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
 
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
       const event = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: attributes.date,
+            date: targetDate,
           },
         },
       });
@@ -1456,13 +1467,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: attributes.date,
+            date: targetDate,
           },
         },
       });
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toStrictEqual(event.date);
+      expect(createdEvents.date).toStrictEqual(targetDate);
       expect(createdEvents.location).toBe(event.location);
       expect(createdEvents.allDay).toBe(event.allDay);
       expect(createdEvents.isCancelled).toBe(event.isCancelled);
@@ -1645,11 +1656,14 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
 
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
       const event = await prisma.calendarEvent.findUnique({
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: attributes.date,
+            date: targetDate,
           },
         },
       });
@@ -1671,13 +1685,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: attributes.date,
+            date: targetDate,
           },
         },
       });
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(event.title);
-      expect(createdEvents.date).toStrictEqual(event.date);
+      expect(createdEvents.date).toStrictEqual(targetDate);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(event.allDay);
       expect(createdEvents.isCancelled).toBe(event.isCancelled);
@@ -1909,6 +1923,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         location: "zoom",
         isRemote: true,
       };
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
       const response = await request
         .post(`${endpoint}/createEvent`)
         .send(attributes)
@@ -1924,13 +1940,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         where: {
           courseId_date: {
             courseId: attributes.courseId,
-            date: new Date(attributes.date),
+            date: new Date(targetDate),
           },
         },
       });
       expect(createdEvents).toBeDefined();
       expect(createdEvents.title).toBe(attributes.title);
-      expect(createdEvents.date).toStrictEqual(new Date(attributes.date));
+      expect(createdEvents.date).toStrictEqual(targetDate);
       expect(createdEvents.location).toBe(attributes.location);
       expect(createdEvents.allDay).toBe(true);
       expect(createdEvents.isCancelled).toBe(false);
