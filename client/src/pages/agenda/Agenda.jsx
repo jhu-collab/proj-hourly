@@ -15,7 +15,7 @@ function Agenda() {
   if (isLoading) {
     return (
       <Alert severity="warning">
-        Retrieving course calendar event topics ...
+        Retrieving course calendar events ...
       </Alert>
     );
   }
@@ -23,7 +23,7 @@ function Agenda() {
   if (error) {
     return (
       <Alert severity="error">
-        Unable to retrieve course calendar event topics
+        Unable to retrieve course calendar events
       </Alert>
     );
   }
