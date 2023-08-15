@@ -13,17 +13,18 @@ function CourseEventDetails() {
   const location = useStoreEvent((state) => state.location);
   const isRemote = useStoreEvent((state) => state.isRemote);
   const resources = useStoreEvent((state) => state.resources);
+  const isCancelled = useStoreEvent((state) => state.isCancelled);
 
   const date = start.toDateString();
 
   return (
     <Stack direction="column" spacing={1}>
-      <Typography variant="h4">{title}</Typography>
-      <Typography>
+      <Typography variant="h4" color={isCancelled ? "error.main" : "text.primary"}>{title}</Typography>
+      <Typography color={isCancelled ? "error.main" : "text.primary"}>
         <strong>Date: </strong>
         {date}
       </Typography>
-      <Typography>
+      <Typography color={isCancelled ? "error.main" : "text.primary"}>
         <strong>Location: </strong>
         {location}
       </Typography>
