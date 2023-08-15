@@ -127,11 +127,11 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
             )}
             {!edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
-                <AnimateButton>
+                {!isCancelled && <AnimateButton>
                   <Button variant="contained" onClick={handleOnClickEditBtn}>
                     Edit
                   </Button>
-                </AnimateButton>
+                </AnimateButton>}
                 <AnimateButton>
                   <Button
                     variant="contained"
