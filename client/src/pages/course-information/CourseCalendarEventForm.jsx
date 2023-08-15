@@ -95,7 +95,7 @@ function CourseCalendarEventForm() {
   recurring = watch("recurringEvent");
 
   const { mutate: createMutate, isLoading: createIsLoading } =
-    useMutationCreateCourseCalendarEvent();
+    useMutationCreateCourseCalendarEvent("many");
   const { mutate: deleteMutate, isLoading: deleteIsLoading } =
     useMutationDeleteCourseCalendarEvent("all");
   const {
