@@ -37,7 +37,7 @@ function useMutationCourseTokeOptIn() {
 
   const mutation = useMutation(optIn, {
     onSuccess: (data) => {
-      const course = data.course;
+      const course = data.courseUpdate;
       //   const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
       //     DateTime.TIME_SIMPLE
       //   );
@@ -47,9 +47,6 @@ function useMutationCourseTokeOptIn() {
 
       //   queryClient.invalidateQueries(["registrationStatus"]);
       //   queryClient.invalidateQueries(["allRegistrations"]);
-
-      const { queries } = queryClient.getQueryCache();
-      console.log(queries);
       queryClient.invalidateQueries(["myRole"]);
       queryClient.invalidateQueries(["officeHours"]);
       queryClient.invalidateQueries(["courses"]);
