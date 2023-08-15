@@ -216,6 +216,10 @@ export const topicSchema = yup.object({
   name: yup.string().required("Topic name is required"),
 });
 
+export const agendaSchema = yup.object({
+  title: yup.string().required("Agenda description is required"),
+});
+
 export const editLocationSchema = yup.object({
   location: yup.string().required("Location is required"),
   remote: yup.boolean(),
