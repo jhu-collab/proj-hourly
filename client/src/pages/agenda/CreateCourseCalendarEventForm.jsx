@@ -40,7 +40,7 @@ const CreateCourseCalendarEventForm = NiceModal.create(() => {
     mutate({ 
       courseId: course.id, 
       title: data.title,
-      date: date.toISOString(),
+      date: date.toISOString().split('T')[0],
       location: data.location,
       isRemote: data.isRemote,
       additionalInfo: data.resources,
