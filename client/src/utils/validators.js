@@ -297,6 +297,18 @@ export const createCourseEventAlternateSchema = yup.object().shape({
   isRemote: yup.boolean(),
 });
 
+export const createIndividualCourseEventSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
+  date: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  location: yup.string().required("Location is required"),
+  resources: yup.string(),
+  isRemote: yup.boolean(),
+});
+
 export const editCourseEventSchema = yup.object().shape({
   title: yup.string().required("Agenda description is required"),
   newDate: yup
