@@ -15,7 +15,7 @@ import useMutationCancelCourseCalendarEvent from "../../hooks/useMutationCancelC
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { DateTime } from "luxon";
-import { topicSchema } from "../../utils/validators"
+import { agendaSchema } from "../../utils/validators";
 import { Chip } from "@mui/material";
 
 /**
@@ -37,10 +37,11 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
     defaultValues: {
       title: topic,
     },
-    resolver: yupResolver(topicSchema),
+    resolver: yupResolver(agendaSchema),
   });
 
   const onSubmit = (data) => {
+    console.log("submitting");
     mutateEdit({
       courseId: course.id,
       date: date.split("T")[0],
@@ -48,6 +49,10 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
     });
     setEdit(false);
   };
+
+  const onInvalid = (data) => {
+    console.log(data);
+  }
 
   const handleOnClickCancelBtn = (e) => {
     e.preventDefault();
@@ -62,14 +67,17 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
   return (
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit, onInvalid)}>
           <Stack
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             alignItems="center"
             spacing={2}
           >
-            <Typography variant="h5" color={isCancelled ? "error.main" : "text.primary"}>
+            <Typography
+              variant="h5"
+              color={isCancelled ? "error.main" : "text.primary"}
+            >
               {DateTime.fromISO(date).toLocaleString(
                 DateTime.DATE_MED_WITH_WEEKDAY
               )}
@@ -87,14 +95,22 @@ function AgendaTopic({ topic, date, isCancelled, isRemote }) {
                 alignItems="center"
                 spacing={2}
               >
-                <Typography variant="h5" color={isCancelled ? "error.main" : "text.primary"}>{topic}</Typography>
+                <Typography
+                  variant="h5"
+                  color={isCancelled ? "error.main" : "text.primary"}
+                >
+                  {topic}
+                </Typography>
                 {isRemote && <Chip label="Remote" />}
               </Stack>
             )}
             {edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
-                  <Button variant="contained" type="submit">
+                  <Button
+                    variant="contained"
+                    type="submit"
+                  >
                     Submit
                   </Button>
                 </AnimateButton>
