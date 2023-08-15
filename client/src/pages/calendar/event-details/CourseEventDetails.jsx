@@ -1,6 +1,7 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import useStoreEvent from "../../../hooks/useStoreEvent";
+import { Chip } from "@mui/material";
 
 /**
  * Child component that displays course calendar event details.
@@ -10,6 +11,7 @@ function CourseEventDetails() {
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
   const location = useStoreEvent((state) => state.location);
+  const isRemote = useStoreEvent((state) => state.isRemote);
   const resources = useStoreEvent((state) => state.resources);
 
   const date = start.toDateString();
@@ -25,10 +27,11 @@ function CourseEventDetails() {
         <strong>Location: </strong>
         {location}
       </Typography>
-      <Typography>
+      {isRemote && <Chip label="Remote" sx={{ width: 1/3 }}/>}
+      {(resources && resources !== "") && <Typography>
         <strong>Additional Resources: </strong>
         {resources}
-      </Typography>
+      </Typography>}
     </Stack>
   );
 }
