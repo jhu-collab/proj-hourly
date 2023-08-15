@@ -511,6 +511,11 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(201);
 
+      let dates  = [];
+      for(let i in calendarEvents) {
+        dates.push(calendarEvents[i].date)
+      }
+
       const calendarJSON = response.body.eventJSon;
       calendarEvents = [];
       for (let i in calendarJSON) {
@@ -527,7 +532,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(createdEvents).toBeDefined();
       for (let i in createdEvents) {
         expect(createdEvents[i].title).toBe(attributes.title);
-        // expect(createdEvents[i].date).toBe(attributes.begDate);
+        expect(createdEvents[i].date).toStrictEqual(dates[i]);
         expect(createdEvents[i].location).toBe(attributes.location);
         expect(createdEvents[i].allDay).toBe(true);
         expect(createdEvents[i].isCancelled).toBe(false);
@@ -2424,10 +2429,16 @@ describe(`Test endpoint ${endpoint}`, () => {
           date: "asc",
         },
       });
+
+      let dates  = [];
+      for(let i in createdEvents) {
+        dates.push(createdEvents[i].date)
+      }
+
       expect(createdEvents).toBeDefined();
       for (let i in createdEvents) {
         expect(createdEvents[i].title).toBe(attributes.title);
-        // expect(createdEvents[i].date).toStrictEqual(attributes.begDate);
+        expect(createdEvents[i].date).toStrictEqual(dates[i]);
         expect(createdEvents[i].location).toBe(attributes.location);
         expect(createdEvents[i].allDay).toBe(true);
         expect(createdEvents[i].isCancelled).toBe(false);
