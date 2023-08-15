@@ -19,11 +19,12 @@ export const doesEventExist = async (req, res, next) => {
   const {courseId, date} = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
+  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
+        date: dateObj,
       },
     },
   });
@@ -45,11 +46,12 @@ export const doesEventExistParams =  async (req, res, next) => {
   const date = req.params.date;
   debug("getting calendar event...");
   let dateObj = new Date(date);
+  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
+        date: dateObj,
       },
     },
   });
@@ -116,11 +118,12 @@ export const doesEventNotExist = async (req, res, next) => {
   const { courseId, date } = req.body;
   debug("getting calendar event...");
   let dateObj = new Date(date);
+  dateObj.setUTCHours(23);
   const calendarEvent = await prisma.calendarEvent.findUnique({
     where: {
       courseId_date: {
         courseId: courseId,
-        date: new Date(dateObj.setUTCHours(23)),
+        date: dateObj,
       },
     },
   });
