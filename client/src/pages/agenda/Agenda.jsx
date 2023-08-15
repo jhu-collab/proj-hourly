@@ -4,17 +4,28 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Grid } from "@mui/material";
 import AgendaTopic from "./AgendaTopic";
+import Fab from "@mui/material/Fab";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import NiceModal from "@ebay/nice-modal-react";
 
 function Agenda() {
   const { isLoading, error, data } = useQueryCourseEvents();
   const courseType = useStoreLayout((state) => state.courseType);
 
   if (isLoading) {
-    return <Alert severity="warning">Retrieving course calendar event topics ...</Alert>;
+    return (
+      <Alert severity="warning">
+        Retrieving course calendar event topics ...
+      </Alert>
+    );
   }
 
   if (error) {
-    return <Alert severity="error">Unable to retrieve course calendar event topics</Alert>;
+    return (
+      <Alert severity="error">
+        Unable to retrieve course calendar event topics
+      </Alert>
+    );
   }
 
   return (
@@ -40,6 +51,17 @@ function Agenda() {
               );
             })}
           </Grid>
+          <Fab
+            color="primary"
+            onClick={() => NiceModal.show("create-course-calendar-event")}
+            sx={{
+              position: "fixed",
+              bottom: (theme) => theme.spacing(3),
+              right: (theme) => theme.spacing(3),
+            }}
+          >
+            <SpeedDialIcon />
+          </Fab>
         </>
       )}
     </>
