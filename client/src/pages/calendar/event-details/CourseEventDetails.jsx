@@ -27,7 +27,7 @@ function CourseEventDetails() {
         <strong>Location: </strong>
         {location}
       </Typography>
-      {isRemote && <Chip label="Remote" sx={{ width: 1/3 }}/>}
+      {isRemote && <Chip label="Remote" sx={{ width: 70 }}/>}
       {(resources && resources !== "") && <Typography>
         <strong>Additional Resources: </strong>
         {resources}
