@@ -35,7 +35,8 @@ router.post(
   validator.isCourseInstructor,
   validator.areValidDOW,
   validator.startDateIsValidDOW,
-  validator.doesNotHaveCourseEvents,
+  validator.doesEventExistRecurring,
+  validator.begDateInFuture,
   validator.isUTCTwo,
   controller.create
 );
@@ -52,6 +53,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.dateInFuture,
   validator.isUTC0,
   controller.changeCancellation
 );
@@ -68,6 +70,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventExist,
   validator.isCourseInstructor,
+  validator.dateInFuture,
   validator.isUTC0,
   controller.changeRemote
 );
@@ -89,10 +92,10 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
-  validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isEventInFuture,
+  validator.dateInFuture,
   validator.newDateNotOldDate,
+  validator.newDateInFuture,
   validator.isUTCTwoNewDate,
   controller.editEvent
 )
@@ -109,9 +112,8 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
-  validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isEventInFuture,
+  validator.dateInFuture,
   validator.isUTC0,
   controller.editEventTitle
 )
@@ -125,12 +127,12 @@ router.post(
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty(),
   body("location", "Please specify location").notEmpty().isString(),
+  body("isRemote", "Please specify whether remote or not").notEmpty().isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
   validator.doesEventExist,
-  validator.isEventNotCancelled,
   validator.isCourseInstructor,
-  validator.isEventInFuture,
+  validator.dateInFuture,
   validator.isUTC0,
   controller.editEventLocation
 )
@@ -190,6 +192,7 @@ router.post(
   courseValidator.isCourseId,
   validator.doesEventNotExist,
   validator.isCourseInstructor,
+  validator.dateInFuture,
   validator.isUTC0,
   controller.addCourseEvent
 )
@@ -215,29 +218,10 @@ router.post(
   validator.isCourseInstructor,
   validator.areValidDOW,
   validator.startDateIsValidDOW,
+  validator.begDateInFuture,
   validator.isUTCTwo,
   controller.addRecurringCourseEvent
 )
-
-// router.post(
-//   "/editAllEventsForCourse",
-//   async (req, res, next) => {
-//     debug(`${req.method} ${req.path} called...`);
-//     next();
-//   },
-//   body("courseId", "Course ID is required").notEmpty().isInt(),
-//   body("title", "Agenda is required").notEmpty().isString(),
-//   body("additionalInfo", "Please specify additionalInfo").optional().isString(),
-//   body("isCancelled", "Please specify whether cancelled or not").notEmpty().isBoolean(),
-//   body("isRemote", "Please specify whether remote or not").notEmpty().isBoolean(),
-//   body("location", "Please specify location").notEmpty().isString(),
-//   accountValidator.isAccountValidHeader,
-//   courseValidator.isCourseId,
-//   validator.doesEventExist,
-//   validator.isEventNotCancelled,
-//   validator.isCourseInstructor,
-//   controller.editAllEvents
-// )
 
 router.get(
   "/getEventOnDay/:courseId/date/:date",
@@ -250,7 +234,8 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isInCourse,
-  validator.isUTC0,
+  validator.dateInFutureParams,
+  validator.isUTC0Params,
   controller.getEventOnDay
 )
 
@@ -278,8 +263,10 @@ router.delete(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
-  validator.isEventInFutureByIdParams,
-  /*validator.isUTC0,*/
+  validator.dateInFutureParams,
+  validator.doesEventExistParams,
+  validator.dateInFutureParams,
+  validator.isUTC0Params,
   controller.deleteCourseOnDay
 )
 

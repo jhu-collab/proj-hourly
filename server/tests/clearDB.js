@@ -7,6 +7,7 @@ export async function setup() {
   console.log("Database Cleared!");
   await prisma.issueToken.deleteMany();
   await prisma.courseToken.deleteMany();
+  await prisma.calendarEvent.deleteMany();
   await prisma.registration.deleteMany();
   await prisma.topic.deleteMany();
   await prisma.officeHour.deleteMany();
@@ -19,6 +20,7 @@ export async function teardown() {
   debug.enable();
   await prisma.issueToken.deleteMany();
   await prisma.courseToken.deleteMany();
+  await prisma.calendarEvent.deleteMany();
   await prisma.registration.deleteMany();
   await prisma.topic.deleteMany();
   await prisma.officeHour.deleteMany();
