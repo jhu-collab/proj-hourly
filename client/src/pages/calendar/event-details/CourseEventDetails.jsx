@@ -29,7 +29,7 @@ function CourseEventDetails() {
         {location}
       </Typography>
       {isRemote && <Chip label="Remote" sx={{ width: 70 }}/>}
-      {(resources && resources !== "") && <Typography>
+      {(resources && resources !== "") && <Typography color={isCancelled ? "error.main" : "text.primary"}>
         <strong>Additional Resources: </strong>
         {resources}
       </Typography>}
