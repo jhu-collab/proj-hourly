@@ -42,7 +42,7 @@ function DeleteAction() {
       >
         <DeleteOutlined />
       </IconButton>
-      <ConfirmPopup {...(recurring && { header: "Delete recurring event" })}>
+      <ConfirmPopup {...(recurring && { header: "Delete recurring event"})}>
         {recurring && (
           <RadioGroup
             value={deleteType}

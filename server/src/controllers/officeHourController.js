@@ -932,11 +932,127 @@ export const rescheduleSingleOfficeHour = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
 };
 
+export const editLocationRecurringDay = async(req, res) => {
+  if (checkValidation(req, res)) {
+    return res;
+  }
+  const { officeHourId, location, isRemote, date } = req.body;
+  const dateObj = spacetime(date);
+  const dateToEnd = spacetime(date);
+  debug("Finding registrations...");
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+      isCancelled: false,
+      isCancelledStaff: false,
+      date: {
+        gte: dateToEnd.toNativeDate()
+      }
+    },
+    select: {
+      account: true,
+    },
+  });
+  debug("Registrations found...");
+  debug("Finding office hour...")
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+    include: {
+      course: true,
+      hosts: true,
+    },
+  });
+  debug("Office hour is found...");
+  debug("Updating office hour...")
+  const officeHourUpdate = await prisma.officeHour.update({
+    where: {
+      id: officeHourId,
+    },
+    data: {
+      isCancelledOn: [...officeHour.isCancelledOn, dateObj.toNativeDate()],
+    }
+  });
+  debug("Office hour updated...")
+  const endDate = officeHour.endDate;
+  const newEndDate = new Date(date);
+  newEndDate.setHours(endDate.getHours());
+  newEndDate.setMinutes(endDate.getMinutes());
+  debug("Creating new office hour...")
+  const newOfficeHour = await prisma.officeHour.create({
+    data: {
+      startDate: new Date(date),
+      endDate: new Date(newEndDate),
+      course: {
+        connect: {
+          id: officeHour.course.id,
+        },
+      },
+      location,
+      isRecurring: false,
+      isDeleted: false,
+      isRemote
+    },
+  });
+  debug("Office hour created...")
+  let hostArr = [];
+  debug("connecting hosts...");
+  officeHour.hosts.forEach((account) => {
+    hostArr.push({ id: account.id });
+  });
+  debug("hosts are connected");
+  debug("updating office hour...");
+  await prisma.officeHour.update({
+    where: {
+      id: newOfficeHour.id,
+    },
+    data: {
+      hosts: {
+        connect: hostArr,
+      },
+    },
+  });
+  await prisma.registration.updateMany({
+    where: {
+      officeHourId: officeHourId,
+    },
+    data: {
+      officeHour: newOfficeHour
+    },
+  });
+  debug("Office hour updated...")
+  debug("Senfing emails that location has been changed...")
+  sendEmailForEachRegistrationWhenLocationChanged(registrations, newOfficeHour)
+  debug("Emails sent...")
+  debug("Generating calendar...")
+  const calendar = await generateCalendar(officeHour.course.id);
+  debug("Calendar generated...")
+  return res.status(StatusCodes.ACCEPTED).json({ newOfficeHour });
+};
+
 export const editLocationSingleDay = async(req, res) => {
   if (checkValidation(req, res)) {
     return res;
   }
   const { officeHourId, location, isRemote } = req.body;
+  const dateToEnd = spacetime(req.body.date);
+  debug("Finding registrations...");
+  const registrations = await prisma.registration.findMany({
+    where: {
+      officeHourId: officeHourId,
+      isCancelled: false,
+      isCancelledStaff: false,
+      date: {
+        gte: dateToEnd.toNativeDate()
+      }
+    },
+    select: {
+      account: true,
+    },
+  });
+  debug("Found registrations...");
+  debug("Updating office hour...");
   const officeHour = await prisma.officeHour.update( {
     where: {
       id: officeHourId
@@ -949,7 +1065,13 @@ export const editLocationSingleDay = async(req, res) => {
       course: true
     }
   });
+  debug("Office hour updated...");
+  debug("Sending emails for location change...");
+  sendEmailForEachRegistrationWhenLocationChanged(registrations, officeHour);
+  debug("Sent emails for location change...");
+  debug("Generating calendar...");
   const calendar = await generateCalendar(officeHour.course.id);
+  debug("Calendar generated...");
   return res.status(StatusCodes.ACCEPTED).json({ officeHour });
 };
 

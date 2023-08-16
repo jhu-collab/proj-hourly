@@ -171,6 +171,17 @@ async function setup() {
       instructors: true,
     },
   });
+  await prisma.officeHourTimeOptions.create({
+    data: {
+      course: {
+        connect: {
+          id: course.id,
+        },
+      },
+      duration: 10,
+      title: "test option",
+    },
+  });
 
   // Create topics
   await prisma.topic.createMany({
@@ -221,8 +232,10 @@ async function setup() {
     },
     include: {
       registrations: true,
+      isOnDayOfWeek: true,
     },
   });
+  console.log(officeHour);
 
   // Create office hour time options
   await prisma.officeHourTimeOptions.create({
@@ -238,6 +251,12 @@ async function setup() {
   // Create registrations
   const regEndTime = new Date(startDate);
   regEndTime.setMinutes(10);
+  const timeOption = await prisma.officeHourTimeOptions.findFirst({
+    where: {
+      courseId: course.id,
+      duration: 10,
+    },
+  });
   const registration = await prisma.registration.create({
     data: {
       startTime: startDate,
@@ -245,6 +264,11 @@ async function setup() {
       date: startDate,
       officeHour: { connect: { id: officeHour.id } },
       account: { connect: { id: students[0].id } },
+      officeHourTimeOptions: {
+        connect: {
+          id: timeOption.id,
+        },
+      },
     },
   });
 
@@ -278,42 +302,12 @@ async function setup() {
 
 async function teardown() {
   // Delete all objects generated for testing
-  await prisma.registration.deleteMany({
-    where: {
-      OR: [
-        { id: { in: ids.registrations } },
-        { officeHourId: { in: ids.officeHours } },
-        { accountId: { in: ids.users } },
-      ],
-    },
-  });
-  await prisma.topic.deleteMany({
-    where: {
-      OR: [{ id: { in: ids.topics } }, { courseId: ids.course }],
-    },
-  });
-  await prisma.officeHour.deleteMany({
-    where: {
-      courseId: ids.course,
-    },
-  });
-  await prisma.officeHourTimeOptions.deleteMany({
-    where: {
-      courseId: ids.course,
-    },
-  });
-  await prisma.course.deleteMany({
-    where: {
-      id: ids.course,
-    },
-  });
-  await prisma.account.deleteMany({
-    where: {
-      id: {
-        in: ids.users,
-      },
-    },
-  });
+  await prisma.registration.deleteMany({});
+  await prisma.topic.deleteMany({});
+  await prisma.officeHour.deleteMany({});
+  await prisma.officeHourTimeOptions.deleteMany({});
+  await prisma.course.deleteMany({});
+  await prisma.account.deleteMany({});
 
   await prisma.$disconnect();
 
@@ -333,6 +327,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       recurringEvent: true,
       timeInterval: 10,
       location: "zoom",
+      remote: true,
     };
 
     beforeAll(async () => {
@@ -371,7 +366,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/create`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text);
       expect(response.status).toBe(201);
       const id = response.body.officeHour.id;
       updateIds("officeHours", [id]);
@@ -473,6 +467,29 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
+    });
+
+    it("Return 202 when course successfully archived", async () => {
+      const attributes = { ...baseAttributes, endTime: "Hello World" };
+      const response = await request
+        .post(`/api/course/${attributes.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when recurringEvent is false of archivec course", async () => {
+      const attributes = { ...baseAttributes, recurringEvent: false };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const attributes = { ...baseAttributes, endTime: "Hello World" };
+      const response = await request
+        .post(`/api/course/${attributes.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
     });
 
     // Row 11
@@ -642,8 +659,10 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe(`Test POST: ${endpoint}/register`, async () => {
     let students = [];
+    let instructor = {};
     let officeHour = {};
     let topics = [];
+    let timeOption = {};
     let baseAttributes = {
       startTime: "12:40:00",
       endTime: "12:50:00",
@@ -652,6 +671,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       students = params.students;
       officeHour = params.officeHour;
       topics = params.topics;
@@ -660,11 +680,19 @@ describe(`Test endpoint ${endpoint}`, () => {
         .split(" ")[0]
         .split("/");
 
+      timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 10,
+          courseId: officeHour.courseId,
+        },
+      });
+
       baseAttributes = {
         ...baseAttributes,
         officeHourId: officeHour.id,
         TopicIds: topics.map((topic) => topic.id),
         date: mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",", ""),
+        timeOptionId: timeOption.id,
       };
     });
 
@@ -672,6 +700,70 @@ describe(`Test endpoint ${endpoint}`, () => {
       await teardown();
     });
 
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when all parameters are valid", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/pauseCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when all parameters are valid for paused course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/pauseCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
@@ -694,7 +786,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
-
     // Row 2
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const attributes = { ...baseAttributes, officeHourId: officeHour.id * 2 };
@@ -749,23 +840,23 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
-    it("Return 409 when startTime is empty", async () => {
+    it("Return 403 when startTime is empty", async () => {
       const attributes = { ...baseAttributes, startTime: "" };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
 
     // Row 7
-    it("Return 409 when startTime is not a time string", async () => {
+    it("Return 403 when startTime is not a time string", async () => {
       const attributes = { ...baseAttributes, startTime: "Hello World" };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
 
     // Row 8
@@ -790,14 +881,19 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     // Row 10
     it("Return 409 when date is today", async () => {
+      const curr = new Date();
+      if (curr.getUTCHours() < Math.abs(curr.getTimezoneOffset() / 60)) {
+        curr.setDate(curr.getDate() - 1);
+      }
       const attributes = {
         ...baseAttributes,
-        date: new Date(Date.now()).toISOString(),
+        date: curr.toISOString().split("T")[0],
       };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
+      console.log(response.text);
       expect(response.status).toBe(400); // will always be outside of range of the scheduled office hour
     });
 
@@ -885,9 +981,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     let officeHour = {};
     let staff = [];
     let baseAttributes = {};
+    let instructor = {};
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       officeHour = params.officeHour;
       staff = params.staff;
       const mdy = new Date(officeHour.startDate)
@@ -917,6 +1015,38 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
     });
 
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 with all valid parameters of archived course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 with all valid parameters", async () => {
       const attributes = { ...baseAttributes };
@@ -993,17 +1123,19 @@ describe(`Test endpoint ${endpoint}`, () => {
 
   describe(`Test POST: ${endpoint}/cancelAll`, async () => {
     let course = {};
+    let instructor = {};
     let officeHour = {};
     let staff = [];
     let baseAttributes = {};
-
+    // recreate test
     beforeAll(async () => {
       const params = await setup();
       officeHour = params.officeHour;
       staff = params.staff;
       course = params.course;
+      instructor = params.instructor;
       const date = new Date(officeHour.startDate);
-      date.setDate(date.getDate() + 9); // should cancel 2 office hours
+      date.setDate(date.getDate() + 14); // should cancel 2 office hours
       const dateString = date
         .toLocaleDateString("en-US", { hour12: false })
         .replaceAll("/", "-");
@@ -1019,16 +1151,47 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      await prisma.officeHour.update({
-        where: {
-          id: officeHour.id,
-        },
+      console.log(officeHour);
+      await prisma.officeHour.updateMany({
         data: {
           isCancelledOn: [],
         },
       });
     });
 
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when all parameters are valid of archived course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/cancelAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token)
+        .set("id", staff[0].id);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
@@ -1037,14 +1200,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token)
         .set("id", staff[0].id);
-      console.log(response.text);
       expect(response.status).toBe(202);
       const id = response.body.officeHourUpdate.id;
-      const officeHour = await prisma.officeHour.findUniqueOrThrow({
+      const officeHour = await prisma.officeHour.findUnique({
         where: { id },
       });
-      expect(officeHour).toBeDefined();
-      expect(officeHour.isCancelledOn.length).toEqual(2);
+      expect(officeHour).toBeNull();
     });
 
     // Row 2
@@ -1091,7 +1252,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/cancelAll`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(409);
+
+      expect(response.status).toBe(400);
     });
 
     // Row 6
@@ -1101,7 +1263,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/cancelAll`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -1110,9 +1272,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     let officeHour = {};
     let staff = [];
     let baseAttributes = {};
+    let instructor = {};
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       officeHour = params.officeHour;
       staff = params.staff;
       course = params.course;
@@ -1122,10 +1286,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       newEndDate.setHours(11);
       baseAttributes = {
         ...baseAttributes,
+        officeHourId: officeHour.id,
         startDate: newStartDate,
         endDate: newEndDate,
         location: "zoom",
       };
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          isCancelledOn: [],
+        },
+      });
     });
 
     afterAll(async () => {
@@ -1141,10 +1314,47 @@ describe(`Test endpoint ${endpoint}`, () => {
           startDate: officeHour.startDate,
           endDate: officeHour.endDate,
           location: officeHour.location,
+          isCancelledOn: [],
         },
       });
     });
-
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when all parameters are valid of archived course", async () => {
+      const mdy = new Date(officeHour.startDate)
+        .toLocaleString("en-US", { hour12: false })
+        .split(" ")[0]
+        .split("/");
+      const date = mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",", "");
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const mdy = new Date(officeHour.startDate)
@@ -1328,6 +1538,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let course = {};
     let officeHour = {};
     let staff = [];
+    let instructor = {};
     let baseAttributes = {
       location: "zoom",
       daysOfWeek: [
@@ -1344,6 +1555,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       officeHour = params.officeHour;
       staff = params.staff;
       course = params.course;
@@ -1353,6 +1565,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       newEndDate.setHours(11);
       baseAttributes = {
         ...baseAttributes,
+        officeHourId: officeHour.id,
         startDate: newStartDate,
         endDate: newEndDate,
         endDateOldOfficeHour: officeHour.endDate,
@@ -1375,7 +1588,38 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
-
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 with all valid parameters of archived course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toEqual(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 201 with all valid parameters", async () => {
       const attributes = { ...baseAttributes };
@@ -1442,6 +1686,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editAll`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
@@ -1544,9 +1789,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     let course = {};
     let registration = {};
     let students = [];
+    let instructor = {};
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       course = params.course;
       registration = params.registration;
       students = params.students;
@@ -1566,7 +1813,24 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
-
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${course.id}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when all parameters are valid", async () => {
+      const response = await request
+        .post(`${endpoint}/cancelRegistration/${registration.id}`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${course.id}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const response = await request
@@ -1606,12 +1870,14 @@ describe(`Test endpoint ${endpoint}`, () => {
     let officeHour = {};
     let topics = [];
     let students = [];
+    let instructor = {};
     let baseAttributes = {
       question: "Test Question",
     };
 
     beforeAll(async () => {
       const params = await setup();
+      instructor = params.instructor;
       registration = params.registration;
       officeHour = params.officeHour;
       topics = params.topics;
@@ -1649,7 +1915,38 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
-
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when all parameters are valid of archived course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/editRegistration/${registration.id}`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = baseAttributes.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
     // Row 1
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };

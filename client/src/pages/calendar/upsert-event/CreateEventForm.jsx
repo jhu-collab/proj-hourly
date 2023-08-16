@@ -102,7 +102,6 @@ function CreateEventForm() {
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
   const onSubmit = (data) => {
-    console.log(data);
     const start = new Date(data.startDate);
     const startTime = data.startTime.split(":");
     start.setHours(startTime[0]);
