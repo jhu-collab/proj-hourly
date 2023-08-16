@@ -56,7 +56,7 @@ function useMutationEditEvent(recurringEvent) {
   };
 
   const mutation = useMutation(
-    recurringEvent ? editEventAll : editEventOnDate,
+    recurringEvent ? editEventAll: editEventOnDate,
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["officeHours"]);

@@ -9,10 +9,12 @@ const request = supertest(app);
 const endpoint = "/api/course";
 
 describe(`Test endpoint ${endpoint}`, () => {
+  let archivedCourses = [];
   let courses = [];
   let users = [];
   let userInCourse = [];
   let topics = [];
+  let archivedTopics = [];
   beforeAll(async () => {
     // create the users
     await prisma.account.createMany({
@@ -45,6 +47,13 @@ describe(`Test endpoint ${endpoint}`, () => {
           role: Role.Admin,
           userName: "user4",
         },
+        {
+          //student
+          //name: "Test User V",
+          email: "user5@test.io",
+          role: Role.User,
+          userName: "user5",
+        },
       ],
       skipDuplicates: true,
     });
@@ -61,6 +70,47 @@ describe(`Test endpoint ${endpoint}`, () => {
       token: createToken({ user }),
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
+
+    const archivedCourse = await prisma.course.create({
+      data: {
+        title: "hello",
+        semester: "Fall",
+        calendarYear: 2023,
+        courseNumber: "235.631",
+        code: "PALWEL",
+        isArchived: true,
+        instructors: {
+          connect: [
+            { id: users[2].id },
+            { id: users[3].id },
+          ],
+        },
+        students: {
+          connect: {
+            id: users[0].id
+          }
+        },
+        courseStaff: {
+          connect: {
+            id: users[4].id
+          }
+        },
+
+      }
+    })
+    archivedCourses.push(archivedCourse);
+    
+    // const topicArchived = await prisma.topic.create({
+    //   data: {
+    //     value: "HW9",
+    //     course: {
+    //       connect: {
+    //         id: archivedCourses[0].id,
+    //       },
+    //     },
+    //   },
+    // });
+    // archivedTopics.push(topicArchived);
   });
 
   describe("HTTP POST request", () => {
@@ -71,10 +121,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -82,10 +129,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course title is not included", async () => {
@@ -98,10 +142,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course number is not included", async () => {
@@ -114,10 +155,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course semester is not included", async () => {
@@ -130,10 +168,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course year is not included", async () => {
@@ -146,10 +181,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course semester is not valid", async () => {
@@ -162,10 +194,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 200 when course is created", async () => {
@@ -178,16 +207,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       let course;
       if (response.status !== 201) {
         course = await prisma.course.findFirst({
           where: {
-            title: "OOSE"
-          }
+            title: "OOSE",
+          },
         });
       } else {
         course = JSON.parse(response.text).course;
@@ -211,10 +237,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
     });
   });
@@ -227,10 +250,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/signup`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -238,10 +258,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/signup`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when invalid code", async () => {
@@ -256,10 +273,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/signup`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 202 when student is registered for course", async () => {
@@ -269,10 +283,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/signup`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       userInCourse.push(users[0]);
     });
@@ -283,10 +294,17 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/signup`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(409);
+    });
+    it("Return 409 when student tries to register for archived course", async () => {
+      const attributes = {
+        code: archivedCourses[0].code,
+      };
+      const response = await request
+        .post(`${endpoint}/signup`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(409);
     });
   });
@@ -299,19 +317,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 200 when no body is included", async () => {
       const response = await request
         .get(`${endpoint}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const { student, staff, instructor } = JSON.parse(response.text);
       expect(student.length).toBe(1);
@@ -328,19 +340,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id is provided", async () => {
       const response = await request
         .get(`${endpoint}/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -355,10 +361,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 when no body is included", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
     });
   });
@@ -373,19 +376,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .delete(`${endpoint}/leave/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id is provided", async () => {
       const response = await request
         .delete(`${endpoint}/leave/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -400,10 +397,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 when no body is included", async () => {
       const response = await request
         .delete(`${endpoint}/leave/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       await prisma.account.update({
         where: {
@@ -418,6 +412,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Return 409 user tries to leave archived course", async () => {
+      const response = await request
+        .delete(`${endpoint}/leave/${archivedCourses[0].id}`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("HTTP Delete Request - delete course", () => {
@@ -428,19 +428,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id is provided", async () => {
       const response = await request
         .delete(`${endpoint}/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -455,10 +449,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course is deleted", async () => {
       let response = await request
         .delete(`${endpoint}/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const attributes = {
         title: "OOSE",
@@ -469,10 +460,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       response = await request
         .post(`${endpoint}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(201);
       const course = JSON.parse(response.text).course;
       expect(course.title).toBe("OOSE");
@@ -492,6 +480,12 @@ describe(`Test endpoint ${endpoint}`, () => {
           },
         },
       });
+    });
+    it("Return 400 when archived course is deleted", async () => {
+      let response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+        expect(response.status).toBe(400);
     });
   });
 
@@ -519,60 +513,48 @@ describe(`Test endpoint ${endpoint}`, () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id is provided", async () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/-1/removeStaff/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not instructor", async () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is invalid", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is not staff", async () => {
       const user = users[3];
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(403);
     });
     it("Return 202 when staff is deleted", async () => {
       const user = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStaff/${user.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
+    });
+    it("Return 400 when staff of archived course is deleted", async () => {
+      const response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}/removeStaff/${users[4].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -600,60 +582,48 @@ describe(`Test endpoint ${endpoint}`, () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id is provided", async () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/-1/removeStudent/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not instructor", async () => {
       const user2 = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user2.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is invalid", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(403);
     });
     it("Return 403 when user id is not student", async () => {
       const user = users[3];
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(403);
     });
     it("Return 202 when student is deleted", async () => {
       const user = users.find((u) => u.userName === "user2");
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/removeStudent/${user.id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
+    });
+    it("Return 400 when student of archived course is deleted", async () => {
+      const response = await request
+        .delete(`${endpoint}/${archivedCourses[0].id}/removeStudent/${users[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -678,19 +648,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/officeHours`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -705,10 +669,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).calendar;
       expect(officeHours.test).toBe("test");
@@ -776,28 +737,19 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid filter", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours/yours`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/officeHours/mine`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -821,10 +773,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours/mine`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).officeHours;
       expect(officeHours.length).toBe(1);
@@ -832,10 +781,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHours/all`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const officeHours = JSON.parse(response.text).officeHours;
       expect(officeHours.length).toBe(2);
@@ -851,10 +797,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -862,10 +805,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is not included", async () => {
@@ -875,10 +815,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when value is not included", async () => {
@@ -888,10 +825,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
@@ -902,10 +836,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when course id is invalid", async () => {
@@ -916,10 +847,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 202 when course is created", async () => {
@@ -930,10 +858,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text).topic;
       expect(topic.value).toBe("Exam");
@@ -947,11 +872,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/createTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
+    });
+    it("Return 400 when topic for archived course is created", async () => {
+      const attributes = {
+        value: "HW10",
+        courseId: archivedCourses[0].id,
+      };
+      const response = await request
+        .post(`${endpoint}/createTopic`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -963,10 +896,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -974,10 +904,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is not included", async () => {
@@ -988,10 +915,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when value is not included", async () => {
@@ -1002,10 +926,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when value is not included", async () => {
@@ -1016,10 +937,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
@@ -1031,10 +949,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not an instructor", async () => {
@@ -1046,10 +961,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 403 when topic id is invalid", async () => {
@@ -1061,10 +973,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(403);
     });
     it("Return 409 when duplicate topic", async () => {
@@ -1087,10 +996,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
     });
     it("Return 202 when course is created", async () => {
@@ -1102,10 +1008,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/editTopic`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text);
       expect(topic.value).toBe("Midterms");
@@ -1121,19 +1024,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/topics`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/topics`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -1148,10 +1045,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/topics`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const topics = JSON.parse(response.text);
       expect(topics.length).toBe(2);
@@ -1168,19 +1062,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .delete(`${endpoint}/topic/${topics[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid topic id is provided", async () => {
       const response = await request
         .delete(`${endpoint}/topic/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -1204,10 +1092,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course is deleted", async () => {
       let response = await request
         .delete(`${endpoint}/topic/${topics[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const topic = JSON.parse(response.text);
       expect(topic.value).toBe("Midterms");
@@ -1222,19 +1107,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/role`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/role`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -1249,20 +1128,14 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - student", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/role`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Student");
     });
     it("Return 200 - instructor", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/role`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Instructor");
     });
@@ -1298,19 +1171,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getRoster`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/getRoster`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -1325,10 +1192,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - gets roster", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getRoster`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const roster = JSON.parse(response.text);
       expect(roster.instructors.length).toBe(1);
@@ -1347,28 +1211,19 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/${users[0].id}/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/${users[0].id}/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when invalid user id", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/-1/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -1392,10 +1247,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - gets role - student", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/${users[0].id}/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Student");
     });
@@ -1403,21 +1255,15 @@ describe(`Test endpoint ${endpoint}`, () => {
       const user4 = users[3];
       const response = await request
         .get(`${endpoint}/${courses[0].id}/${user4.id}/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Staff");
     });
     it("Return 200 - gets role - instructor", async () => {
-      const user4 = users.find((u) => u.userName === "user3");
+      const user4 = users[2];
       const response = await request
         .get(`${endpoint}/${courses[0].id}/${user4.id}/getRole`)
-        .set(
-          "Authorization",
-          "bearer " + users[3].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).role).toBe("Instructor");
     });
@@ -1434,10 +1280,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -1445,10 +1288,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when invalid course id", async () => {
@@ -1459,10 +1299,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/-1/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course title is not included", async () => {
@@ -1473,10 +1310,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when length is not included", async () => {
@@ -1486,10 +1320,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when length is not a multiple of 5", async () => {
@@ -1500,10 +1331,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not instructor", async () => {
@@ -1514,10 +1342,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 202 when time length is created", async () => {
@@ -1528,11 +1353,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
+    });
+    it("Return 400 when time length of archived course is created", async () => {
+      const attributes = {
+        title: "title",
+        length: 20,
+      };
+      const response = await request
+        .post(`${endpoint}/${archivedCourses[0].id}/officeHourTimeInterval`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -1546,19 +1379,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 401 when course id is invalid", async () => {
       const response = await request
         .get(`${endpoint}/-1/officeHourTimeInterval`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 403 when user is not in course", async () => {
@@ -1573,10 +1400,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 when no body is included", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/officeHourTimeInterval`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       const timeSlots = JSON.parse(response.text).times;
       expect(timeSlots.length).toBe(2);
@@ -1593,20 +1417,14 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when body is empty", async () => {
       const attributes = {};
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
@@ -1616,10 +1434,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
@@ -1629,10 +1444,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
@@ -1643,10 +1455,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
@@ -1657,10 +1466,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/-1/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
@@ -1671,10 +1477,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        )
+        .set("Authorization", "bearer " + users[0].token)
         .send(attributes);
       expect(response.status).toBe(403);
     });
@@ -1685,26 +1488,20 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        )
+        .set("Authorization", "bearer " + users[2].token)
         .send(attributes);
       expect(response.status).toBe(400);
     });
-    it("Return 409 when option is not for course", async () => {
+    it("Return 403 when option is not for course", async () => {
       const attributes = {
         length: 15,
         title: "title",
       };
       const response = await request
         .post(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1/update`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        )
+        .set("Authorization", "bearer " + users[2].token)
         .send(attributes);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
     it("Return 202 when time option is updated", async () => {
       const attributes = {
@@ -1720,15 +1517,42 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(
           `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}/update`
         )
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        )
+        .set("Authorization", "bearer " + users[2].token)
         .send(attributes);
       expect(response.status).toBe(202);
       const timeOption = JSON.parse(response.text).time;
       expect(timeOption.title).toBe("title");
       expect(timeOption.duration).toBe(15);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when time option of archived course is updated", async () => {
+      const attributes = {
+        length: 15,
+        title: "title",
+      };
+      const timeOptions = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 15,
+        },
+      });
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}/update`
+        )
+        .set("Authorization", "bearer " + users[2].token)
+        .send(attributes);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
   });
 
@@ -1742,38 +1566,51 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when course id is invalid", async () => {
       const response = await request
         .delete(`${endpoint}/-1/officeHourTimeInterval/1`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not instructor", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/1`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 409 when option is not for course", async () => {
       const response = await request
         .delete(`${endpoint}/${courses[0].id}/officeHourTimeInterval/-1`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(409);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when time option of archived course is deleted", async () => {
+      const timeOptions = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          duration: 15,
+        },
+      });
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when time option is updated", async () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
@@ -1785,10 +1622,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .delete(
           `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
         )
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const timeOption = JSON.parse(response.text).deletedTime;
       expect(timeOption.id).toBe(timeOptions.id);
@@ -1796,22 +1630,19 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(timeOption.duration).toBe(timeOptions.duration);
       expect(timeOption.courseId).toBe(timeOptions.courseId);
     });
-    it("Return 403 when it is the only time option remaining", async () => {
+    it("Return 400 when it is the only time option remaining", async () => {
       const timeOptions = await prisma.officeHourTimeOptions.findFirst({
         where: {
           duration: 10,
+          courseId: courses[0].id,
         },
       });
       const response = await request
         .delete(
           `${endpoint}/${courses[0].id}/officeHourTimeInterval/${timeOptions.id}`
         )
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
-      console.log(response.text);
-      expect(response.status).toBe(403);
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
     });
   });
 
@@ -1825,10 +1656,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -1836,10 +1664,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when start is not included", async () => {
@@ -1849,10 +1674,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when end is not included", async () => {
@@ -1862,10 +1684,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
@@ -1876,10 +1695,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/-1/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when it is not an instructor", async () => {
@@ -1890,10 +1706,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 400 when start is negative", async () => {
@@ -1904,10 +1717,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when end is negative", async () => {
@@ -1918,10 +1728,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when end is greater than start", async () => {
@@ -1932,11 +1739,31 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when archived course edit registration constraints", async () => {
+      const attributes = {
+        start: 72,
+        end: 0,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when course is created", async () => {
       const attributes = {
@@ -1946,10 +1773,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/registrationConstraints`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const course = JSON.parse(response.text).course;
       expect(course.startRegConstraint).toBe(72);
@@ -1965,10 +1789,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -1976,10 +1797,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when role is not included", async () => {
@@ -1989,10 +1807,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when studentId is not included", async () => {
@@ -2002,10 +1817,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
@@ -2016,10 +1828,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/-1`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when student id is invalid", async () => {
@@ -2030,10 +1839,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when it is not an instructor", async () => {
@@ -2044,10 +1850,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 400 when role is not valid", async () => {
@@ -2058,11 +1861,42 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when student of archived course is promoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Staff",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when student of archived course is promoted", async () => {
+      const attributes = {
+        studentId: users[3].id,
+        role: "Instructor",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when student is promoted", async () => {
       const attributes = {
@@ -2072,10 +1906,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Staff");
@@ -2089,10 +1920,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Instructor");
@@ -2110,10 +1938,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].expiredToken
-        );
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when no body is included", async () => {
@@ -2121,10 +1946,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when role is not included", async () => {
@@ -2134,10 +1956,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when studentId is not included", async () => {
@@ -2147,10 +1966,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
@@ -2161,10 +1977,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/-1/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when student id is invalid", async () => {
@@ -2175,10 +1988,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 403 when it is not an instructor", async () => {
@@ -2189,10 +1999,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(403);
     });
     it("Return 400 when role is not valid", async () => {
@@ -2203,11 +2010,31 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when staff of archived course is demoted", async () => {
+      const attributes = {
+        studentId: users[0].id,
+        role: "Student",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/demote`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when staff is demoted", async () => {
       const attributes = {
@@ -2217,10 +2044,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const account = JSON.parse(response.text);
       expect(account.newRole).toBe("Student");
@@ -2248,19 +2072,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/topicCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not an instructor", async () => {
@@ -2275,10 +2093,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - no registrations", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const { counts } = JSON.parse(response.text);
       counts.forEach((count) => {
@@ -2294,6 +2109,12 @@ describe(`Test endpoint ${endpoint}`, () => {
       const topics = await prisma.topic.findMany({
         where: {
           courseId: courses[0].id,
+        },
+      });
+      const timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          courseId: courses[0].id,
+          duration: 10,
         },
       });
       await prisma.registration.create({
@@ -2316,14 +2137,16 @@ describe(`Test endpoint ${endpoint}`, () => {
               id: topics[0].id,
             },
           },
+          officeHourTimeOptions: {
+            connect: {
+              id: timeOption.id,
+            },
+          },
         },
       });
       const response = await request
         .get(`${endpoint}/${courses[0].id}/topicCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const { counts } = JSON.parse(response.text);
       counts.forEach((count) => {
@@ -2346,19 +2169,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/studentRegistrationCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not an instructor", async () => {
@@ -2373,10 +2190,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - one registrations", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const counts = JSON.parse(response.text).countsAndAccount;
       counts.forEach((count) => {
@@ -2400,10 +2214,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       const response = await request
         .get(`${endpoint}/${courses[0].id}/studentRegistrationCounts`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       const counts = JSON.parse(response.text).countsAndAccount;
       counts.forEach((count) => {
@@ -2440,19 +2251,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].expiredToken
-        );
+        .set("Authorization", "bearer " + users[0].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when invalid course id", async () => {
       const response = await request
         .get(`${endpoint}/-1/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -2467,30 +2272,21 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 200 - no registrations - instructor", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
     });
     it("Return 200 - no registrations - staff", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[3].token
-        );
+        .set("Authorization", "bearer " + users[3].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
     });
     it("Return 200 - no registrations - student", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
     });
@@ -2503,6 +2299,12 @@ describe(`Test endpoint ${endpoint}`, () => {
       const topics = await prisma.topic.findMany({
         where: {
           courseId: courses[0].id,
+        },
+      });
+      const timeOption = await prisma.officeHourTimeOptions.findFirst({
+        where: {
+          courseId: courses[0].id,
+          duration: 10,
         },
       });
       await prisma.registration.create({
@@ -2525,36 +2327,93 @@ describe(`Test endpoint ${endpoint}`, () => {
               id: topics[0].id,
             },
           },
+          officeHourTimeOptions: {
+            connect: {
+              id: timeOption.id,
+            },
+          },
         },
       });
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[2].token
-        );
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(1);
     });
     it("Return 200 - one registration - staff", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[3].token
-        );
+        .set("Authorization", "bearer " + users[3].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(0);
     });
     it("Return 200 - one registration - student", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getAllRegistrations`)
-        .set(
-          "Authorization",
-          "bearer " + users[0].token
-        );
+        .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       expect(JSON.parse(response.text).registrations.length).toBe(1);
+    });
+  });
+  describe("HTTP POST pause course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/${courses[0].id}/pauseCourse`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const response = await request
+        .post(`${endpoint}/-1/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id
+        }
+      });
+      expect(course.isPaused).toBe(true);
+    });
+  });
+
+  describe("HTTP POST archive course", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.post(`${endpoint}/${courses[0].id}/archiveCourse`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const response = await request
+        .post(`${endpoint}/-1/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id
+        }
+      });
+      expect(course.isArchived).toBe(true);
     });
   });
 
@@ -2562,64 +2421,93 @@ describe(`Test endpoint ${endpoint}`, () => {
     const userIds = users.map((user) => user.id);
     const courseIds = courses.map((course) => course.id);
     const topicIds = topics.map((topic) => topic.id);
+    const courseArchivedIds = archivedCourses.map((course) => course.id);
+    // const topicArchivedIds = archivedTopics.map((topic) => topic.id);
+    // const archivedCourseId = archivedCourses[0].id;
+    // const archivedTopicId = archivedTopics[0].id;
     const deleteRegistrations = prisma.registration.deleteMany({
       where: {
         accountId: {
-          in: userIds
-        }
-      }
+          in: userIds,
+        },
+      },
     });
     const deleteOfficeHours = prisma.officeHour.deleteMany({
       where: {
         courseId: {
-          in: courseIds
-        }
-      }
+          in: courseIds,
+        },
+      },
     });
     const deleteUsers = prisma.account.deleteMany({
       where: {
         id: {
-          in: userIds
-        }
-      }
+          in: userIds,
+        },
+      },
     });
     const deleteTopics = prisma.topic.deleteMany({
       where: {
         OR: [
           {
             id: {
-              in: topicIds
-            }
+              in: topicIds,
+            },
           },
           {
             courseId: {
-              in: courseIds
-            }
-          }
-        ]
-      }
+              in: courseIds,
+            },
+          },
+        ],
+      },
     });
     const deleteTimeOptions = prisma.officeHourTimeOptions.deleteMany({
       where: {
         courseId: {
-          in: courseIds
-        }
-      }
+          in: courseIds,
+        },
+      },
     });
     const deleteCourses = prisma.course.deleteMany({
       where: {
         id: {
-          in: courseIds
-        }
+          in: courseIds,
+        },
+      },
+    });
+    // const deleteArchivedTopic = prisma.topic.deleteMany({
+    //   where: {
+    //     OR: [
+    //       {
+    //         id: {
+    //           in: topicArchivedIds,
+    //         },
+    //       },
+    //       {
+    //         courseId: {
+    //           in: courseArchivedIds,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // });
+    const deleteArchivedCourse = prisma.course.deleteMany({
+      where: {
+        id: {
+          in: courseArchivedIds,
+        },
       }
     });
+    
     await prisma.$transaction([deleteRegistrations]);
     await prisma.$transaction([deleteOfficeHours]);
     await prisma.$transaction([deleteUsers]);
     await prisma.$transaction([deleteTopics]);
     await prisma.$transaction([deleteTimeOptions]);
     await prisma.$transaction([deleteCourses]);
-
+    await prisma.$transaction([deleteArchivedCourse]);
+    // await prisma.$transaction([deleteArchivedTopic]);
     await prisma.$disconnect();
     // Tear down the test database by `yarn docker:down`
   });

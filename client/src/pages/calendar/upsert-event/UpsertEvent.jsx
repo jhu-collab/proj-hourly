@@ -2,6 +2,10 @@ import Popup from "../../../components/Popup";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import CreateEventForm from "./CreateEventForm";
 import EditEventForm from "./EditEventForm";
+import EditLocationForm from "./EditLocationForm";
+import EditCourseEventForm from "./EditCourseEventForm";
+import EditCourseEventLocationForm from "./EditCourseEventLocationForm"
+import EditCourseEventTitleForm from "./EditCourseEventTitleForm";
 
 /**
  * Parent component for the UpsertForm component.
@@ -15,9 +19,37 @@ const UpsertEvent = NiceModal.create(({ type }) => {
   return (
     <Popup
       modal={modal}
-      title={type === "edit" ? "Edit Event" : "Create Event"}
+      title={(() => {
+        if (type === "edit") {
+          return "Edit Event"
+        } else if (type === "create") {
+          return "Create Event"
+        } else if (type === "location") {
+          return "Edit Event Location"
+        } else if (type === "courseEdit") {
+          return "Edit Course Calendar Event" 
+        } else if (type === "courseLocation") {
+          return "Edit Course Calendar Event Location"
+        } else if (type === "courseTitle") {
+          return "Edit Course Calendar Event Agenda Description"
+        }
+      })()}
     >
-      {type === "edit" ? <EditEventForm /> : <CreateEventForm />}
+      {(() => {
+        if (type === "edit") {
+          return <EditEventForm />;
+        } else if (type === "create") {
+          return <CreateEventForm />;
+        } else if (type === "location") {
+          return <EditLocationForm />
+        } else if (type === "courseEdit") {
+          return <EditCourseEventForm />
+        } else if (type === "courseLocation") {
+          return <EditCourseEventLocationForm />
+        } else if (type === "courseTitle") {
+          return <EditCourseEventTitleForm />
+        }
+      })()}
     </Popup>
   );
 });

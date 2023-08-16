@@ -42,7 +42,7 @@ function DeleteAction() {
       >
         <DeleteOutlined />
       </IconButton>
-      <ConfirmPopup {...(recurring && { header: "Delete recurring event" })}>
+      <ConfirmPopup {...(recurring && { header: "Delete recurring event"})}>
         {recurring && (
           <RadioGroup
             value={deleteType}
@@ -53,8 +53,6 @@ function DeleteAction() {
               control={<Radio />}
               label="This event"
             />
-            {/* TODO: Backend needs to create a route to delete this and following
-          events */}
             <FormControlLabel
               value="all"
               control={<Radio />}

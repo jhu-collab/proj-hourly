@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
+import spacetime from "spacetime";
 
 const debug = factory(import.meta.url);
 export const officeHourDateCheck = (req, res, next) => {
@@ -35,9 +36,9 @@ export const officeHourDateCheck = (req, res, next) => {
 export const endIsAfterStart = (req, res, next) => {
   debug("endIsAfterStart called!");
   const { startDate, endDate } = req.body;
-  const startObj = new Date(startDate);
-  const endObj = new Date(endDate);
-  if (startObj > endObj) {
+  const startObj = spacetime(startDate);
+  const endObj = spacetime(endDate);
+  if (!endObj.isAfter(startObj)) {
     debug("end is before start...");
     return res
       .status(StatusCodes.BAD_REQUEST)

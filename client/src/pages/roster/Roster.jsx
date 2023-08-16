@@ -4,6 +4,7 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import useTheme from "@mui/material/styles/useTheme";
 import useQueryCourseUsers from "../../hooks/useQueryCourseUsers";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
  * A component that represents the roster page that the user visits
@@ -14,6 +15,7 @@ const Roster = () => {
   const theme = useTheme();
 
   const { isLoading, error, data } = useQueryCourseUsers();
+  const course = useStoreCourse((state) => state.course);
 
   if (isLoading) {
     return (

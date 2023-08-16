@@ -13,6 +13,7 @@ const debug = factory(import.meta.url);
 
 const router = express.Router();
 const body = express_validator.body;
+const param = express_validator.param;
 
 router.use(checkToken);
 
@@ -27,6 +28,9 @@ router.post(
     "recurringEvent",
     "Please specify if this is a recurring event"
   ).isBoolean(),
+  body("remote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -50,6 +54,7 @@ router.post(
   //timeValidator.isTime,
   //validator.areValidDOW,
   // validator.noConflictsWithHosts,
+  courseValidator.isCourseArchived,
   controller.create
 );
 
@@ -67,6 +72,7 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
+  body("timeOptionId", "Please include a time option id").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
@@ -74,12 +80,15 @@ router.post(
   validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   validator.isUserNotRegistered,
   validator.isRegistrationInFuture,
   courseValidator.areTopicsForCourse,
+  validator.isTimeLengthForCourse,
+  validator.isTimeCorrectInterval,
   courseValidator.isWithinRegisterConstraint,
+  courseValidator.isCoursePausedOfficeHourId,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.register
 );
 
@@ -94,10 +103,11 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
-  validator.isOfficeHourHost,
+  validator.isOfficeHourHostOrInstructor,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegun,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.cancelOnDate
 );
 
@@ -112,10 +122,11 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
-  validator.isOfficeHourHost,
+  validator.isOfficeHourHostOrInstructor,
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
   validator.officeHoursHasNotBegunCancelAll,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.cancelAll
 );
 
@@ -125,6 +136,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -139,6 +152,8 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").notEmpty(),
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").notEmpty(),
@@ -146,11 +161,56 @@ router.post(
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
+  validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   validator.isInFuture,
   dateValidator.endIsAfterStart,
   validator.durationIsMultipleof5,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.rescheduleSingleOfficeHour
+);
+
+router.post(
+  "/editLocationSingleDay",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("officeHourId", "Office Hour ID is required").isInt(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
+  body("isRemote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
+  validator.isOfficeHourHostOrInstructor,
+  courseValidator.isCourseArchivedOfficeHourId,
+  controller.editLocationSingleDay
+);
+
+router.post(
+  "/editLocationRecurringDay",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("officeHourId", "Office Hour ID is required").isInt(),
+  body(
+    "location",
+    "Please specify a location for your office hours"
+  ).notEmpty(),
+  body("isRemote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
+  body("date", "Date is required").notEmpty(),
+  accountValidator.isAccountValidHeader,
+  validator.doesOfficeHourExist,
+  validator.isOfficeHourHostOrInstructor,
+  courseValidator.isCourseArchivedOfficeHourId,
+  controller.editLocationRecurringDay
 );
 
 router.post(
@@ -159,6 +219,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -183,6 +244,7 @@ router.post(
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
   validator.durationIsMultipleof5,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editAll
 );
 
@@ -192,10 +254,12 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("registrationId", "Please enter a valid registration id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesRegistrationExistParams,
   validator.isRegisteredOrIsStaffBody,
   validator.isRegistrationInFutureByIdParams,
+  courseValidator.isCourseArchivedRegistrationId,
   controller.cancelRegistration
 );
 
@@ -205,6 +269,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -219,6 +285,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -231,6 +298,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("officeHourId", "Please enter a valid officehour id").isInt(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
@@ -246,6 +315,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("registrationId", "Please enter a valid registration id").isInt(),
   body("officeHourId", "Office Hour is required").isInt(),
   body("startTime", "Please include a startTime").notEmpty(),
   body("endTime", "Please include an endtime").notEmpty(),
@@ -254,6 +324,7 @@ router.post(
     .optional()
     .isString(),
   body("TopicIds", "Please include topics as an array").optional().isArray(),
+  body("timeOptionId", "Please include a time option id").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.getDatesForOfficeHour,
@@ -261,11 +332,29 @@ router.post(
   validator.doesRegistrationExistParams,
   validator.isStudentRegistered,
   validator.isWithinTimeOffering,
-  validator.isTimeCorrectInterval,
   validator.isTimeAvailable,
   courseValidator.areTopicsForCourse,
+  validator.isTimeLengthForCourse,
+  validator.isTimeCorrectInterval,
   courseValidator.isWithinRegisterConstraint,
+  courseValidator.isCourseArchivedOfficeHourId,
   controller.editRegistration
+);
+
+router.post(
+  "/editRegistrationNoShow",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("registrationId", "Registration is required").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isRegistrationId,
+  validator.isRegistrationHostOrInstructor,
+  validator.isRegistrationInPast,
+  validator.isNotCancelled,
+  courseValidator.isCourseArchivedRegistrationId,
+  controller.editRegistrationNoShow
 );
 
 export default router;

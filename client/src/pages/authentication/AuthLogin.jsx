@@ -27,6 +27,8 @@ function AuthLogin() {
     resolver: yupResolver(loginSchema),
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   if (isAuthenticated()) {
     return <Navigate to="/" replace={true} />;
   }
@@ -35,9 +37,7 @@ function AuthLogin() {
     signIn(data);
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -57,17 +57,6 @@ function AuthLogin() {
               Sign in as User
             </Button>
           </AnimateButton>
-          {/* TODO: UNFINISHED FEATURE */}
-          {/* <AnimateButton>
-            <Button
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={() => signInAsAdmin()}
-            >
-              Sign in as Admin
-            </Button>
-          </AnimateButton> */}
         </Stack>
       ) : (
         <SingleSignOn />

@@ -46,6 +46,7 @@ router.post(
   accountValidator.isAccountIdValid,
   validator.isCourseCode,
   validator.isNotInCourse,
+  validator.isCourseArchivedCourseCode,
   controller.register
 );
 
@@ -64,8 +65,10 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountStudent,
+  validator.isCourseArchived,
   controller.leaveCourse
 );
 
@@ -75,9 +78,12 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("staffId", "Please enter a valid staff id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStaff,
+  validator.isCourseArchived,
   controller.removeStaff
 );
 
@@ -87,9 +93,12 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
   validator.isCourseIdUrlValid,
   accountValidator.isAccountInstructor,
   accountValidator.isUrlStudent,
+  validator.isCourseArchived,
   controller.removeStudent
 );
 
@@ -99,6 +108,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -125,6 +135,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -137,6 +148,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -155,6 +167,7 @@ router.post(
   validator.isCourseId,
   accountValidator.isAccountInstructorBody,
   validator.isNotDuplicateTopic,
+  validator.isCourseArchived,
   controller.createTopic
 );
 
@@ -172,6 +185,7 @@ router.post(
   accountValidator.isAccountInstructorBody,
   validator.doesTopicIdExist,
   validator.isNotDuplicateTopic,
+  validator.isCourseArchived,
   controller.editTopic
 );
 
@@ -184,6 +198,7 @@ router.delete(
   },
   accountValidator.isAccountValidHeader,
   validator.isAccountInstructorForTopic,
+  validator.isCourseArchivedTopicId,
   controller.deleteTopic
 );
 
@@ -193,6 +208,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -205,6 +221,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
@@ -217,6 +234,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -229,6 +247,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -241,6 +260,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   validator.isInCourseFromHeader,
@@ -253,9 +273,11 @@ router.delete(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
+  validator.isCourseArchived,
   controller.deleteCourse
 );
 
@@ -272,6 +294,7 @@ router.post(
   validator.isCourseIdParams,
   validator.isLengthMultipleOf5,
   accountValidator.isAccountInstructor,
+  validator.isCourseArchived,
   controller.createTimeLength
 );
 
@@ -301,14 +324,16 @@ router.post(
   accountValidator.isAccountValidHeader,
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
-  validator.doesTimeLengthExist,
+  //validator.doesTimeLengthExist,
   validator.isLengthMultipleOf5,
   validator.isTimeLengthForCourse,
+  validator.isCourseArchived,
   controller.editTimeLength
 );
 
 router.delete(
   "/:courseId/officeHourTimeInterval/:id",
+  param("courseId", "Please enter a valid course id").isInt(),
   param("id", "Param must have id").isInt(),
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
@@ -320,6 +345,7 @@ router.delete(
   validator.doesTimeLengthExist,
   validator.isTimeLengthForCourse,
   validator.isNotOnlyTimeLengthForCourse,
+  validator.isCourseArchived,
   controller.deleteTimeLength
 );
 
@@ -342,6 +368,7 @@ router.post(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForPromotionTo,
+  validator.isCourseArchived,
   controller.promote
 );
 
@@ -364,6 +391,7 @@ router.post(
   validator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isInCourseBelowRoleForDemotionTo,
+  validator.isCourseArchived,
   controller.demote
 );
 
@@ -373,6 +401,8 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("id", "Please enter a valid id").isInt(),
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountValidParams,
   validator.isCourseIdParams,
@@ -383,6 +413,7 @@ router.get(
 
 router.post(
   "/:courseId/registrationConstraints",
+  param("courseId", "Please enter a valid course id").isInt(),
   body("start", "Please include a start constraint in hoyrs")
     .notEmpty()
     .isInt(),
@@ -396,7 +427,57 @@ router.post(
   accountValidator.isAccountInstructor,
   validator.startAndEndArePositive,
   validator.startIsGreaterThanEnd,
+  validator.isCourseArchived,
   controller.updateRegistrationConstraints
+);
+
+
+router.get(
+  "/:courseId/getRegistration/:filterType/value/:filterValue",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("filterType", "filterType is required").isIn([
+    "date",
+    "officeHourId",
+    "accountId",
+    "topics",
+    "isNoShow",
+    "hosts",
+  ]),
+  param("filterValue", "filterType is required").isString(),
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  validator.isInCourseFromHeader,
+  validator.isValidFilterForRole,
+  validator.isValidFilterValue,
+  controller.getRegistrationWithFilter
+);
+
+router.post(
+  "/:courseId/pauseCourse",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.pauseCourse
+);
+
+router.post(
+  "/:courseId/archiveCourse",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  accountValidator.isAccountValidHeader,
+  validator.isCourseIdParams,
+  accountValidator.isAccountInstructor,
+  controller.archiveCourse
 );
 
 export default router;

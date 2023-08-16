@@ -4,41 +4,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import DeleteButton from "./DeleteButton";
 import ChangeRoleIcon from "./ChangeRoleIcon";
-const columns = [
-  {
-    field: "firstName",
-    headerName: "First Name",
-    flex: 2.6,
-  },
-  {
-    field: "lastName",
-    headerName: "Last Name",
-    flex: 2.6,
-  },
-  {
-    field: "email",
-    headerName: "Email",
-    flex: 2.6,
-  },
-  {
-    field: "actions",
-    type: "actions",
-    flex: 1,
-    getActions: (params) => [
-      <ChangeRoleIcon params={params} isStaff={false} />,
-      <DeleteButton params={params} isStaff={false} />,
-    ],
-  },
-  {
-    field: "actions",
-    type: "actions",
-    flex: 1,
-    getActions: (params) => [
-      <ChangeRoleIcon params={params} isStaff={true} />,
-      <DeleteButton params={params} isStaff={true} />,
-    ],
-  },
-];
+import UseTokenIcon from "./UseTokenIcon";
+import useStoreCourse from "../../hooks/useStoreCourse";
 
 /**
  * Represents a panel of users in a course.
@@ -50,6 +17,44 @@ const columns = [
  */
 function RosterTabPanel({ index, rows }) {
   const rosterTab = useStoreLayout((state) => state.rosterTab);
+  const course = useStoreCourse((state) => state.course);
+  const columns = [
+    {
+      field: "firstName",
+      headerName: "First Name",
+      flex: 2.6,
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 2.6,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 2.6,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      flex: 1,
+      getActions: (params) => [
+        <UseTokenIcon params={params} isStaff={false} index={index} />,
+        <ChangeRoleIcon params={params} isStaff={false} />,
+        <DeleteButton params={params} isStaff={false} />,
+      ],
+    },
+    {
+      field: "actions",
+      type: "actions",
+      flex: 1,
+      getActions: (params) => [
+        <UseTokenIcon params={params} isStaff={false} index={index} />,
+        <ChangeRoleIcon params={params} isStaff={true} />,
+        <DeleteButton params={params} isStaff={true} />,
+      ],
+    },
+  ];
 
   const noRows = () => {
     return (

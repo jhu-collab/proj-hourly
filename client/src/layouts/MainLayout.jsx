@@ -48,8 +48,6 @@ function MainLayout() {
         <Breadcrumbs
           navigation={menuItems()}
           title
-          // titleBottom
-          // card={false}
           divider={false}
         />
         <Outlet />

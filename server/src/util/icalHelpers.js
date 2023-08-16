@@ -157,6 +157,7 @@ export const generateRecurringEventJson = (officeHour) => {
           location: officeHour.location,
           id: officeHour.id,
           isRecurring: true,
+          isRemote: officeHour.isRemote
         },
       });
     }
@@ -211,6 +212,7 @@ export const generateSingleEventJson = (officeHour) => {
       location: officeHour.location,
       id: officeHour.id,
       isRecurring: false,
+      isRemote: officeHour.isRemote
     },
   };
 };
@@ -391,4 +393,51 @@ const generateRRule = (officeHour) => {
   // });
   // console.log(rruleSet.toString());
   //return rruleSet;
+};
+
+export const generateSingleEventJsonCourse = (calendarEvent, i) => {
+  return {
+    id: i,
+    title: calendarEvent.title,
+    start: getIsoDate(calendarEvent.date),
+    end: getIsoDate(calendarEvent.date),
+    extendedProps: {
+      courseId: calendarEvent.course.id,
+      additionalInfo: calendarEvent.additionalInfo,
+      isCancelled: calendarEvent.isCancelled,
+      isRemote: calendarEvent.isRemote,
+      location: calendarEvent.location,
+      allDay: calendarEvent.allDay
+    },
+  };
+};
+
+export const generateCourseCalendar = async (courseId) => {
+  debug("generateCourseCalendar called!");
+  const events = [];
+  debug("getting calendar events...");
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      courseId,
+    },
+    include: {
+      course: true,
+    }
+  });
+  let i = 1;
+  calendarEvents.forEach((calendarEvent) => {
+    i++;
+    events.push(generateSingleEventJsonCourse(calendarEvent, i));
+  });
+  debug("updating course...");
+  await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      iCalJsonCalEvent: events,
+    },
+  });
+  debug("generateCourseCalendar done!");
+  return events;
 };

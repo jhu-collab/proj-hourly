@@ -83,6 +83,7 @@ export const getCourses = async (req, res) => {
           id,
         },
       },
+      isArchived: false
     },
   });
   studentCourses.forEach((course) => {
@@ -140,7 +141,7 @@ export const deleteAccount = async (req, res) => {
   });
   let deleteOH = [];
   let courseDeletedOH = [];
-  officeHours.forEach(async (officeHour) => {
+  officeHours.forEach((officeHour) => {
     if (officeHour.hosts.length === 1) {
       deleteOH.push(officeHour.id);
       courseDeletedOH.push(officeHour.course.id);
@@ -176,7 +177,7 @@ export const deleteAccount = async (req, res) => {
     },
   });
   let deleteCourse = [];
-  courses.forEach(async (course) => {
+  courses.forEach((course) => {
     if (course.instructors.length === 1) {
       deleteCourse.push(course.id);
     }
@@ -265,7 +266,6 @@ export const getAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ accounts });
 };
 
-/* c8 ignore start */
 export const promoteToAdmin = async (req, res) => {
   debug("promoting to admin...");
   const id = parseInt(req.params.id, 10);
@@ -280,4 +280,3 @@ export const promoteToAdmin = async (req, res) => {
   debug("promoted to admin...");
   return res.status(StatusCodes.ACCEPTED).json(account);
 };
-/* c8 ignore end */

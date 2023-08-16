@@ -85,6 +85,7 @@ function CreateEventForm() {
         ? DateTime.fromJSDate(start).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
       recurringEvent: false,
+      remote: false,
       endTime: end
         ? DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_24_SIMPLE)
         : "",
@@ -96,6 +97,7 @@ function CreateEventForm() {
   });
 
   const recurring = watch("recurringEvent");
+  const remote = watch("remote");
 
   const { mutate, isLoading } = useMutationCreateOfficeHour();
 
@@ -118,6 +120,7 @@ function CreateEventForm() {
       endDate: end.toISOString(),
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
+      remote: data.remote,
       hosts: [id], // TOOD: For now, there will be no additional hosts
     });
   };
@@ -142,17 +145,18 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-          <FormCheckbox
-            name="recurringEvent"
-            control={control}
-            label="Recurring event"
-          />
-          {/* TODO: UNFINISHED FEATURE */}
-          {/* <FormCheckbox
-              name="feedback"
+          <Stack direction="row" spacing={3} alignItems="center">
+            <FormCheckbox
+              name="recurringEvent"
               control={control}
-              label="Would you like feedback?" //TODO need to update backend so we can have optional feedback
-            /> */}
+              label="Recurring event"
+            />
+            <FormCheckbox
+              name="remote"
+              control = {control}
+              label="Remote"
+            />
+          </Stack>
           <FormInputText
             name="startDate"
             control={control}
@@ -176,7 +180,7 @@ function CreateEventForm() {
               buttons={BUTTONS}
             />
           )}
-          <FormInputText name="location" control={control} label="Location" />
+          <FormInputText name="location" control={control} label="Location" /> 
           <Button
             type="submit"
             variant="contained"

@@ -14,6 +14,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
 
@@ -44,24 +45,36 @@ function Calendar() {
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
+  const openSidebar = useStoreLayout((state) => state.openSidebar);
 
   const token = useStoreToken((state) => state.token);
   const { id } = decodeToken(token);
 
   const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
-  const { isLoading, error, data } = useQueryOfficeHours();
+  const {
+    isLoading: isOfficeHoursLoading,
+    error: officeHoursError,
+    data: officeHoursData,
+  } = useQueryOfficeHours();
+  const {
+    isLoading: isCourseEventsLoading,
+    error: courseEventsError,
+    data: courseEventsData,
+  } = useQueryCourseEvents();
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
   }, [courseType]);
 
+  useEffect(() => {
+    setTimeout(() => calendarRef.current.getApi().updateSize(), 500);
+  }, [openSidebar]);
+
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
-    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -70,6 +83,10 @@ function Calendar() {
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
       hosts: info.event.extendedProps.hosts,
+      isRemote: info.event.extendedProps.isRemote,
+      allDay: info.event.allDay,
+      resources: info.event.extendedProps.additionalInfo,
+      isCancelled: info.event.extendedProps.isCancelled,
     });
   };
 
@@ -93,7 +110,6 @@ function Calendar() {
   };
 
   const handleEventDrop = (info) => {
-    console.log("event click");
     setEvent({
       title: info.event.title,
       start: info.event.start,
@@ -101,6 +117,7 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
+      isRemote: info.event.extendedProps.isRemote,
     });
     NiceModal.show("upsert-event", { type: "edit" });
     info.revert();
@@ -117,8 +134,8 @@ function Calendar() {
       return false;
     });
     return filtered;
-  }
-  
+  };
+
   const chosenData = (data) => {
     if (!data || !data.calendar || data.calendar.length === 0) {
       return [];
@@ -131,7 +148,26 @@ function Calendar() {
         return [];
       }
     }
-  }
+  };
+
+  const allChosenData = () => {
+    let data = [];
+
+    if (Array.isArray(officeHoursData?.calendar)) {
+      data = data.concat(chosenData(officeHoursData));
+    }
+
+    if (
+      Array.isArray(courseEventsData?.calendarEvents) &&
+      courseEventsData &&
+      courseEventsData.calendarEvents &&
+      courseEventsData.calendarEvents.length !== 0
+    ) {
+      data = data.concat(courseEventsData.calendarEvents);
+    }
+
+    return data;
+  };
 
   return (
     <>
@@ -139,12 +175,16 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
           <StyleWrapper>
-          {matchUpSm && (
-            <CalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered} setMaxEventsStacked={setMaxEventsStacked}/>
-          )}
+            {matchUpSm && (
+              <CalendarMenu
+                calendarRef={calendarRef}
+                isStaff={isStaff}
+                setFiltered={setFiltered}
+                setMaxEventsStacked={setMaxEventsStacked}
+              />
+            )}
             <FullCalendar
               plugins={[
                 rrulePlugin,
@@ -183,7 +223,7 @@ function Calendar() {
               selectAllow={handleSelectAllow}
               selectMirror={isStaff ? true : false}
               unselectAuto={true}
-              events={Array.isArray(data?.calendar) ? chosenData(data) : []}
+              events={allChosenData()}
               select={handleSelect}
               slotDuration="0:30:00"
               slotLabelFormat={{
@@ -195,21 +235,29 @@ function Calendar() {
               slotEventOverlap={false}
               ref={calendarRef}
               dayHeaderContent={dayHeaderContent}
-              allDaySlot={false}
+              allDaySlot={true}
               nowIndicator
               nowIndicatorContent={nowIndicatorContent}
-              {...(!matchUpSm && { headerToolbar: { 
-                start: "mobileCalMenu",
-                center: "prev title next",
-                end: ""} })}
+              {...(!matchUpSm && {
+                headerToolbar: {
+                  start: "mobileCalMenu",
+                  center: "prev title next",
+                  end: "",
+                },
+              })}
             />
           </StyleWrapper>
-          
         </Box>
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} isStaff = {isStaff} setFiltered = {setFiltered}/>}
-      {isLoading && <Loader />}
+      {!matchUpSm && (
+        <MobileCalendarMenu
+          calendarRef={calendarRef}
+          isStaff={isStaff}
+          setFiltered={setFiltered}
+        />
+      )}
+      {(isOfficeHoursLoading || isCourseEventsLoading) && <Loader />}
     </>
   );
 }

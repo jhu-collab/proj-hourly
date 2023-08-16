@@ -634,6 +634,7 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   } else if (role === "Instructor") {
@@ -672,6 +673,7 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   } else {
@@ -715,36 +717,28 @@ export const getAllRegistrations = async (req, res) => {
             },
           },
         },
+        officeHourTimeOptions: true,
       },
     });
   }
-  debug("retrieving time options...");
-  const OfficeHourTimeOptions = await prisma.officeHourTimeOptions.findMany({
-    where: {
-      courseId,
-    },
-  });
-  debug("matching time options to registrations...");
-  registrations.forEach((registration) => {
-    let endTime = registration.endTime;
-    if (registration.endTime < registration.startTime) {
-      endTime.setUTCDate(endTime.getUTCDate() + 1);
-    }
-    const duration =
-      (endTime.getTime() - registration.startTime.getTime()) / (1000 * 60);
-    OfficeHourTimeOptions.forEach((option) => {
-      if (duration == option.duration) {
-        registration.type = option.title;
-      }
-    });
-    if (endTime.getTimezoneOffset !== registration.date.getTimezoneOffset()) {
-      registration.endTime.setUTCHours(endTime.getUTCHours() + 1);
-      registration.startTime.setUTCHours(
-        registration.startTime.getUTCHours() + 1
-      );
-    }
-  });
-  debug("getAllRegistrations is done!");
+  // const OfficeHourTimeOptions = await prisma.officeHourTimeOptions.findMany({
+  //   where: {
+  //     courseId,
+  //   },
+  // });
+  // registrations.forEach((registration) => {
+  //   let endTime = registration.endTime;
+  //   if (registration.endTime < registration.startTime) {
+  //     endTime.setUTCDate(endTime.getUTCDate() + 1);
+  //   }
+  //   const duration =
+  //     (endTime.getTime() - registration.startTime.getTime()) / (1000 * 60);
+  //   OfficeHourTimeOptions.forEach((option) => {
+  //     if (duration == option.duration) {
+  //       registration.type = option.title;
+  //     }
+  //   });
+  // });
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 
@@ -1151,4 +1145,199 @@ export const updateRegistrationConstraints = async (req, res) => {
   });
   debug("updateRegistrationConstraints is done!");
   return res.status(StatusCodes.ACCEPTED).json({ course });
+};
+
+export const getRegistrationWithFilter = async(req, res) => {
+  debug("getRegistrationWithFilter is starting!");
+  const courseId = parseInt(req.params.courseId, 10);
+  if(req.role === "Instructor") {
+    return getRegistrationInstructor(req, res, courseId);
+  } else if(req.role === "Staff") {
+    return getRegistrationStaff(req, res, courseId);
+  } else {
+    return getRegistrationStudent(req, res, courseId);
+  }
+}
+
+const registrationsInclude = {
+  topics: true,
+  account: {
+    select: {
+      id: true,
+      userName: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      preferredName: true,
+    },
+  },
+  officeHour: {
+    select: {
+      hosts: {
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          preferredName: true,
+        },
+      },
+    },
+  },
+  officeHourTimeOptions: true,
+};
+
+const getRegistrationStudent = async(req, res, courseId) => {
+  debug("filtering registration for student...");
+  const id = req.id;
+  const {filterType, filterValue} = req.params;
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    accountId: id,
+    officeHour: {
+      courseId,
+    },
+  };
+  if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: parseInt(filterValue),
+      }
+    }
+  } else if (filterType === "hosts") {
+    where["officeHour"] = {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: parseInt(filterValue),
+        }
+      }
+    }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId") {
+    where[filterType] = parseInt(filterValue);
+  } else {
+    where[filterType] = new Date(filterValue);
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+}
+
+const getRegistrationStaff = async(req, res, courseId) => {
+  debug("filtering registration for staff...");
+  const id = req.id;
+  const {filterType, filterValue} = req.params;
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    officeHour: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: id,
+        }
+      }
+    },
+  };
+  if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: parseInt(filterValue),
+      }
+    }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId" || filterType === "accountId") {
+    where[filterType] = parseInt(filterValue);
+  } else {
+    where[filterType] = new Date(filterValue);
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for staff...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+}
+
+const getRegistrationInstructor = async(req, res, courseId) => {
+  debug("filtering registration for instructor...");
+  const {filterType, filterValue} = req.params;
+  const where = { 
+    isCancelled: false,
+    isCancelledStaff: false,
+    officeHour: {
+      courseId: courseId,
+    },
+  };
+  if(filterType === "hosts") {
+    where["officeHour"] = {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: parseInt(filterValue),
+        }
+      }
+    }
+  } else if (filterType === "topics") {
+    where[filterType] = {
+      some: {
+        id: parseInt(filterValue),
+      }
+    }
+  } else if (filterType === "isNoShow") {
+    where[filterType] = (filterValue === "true");
+  } else if (filterType === "officeHourId" || filterType === "accountId") {
+    where[filterType] = parseInt(filterValue);
+  } else {
+    where[filterType] = new Date(filterValue);
+  }
+  const registrations = await prisma.registration.findMany({where, include: registrationsInclude});
+  debug("done filtering registration for instructor...");
+  return res.status(StatusCodes.ACCEPTED).json({ registrations });
+};
+
+export const pauseCourse = async(req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Finding course...");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId
+    }
+  });
+  debug("Course found...")
+  debug("Updating course...");
+  const courseUpdate = await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      isPaused: !course.isPaused,
+    }
+  });
+  debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
+};
+
+export const archiveCourse = async(req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Finding course...")
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId
+    }
+  });
+  debug("Course found...");
+  debug("Updating course...");
+  const courseUpdate = await prisma.course.update({
+    where: {
+      id: courseId
+    },
+    data: {
+      isArchived: !course.isArchived
+    }
+  });
+  debug("Course updated...");
+  return res.status(StatusCodes.ACCEPTED).json({ courseUpdate });
 };
