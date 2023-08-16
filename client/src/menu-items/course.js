@@ -4,6 +4,7 @@ import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlin
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
 import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
+import UnorderedListOutlined from "@ant-design/icons/UnorderedListOutlined";
 import DollarOutlined from "@ant-design/icons/DollarOutlined";
 const icons = {
   CalendarOutlined,
@@ -12,6 +13,7 @@ const icons = {
   InfoCircleOutlined,
   BulbOutlined,
   BarChartOutlined,
+  UnorderedListOutlined,
   DollarOutlined,
 };
 
@@ -70,6 +72,15 @@ export const course = (currentCourse, courseType) => {
     type: "item",
     url: "/courseinformation",
     icon: icons.InfoCircleOutlined,
+    breadcrumbs: false,
+  });
+
+  children.push({
+    id: "agenda",
+    title: "agenda",
+    type: "item",
+    url: "/agenda",
+    icon: icons.UnorderedListOutlined,
     breadcrumbs: false,
   });
 

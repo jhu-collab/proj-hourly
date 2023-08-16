@@ -4,6 +4,7 @@ import RemoveCourseAction from "./RemoveCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
+import CourseCalendarEventForm from "./CourseCalendarEventForm";
 import CourseTokenOptInForm from "./CourseTokenOptInForm";
 
 function CourseInfoPage() {
@@ -31,10 +32,12 @@ function CourseInfoPage() {
             </Typography>
           )}
         </Stack>
-        {courseType === "Student" && (
-          <RemoveCourseAction courseId={course.id} />
-        )}
+        {courseType === "Student" && <RemoveCourseAction courseId={course.id} />}
       </MainCard>
+      {courseType === "Instructor" && 
+        <MainCard title="Course Calendar Event Information" sx={{ padding: 0 }} content={true}>
+          <CourseCalendarEventForm />
+        </MainCard>}
       {courseType === "Instructor" && (
         <MainCard
           title="Course Token Option"
