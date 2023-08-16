@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import CourseCalendarEventForm from "./CourseCalendarEventForm";
+import CourseTokenOptInForm from "./CourseTokenOptInForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
@@ -36,8 +37,16 @@ function CourseInfoPage() {
       {courseType === "Instructor" && 
         <MainCard title="Course Calendar Event Information" sx={{ padding: 0 }} content={true}>
           <CourseCalendarEventForm />
+        </MainCard>}
+      {courseType === "Instructor" && (
+        <MainCard
+          title="Course Token Option"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CourseTokenOptInForm />
         </MainCard>
-      }
+      )}
     </>
   );
 }

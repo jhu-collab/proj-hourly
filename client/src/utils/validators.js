@@ -328,3 +328,12 @@ export const editCourseEventSchema = yup.object().shape({
 export const editTitleSchema = yup.object().shape({
   title: yup.string().required("Agenda description is required"),
 });
+
+export const tokenSchema = yup.object({
+  name: yup.string().required("Token name is required"),
+  description: yup.string().required("Token description is required"),
+  quantity: yup
+    .number()
+    .required("Toke quantity is required")
+    .min(1, "Must have at least 1 of each token"),
+});

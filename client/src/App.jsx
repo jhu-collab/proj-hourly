@@ -9,6 +9,7 @@ import CourseWrapper from "./layouts/CourseWrapper";
 import AdminOnlyRoute from "./layouts/AdminOnlyRoute";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import StaffOnlyRoute from "./layouts/StaffOnlyRoute";
+import CourseTokenEnabledRoute from "./layouts/CourseTokenEnabledRoute";
 
 const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
 const MyCourses = Loadable(lazy(() => import("./pages/my-courses/MyCourses")));
@@ -26,6 +27,9 @@ const Registrations = Loadable(
   lazy(() => import("./pages/registrations/Registrations"))
 );
 const Topics = Loadable(lazy(() => import("./pages/topics/Topics")));
+const CourseTokens = Loadable(
+  lazy(() => import("./pages/courseTokens/CourseTokens"))
+);
 const Statistics = Loadable(
   lazy(() => import("./pages/statistics/Statistics"))
 );
@@ -44,6 +48,9 @@ function App() {
               <Route path="/" element={<CourseWrapper />}>
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/registrations" element={<Registrations />} />
+                <Route path="" element={<CourseTokenEnabledRoute />}>
+                  <Route path="/tokens" element={<CourseTokens />} />
+                </Route>
                 <Route path="/courseinformation" element={<CourseInfoPage />} />
                 <Route path="/agenda" element={<Agenda />} />
                 <Route path="" element={<StaffOnlyRoute />}>

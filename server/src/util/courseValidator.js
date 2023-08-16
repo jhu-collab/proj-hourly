@@ -143,7 +143,10 @@ export const isCourseIdParams = async (req, res, next) => {
 export const isCourseStaffOrInstructor = async (req, res, next) => {
   debug("isCourseStaffOrInstructor is called!");
   debug("Retrieving course id from body and account id");
-  const { courseId } = req.body;
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
   const id = req.id;
   let roleQuery = {
     OR: [
@@ -846,9 +849,9 @@ export const startIsGreaterThanEnd = (req, res, next) => {
 };
 
 export const isValidFilterForRole = async (req, res, next) => {
-  const {filterType, filterValue} = req.params;
+  const { filterType, filterValue } = req.params;
   debug("isValidFilterValue is called!");
-  debug("Finding user role.")
+  debug("Finding user role.");
   const id = req.id;
   const courseId = parseInt(req.params.courseId);
   debug("Checking if account is an instructor or staff for course...");
@@ -872,7 +875,7 @@ export const isValidFilterForRole = async (req, res, next) => {
           id,
         },
       },
-    }
+    },
   });
   if (staffQuery.students.length === 1) {
     req.role = "Student";
@@ -884,92 +887,95 @@ export const isValidFilterForRole = async (req, res, next) => {
   debug("User level found.");
   if (filterType === "hosts" && req.role === "Staff") {
     return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: user does not have access to filter" });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: user does not have access to filter" });
   } else if (filterType === "accountId" && req.role === "Student") {
     return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: user does not have access to filter" });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: user does not have access to filter" });
   } else {
     debug("isValidFilterForRole is complete!");
     next();
   }
-}
+};
 
 export const isValidFilterValue = async (req, res, next) => {
   debug("isValidFilterValue is called!");
   debug("Retrieving filterType and filterValue from params...");
-  const {filterType, filterValue} = req.params;
+  const { filterType, filterValue } = req.params;
   const courseId = req.body;
   const id = req.id;
-  if(filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+  if (filterType === "date" && new Date(filterValue).valueOf() === NaN) {
     return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: filter value must be of type Date" });
-  } else if (filterType === "officeHourId" ) {
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type Date" });
+  } else if (filterType === "officeHourId") {
     if (isNaN(parseInt(filterValue))) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type office hour" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type office hour" });
     }
     const officeHour = await prisma.officeHour.findUnique({
       where: {
         id: parseInt(filterValue, 10),
       },
-    })
-    if(officeHour === null) {
+    });
+    if (officeHour === null) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type office hour" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type office hour" });
     } else {
       debug("The filterValue is a valid instance of the filterType!");
       debug("isValidFilterValue is done!");
       next();
     }
-  } else if(filterType === "accountId") {
+  } else if (filterType === "accountId") {
     if (isNaN(parseInt(filterValue))) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type account" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
     }
     const account = await prisma.account.findUnique({
       where: {
         id: parseInt(filterValue, 10),
       },
-    })
-    if(account === null) {
+    });
+    if (account === null) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type account" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
     } else {
       debug("The filterValue is a valid instance of the filterType!");
       debug("isValidFilterValue is done!");
       next();
     }
-  } else if(filterType === "topics") {
+  } else if (filterType === "topics") {
     if (isNaN(parseInt(filterValue))) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type topic" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type topic" });
     }
     const topic = await prisma.topic.findUnique({
       where: {
         id: parseInt(filterValue, 10),
       },
-    })
-    if(topic === null) {
+    });
+    if (topic === null) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type topic" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type topic" });
     } else {
       debug("The filterValue is a valid instance of the filterType!");
       debug("isValidFilterValue is done!");
       next();
     }
-  } else if(filterType === "isNoShow" && !(filterValue === "true" || filterValue === "false")) {
+  } else if (
+    filterType === "isNoShow" &&
+    !(filterValue === "true" || filterValue === "false")
+  ) {
     return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ msg: "ERROR: filter value must be of type boolean" });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
     const course = await prisma.officeHour.findMany({
       where: {
@@ -977,14 +983,14 @@ export const isValidFilterValue = async (req, res, next) => {
         hosts: {
           some: {
             id,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
     if (course === null) {
       return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: filter value must be of type host" });
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type host" });
     } else {
       debug("The filterValue is a valid instance of the filterType!");
       debug("isValidFilterValue is done!");
@@ -995,4 +1001,190 @@ export const isValidFilterValue = async (req, res, next) => {
     debug("isValidFilterValue is done!");
     next();
   }
-}
+};
+
+export const isAccountStudentParams = async (req, res, next) => {
+  debug("isAccountStudentParams is called!");
+  const accoundId = parseInt(req.params.accountId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("Checking if account is a student...");
+  const isStudent = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+    include: {
+      students: {
+        where: {
+          id: accoundId,
+        },
+      },
+    },
+  });
+  debug("got data for if account is a student");
+  if (isStudent.students.length == 0) {
+    debug("account is not a student...");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: account is not a student" });
+  } else {
+    debug("isAccountStudentParams is done!");
+    next();
+  }
+};
+
+export const isCoursePaused = async (req, res, next) => {
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  if (course.isPaused === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived." });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCoursePausedOfficeHourId = async (req, res, next) => {
+  let { officeHourId } = req.body;
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+  });
+  if (course.isPaused === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is paused" });
+  } else {
+    debug("Course is not paused.");
+    next();
+  }
+};
+
+export const isCourseArchived = async (req, res, next) => {
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived." });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedOfficeHourId = async (req, res, next) => {
+  let { officeHourId } = req.body;
+  if (officeHourId === undefined || officeHourId === null) {
+    officeHourId = parseInt(req.params.officeHourId, 10);
+  }
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: officeHourId,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedRegistrationId = async (req, res, next) => {
+  let { registrationId } = req.body;
+  if (registrationId === undefined || registrationId === null) {
+    registrationId = parseInt(req.params.registrationId, 10);
+  }
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      officeHour: true,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: registration.officeHour.courseId,
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedTopicId = async (req, res, next) => {
+  let { topicId } = req.body;
+  if (topicId === undefined || topicId === null) {
+    topicId = parseInt(req.params.topicId, 10);
+  }
+  const topic = await prisma.topic.findUnique({
+    where: {
+      id: topicId,
+    },
+  });
+  const course = await prisma.course.findUnique({
+    where: {
+      id: topic.courseId,
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
+
+export const isCourseArchivedCourseCode = async (req, res, next) => {
+  let { code } = req.body;
+  const course = await prisma.course.findUnique({
+    where: {
+      code: code,
+    },
+  });
+  if (course.isArchived === true) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: Course is archived" });
+  } else {
+    debug("Course is not archived.");
+    next();
+  }
+};
