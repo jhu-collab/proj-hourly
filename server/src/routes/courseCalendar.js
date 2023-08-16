@@ -26,10 +26,7 @@ router.post(
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("begDate", "Please specify the start day of this event").notEmpty(),
   body("endDate", "Please specify the end day of this event").notEmpty(),
-  body(
-    "daysOfWeek",
-    "Please specify the days of the week where this course occurs"
-  )
+  body("daysOfWeek", "Please specify the days of the week of this course")
     .notEmpty()
     .isArray(),
   body("location", "Please specify location").notEmpty().isString(),
@@ -262,10 +259,7 @@ router.post(
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("begDate", "Please specify the start day of this event").notEmpty(),
   body("endDate", "Please specify the end day of this event").notEmpty(),
-  body(
-    "daysOfWeek",
-    "Please specify the days of the week where this course occurs"
-  )
+  body("daysOfWeek", "Please specify the days of the week of this course")
     .notEmpty()
     .isArray(),
   body("location", "Please specify location").notEmpty().isString(),

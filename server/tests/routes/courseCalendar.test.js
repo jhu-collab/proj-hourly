@@ -511,9 +511,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(201);
 
-      let dates  = [];
-      for(let i in calendarEvents) {
-        dates.push(calendarEvents[i].date)
+      let dates = [];
+      for (let i in calendarEvents) {
+        dates.push(calendarEvents[i].date);
       }
 
       const calendarJSON = response.body.eventJSon;
@@ -2430,9 +2430,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
 
-      let dates  = [];
-      for(let i in createdEvents) {
-        dates.push(createdEvents[i].date)
+      let dates = [];
+      for (let i in createdEvents) {
+        dates.push(createdEvents[i].date);
       }
 
       expect(createdEvents).toBeDefined();
