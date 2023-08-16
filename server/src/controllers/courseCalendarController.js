@@ -36,7 +36,6 @@ export const create = async (req, res) => {
   end = end.add(23 - end.toNativeDate().getUTCHours(), "hours");
   let beg = spacetime(thisBeg);
   beg = beg.add(23 - beg.toNativeDate().getUTCHours(), "hours");
-  console.log(beg.toNativeDate(), end.toNativeDate());
   let indices = [];
   daysOfWeek.forEach((dow) => {
     indices.push(weekday.indexOf(dow));
@@ -61,7 +60,6 @@ export const create = async (req, res) => {
     }
     beg = beg.add(diff, "day");
   }
-  console.log(calendarEvents);
   const createdEvents = await prisma.calendarEvent.createMany({
     data: calendarEvents,
   });

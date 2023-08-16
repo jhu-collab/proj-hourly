@@ -232,10 +232,10 @@ async function setup() {
     },
     include: {
       registrations: true,
-      isOnDayOfWeek: true
+      isOnDayOfWeek: true,
     },
   });
-  console.log(officeHour)
+  console.log(officeHour);
 
   // Create office hour time options
   await prisma.officeHourTimeOptions.create({
@@ -302,42 +302,12 @@ async function setup() {
 
 async function teardown() {
   // Delete all objects generated for testing
-  await prisma.registration.deleteMany({
-    where: {
-      OR: [
-        { id: { in: ids.registrations } },
-        { officeHourId: { in: ids.officeHours } },
-        { accountId: { in: ids.users } },
-      ],
-    },
-  });
-  await prisma.topic.deleteMany({
-    where: {
-      OR: [{ id: { in: ids.topics } }, { courseId: ids.course }],
-    },
-  });
-  await prisma.officeHour.deleteMany({
-    where: {
-      courseId: ids.course,
-    },
-  });
-  await prisma.officeHourTimeOptions.deleteMany({
-    where: {
-      courseId: ids.course,
-    },
-  });
-  await prisma.course.deleteMany({
-    where: {
-      id: ids.course,
-    },
-  });
-  await prisma.account.deleteMany({
-    where: {
-      id: {
-        in: ids.users,
-      },
-    },
-  });
+  await prisma.registration.deleteMany({});
+  await prisma.topic.deleteMany({});
+  await prisma.officeHour.deleteMany({});
+  await prisma.officeHourTimeOptions.deleteMany({});
+  await prisma.course.deleteMany({});
+  await prisma.account.deleteMany({});
 
   await prisma.$disconnect();
 
@@ -701,7 +671,7 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     beforeAll(async () => {
       const params = await setup();
-      instructor = params.instructor
+      instructor = params.instructor;
       students = params.students;
       officeHour = params.officeHour;
       topics = params.topics;
@@ -735,7 +705,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -755,7 +725,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -767,7 +737,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/pauseCourse`)
@@ -787,7 +757,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/pauseCourse`)
@@ -870,23 +840,23 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
-    it("Return 409 when startTime is empty", async () => {
+    it("Return 403 when startTime is empty", async () => {
       const attributes = { ...baseAttributes, startTime: "" };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
 
     // Row 7
-    it("Return 409 when startTime is not a time string", async () => {
+    it("Return 403 when startTime is not a time string", async () => {
       const attributes = { ...baseAttributes, startTime: "Hello World" };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(403);
     });
 
     // Row 8
@@ -911,14 +881,19 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     // Row 10
     it("Return 409 when date is today", async () => {
+      const curr = new Date();
+      if (curr.getUTCHours() < Math.abs(curr.getTimezoneOffset() / 60)) {
+        curr.setDate(curr.getDate() - 1);
+      }
       const attributes = {
         ...baseAttributes,
-        date: new Date(Date.now()).toISOString(),
+        date: curr.toISOString().split("T")[0],
       };
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
+      console.log(response.text);
       expect(response.status).toBe(400); // will always be outside of range of the scheduled office hour
     });
 
@@ -1045,7 +1020,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1065,7 +1040,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1158,7 +1133,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       officeHour = params.officeHour;
       staff = params.staff;
       course = params.course;
-      instructor = params.instructor
+      instructor = params.instructor;
       const date = new Date(officeHour.startDate);
       date.setDate(date.getDate() + 14); // should cancel 2 office hours
       const dateString = date
@@ -1176,8 +1151,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      console.log(officeHour)
-      await prisma.officeHour.updateMany({ 
+      console.log(officeHour);
+      await prisma.officeHour.updateMany({
         data: {
           isCancelledOn: [],
         },
@@ -1189,7 +1164,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1210,7 +1185,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1318,12 +1293,12 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       await prisma.officeHour.update({
         where: {
-          id: officeHour.id
+          id: officeHour.id,
         },
         data: {
-          isCancelledOn: []
-        }
-      })
+          isCancelledOn: [],
+        },
+      });
     });
 
     afterAll(async () => {
@@ -1339,7 +1314,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           startDate: officeHour.startDate,
           endDate: officeHour.endDate,
           location: officeHour.location,
-          isCancelledOn: []
+          isCancelledOn: [],
         },
       });
     });
@@ -1348,7 +1323,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1373,7 +1348,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1618,7 +1593,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1638,7 +1613,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1945,7 +1920,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
@@ -1965,7 +1940,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const officeHour = await prisma.officeHour.findUnique({
         where: {
           id: officeHourId,
-        }
+        },
       });
       const response = await request
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)

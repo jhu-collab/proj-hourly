@@ -22,14 +22,12 @@ export const sendEmail = async (req) => {
 
   // send mail with defined transport object
   debug("sending mail...");
-  if (!process.env.test) {
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-        return "stop";
-      }
-    });
-  }
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      return "stop";
+    }
+  });
   debug("sendEmail done!");
 };
 
@@ -116,8 +114,10 @@ export const sendEmailForEachRegistrationWhenChanged = (
   debug("sendEmailForEachRegistrationWhenChanged done!");
 };
 
-export const sendEmailForEachRegistrationWhenLocationChanged = 
-(registrations, editedOfficeHour) => {
+export const sendEmailForEachRegistrationWhenLocationChanged = (
+  registrations,
+  editedOfficeHour
+) => {
   const accounts = [];
   registrations.forEach((registration) => {
     accounts.push(registration.account);
@@ -127,9 +127,7 @@ export const sendEmailForEachRegistrationWhenLocationChanged =
       editedOfficeHour.startDate
     ).toLocaleString()} to ${new Date(
       editedOfficeHour.endDate
-    ).toLocaleString()} will now take place at ${
-      editedOfficeHour.location
-    }.`;
+    ).toLocaleString()} will now take place at ${editedOfficeHour.location}.`;
     const changeNotification = (email) => {
       return {
         email: email,
@@ -140,4 +138,4 @@ export const sendEmailForEachRegistrationWhenLocationChanged =
     };
     await sendEmail(changeNotification(account.email));
   });
-}
+};

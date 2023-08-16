@@ -28,7 +28,9 @@ router.post(
     "recurringEvent",
     "Please specify if this is a recurring event"
   ).isBoolean(),
-  body("remote", "Please specify if the event is remote").notEmpty().isBoolean(), 
+  body("remote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
   body("startDate", "Please specify what date this event starts").notEmpty(),
   body("endDate", "Please specify what date this event ends").notEmpty(),
   body(
@@ -135,7 +137,7 @@ router.get(
     next();
   },
   param("officeHourId", "Please enter a valid officehour id").isInt(),
-  param("date", "Date is required").isDate(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -151,7 +153,7 @@ router.post(
     next();
   },
   param("officeHourId", "Please enter a valid officehour id").isInt(),
-  param("date", "Date is required").isDate(),
+  param("date", "Date is required").notEmpty(),
   body("startDate", "start date is required").notEmpty(),
   body("endDate", "end date is required").notEmpty(),
   body("location", "location must be a string").notEmpty(),
@@ -179,13 +181,15 @@ router.post(
     "location",
     "Please specify a location for your office hours"
   ).notEmpty(),
-  body("isRemote", "Please specify if the event is remote").notEmpty().isBoolean(),
+  body("isRemote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.isOfficeHourHostOrInstructor,
   courseValidator.isCourseArchivedOfficeHourId,
   controller.editLocationSingleDay
-)
+);
 
 router.post(
   "/editLocationRecurringDay",
@@ -198,14 +202,16 @@ router.post(
     "location",
     "Please specify a location for your office hours"
   ).notEmpty(),
-  body("isRemote", "Please specify if the event is remote").notEmpty().isBoolean(),
-  body("date", "Date is required").notEmpty(), 
+  body("isRemote", "Please specify if the event is remote")
+    .notEmpty()
+    .isBoolean(),
+  body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
   validator.isOfficeHourHostOrInstructor,
   courseValidator.isCourseArchivedOfficeHourId,
   controller.editLocationRecurringDay
-)
+);
 
 router.post(
   "/:officeHourId/editAll",
@@ -264,7 +270,7 @@ router.get(
     next();
   },
   param("officeHourId", "Please enter a valid officehour id").isInt(),
-  param("date", "Date is required").isDate(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
   courseValidator.isInCourseForOfficeHourParam,
@@ -293,7 +299,7 @@ router.get(
     next();
   },
   param("officeHourId", "Please enter a valid officehour id").isInt(),
-  param("date", "Date is required").isDate(),
+  param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
@@ -349,6 +355,6 @@ router.post(
   validator.isNotCancelled,
   courseValidator.isCourseArchivedRegistrationId,
   controller.editRegistrationNoShow
-)
+);
 
 export default router;
