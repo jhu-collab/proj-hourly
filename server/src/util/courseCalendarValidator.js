@@ -17,6 +17,7 @@ export const weekday = [
 /**
  * Middleware function to check whether a calendar event exists for a given course and date.
  * If the event exists, the request is allowed to proceed, otherwise an error response is sent.
+ * Extracts courseId and date from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -51,6 +52,7 @@ export const doesEventExist = async (req, res, next) => {
 /**
  * Middleware function to check whether a calendar event exists for a given course and date in the params.
  * If the event exists, the request is allowed to proceed, otherwise an error response is sent.
+ * Extracts courseId and date from the request parameters.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -86,6 +88,7 @@ export const doesEventExistParams = async (req, res, next) => {
 /**
  * Middleware function to check whether a calendar event exists for a given course and period of time.
  * If no events exist in the time period, the request is allowed to proceed, otherwise an error response is sent.
+ * Extracts courseId, daysOfWeek, begDate, and endDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -140,6 +143,7 @@ export const doesEventExistRecurring = async (req, res, next) => {
 /**
  * Middleware function to check whether a calendar event exists for a given course and date.
  * If the event doesn't exist, the request is allowed to proceed, otherwise an error response is sent.
+ * Extracts courseId and date from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -174,7 +178,8 @@ export const doesEventNotExist = async (req, res, next) => {
 /**
  * Middleware function to check whether the end date is after the start date.
  * If the end date is after the start date, the request is allowed to proceed,
- * otherwise an error response is sent.
+ * otherwise an error response is sent. Extracts begDate and endDate from the 
+ * request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -203,7 +208,8 @@ export const endAfterStart = async (req, res, next) => {
 /**
  * Middleware function to check whether the course begins on a specified day of the week.
  * If the course begins on the specified day, the request is allowed to proceed,
- * otherwise an error response is sent.
+ * otherwise an error response is sent. Extracts begDate and daysOfWeek from the request 
+ * body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -234,7 +240,8 @@ export const doesCourseBeginOnDay = async (req, res, next) => {
 /**
  * Middleware function to check whether the user is an instructor of the specified course.
  * If the user is an instructor of the course, the request is allowed to proceed,
- * otherwise a forbidden response is sent.
+ * otherwise a forbidden response is sent. Extracts courseId from the request body and id 
+ * from the request id.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -267,7 +274,8 @@ export const isCourseInstructor = async (req, res, next) => {
 /**
  * Middleware function to check whether the user is an instructor of the specified course.
  * If the user is an instructor of the course, the request is allowed to proceed,
- * otherwise a forbidden response is sent.
+ * otherwise a forbidden response is sent. Extracts courseId from the request parameters
+ * and id from the request id.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -300,7 +308,7 @@ export const isCourseInstructorParams = async (req, res, next) => {
 /**
  * Middleware function to check whether the provided days of the week are valid.
  * If the days of the week are valid, the request is allowed to proceed,
- * otherwise an error response is sent.
+ * otherwise an error response is sent. Extracts daysOfWeek from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -330,7 +338,7 @@ export const areValidDOW = (req, res, next) => {
 /**
  * Middleware function to check whether the start date falls on a valid day of the week.
  * If the start date falls on a valid day of the week, the request is allowed to proceed,
- * otherwise an error response is sent.
+ * otherwise an error response is sent. Extracts daysOfWeek and begDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -357,7 +365,8 @@ export const startDateIsValidDOW = (req, res, next) => {
 /**
  * Middleware function to check whether the user is a member of the specified course.
  * If the user is a member of the course, the request is allowed to proceed,
- * otherwise a forbidden response is sent.
+ * otherwise a forbidden response is sent. Extracts courseId from the request parameters 
+ * and id from the request id.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -428,6 +437,7 @@ export const isInCourse = async (req, res, next) => {
  * Middleware function to check whether the new date is different from the old date
  * and if the course already exists on the new date. If conditions are met, the
  * request is allowed to proceed; otherwise, an error response is sent.
+ * Extracts courseId, date, and newDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -463,6 +473,7 @@ export const newDateNotOldDate = async (req, res, next) => {
 /**
  * Middleware function to check whether both the original date and the new date are in the future.
  * If both dates are in the future, the request is allowed to proceed; otherwise, an error response is sent.
+ * Extracts date and newDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -491,6 +502,7 @@ export const newDateInFuture = async (req, res, next) => {
 /**
  * Middleware function to check whether both the beg date and the end date are in the future.
  * If both dates are in the future, the request is allowed to proceed; otherwise, an error response is sent.
+ * Extracts begDate and endDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -519,6 +531,7 @@ export const begDateInFuture = async (req, res, next) => {
 /**
  * Middleware function to check whether the original date is in the future.
  * If it is in the future, the request is allowed to proceed; otherwise, an error response is sent.
+ * Extracts date from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -544,6 +557,7 @@ export const dateInFuture = async (req, res, next) => {
 /**
  * Middleware function to check whether the original date is in the future.
  * If it is in the future, the request is allowed to proceed; otherwise, an error response is sent.
+ * Extracts date from the request parameters.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -569,7 +583,7 @@ export const dateInFutureParams = async (req, res, next) => {
 /**
  * Middleware function to check whether the provided date is in correct UTC timezone.
  * If the date is in correct UTC timezone, the request is allowed to proceed;
- * otherwise, an error response is sent.
+ * otherwise, an error response is sent. Extracts date from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -595,7 +609,7 @@ export const isUTC0 = async (req, res, next) => {
 /**
  * Middleware function to check whether the provided date is in correct UTC timezone.
  * If the date is in correct UTC timezone, the request is allowed to proceed;
- * otherwise, an error response is sent.
+ * otherwise, an error response is sent. Extracts date from the request parameters.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -621,7 +635,7 @@ export const isUTC0Params = async (req, res, next) => {
 /**
  * Middleware function to check whether the provided beginning and end dates are in the same UTC timezone.
  * If both dates are in the correct UTC timezone, the request is allowed to proceed;
- * otherwise, an error response is sent.
+ * otherwise, an error response is sent. Extracts begDate and endDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
@@ -654,7 +668,7 @@ export const isUTCTwo = async (req, res, next) => {
 /**
  * Middleware function to check whether the provided original and new dates are in the same UTC timezone.
  * If both dates are in the correct UTC timezone, the request is allowed to proceed;
- * otherwise, an error response is sent.
+ * otherwise, an error response is sent. Extracts date and newDate from the request body.
  *
  * @param {object} req - Express request object.
  * @param {object} res - Express response object.
