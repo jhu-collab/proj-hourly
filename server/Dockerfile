@@ -32,7 +32,9 @@ COPY . .
 RUN npx prisma generate
 # ^ Generates assets like Prisma Client based on the generator and data model 
 
-RUN if [ "$TARGET" = "production" ] ; then DATABASE_URL=$DATABASE_URL npx prisma migrate deploy ; else DATABASE_URL=$DATABASE_URL npx prisma migrate reset --force ; fi
+# RUN if [ "$TARGET" = "production" ] ; then DATABASE_URL=$DATABASE_URL npx prisma migrate deploy ; else DATABASE_URL=$DATABASE_URL npx prisma migrate reset --force ; fi
+RUN DATABASE_URL=$DATABASE_URL && npx prisma migrate reset --force
+
 # ^ Apply migrations 
 
 EXPOSE 5050
