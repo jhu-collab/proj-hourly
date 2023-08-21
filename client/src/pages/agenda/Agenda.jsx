@@ -14,17 +14,13 @@ function Agenda() {
 
   if (isLoading) {
     return (
-      <Alert severity="warning">
-        Retrieving course calendar events ...
-      </Alert>
+      <Alert severity="warning">Retrieving course calendar events ...</Alert>
     );
   }
 
   if (error) {
     return (
-      <Alert severity="error">
-        Unable to retrieve course calendar events
-      </Alert>
+      <Alert severity="error">Unable to retrieve course calendar events</Alert>
     );
   }
 
@@ -33,20 +29,21 @@ function Agenda() {
       <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
         Agenda
       </Typography>
-        <Grid container spacing={2}>
-          {data.calendarEvents.map((calendarEvent) => {
-            return (
-              <Grid item xs={12} key={calendarEvent.date}>
-                  <AgendaTopic
-                    topic={calendarEvent.title}
-                    date={calendarEvent.date}
-                    isCancelled={calendarEvent.isCancelled}
-                    isRemote={calendarEvent.isRemote}
-                  />
-              </Grid>
-            );
-          })}
-        </Grid>
+      <Grid container spacing={2}>
+        {data.calendarEvents.map((calendarEvent) => {
+          return (
+            <Grid item xs={12} key={calendarEvent.date}>
+              <AgendaTopic
+                topic={calendarEvent.title}
+                date={calendarEvent.date}
+                isCancelled={calendarEvent.isCancelled}
+                isRemote={calendarEvent.isRemote}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+      {courseType === "Instructor" && (
         <Fab
           color="primary"
           onClick={() => NiceModal.show("create-course-calendar-event")}
@@ -58,6 +55,7 @@ function Agenda() {
         >
           <SpeedDialIcon />
         </Fab>
+      )}
     </>
   );
 }
