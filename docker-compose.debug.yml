@@ -24,7 +24,7 @@ services:
         - VITE_ADMIN_USERNAME=$VITE_ADMIN_USERNAME
         - VITE_ADMIN_PASSWORD=$VITE_ADMIN_PASSWORD
     ports:
-      - "3000:3000"
+      - "3000:80"
   server:
     build:
       context: ./server
