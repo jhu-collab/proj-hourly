@@ -34,9 +34,9 @@ jobs:
       - name: Build the docker image
         run: |
           docker-compose -f docker-compose.debug.yml build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --build-arg DATABASE_URL=$DATABASE_URL
-          docker tag client:latest ghcr.io/${{ github.repository }}/client-dev:latest
-          docker tag server:latest ghcr.io/${{ github.repository }}/server-dev:latest
-          docker tag nginx:latest ghcr.io/${{ github.repository }}/nginx-dev:latest
+          docker tag proj-hourly-client:latest ghcr.io/${{ github.repository }}/client-dev:latest
+          docker tag proj-hourly-server:latest ghcr.io/${{ github.repository }}/server-dev:latest
+          docker tag proj-hourly-nginx:latest ghcr.io/${{ github.repository }}/nginx-dev:latest
           docker push ghcr.io/${{ github.repository }}/client-dev:latest
           docker push ghcr.io/${{ github.repository }}/server-dev:latest
           docker push ghcr.io/${{ github.repository }}/nginx-dev:latest
