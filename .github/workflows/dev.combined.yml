@@ -33,7 +33,7 @@ jobs:
 
       - name: Build the docker image
         run: |
-          docker-compose -f ../../docker-compose.debug.yml build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --build-arg DATABASE_URL=$DATABASE_URL --tag ghcr.io/${{ github.repository }}-dev:latest
+          docker-compose -f docker-compose.debug.yml build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --build-arg DATABASE_URL=$DATABASE_URL --tag ghcr.io/${{ github.repository }}-dev:latest
           docker push ghcr.io/${{ github.repository }}-dev:latest
 
       - name: Deploy to Caprover
