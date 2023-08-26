@@ -12,7 +12,6 @@ services:
         - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
     ports:
       - "3000:80"
-    image:
   server:
     build:
       context: ./server
