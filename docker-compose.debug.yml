@@ -1,14 +1,5 @@
 version: "3"
 services:
-  database:
-    image: postgres:15-alpine
-    restart: always
-    container_name: postgres-for-hourly
-    ports:
-      - "5432:5432" # HOST_PORT:CONTAINER_PORT
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
   client:
     build:
       context: ./client
@@ -21,6 +12,7 @@ services:
         - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
     ports:
       - "3000:80"
+    image:
   server:
     build:
       context: ./server
