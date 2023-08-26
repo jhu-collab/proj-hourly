@@ -12,6 +12,7 @@ services:
         - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
     ports:
       - "3000:80"
+    image: proj-hourly-client
   server:
     build:
       context: ./server
@@ -22,6 +23,7 @@ services:
       - "5000:5000"
     environment:
       - DATABASE_URL=$DATABASE_URL
+    image: proj-hourly-server
   nginx:
     build:
       context: ./nginx
@@ -31,3 +33,4 @@ services:
     depends_on:
       - client
       - server
+    image: proj-hourly-nginx

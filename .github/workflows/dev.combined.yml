@@ -8,6 +8,7 @@ on:
       - "client/**"
       - "server/**"
       - ".github/workflows/dev.combined.yml"
+      - "docker-compose.debug.yml"
 
 env:
   VITE_RUN_MODE: dev
