@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_RUN_MODE=$VITE_RUN_MODE
-        - VITE_LOC_BASE_URL=$VITE_LOC_BASE_URL
+        # - VITE_LOC_BASE_URL=$VITE_LOC_BASE_URL
         - VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL
         - VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL
         - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
