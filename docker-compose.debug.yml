@@ -19,10 +19,6 @@ services:
         - VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL
         - VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL
         - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
-        - VITE_USER_USERNAME=$VITE_USER_USERNAME
-        - VITE_USER_PASSWORD=$VITE_USER_PASSWORD
-        - VITE_ADMIN_USERNAME=$VITE_ADMIN_USERNAME
-        - VITE_ADMIN_PASSWORD=$VITE_ADMIN_PASSWORD
     ports:
       - "3000:80"
   server:
@@ -31,42 +27,12 @@ services:
       dockerfile: Dockerfile
       args:
         - DATABASE_URL=$DATABASE_URL
-        - JWT_SECRET=$JWT_SECRET
-        - EMAIL_HOST=$EMAIL_HOST
-        - EMAIL=$EMAIL
-        - EMAIL_PASSWORD=$EMAIL_PASSWORD
-        - DEBUG=$DEBUG
-        - NODE_ENV=$NODE_ENV
-        - JHU_SSO_URL=$JHU_SSO_URL
-        - SP_NAME=$SP_NAME
-        - BASE_URL=$BASE_URL
-        - CERT=$CERT
-        - PBK=$PBK
-        - PVK=$PVK
-        - HOURLY_API_KEY=$HOURLY_API_KEY
-        - DB_PORT=$DB_PORT
-        - TARGET=$TARGET
     ports:
       - "5000:5000"
     depends_on:
       - database
     environment:
       - DATABASE_URL=$DATABASE_URL
-      - JWT_SECRET="JWT_SECRET!"
-      - EMAIL_HOST="sandbox.smtp.mailtrap.io"
-      - EMAIL="0cac8cdb07e99d"
-      - EMAIL_PASSWORD="18d59fa62a7e29"
-      - DEBUG=roster:*
-      - NODE_ENV=local
-      - JHU_SSO_URL=https://idp.jh.edu/idp/profile/SAML2/Redirect/SSO
-      - SP_NAME=glacial-plateau-47269
-      - BASE_URL=https://glacial-plateau-47269.herokuapp.com
-      - CERT=""
-      - PBK="YOUR PUBLIC KEY"
-      - PVK="YOUR PRIVATE KEY"
-      - HOURLY_API_KEY="api-key"
-      - DB_PORT=5432
-      - TARGET="local"
   nginx:
     build:
       context: ./nginx
@@ -76,57 +42,3 @@ services:
     depends_on:
       - client
       - server
-# version: "3.4"
-
-# services:
-#   nginx:
-#     restart: always
-#     build:
-#       dockerfile: Dockerfile
-#       context: ./nginx
-#     ports:
-#       - 3000:80
-#   # backend:
-#   #   build:
-#   #     dockerfile: Dockerfile
-#   #     context: ./server
-#   #   volumes:
-#   #     - /app/node_modules
-#   #     - ./server:/app
-#   #   environment:
-#   #     - DATABASE_URL="postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly"
-#   #     - JWT_SECRET="JWT_SECRET!"
-#   #     - EMAIL_HOST="sandbox.smtp.mailtrap.io"
-#   #     - EMAIL="0cac8cdb07e99d"
-#   #     - EMAIL_PASSWORD="18d59fa62a7e29"
-#   #     - DEBUG=roster:*
-#   #     - NODE_ENV=local
-#   #     - JHU_SSO_URL=https://idp.jh.edu/idp/profile/SAML2/Redirect/SSO
-#   #     - SP_NAME=glacial-plateau-47269
-#   #     - BASE_URL=https://glacial-plateau-47269.herokuapp.com
-#   #     - CERT=""
-#   #     - PBK="YOUR PUBLIC KEY"
-#   #     - PVK="YOUR PRIVATE KEY"
-#   #     - HOURLY_API_KEY="api-key"
-#   #     - DB_PORT=5432
-#   #     - TARGET="local"
-#   frontend:
-#     build:
-#       dockerfile: Dockerfile
-#       context: ./client
-#     volumes:
-#       - /node_modules
-#       - /src/styles
-#       - ./client:/app
-#     environment:
-#       - NODE_ENV=development
-#       - REACT_APP_DEVELOPMENT_API_ENDPOINT=/devURL
-#       - VITE_RUN_MODE=local
-#       - VITE_LOC_BASE_URL=http://localhost:5000
-#       - VITE_DEV_BASE_URL=https://proj-hourly-dev.herokuapp.com
-#       - VITE_PROD_BASE_URL=https://proj-hourly-prod.herokuapp.com
-#       - VITE_ROSTER_SSO_JHU_URL=https://glacial-plateau-47269.herokuapp.com/jhu/login
-#       - VITE_USER_USERNAME=user-1
-#       - VITE_USER_PASSWORD=user-1
-#       - VITE_ADMIN_USERNAME=admin-1
-#       - VITE_ADMIN_PASSWORD=admin-1
