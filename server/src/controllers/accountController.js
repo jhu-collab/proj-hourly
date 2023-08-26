@@ -83,7 +83,7 @@ export const getCourses = async (req, res) => {
           id,
         },
       },
-      isArchived: false
+      isArchived: false,
     },
   });
   studentCourses.forEach((course) => {
