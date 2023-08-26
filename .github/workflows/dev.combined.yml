@@ -1,4 +1,4 @@
-name: (dev) Deploy the app in single container
+name: (dev) Deploy the app in a single container
 
 on:
   push:
