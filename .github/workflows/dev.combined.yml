@@ -1,14 +1,14 @@
 name: (dev) Deploy the app in single container
 
-on:
-  push:
-    branches:
-      - dev
-    paths:
-      - "client/**"
-      - "server/**"
-      - ".github/workflows/dev.combined.yml"
-      - "docker-compose.debug.yml"
+# on:
+#   push:
+#     branches:
+#       - dev
+#     paths:
+#       - "client/**"
+#       - "server/**"
+#       - ".github/workflows/dev.combined.yml"
+#       - "docker-compose.debug.yml"
 
 env:
   VITE_RUN_MODE: dev
