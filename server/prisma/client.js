@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 // Prevent multiple instances of Prisma Client in development
-const prisma = global.prisma || new PrismaClient();
+const prisma =
+  global.prisma || new PrismaClient({ log: ["query", "info", "warn"] });
 if (process.env.NODE_ENV === "development") global.prisma = prisma;
 // A server application should generally only create one instance of PrismaClient.
 // Why? Read these!
