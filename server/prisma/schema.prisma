@@ -147,7 +147,7 @@ model CalendarEvent {
   additionalInfo String?
   isCancelled    Boolean  @default(false)
   isRemote       Boolean  @default(false)
-  location       String
+  location       String   @default("")
   allDay         Boolean  @default(true)
 
   @@unique([courseId, date])

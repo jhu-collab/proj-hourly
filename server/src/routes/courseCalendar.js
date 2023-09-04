@@ -201,7 +201,7 @@ router.post(
   },
   body("courseId", "Course ID is required").notEmpty().isInt(),
   body("date", "Please specify the day of this event").notEmpty(),
-  body("location", "Please specify location").notEmpty().isString(),
+  body("location", "Please specify location").optional().isString(),
   body("title", "Please specify topic of the course event")
     .notEmpty()
     .isString(),
