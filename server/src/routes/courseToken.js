@@ -79,10 +79,9 @@ router.post(
   },
   param("courseId", "Please enter a valid course id").isInt(),
   body("title", "Please enter a title for this course token").notEmpty(),
-  body(
-    "description",
-    "Please enter a description for this course token"
-  ).notEmpty(),
+  body("description", "Please enter a description for this course token")
+    .optional()
+    .isString(),
   body(
     "tokenLimit",
     "Please enter a token limit for this course token"
@@ -110,7 +109,9 @@ router.post(
   body(
     "description",
     "Please indicate what the description should be changed to."
-  ).notEmpty(),
+  )
+    .optional()
+    .isString(),
   body("tokenLimit", "Please indicate the new token limit.").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,

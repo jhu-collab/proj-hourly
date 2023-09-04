@@ -83,7 +83,7 @@ function CourseCalendarEventForm() {
       recurringEvent: true,
       isRemote: false,
       startDate: "",
-      endDate: null,
+      endDate: "",
       location: "",
       resources: "",
     },

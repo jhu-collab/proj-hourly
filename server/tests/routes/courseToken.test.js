@@ -167,18 +167,18 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    it("Return 400 when course token description is not included", async () => {
-      const attributes = {
-        title: "title",
-        //description: "This is a description",
-        tokenLimit: 5,
-      };
-      const response = await request
-        .post(`${endpoint}/${courses[0].id}/createToken`)
-        .send(attributes)
-        .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when course token description is not included", async () => {
+    //   const attributes = {
+    //     title: "title",
+    //     //description: "This is a description",
+    //     tokenLimit: 5,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/${courses[0].id}/createToken`)
+    //     .send(attributes)
+    //     .set("Authorization", "bearer " + users[2].token);
+    //   expect(response.status).toBe(400);
+    // });
     it("Return 400 when course token token limit is not included", async () => {
       const attributes = {
         title: "title",
@@ -277,20 +277,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    it("Return 400 when course token description is not included", async () => {
-      const attributes = {
-        title: "title",
-        //description: "This is a description",
-        tokenLimit: 5,
-      };
-      const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`
-        )
-        .send(attributes)
-        .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when course token description is not included", async () => {
+    //   const attributes = {
+    //     title: "title",
+    //     //description: "This is a description",
+    //     tokenLimit: 5,
+    //   };
+    //   const response = await request
+    //     .post(
+    //       `${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`
+    //     )
+    //     .send(attributes)
+    //     .set("Authorization", "bearer " + users[2].token);
+    //   expect(response.status).toBe(400);
+    // });
     it("Return 400 when course token token limit is not included", async () => {
       const attributes = {
         title: "title",
