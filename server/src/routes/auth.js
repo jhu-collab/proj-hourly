@@ -20,6 +20,11 @@ router.post(`${endpoint}`, async (req, res, next) => {
     }
 
     debug(`Looking up ${username} in the database...`);
+    console.log(
+      prisma.account.findUnique({
+        where: { userName: username },
+      })
+    );
     const user = await prisma.account.findUnique({
       where: { userName: username },
     });
