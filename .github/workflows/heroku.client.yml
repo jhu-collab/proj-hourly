@@ -33,9 +33,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Change to client directory
-        run: cd client
 
       - name: Detect package manager
         id: detect-package-manager
@@ -65,10 +62,10 @@ jobs:
         uses: actions/configure-pages@v2
 
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        run: cd client && ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
       - name: Build with Vite
-        run: ${{ steps.detect-package-manager.outputs.runner }} vite build
+        run: cd client && ${{ steps.detect-package-manager.outputs.runner }} vite build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
