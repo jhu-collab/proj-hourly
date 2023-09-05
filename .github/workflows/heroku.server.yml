@@ -1,4 +1,4 @@
-name: Deploy (API Server) to Heroku 
+name: Deploy API Server to Heroku 
 
 on:
   # Runs on pushes to the main branch
