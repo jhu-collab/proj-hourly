@@ -307,7 +307,7 @@ export const createIndividualCourseEventSchema = yup.object().shape({
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  location: yup.string().required("Location is required"),
+  location: yup.string(), //.required("Location is required"),
   resources: yup.string(),
   isRemote: yup.boolean(),
 });
@@ -319,7 +319,7 @@ export const editCourseEventSchema = yup.object().shape({
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  location: yup.string().required("Location is required"),
+  location: yup.string(), //.required("Location is required"),
   isRemote: yup.boolean(),
   resources: yup.string(),
 });
