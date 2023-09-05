@@ -43,12 +43,13 @@ function useMutationRegister() {
         registration.date.substring(0, 10) +
           registration.startTime.substring(10)
       ).toLocaleString();
-      const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
-        DateTime.TIME_SIMPLE
-      );
-      const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
-        DateTime.TIME_SIMPLE
-      );
+      const startTime = DateTime.fromISO(
+        registration.date.substring(0, 10) +
+          registration.startTime.substring(10)
+      ).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(
+        registration.date.substring(0, 10) + registration.endTime.substring(10)
+      ).toLocaleString(DateTime.TIME_SIMPLE);
 
       queryClient.invalidateQueries(["studentRegistrationCounts"]);
       queryClient.invalidateQueries(["topicCounts"]);
@@ -61,7 +62,7 @@ function useMutationRegister() {
       );
     },
     onError: (err) => {
-      debug( {err} );
+      debug({ err });
       errorToast(err);
     },
   });
