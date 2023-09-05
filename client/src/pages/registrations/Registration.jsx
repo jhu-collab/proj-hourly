@@ -26,9 +26,10 @@ import useMutationChangeNoShowStatus from "../../hooks/useMutationChangeNoShowSt
  */
 function Registration({ registration, type }) {
   // cancel and no-show will never be options as the same time
-  const { mutate, isLoading: isLoadingMutate } = type === 0 ? 
-    useMutationCancelRegistration(registration.id || -1) : 
-    useMutationChangeNoShowStatus(registration.id || -1);
+  const { mutate, isLoading: isLoadingMutate } =
+    type === 0
+      ? useMutationCancelRegistration(registration.id || -1)
+      : useMutationChangeNoShowStatus(registration.id || -1);
 
   const courseType = useStoreLayout((state) => state.courseType);
   const token = useStoreToken((state) => state.token);
@@ -48,8 +49,9 @@ function Registration({ registration, type }) {
   };
 
   const onNoShowClick = () => {
-    confirmDialog("Do you really want to change this registration's no-show status?", () =>
-    mutate()
+    confirmDialog(
+      "Do you really want to change this registration's no-show status?",
+      () => mutate()
     );
   };
 
@@ -65,20 +67,34 @@ function Registration({ registration, type }) {
         >
           {/* Date and Time */}
           <Stack direction="row" spacing={5}>
-            <Typography fontWeight={600} color={isNoShow ? "error.main" : "text.primary"}>
+            <Typography
+              fontWeight={600}
+              color={isNoShow ? "error.main" : "text.primary"}
+            >
               {DateTime.fromISO(
                 registration.date.substring(0, 10) +
                   registration.startTime.substring(10)
               ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
             </Typography>
-            <Typography fontWeight={600} color={isNoShow ? "error.main" : "text.primary"}>
-              {DateTime.fromISO(registration.startTime).toLocaleString(
-                DateTime.TIME_SIMPLE
-              )}{" "}
+            <Typography
+              fontWeight={600}
+              color={isNoShow ? "error.main" : "text.primary"}
+            >
+              {DateTime.fromISO(
+                registration.date.substring(0, 10) +
+                  registration.startTime.substring(10)
+              ).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
               -{" "}
-              {DateTime.fromISO(registration.endTime).toLocaleString(
-                DateTime.TIME_SIMPLE
-              )}
+              {DateTime.fromISO(
+                registration.date.substring(0, 10) +
+                  registration.endTime.substring(10)
+              ).toLocaleString(DateTime.TIME_SIMPLE)}
+            </Typography>
+            <Typography
+              fontWeight={600}
+              color={isNoShow ? "error.main" : "text.primary"}
+            >
+              {registration.officeHour.location}
             </Typography>
           </Stack>
           {/* Host (display only for instructors and students) and Student (display only for staff) */}
@@ -135,20 +151,19 @@ function Registration({ registration, type }) {
               <Typography marginBottom={4}>{registration.question}</Typography>
             </>
           )}
-          {type === 2 && 
-            (isHost || courseType === "Instructor") && (
-              <>
-                <Button
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  onClick={onNoShowClick}
-                >
-                  {isNoShow ? "Mark as Present" : "Mark as No-Show"}
-                </Button>
-                <ConfirmPopup />
-              </>
-            )}
+          {type === 2 && (isHost || courseType === "Instructor") && (
+            <>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={onNoShowClick}
+              >
+                {isNoShow ? "Mark as Present" : "Mark as No-Show"}
+              </Button>
+              <ConfirmPopup />
+            </>
+          )}
           {type === 0 &&
             (isHost ||
               courseType === "Student" ||
