@@ -16,6 +16,7 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import useQueryTopics from "../../../hooks/useQueryTopics";
 import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 import { useEffect, useState } from "react";
+import FormInputText from "../../../components/form-ui/FormInputText";
 
 const getTimeSlotOptions = (timeSlotsPerType, type) => {
   const found = timeSlotsPerType.find((element) => element.type === type);
@@ -100,6 +101,7 @@ function RegisterForm() {
     defaultValues: {
       type: "",
       times: "",
+      question: "",
       topicIds: [],
     },
     resolver: yupResolver(registerSchema),
@@ -122,12 +124,18 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
+    let timeOptionId = -1;
+    registrationTypeOptions.forEach((option) => {
+      if (option.label === data.type) timeOptionId = option.id;
+    });
     mutate({
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      question: data.question,
       TopicIds: data.topicIds,
+      timeOptionId: timeOptionId,
     });
   };
 
@@ -185,6 +193,13 @@ function RegisterForm() {
                     })}
                   </Box>
                 )}
+              />
+              <FormInputText
+                name="question"
+                control={control}
+                label="Additional Notes (optional)"
+                multiline
+                rows={4}
               />
               <Button
                 data-cy="student-submit-register"

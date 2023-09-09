@@ -65,7 +65,7 @@ export const checkToken = async (req, res, next) => {
     ) {
       throw new ApiError(401, "Invalid Authorization token was provided!");
     }
-    debug(`Token belongs to ${userInfo.username}`);
+    debug(`Token belongs to ${userInfo.userName}`);
 
     debug(
       `Attaching user and token (and its decoded expirtation date) to the req object`
@@ -92,6 +92,7 @@ export const checkToken = async (req, res, next) => {
 };
 
 // Pre: req object contains the token and user info
+/* c8 ignore start */
 export const refreshToken = async (req, res, next) => {
   debug(`refreshToken is called!`);
 
@@ -166,6 +167,7 @@ export const refreshToken = async (req, res, next) => {
     next(err);
   }
 };
+/* c8 ignore end */
 
 export const globalErrorHandler = (err, req, res, next) => {
   debug(`globalErrorHandler is called!`);

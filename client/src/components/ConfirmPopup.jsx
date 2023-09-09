@@ -33,9 +33,9 @@ export const confirmDialog = (message, onSubmit) => {
  */
 function ConfirmPopup({ header, children }) {
   const { message, onSubmit, close } = useStoreConfirmDialog();
-
   return (
-    <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth>
+
+    <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth >
       <DialogTitle variant="h4">
         {header ? header : "Confirm the action"}
       </DialogTitle>

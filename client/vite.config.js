@@ -5,6 +5,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/proj-hourly/",
   plugins: [
     react(),
     istanbul({
@@ -47,5 +48,10 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
+  },
+  test: {
+    coverage: {
+      reporter: ["text", "json", "html"],
+    },
   },
 });

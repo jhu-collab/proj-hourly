@@ -25,6 +25,7 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
+  IssueToken        IssueToken[]   
 }
 
 enum Role {
@@ -46,16 +47,23 @@ model Course {
   officeHourOptions  OfficeHourTimeOptions[] @relation("isCourseTimeOption")
   topics             Topic[]
   iCalJson           Json?
+  iCalJsonCalEvent   Json?
   startRegConstraint Int                     @default(48) //in hours
   endRegConstraint   Int                     @default(2)
+  CourseToken        CourseToken[]
+  usesTokens         Boolean                 @default(false)
+  calendarEvents     CalendarEvent[]
+  isPaused           Boolean                 @default(false)
+  isArchived           Boolean               @default(false)
 }
 
 model OfficeHourTimeOptions {
-  id       Int    @id @default(autoincrement())
-  title    String
-  duration Int    @default(10)
-  course   Course @relation("isCourseTimeOption", fields: [courseId], references: [id])
-  courseId Int
+  id           Int            @id @default(autoincrement())
+  title        String
+  duration     Int            @default(10)
+  course       Course         @relation("isCourseTimeOption", fields: [courseId], references: [id])
+  courseId     Int
+  Registration Registration[]
 }
 
 model OfficeHour {
@@ -74,6 +82,7 @@ model OfficeHour {
   isOnDayOfWeek numberToDayOfWeek[] @relation("isOnDayOfWeek")
   registrations Registration[]
   isDeleted     Boolean             @default(false)
+  isRemote      Boolean             @default(false)
 }
 
 model numberToDayOfWeek {
@@ -83,20 +92,23 @@ model numberToDayOfWeek {
 }
 
 model Registration {
-  id               Int        @id @default(autoincrement())
-  startTime        DateTime   @db.Timetz()
-  endTime          DateTime   @db.Timetz()
-  date             DateTime   @db.Date
-  isCancelled      Boolean    @default(false)
-  officeHour       OfficeHour @relation(fields: [officeHourId], references: [id])
-  officeHourId     Int
-  account          Account    @relation(fields: [accountId], references: [id])
-  accountId        Int
-  question         String?
-  feedback         String?
-  rating           Int?
-  topics           Topic[]    @relation("withTopics")
-  isCancelledStaff Boolean    @default(false)
+  id                     Int                   @id @default(autoincrement())
+  startTime              DateTime              @db.Timetz()
+  endTime                DateTime              @db.Timetz()
+  date                   DateTime              @db.Date
+  isCancelled            Boolean               @default(false)
+  officeHour             OfficeHour            @relation(fields: [officeHourId], references: [id])
+  officeHourId           Int
+  account                Account               @relation(fields: [accountId], references: [id])
+  accountId              Int
+  question               String?
+  feedback               String?
+  rating                 Int?
+  topics                 Topic[]               @relation("withTopics")
+  isCancelledStaff       Boolean               @default(false)
+  officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
+  officeHourTimeOptionId Int
+  isNoShow               Boolean               @default(false)
 }
 
 model Topic {
@@ -105,4 +117,38 @@ model Topic {
   course        Course         @relation(fields: [courseId], references: [id])
   courseId      Int
   registrations Registration[] @relation("withTopics")
+}
+
+model CourseToken {
+  //relations to the course
+  id                     Int                   @id @default(autoincrement())
+  course                 Course                @relation(fields: [courseId], references:[id])
+  title                  String
+  description            String                @default("")
+  courseId               Int
+  tokenLimit             Int
+  IssueToken             IssueToken[] 
+}
+
+model IssueToken {
+  //relation to student
+  id                     Int                   @id @default(autoincrement())
+  datesUsed              DateTime[]
+  account                Account               @relation(fields: [accountId], references: [id])
+  accountId              Int
+  CourseToken            CourseToken           @relation(fields: [courseTokenId], references: [id])
+  courseTokenId          Int
+}
+model CalendarEvent {
+  course         Course   @relation(fields: [courseId], references: [id])
+  courseId       Int
+  date           DateTime //@db.Date()
+  title  String   @default("")
+  additionalInfo String?
+  isCancelled    Boolean  @default(false)
+  isRemote       Boolean  @default(false)
+  location       String   @default("")
+  allDay         Boolean  @default(true)
+
+  @@unique([courseId, date])
 }

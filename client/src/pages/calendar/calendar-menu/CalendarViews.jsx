@@ -11,18 +11,24 @@ import Typography from "@mui/material/Typography";
  *                    Calendar.jsx
  * @returns Calendar view toggle.
  */
-function CalendarViews({ calendarRef }) {
+function CalendarViews({ calendarRef, setMaxEventsStacked }) {
   const [alignment, setAlignment] = useState("week");
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment != null) {
       setAlignment(newAlignment);
       let calendarApi = calendarRef.current.getApi();
-      newAlignment === "day"
-        ? calendarApi.changeView("timeGridDay")
-        : newAlignment === "week"
-        ? calendarApi.changeView("timeGridWeek")
-        : calendarApi.changeView("dayGridMonth");
+
+      if (newAlignment === "day") {
+        calendarApi.changeView("timeGridDay");
+        setMaxEventsStacked(-1);
+      } else if (newAlignment === "week") {
+        calendarApi.changeView("timeGridWeek");
+        setMaxEventsStacked(2);
+      } else {
+        calendarApi.changeView("dayGridMonth");
+        setMaxEventsStacked(-1);
+      }
     }
   };
 

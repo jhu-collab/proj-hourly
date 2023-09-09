@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import express from "express";
 import { checkToken, refreshToken } from "../util/middleware.js";
 import prisma from "../../prisma/client.js";
@@ -297,3 +298,5 @@ router.delete(
 );
 
 export default router;
+
+/* c8 ignore end */

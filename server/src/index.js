@@ -8,6 +8,8 @@ import users from "./routes/users.js";
 import courses from "./routes/courses.js";
 import officeHours from "./routes/officeHours.js";
 import account from "./routes/accounts.js";
+import courseToken from "./routes/courseToken.js"
+import calendarEvents from "./routes/courseCalendar.js";
 import { globalErrorHandler } from "./util/middleware.js";
 
 const app = express();
@@ -30,8 +32,10 @@ app.use("/", sso);
 app.use("/", auth);
 app.use("/api", users);
 app.use("/api/course", courses);
+app.use("/api/courseToken", courseToken);
 app.use("/api/account", account);
 app.use("/api/officeHour", officeHours);
+app.use("/api/calendarEvent", calendarEvents);
 
 app.use(globalErrorHandler);
 

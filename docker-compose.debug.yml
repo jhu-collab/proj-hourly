@@ -1,0 +1,36 @@
+version: "3"
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - VITE_RUN_MODE=$VITE_RUN_MODE
+        # - VITE_LOC_BASE_URL=$VITE_LOC_BASE_URL
+        - VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL
+        - VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL
+        - VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
+    ports:
+      - "3000:80"
+    image: proj-hourly-client
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=$DATABASE_URL
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=$DATABASE_URL
+    image: proj-hourly-server
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - client
+      - server
+    image: proj-hourly-nginx
