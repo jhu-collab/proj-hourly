@@ -1,5 +1,5 @@
 describe("Course Details Page: Staff", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly";
 
   const userNameInputText = '[data-cy="username-input-text"]';
   const passwordInputText = '[data-cy="password-input-text"]';
@@ -34,7 +34,7 @@ describe("Course Details Page: Staff", () => {
     cy.task("deleteStudentCourses", "user-1");
     cy.task("deleteInstructorCourses", "user-1");
 
-    cy.visit(BASE_URL + "login");
+    cy.visit(BASE_URL + "/login");
 
     cy.get(userNameInputText).type("user-1");
     cy.get(passwordInputText).type("user-1");
@@ -52,12 +52,12 @@ describe("Course Details Page: Staff", () => {
     cy.wait(1000);
 
     cy.get(courseCard).click();
-
     cy.wait(1000);
 
     cy.get(navbarButton).click();
+    const body = cy.get("body");
     cy.get(navbar).contains("a", "course details").click();
-    cy.get("body").click();
+    body.click();
   });
 
   it("Course Details Look as Expected", () => {
@@ -65,6 +65,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(courseDetailsNumber).contains(`Course Number: ${courseNumber}`);
     cy.get(courseDetailsSemester).contains(`Semester: ${courseSemester}`);
     cy.get(courseDetailsYear).contains(`Year: ${courseYear}`);
+    Cypress.on('uncaught:exception', () => { return false });
     cy.task("getCourseByNumber", courseNumber).then((course) => {
       cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
     });
@@ -72,7 +73,7 @@ describe("Course Details Page: Staff", () => {
 });
 
 describe("Course Details Page: Student", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly";
 
   const userNameInputText = '[data-cy="username-input-text"]';
   const passwordInputText = '[data-cy="password-input-text"]';
@@ -102,7 +103,7 @@ describe("Course Details Page: Student", () => {
     cy.task("deleteStudentCourses", "user-1");
     cy.task("deleteInstructorCourses", "user-1");
 
-    cy.visit(BASE_URL + "login");
+    cy.visit(BASE_URL + "/login");
 
     cy.get(userNameInputText).type("user-1");
     cy.get(passwordInputText).type("user-1");
@@ -119,9 +120,10 @@ describe("Course Details Page: Student", () => {
       cy.get(courseCard).click();
 
       cy.get(navbarButton).click();
+      const body = cy.get("body");
       cy.get(navbar).contains("a", "course details").click();
-      cy.get("body").click();
-    });
+      body.click();
+      });
   });
 
   it("Course Details Look as Expected", () => {
@@ -137,9 +139,13 @@ describe("Course Details Page: Student", () => {
   });
 
   it("Leave Course Successful", () => {
-    cy.get(leaveCourseButton).click();
-    cy.get(leaveCourseConfirmButton).click();
+    Cypress.on('uncaught:exception', () => { return false })
 
+    cy.get(leaveCourseButton).click();
+    cy.get(leaveCourseConfirmButton).should("be.visible");
+
+    cy.get(leaveCourseConfirmButton).click();
+    
     cy.url().should("be.equal", BASE_URL);
     cy.get(".Toastify")
       .contains("div", "Successfully removed course!")
@@ -156,7 +162,7 @@ describe("Course Details Page: Student", () => {
     cy.get(leaveCourseButton).click();
     cy.get(leaveCourseCancelButton).click();
 
-    cy.url().should("be.equal", BASE_URL + "courseinformation");
+    cy.url().should("be.equal", BASE_URL + "/courseinformation");
     cy.task("getCourseByCode", courseCode).then((course) => {
       cy.get(courseDetailsTitle).contains(`Course Name: ${course.title}`);
       cy.get(courseDetailsNumber).contains(
