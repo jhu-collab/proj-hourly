@@ -58,7 +58,7 @@ function RosterTabPanel({ index, rows }) {
 
   const noRows = () => {
     return (
-      <Alert severity="info">
+      <Alert data-cy="no-roster-alert" severity="info">
         {index === 0
           ? "No Students"
           : index === 1
