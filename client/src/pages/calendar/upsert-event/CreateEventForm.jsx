@@ -149,6 +149,7 @@ function CreateEventForm() {
           </Stack>
           <Stack direction="row" spacing={3} alignItems="center">
             <FormCheckbox
+              data-cy="create-recurring-checkbox"
               name="recurringEvent"
               control={control}
               label="Recurring event"
@@ -180,7 +181,12 @@ function CreateEventForm() {
               buttons={BUTTONS}
             />
           )}
-          <FormInputText name="location" control={control} label="Location" />
+          <FormInputText
+            data-cy="create-location-input"
+            name="location"
+            control={control}
+            label="Location"
+          />
           <Button
             data-cy="create-event-submit"
             type="submit"
