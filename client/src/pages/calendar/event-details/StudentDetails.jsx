@@ -21,9 +21,11 @@ function StudentDetails() {
   const { mutate, isLoading: isLoadingMutate } = useMutationCancelRegistration(
     data?.registration?.id || -1
   );
-  
-  const { isLoading: isLoadingTimeSlots, data: timeSlots } = useQueryTimeSlots();
-  const { isLoading: isLoadingRegTypes, data: dataRegTypes } = useQueryRegistrationTypes();
+
+  const { isLoading: isLoadingTimeSlots, data: timeSlots } =
+    useQueryTimeSlots();
+  const { isLoading: isLoadingRegTypes, data: dataRegTypes } =
+    useQueryRegistrationTypes();
 
   const end = useStoreEvent((state) => state.end);
   const curDate = new Date();
@@ -35,12 +37,13 @@ function StudentDetails() {
 
     for (let i = 0; i < dataRegTypes.times.length; i++) {
       if (timeSlots.timeSlotsPerType[i].times.length > 0) {
+        console.log(timeSlots.timeSlotsPerType[i].times.length);
         return false;
       }
     }
 
     return true;
-  }
+  };
 
   if (isLoading || isLoadingMutate || isLoadingRegTypes || isLoadingTimeSlots) {
     return <Alert severity="warning">Retrieving registration status ...</Alert>;
@@ -66,12 +69,19 @@ function StudentDetails() {
   return (
     <>
       <Stack alignItems="center" spacing={2}>
-        <Typography color={isRegistered ? "green" : "red"} paddingX={2}>
+        <Typography
+          data-cy="student-register-status"
+          color={isRegistered ? "green" : "red"}
+          paddingX={2}
+        >
           {isRegistered
             ? `You are currently registered for this session`
-            : (isPastBookingWindow ? `This session is not within the booking window` : `You are not registered for this session`)}
+            : isPastBookingWindow
+            ? `This session is not within the booking window`
+            : `You are not registered for this session`}
         </Typography>
         <Button
+          data-cy="student-register-button"
           variant="contained"
           fullWidth
           sx={{ borderRadius: 0 }}

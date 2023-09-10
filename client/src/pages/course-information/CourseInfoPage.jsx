@@ -32,12 +32,19 @@ function CourseInfoPage() {
             </Typography>
           )}
         </Stack>
-        {courseType === "Student" && <RemoveCourseAction courseId={course.id} />}
+        {courseType === "Student" && (
+          <RemoveCourseAction courseId={course.id} />
+        )}
       </MainCard>
-      {courseType === "Instructor" && 
-        <MainCard title="Course Calendar Event Information" sx={{ padding: 0 }} content={true}>
+      {courseType === "Instructor" && (
+        <MainCard
+          title="Course Calendar Event Information"
+          sx={{ padding: 0 }}
+          content={true}
+        >
           <CourseCalendarEventForm />
-        </MainCard>}
+        </MainCard>
+      )}
       {courseType === "Instructor" && (
         <MainCard
           title="Course Token Option"

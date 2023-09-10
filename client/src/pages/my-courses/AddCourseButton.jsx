@@ -29,6 +29,7 @@ function AddCourseButton() {
           backgroundColor: "#58B7BF",
         },
       }}
+      data-cy="add-course-button"
     >
       <PlusOutlined style={{ fontSize: "24px" }} />
     </Fab>

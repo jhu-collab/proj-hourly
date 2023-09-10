@@ -32,9 +32,9 @@ function RegistrationTabs() {
         },
       }}
     >
-      <Tab label="Upcoming" />
-      <Tab label="Ongoing" />
-      <Tab label="Past" />
+      <Tab data-cy="upcoming-registrations-tab" label="Upcoming" />
+      <Tab data-cy="ongoing-registrations-tab" label="Ongoing" />
+      <Tab data-cy="past-registrations-tab" label="Past" />
       {(courseType === "Staff" || courseType === "Instructor") && (
         <Divider
           orientation="vertical"
@@ -42,7 +42,7 @@ function RegistrationTabs() {
         />
       )}
       {(courseType === "Staff" || courseType === "Instructor") && (
-        <Tab label="Registration Types" />
+        <Tab data-cy="registration-types-tab" label="Registration Types" />
       )}
     </Tabs>
   );

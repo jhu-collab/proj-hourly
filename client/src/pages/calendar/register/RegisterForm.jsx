@@ -147,7 +147,11 @@ function RegisterForm() {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack alignItems="center" mt={2} direction="column" spacing={3}>
-          <Typography textAlign="center" variant="h4">
+          <Typography
+            data-cy="student-register-text"
+            textAlign="center"
+            variant="h4"
+          >
             You are about to register for <br /> <u> {title} </u> <br /> on{" "}
             <u> {date} </u> from{" "}
             <u>
@@ -156,6 +160,7 @@ function RegisterForm() {
             </u>
           </Typography>
           <FormInputDropdown
+            data-cy="oh-topic-dropdown"
             name="type"
             control={control}
             label="Registration Type"
@@ -164,12 +169,14 @@ function RegisterForm() {
           {type !== "" && (
             <>
               <FormInputDropdown
+                data-cy="student-time-slots"
                 name="times"
                 control={control}
                 label="Available Time Slots"
                 options={timeSlots}
               />
               <FormInputDropdown
+                data-cy="student-topic-options"
                 name="topicIds"
                 control={control}
                 label="Topics (optional)"
@@ -195,6 +202,7 @@ function RegisterForm() {
                 rows={4}
               />
               <Button
+                data-cy="student-submit-register"
                 type="submit"
                 variant="contained"
                 fullWidth

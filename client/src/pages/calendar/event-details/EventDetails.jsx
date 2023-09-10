@@ -22,15 +22,15 @@ function EventDetails() {
   return (
     <Stack direction="column" spacing={1}>
       <Typography variant="h4">{title}</Typography>
-      <Typography>
+      <Typography data-cy="date-text">
         <strong>Date: </strong>
         {date}
       </Typography>
-      <Typography>
+      <Typography data-cy="time-text">
         <strong>Time: </strong>
         {startTime} - {endTime}
       </Typography>
-      <Typography>
+      <Typography data-cy="location-text">
         <strong>Location: </strong>
         {location}
       </Typography>

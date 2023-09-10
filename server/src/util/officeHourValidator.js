@@ -157,6 +157,7 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       }
     });
   }
+
   if (officeHour === null || isCancelled) {
     debug("office hour is not on day");
     return res

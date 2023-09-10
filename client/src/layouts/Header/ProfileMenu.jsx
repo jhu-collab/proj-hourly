@@ -48,6 +48,7 @@ function ProfileMenu() {
       }}
     >
       <ListItemButton
+        data-cy="profile-button"
         selected={selectedIndex === 0}
         onClick={(event) => handleListItemClick(event, 0)}
       >
@@ -57,6 +58,7 @@ function ProfileMenu() {
         <ListItemText primary="Profile" />
       </ListItemButton>
       <ListItemButton
+        data-cy="logout-button"
         selected={selectedIndex === 1}
         onClick={(event) => handleListItemClick(event, 1)}
       >
