@@ -229,7 +229,7 @@ describe("Course Tokens Page", () => {
     cy.wait(1000);
 
     cy.get(tokenCard).contains("button", "Edit").click();
-    cy.get(editTokenQuantity).type(0);
+    cy.get(editTokenQuantity).type("{selectAll}").type("{backspace}").type(0);
     cy.get(tokenCard).contains("button", "Submit").click();
 
     cy.get(editTokenQuantity).contains(
