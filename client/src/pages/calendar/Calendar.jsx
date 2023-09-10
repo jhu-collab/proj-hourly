@@ -175,12 +175,7 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-<<<<<<< HEAD
-        
-        <Box data-cy="full-calendar" sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 3 }}>
-=======
         <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
->>>>>>> dev
           <StyleWrapper>
             {matchUpSm && (
               <CalendarMenu

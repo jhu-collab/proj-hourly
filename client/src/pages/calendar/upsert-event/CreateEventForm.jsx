@@ -147,29 +147,13 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
           </Stack>
-<<<<<<< HEAD
-          <FormCheckbox
-          data-cy="create-recurring-checkbox"
-            name="recurringEvent"
-            control={control}
-            label="Recurring event"
-          />
-          {/* TODO: UNFINISHED FEATURE */}
-          {/* <FormCheckbox
-              name="feedback"
-=======
           <Stack direction="row" spacing={3} alignItems="center">
             <FormCheckbox
               name="recurringEvent"
->>>>>>> dev
               control={control}
               label="Recurring event"
             />
-            <FormCheckbox
-              name="remote"
-              control = {control}
-              label="Remote"
-            />
+            <FormCheckbox name="remote" control={control} label="Remote" />
           </Stack>
           <FormInputText
             data-cy="create-start-date-text"
@@ -196,16 +180,7 @@ function CreateEventForm() {
               buttons={BUTTONS}
             />
           )}
-<<<<<<< HEAD
-          <FormInputText
-            data-cy="create-location-input"
-            name="location"
-            control={control}
-            label="Location"
-          />
-=======
-          <FormInputText name="location" control={control} label="Location" /> 
->>>>>>> dev
+          <FormInputText name="location" control={control} label="Location" />
           <Button
             data-cy="create-event-submit"
             type="submit"
