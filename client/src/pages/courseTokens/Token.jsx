@@ -8,6 +8,7 @@ import AnimateButton from "../../components/AnimateButton";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import Form from "../../components/form-ui/Form";
 import FormInputText from "../../components/form-ui/FormInputText";
+import FormInputNumber from "../../components/form-ui/FormInputNumber";
 import MainCard from "../../components/MainCard";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
@@ -71,15 +72,19 @@ function Token({ token }) {
           >
             {edit && courseType === "Instructor" ? (
               <FormInputText
+                data-cy="edit-token-name"
                 name="name"
                 control={control}
                 sx={{ width: 230 }}
               />
             ) : (
-              <Typography variant="h5">{token.title}</Typography>
+              <Typography data-cy="token-name" variant="h5">
+                {token.title}
+              </Typography>
             )}
             {edit && courseType === "Instructor" ? (
               <FormInputText
+                data-cy="edit-token-description"
                 name="description"
                 control={control}
                 sx={{ width: 230 }}
@@ -88,7 +93,8 @@ function Token({ token }) {
               <Typography variant="h5">{token.description}</Typography>
             )}
             {edit && courseType === "Instructor" ? (
-              <FormInputText
+              <FormInputNumber
+                data-cy="edit-token-quantity"
                 name="quantity"
                 control={control}
                 sx={{ width: 230 }}
@@ -124,7 +130,11 @@ function Token({ token }) {
             {!edit && courseType === "Instructor" && (
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
-                  <Button variant="contained" onClick={handleOnClickEditBtn}>
+                  <Button
+                    data-cy="edit-token-button"
+                    variant="contained"
+                    onClick={handleOnClickEditBtn}
+                  >
                     Edit
                   </Button>
                 </AnimateButton>
