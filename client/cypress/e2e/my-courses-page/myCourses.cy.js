@@ -1,5 +1,5 @@
 describe("My Courses Page", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
 
   const userNameInputText = '[data-cy="username-input-text"]';
   const passwordInputText = '[data-cy="password-input-text"]';

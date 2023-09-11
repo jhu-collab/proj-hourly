@@ -7,7 +7,7 @@ const formatCypressDate = (date) => {
   return year + "-" + month + "-" + day;
 };
 describe("Calendar Page: Staff Office Hours", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
   //Set the date used for the tests
   let now = new Date();
 

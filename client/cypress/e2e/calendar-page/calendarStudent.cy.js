@@ -1,5 +1,5 @@
 describe("Calendar Page: Student Office Hours", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
 
   before(() => {
     cy.task("removeOH", "ABCDEF");
