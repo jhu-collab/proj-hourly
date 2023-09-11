@@ -27,8 +27,8 @@ describe("Course Tokens Page", () => {
   // const topicNameInput = '[data-cy="topic-name-input"]';
   // const createTopicButton = '[data-cy="create-topic-button"]';
   // const editTopicInput = '[data-cy="edit-topic-input"]';
-  // const cancelDeleteButton = '[data-cy="cancel-delete-button"]';
-  // const confirmDeleteButton = '[data-cy="confirm-delete-button"]';
+  const cancelDeleteButton = '[data-cy="cancel-delete-button"]';
+  const confirmDeleteButton = '[data-cy="confirm-delete-button"]';
   const tokenNameInput = '[data-cy="token-name-input"]';
   const tokenDescriptionInput = '[data-cy="token-description-input"]';
   const tokenQuantityInput = '[data-cy="token-quantity-input"]';
@@ -216,7 +216,7 @@ describe("Course Tokens Page", () => {
     cy.get(editTokenQuantity).contains("p", "You must specify a number");
   });
 
-  it("Failure when Editing a Token with Empty quantity", () => {
+  it("Failure when Editing a Token with negative quantity", () => {
     const tokenName = "Clue Token";
     const tokenQuantity = 3;
     cy.get(addTokenButton).click();
@@ -237,101 +237,115 @@ describe("Course Tokens Page", () => {
       "Must have at least 1 of each token"
     );
   });
+  it("Successful editting of token", () => {
+    const tokenName = "Clue Token";
+    const tokenQuantity = 3;
+    const newTokenName = "Debugging Token";
+    const newTokenQuantity = 2;
+    cy.get(addTokenButton).click();
+    cy.get(tokenNameInput).type(tokenName);
+    cy.get(tokenQuantityInput).type(tokenQuantity);
+    cy.get(createTokenButton).click();
 
-  // it("Successfully Editing a Topic", () => {
-  //   const oldTopicName = "Caches";
+    const oldTokenCard = `[data-cy="${tokenName}"]`;
 
-  //   cy.get(addTopicButton).click();
-  //   cy.get(topicNameInput).type(oldTopicName);
-  //   cy.get(createTopicButton).click();
+    cy.wait(1000);
 
-  //   const oldTopicCard = `[data-cy="${oldTopicName}"]`;
+    cy.get(oldTokenCard).contains("button", "Edit").click();
+    cy.get(editTokenQuantity).type("{selectAll}").type(newTokenQuantity);
+    cy.get(editTokenName).type("{selectAll}").type(newTokenName);
+    cy.get(oldTokenCard).contains("button", "Submit").click();
+    cy.wait(5000);
+    const newTokenCard = `[data-cy="${newTokenName}"]`;
 
-  //   cy.wait(1000);
+    cy.get(".Toastify")
+      .contains("div", `Successfully updated the token!`)
+      .should("be.visible");
+    cy.get(newTokenCard).contains("h5", newTokenName);
+    cy.get(newTokenCard).contains("h5", newTokenQuantity);
+    cy.get(newTokenCard).contains("button", "Edit");
+    cy.get(newTokenCard).contains("button", "Delete");
+  });
 
-  //   const newTopicName = "Multi-threaded Networks";
+  it("Cancelling Editing a Token", () => {
+    const tokenName = "Clue Token";
+    const tokenQuantity = 3;
+    const newTokenName = "Debugging Token";
+    const newTokenQuantity = 2;
+    cy.get(addTokenButton).click();
+    cy.get(tokenNameInput).type(tokenName);
+    cy.get(tokenQuantityInput).type(tokenQuantity);
+    cy.get(createTokenButton).click();
 
-  //   cy.get(oldTopicCard).contains("button", "Edit").click();
-  //   cy.get(editTopicInput)
-  //     .type("{selectAll}")
-  //     .type("{backspace}")
-  //     .type(newTopicName);
-  //   cy.get(oldTopicCard).contains("button", "Submit").click();
+    const oldTokenCard = `[data-cy="${tokenName}"]`;
 
-  //   const newTopicCard = `[data-cy="${newTopicName}"]`;
+    cy.wait(1000);
 
-  //   cy.get(".Toastify")
-  //     .contains("div", `Successfully updated the topic!`)
-  //     .should("be.visible");
-  //   cy.get(newTopicCard).contains("h5", newTopicName);
-  // });
+    cy.get(oldTokenCard).contains("button", "Edit").click();
+    cy.get(editTokenQuantity).type("{selectAll}").type(newTokenName).type(0);
+    cy.get(editTokenName).type("{selectAll}").type(newTokenQuantity);
+    cy.get(oldTokenCard).contains("button", "Cancel").click();
 
-  // it("Cancelling Editing a Topic", () => {
-  //   const topicName = "Caches";
+    cy.wait(1000);
 
-  //   cy.get(addTopicButton).click();
-  //   cy.get(topicNameInput).type(topicName);
-  //   cy.get(createTopicButton).click();
+    cy.get(oldTokenCard).contains("h5", tokenName);
+    cy.get(oldTokenCard).contains("h5", tokenQuantity);
+    cy.get(oldTokenCard).contains("button", "Edit");
+    cy.get(oldTokenCard).contains("button", "Delete");
+  });
 
-  //   const topicCard = `[data-cy="${topicName}"]`;
+  it("Confirm Delete Token Popup Looks as Expected", () => {
+    const tokenName = "Clue Token";
+    const tokenQuantity = 3;
+    cy.get(addTokenButton).click();
+    cy.get(tokenNameInput).type(tokenName);
+    cy.get(tokenQuantityInput).type(tokenQuantity);
+    cy.get(createTokenButton).click();
 
-  //   cy.get(topicCard).contains("button", "Edit").click();
-  //   cy.get(editTopicInput).type("{selectAll}").type("{backspace}");
-  //   cy.get(topicCard).contains("button", "Cancel").click();
+    const tokenCard = `[data-cy="${tokenName}"]`;
 
-  //   cy.wait(1000);
+    cy.wait(1000);
 
-  //   cy.get(topicCard).contains("h5", topicName);
-  // });
+    cy.get(tokenCard).contains("button", "Delete").click();
+    cy.get(cancelDeleteButton).should("be.visible").should("be.enabled");
+    cy.get(confirmDeleteButton).should("be.visible").should("be.enabled");
+  });
 
-  // it("Confirm Delete Topic Popup Looks as Expected", () => {
-  //   const topicName = "Caches";
+  it("Successfully Deleting a Token", () => {
+    const tokenName = "Clue Token";
+    const tokenQuantity = 3;
+    cy.get(addTokenButton).click();
+    cy.get(tokenNameInput).type(tokenName);
+    cy.get(tokenQuantityInput).type(tokenQuantity);
+    cy.get(createTokenButton).click();
 
-  //   cy.get(addTopicButton).click();
-  //   cy.get(topicNameInput).type(topicName);
-  //   cy.get(createTopicButton).click();
+    const tokenCard = `[data-cy="${tokenName}"]`;
 
-  //   const topicCard = `[data-cy="${topicName}"]`;
+    cy.wait(1000);
 
-  //   cy.wait(1000);
+    cy.get(tokenCard).contains("button", "Delete").click();
+    cy.get(confirmDeleteButton).click();
+    cy.get(".Toastify")
+      .contains("div", `Successfully deleted the "${tokenName}" token!`)
+      .should("be.visible");
+    cy.get(noTokensAlert).should("be.visible");
+  });
 
-  //   cy.get(topicCard).contains("button", "Delete").click();
-  //   cy.get(cancelDeleteButton).should("be.visible").should("be.enabled");
-  //   cy.get(confirmDeleteButton).should("be.visible").should("be.enabled");
-  // });
+  it("Cancelling Deleting a Topic", () => {
+    const tokenName = "Clue Token";
+    const tokenQuantity = 3;
+    cy.get(addTokenButton).click();
+    cy.get(tokenNameInput).type(tokenName);
+    cy.get(tokenQuantityInput).type(tokenQuantity);
+    cy.get(createTokenButton).click();
 
-  // it("Successfully Deleting a Topic", () => {
-  //   const topicName = "Caches";
+    const tokenCard = `[data-cy="${tokenName}"]`;
 
-  //   cy.get(addTopicButton).click();
-  //   cy.get(topicNameInput).type(topicName);
-  //   cy.get(createTopicButton).click();
+    cy.wait(1000);
 
-  //   const topicCard = `[data-cy="${topicName}"]`;
-
-  //   cy.wait(1000);
-
-  //   cy.get(topicCard).contains("button", "Delete").click();
-  //   cy.get(confirmDeleteButton).click();
-  //   cy.get(".Toastify")
-  //     .contains("div", `Successfully deleted the "${topicName}" topic!`)
-  //     .should("be.visible");
-  //   cy.get(noTopicsAlert).should("be.visible");
-  // });
-
-  // it("Cancelling Deleting a Topic", () => {
-  //   const topicName = "Caches";
-
-  //   cy.get(addTopicButton).click();
-  //   cy.get(topicNameInput).type(topicName);
-  //   cy.get(createTopicButton).click();
-
-  //   const topicCard = `[data-cy="${topicName}"]`;
-
-  //   cy.wait(1000);
-
-  //   cy.get(topicCard).contains("button", "Delete").click();
-  //   cy.get(cancelDeleteButton).click();
-  //   cy.get(topicCard).contains("h5", topicName);
-  // });
+    cy.get(tokenCard).contains("button", "Delete").click();
+    cy.get(cancelDeleteButton).click();
+    cy.get(tokenCard).contains("h5", tokenName);
+    cy.get(tokenCard).contains("h5", tokenQuantity);
+  });
 });
