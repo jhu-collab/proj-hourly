@@ -18,7 +18,7 @@
       href="https://fonts.googleapis.com/css2?family=Cabin&display=swap"
       rel="stylesheet"
     />
-    
+
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
       // Single Page Apps for GitHub Pages
@@ -48,8 +48,19 @@
         }
       })(window.location);
     </script>
-    <!-- End Single Page Apps for GitHub Pages -->
+    <script type="module">
+      // Check if a flag is set in localStorage
+      if (!localStorage.getItem("firstLoad")) {
+        // Set the flag to indicate that the page has been loaded once
+        localStorage.setItem("firstLoad", "1");
 
+        // Add a timeout to reload the page after 1 second (adjust as needed)
+        setTimeout(function () {
+          window.location.reload();
+        }, 1000); // 1000 milliseconds = 1 second
+      }
+    </script>
+    <!-- End Single Page Apps for GitHub Pages -->
   </head>
 
   <body>
