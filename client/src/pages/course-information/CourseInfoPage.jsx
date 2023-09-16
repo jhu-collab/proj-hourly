@@ -14,30 +14,57 @@ function CourseInfoPage() {
     <>
       <MainCard title="Course Information" sx={{ padding: 0 }} content={false}>
         <Stack padding="16px" spacing={1}>
-          <Typography variant="h5" fontWeight={400}>
+          <Typography
+            data-cy="course-details-title"
+            variant="h5"
+            fontWeight={400}
+          >
             Course Name: <strong>{course.title}</strong>
           </Typography>
-          <Typography variant="h5" fontWeight={400}>
+          <Typography
+            data-cy="course-details-number"
+            variant="h5"
+            fontWeight={400}
+          >
             Course Number: <strong>{course.courseNumber}</strong>
           </Typography>
-          <Typography variant="h5" fontWeight={400}>
+          <Typography
+            data-cy="course-details-semester"
+            variant="h5"
+            fontWeight={400}
+          >
             Semester: <strong>{course.semester}</strong>
           </Typography>
-          <Typography variant="h5" fontWeight={400}>
+          <Typography
+            data-cy="course-details-year"
+            variant="h5"
+            fontWeight={400}
+          >
             Year: <strong>{course.calendarYear}</strong>
           </Typography>
           {(courseType === "Staff" || courseType === "Instructor") && (
-            <Typography variant="h5" fontWeight={400}>
+            <Typography
+              data-cy="course-details-code"
+              variant="h5"
+              fontWeight={400}
+            >
               Code: <strong>{course.code}</strong>
             </Typography>
           )}
         </Stack>
-        {courseType === "Student" && <RemoveCourseAction courseId={course.id} />}
+        {courseType === "Student" && (
+          <RemoveCourseAction courseId={course.id} />
+        )}
       </MainCard>
-      {courseType === "Instructor" && 
-        <MainCard title="Course Calendar Event Information" sx={{ padding: 0 }} content={true}>
+      {courseType === "Instructor" && (
+        <MainCard
+          title="Course Calendar Event Information"
+          sx={{ padding: 0 }}
+          content={true}
+        >
           <CourseCalendarEventForm />
-        </MainCard>}
+        </MainCard>
+      )}
       {courseType === "Instructor" && (
         <MainCard
           title="Course Token Option"

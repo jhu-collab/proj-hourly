@@ -48,6 +48,7 @@ function Profile() {
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
+        data-cy="profile-name-button"
         sx={{
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : "transparent",
