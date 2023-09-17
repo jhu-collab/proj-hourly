@@ -173,6 +173,9 @@ export default defineConfig({
           }
           for (const c of user.instructorCourses) {
             console.log(c);
+            await prisma.calendarEvent.deleteMany({
+              where: {courseId: c.id}
+            })
             await prisma.officeHourTimeOptions.deleteMany({
               where: { courseId: c.id },
             });

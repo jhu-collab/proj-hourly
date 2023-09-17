@@ -49,6 +49,7 @@ function CourseTokenOptInForm() {
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" spacing={3} alignItems="center"></Stack>
           <Button
+            data-cy="use-token-submit"
             type="submit"
             variant="contained"
             disabled={isLoading}
