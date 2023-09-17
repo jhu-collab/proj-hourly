@@ -212,6 +212,73 @@ export default defineConfig({
           });
           return course;
         },
+        async addStudent(courseCode) {
+          const aliTheStudent = await prisma.account.update({
+            where: {
+              userName: "ali-the-student".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                connect: {
+                  id: courseCode,
+                }
+              },
+            },
+          });
+        },
+        async addStaff(courseCode) {
+          const aliTheTA = await prisma.account.update({
+            where: {
+              userName: "ali-the-ta".toLocaleLowerCase(),
+            },
+            data: {
+              staffCourses: {
+                connect: {
+                  id: courseCode,
+                }
+              },
+            },
+          });
+        },
+        async removeStudent(courseCode) {
+          const aliTheStudent = await prisma.account.update({
+            where: {
+              userName: "ali-the-student".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                disconnect: {
+                  id: courseCode,
+                }
+              },
+            },
+          });
+        },
+        async removeStaff(courseCode) {
+          const aliTheTA = await prisma.account.update({
+            where: {
+              userName: "ali-the-ta".toLocaleLowerCase(),
+            },
+            data: {
+              staffCourses: {
+                disconnect: {
+                  id: courseCode,
+                }
+              },
+            },
+          });
+        },
+        async getCourseCode(courseTitle, courseNumber, courseSemester, courseYear) {
+          const course = await prisma.account.findUnique({
+            where: {
+              title: courseTitle,
+              courseNumber,
+              semester: courseSemester,
+              calendarYear: courseYear,
+            },
+          });
+          return course.code;
+        },
       });
       return config;
     },
