@@ -85,7 +85,7 @@ describe("Roster Page", () => {
       cy.get(rosterToolbarRoles).should("be.visible");
       cy.get(rosterToolbarStudent).contains("Students").click();
       if(cy.get(rosterStudentRows)) {
-
+        //
       } else {
         cy.get(noRosterAlert).contains("Students").should("be.visible");
       }
