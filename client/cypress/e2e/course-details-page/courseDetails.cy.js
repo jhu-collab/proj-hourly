@@ -129,9 +129,14 @@ describe("Course Details Page: Staff", () => {
     cy.wait(1000);
     cy.get(courseCard).click();
 
-    // check if events appear in calendar correctly - hard coded
-    
-    
+    // check if events appear in calendar correctly - hard coded (creating events on Sunday, recurring on every Tues, Thurs, & Sun)
+    cy.get('button[title="Next week"]').should("be.visible").click();
+    cy.get('div[class="fc-daygrid-event-harness"]').then(($elements) => {
+      let countOfElements = 0;
+      cy.log($elements.length);
+      countOfElements += $elements.length;
+      cy.wrap(countOfElements).should("be.lte", 3);
+    });
 
 
     cy.wait(1000);
