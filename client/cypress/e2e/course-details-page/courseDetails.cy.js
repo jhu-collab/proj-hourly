@@ -33,13 +33,6 @@ describe("Course Details Page: Staff", () => {
 
   const courseCalendarEventInfoTitle = '[data-cy="coursetype-calendar-event_info_title"]';
   const courseTokenOptionTitle = '[data-cy="coursetype-course-token-title"]';
-  const recurringEventCheckbox = 'data-cy="recurring-event-check-box"';
-  const eventForm = 'data-cy="form"';
-
-  // added:
-  const courseCalendarEventTitle = '[data-cy="coursetype-calendar-event_info_title"]';
-  // const newDate = new Date(now.setMonth(now.getMonth() + 1));
-  // // const newDateStr = formatCypressDate(newDate);
 
   const courseTitle = "Machine Learning";
   const courseNumber = "601.475";
@@ -79,19 +72,18 @@ describe("Course Details Page: Staff", () => {
     body.click();
   });
 
-  // it("Course Details Look as Expected", () => {
-  //   cy.get(courseDetailsTitle).contains(`Course Name: ${courseTitle}`);
-  //   cy.get(courseDetailsNumber).contains(`Course Number: ${courseNumber}`);
-  //   cy.get(courseDetailsSemester).contains(`Semester: ${courseSemester}`);
-  //   cy.get(courseDetailsYear).contains(`Year: ${courseYear}`);
-  //   Cypress.on('uncaught:exception', () => { return false });
-  //   cy.task("getCourseByNumber", courseNumber).then((course) => {
-  //     cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
-  //   });
-  // });
+  it("Course Details Look as Expected", () => {
+    cy.get(courseDetailsTitle).contains(`Course Name: ${courseTitle}`);
+    cy.get(courseDetailsNumber).contains(`Course Number: ${courseNumber}`);
+    cy.get(courseDetailsSemester).contains(`Semester: ${courseSemester}`);
+    cy.get(courseDetailsYear).contains(`Year: ${courseYear}`);
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.task("getCourseByNumber", courseNumber).then((course) => {
+      cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
+    });
+  });
 
-  // added:
-  // TODO: test the form 
+
   it("create course calendar event successful", ()=> {
     cy.get(courseCalendarEventInfoTitle).contains(`Course Calendar Event Information`);
     // Activate recurring
@@ -146,105 +138,105 @@ describe("Course Details Page: Staff", () => {
   });
 });
 
-// describe("Course Details Page: Student", () => {
-//   const BASE_URL = "http://localhost:3000/proj-hourly";
+describe("Course Details Page: Student", () => {
+  const BASE_URL = "http://localhost:3000/proj-hourly";
 
-//   const userNameInputText = '[data-cy="username-input-text"]';
-//   const passwordInputText = '[data-cy="password-input-text"]';
-//   const loginButton = '[data-cy="login-button"]';
+  const userNameInputText = '[data-cy="username-input-text"]';
+  const passwordInputText = '[data-cy="password-input-text"]';
+  const loginButton = '[data-cy="login-button"]';
 
-//   const addCourseButton = '[data-cy="add-course-button"]';
-//   const joinCourseButton = '[data-cy="join-course-button"]';
-//   const joinCourseInput = '[data-cy="join-course-input"]';
+  const addCourseButton = '[data-cy="add-course-button"]';
+  const joinCourseButton = '[data-cy="join-course-button"]';
+  const joinCourseInput = '[data-cy="join-course-input"]';
 
-//   const navbarButton = '[data-cy="navbar-button"]';
-//   const navbar = '[data-cy="navbar"]';
+  const navbarButton = '[data-cy="navbar-button"]';
+  const navbar = '[data-cy="navbar"]';
 
-//   const courseDetailsTitle = '[data-cy="course-details-title"]';
-//   const courseDetailsNumber = '[data-cy="course-details-number"]';
-//   const courseDetailsSemester = '[data-cy="course-details-semester"]';
-//   const courseDetailsYear = '[data-cy="course-details-year"]';
-//   const leaveCourseButton = '[data-cy="leave-course-button"]';
+  const courseDetailsTitle = '[data-cy="course-details-title"]';
+  const courseDetailsNumber = '[data-cy="course-details-number"]';
+  const courseDetailsSemester = '[data-cy="course-details-semester"]';
+  const courseDetailsYear = '[data-cy="course-details-year"]';
+  const leaveCourseButton = '[data-cy="leave-course-button"]';
 
-//   const leaveCourseConfirmButton = '[data-cy="confirm-delete-button"]';
-//   const leaveCourseCancelButton = '[data-cy="cancel-delete-button"]';
+  const leaveCourseConfirmButton = '[data-cy="confirm-delete-button"]';
+  const leaveCourseCancelButton = '[data-cy="cancel-delete-button"]';
 
-//   const studentCourseList = '[data-cy="student-course-list"]';
+  const studentCourseList = '[data-cy="student-course-list"]';
 
-//   const courseCode = "AVENGE";
+  const courseCode = "AVENGE";
 
-//   beforeEach(() => {
-//     cy.task("deleteStudentCourses", "user-1");
-//     cy.task("deleteInstructorCourses", "user-1");
+  beforeEach(() => {
+    cy.task("deleteStudentCourses", "user-1");
+    cy.task("deleteInstructorCourses", "user-1");
 
-//     cy.visit(BASE_URL + "/login");
+    cy.visit(BASE_URL + "/login");
 
-//     cy.get(userNameInputText).type("user-1");
-//     cy.get(passwordInputText).type("user-1");
-//     cy.get(loginButton).click();
+    cy.get(userNameInputText).type("user-1");
+    cy.get(passwordInputText).type("user-1");
+    cy.get(loginButton).click();
 
-//     cy.get(addCourseButton).click();
-//     cy.get(joinCourseInput).type(courseCode);
-//     cy.get(joinCourseButton).click();
+    cy.get(addCourseButton).click();
+    cy.get(joinCourseInput).type(courseCode);
+    cy.get(joinCourseButton).click();
 
-//     cy.wait(1000);
+    cy.wait(1000);
 
-//     cy.task("getCourseByCode", courseCode).then((course) => {
-//       const courseCard = `[data-cy="${course.courseNumber}"]`;
-//       cy.get(courseCard).click();
+    cy.task("getCourseByCode", courseCode).then((course) => {
+      const courseCard = `[data-cy="${course.courseNumber}"]`;
+      cy.get(courseCard).click();
 
-//       cy.get(navbarButton).click();
-//       const body = cy.get("body");
-//       cy.get(navbar).contains("a", "course details").click();
-//       body.click();
-//       });
-//   });
+      cy.get(navbarButton).click();
+      const body = cy.get("body");
+      cy.get(navbar).contains("a", "course details").click();
+      body.click();
+      });
+  });
 
-//   it("Course Details Look as Expected", () => {
-//     cy.task("getCourseByCode", courseCode).then((course) => {
-//       cy.get(courseDetailsTitle).contains(`Course Name: ${course.title}`);
-//       cy.get(courseDetailsNumber).contains(
-//         `Course Number: ${course.courseNumber}`
-//       );
-//       cy.get(courseDetailsSemester).contains(`Semester: ${course.semester}`);
-//       cy.get(courseDetailsYear).contains(`Year: ${course.calendarYear}`);
-//       cy.get(leaveCourseButton).should("be.visible").should("be.enabled");
-//     });
-//   });
+  it("Course Details Look as Expected", () => {
+    cy.task("getCourseByCode", courseCode).then((course) => {
+      cy.get(courseDetailsTitle).contains(`Course Name: ${course.title}`);
+      cy.get(courseDetailsNumber).contains(
+        `Course Number: ${course.courseNumber}`
+      );
+      cy.get(courseDetailsSemester).contains(`Semester: ${course.semester}`);
+      cy.get(courseDetailsYear).contains(`Year: ${course.calendarYear}`);
+      cy.get(leaveCourseButton).should("be.visible").should("be.enabled");
+    });
+  });
 
-//   it("Leave Course Successful", () => {
-//     Cypress.on('uncaught:exception', () => { return false })
+  it("Leave Course Successful", () => {
+    Cypress.on('uncaught:exception', () => { return false })
 
-//     cy.get(leaveCourseButton).click();
-//     cy.get(leaveCourseConfirmButton).should("be.visible");
+    cy.get(leaveCourseButton).click();
+    cy.get(leaveCourseConfirmButton).should("be.visible");
 
-//     cy.get(leaveCourseConfirmButton).click();
+    cy.get(leaveCourseConfirmButton).click();
     
-//     cy.url().should("be.equal", BASE_URL);
-//     cy.get(".Toastify")
-//       .contains("div", "Successfully removed course!")
-//       .should("be.visible");
-//     cy.get(studentCourseList)
-//       .should("be.visible")
-//       .should("have.length", 1)
-//       .contains(
-//         "You are not enrolled in any courses in which you are a student."
-//       );
-//   });
+    cy.url().should("be.equal", BASE_URL);
+    cy.get(".Toastify")
+      .contains("div", "Successfully removed course!")
+      .should("be.visible");
+    cy.get(studentCourseList)
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a student."
+      );
+  });
 
-//   it("Leave Course Cancelled", () => {
-//     cy.get(leaveCourseButton).click();
-//     cy.get(leaveCourseCancelButton).click();
+  it("Leave Course Cancelled", () => {
+    cy.get(leaveCourseButton).click();
+    cy.get(leaveCourseCancelButton).click();
 
-//     cy.url().should("be.equal", BASE_URL + "/courseinformation");
-//     cy.task("getCourseByCode", courseCode).then((course) => {
-//       cy.get(courseDetailsTitle).contains(`Course Name: ${course.title}`);
-//       cy.get(courseDetailsNumber).contains(
-//         `Course Number: ${course.courseNumber}`
-//       );
-//       cy.get(courseDetailsSemester).contains(`Semester: ${course.semester}`);
-//       cy.get(courseDetailsYear).contains(`Year: ${course.calendarYear}`);
-//       cy.get(leaveCourseButton).should("be.visible").should("be.enabled");
-//     });
-//   });
-// });
+    cy.url().should("be.equal", BASE_URL + "/courseinformation");
+    cy.task("getCourseByCode", courseCode).then((course) => {
+      cy.get(courseDetailsTitle).contains(`Course Name: ${course.title}`);
+      cy.get(courseDetailsNumber).contains(
+        `Course Number: ${course.courseNumber}`
+      );
+      cy.get(courseDetailsSemester).contains(`Semester: ${course.semester}`);
+      cy.get(courseDetailsYear).contains(`Year: ${course.calendarYear}`);
+      cy.get(leaveCourseButton).should("be.visible").should("be.enabled");
+    });
+  });
+});
