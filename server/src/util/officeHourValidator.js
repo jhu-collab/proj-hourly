@@ -902,6 +902,9 @@ export const isRegistrationInFuture = async (req, res, next) => {
   const dateObj = new Date(date);
   dateObj.setUTCHours(startTimeObj.getUTCHours());
   dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (startTimeObj.getUTCHours() < req.targetDate.getUTCHours()) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
@@ -1075,7 +1078,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
                 60 //handles daylight savings
           );
         }
-        if (currEnd < start) {
+        if (currEnd.toNativeDate() < start.toNativeDate()) {
           currEnd.date(currEnd.date() + 1);
         }
         if (equalDates(start.toNativeDate(), dateObj.toNativeDate())) {
