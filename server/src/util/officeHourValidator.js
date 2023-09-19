@@ -870,7 +870,10 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   debug("got registration");
   const startTimeObj = spacetime(registration.startTime);
   let dateObj = spacetime(registration.date);
-  dateObj = dateObj.add(startTimeObj.hour(), "hour");
+  dateObj = dateObj.add(
+    startTimeObj.hour() + startTimeObj.toNativeDate().getTimezoneOffset() / 60,
+    "hour"
+  );
   dateObj = dateObj.add(startTimeObj.minute(), "minute");
   dateObj = dateObj.add(
     startTimeObj.toNativeDate().getTimezoneOffset() / 60 -
