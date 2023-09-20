@@ -77,6 +77,7 @@ router.post(
   validator.doesOfficeHourExist,
   courseValidator.isInCourseForOfficeHour,
   validator.getDatesForOfficeHour,
+  validator.isTimeTwoHoursBefore,
   validator.isDateInFuture,
   validator.isOfficeHourOnDay,
   validator.isWithinTimeOffering,

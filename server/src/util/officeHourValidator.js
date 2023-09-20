@@ -601,6 +601,25 @@ export const isDateInFuture = async (req, res, next) => {
   }
 };
 
+export const isTimeTwoHoursBefore = async (req, res, next) => {
+  debug("checking if present time is more than two hours before OH");
+  const date = spacetime(req.targetDate);
+  const curr = spacetime.now();
+  curr.hour(0);
+  curr.minute(0);
+  curr.second(0);
+  curr.millisecond(0);
+  if (curr.diff(date, "second") >= -7200) {
+    debug("cannot register for office hours less than two hours away");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "ERROR: Office hour selection is less than two hours away" });  
+  } else {
+    debug("Office hour selection is more than two hours away");
+    next();
+  }
+};
+
 export const isStudentRegistered = async (req, res, next) => {
   debug("checking if student is registered");
   const registrationId = parseInt(req.params.registrationId, 10);
