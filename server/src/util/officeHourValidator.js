@@ -477,8 +477,9 @@ export const isInFuture = async (req, res, next) => {
   debug("checking if office hour is in future");
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const dateObj = spacetime(date).goto("America/New_York");
+  const dateObj = spacetime(req.targetDate).goto("America/New_York");
   const current = spacetime.now().goto("America/New_York");
+  console.log(date);
   if (dateObj.isBefore(current)) {
     return res
       .status(StatusCodes.CONFLICT)
