@@ -797,7 +797,6 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
   const timeObj = stringToTimeObj(startTime);
   dateObj.setUTCHours(timeObj.getUTCHours());
   dateObj.setUTCMinutes(timeObj.getUTCMinutes());
-  console.log(dateObj);
   if (dateObj < req.targetDate) {
     dateObj.setUTCDate(dateObj.getUTCDate() + 1);
   }
@@ -805,7 +804,6 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
   const end = new Date(dateObj);
   before.setUTCHours(before.getUTCHours() - course.startRegConstraint);
   end.setUTCHours(end.getUTCHours() - course.endRegConstraint);
-  console.log(currDate, before, end);
   if (currDate >= before && currDate <= end) {
     debug("Registration is within registration constraints!");
     debug("isWithinRegisterConstraint is done!");
