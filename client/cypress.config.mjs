@@ -173,6 +173,26 @@ export default defineConfig({
           }
           for (const c of user.instructorCourses) {
             console.log(c);
+            const tokens = await prisma.courseToken.findMany({
+              where: {
+                courseId: c.id,
+              },
+            });
+            const tokenIds = tokens.map((token) => token.id);
+            await prisma.issueToken.deleteMany({
+              where: {
+                courseTokenId: {
+                  in: tokenIds,
+                },
+              },
+            });
+            await prisma.courseToken.deleteMany({
+              where: {
+                id: {
+                  in: tokenIds,
+                },
+              },
+            });
             await prisma.officeHourTimeOptions.deleteMany({
               where: { courseId: c.id },
             });
@@ -208,6 +228,25 @@ export default defineConfig({
           const course = await prisma.course.findFirst({
             where: {
               courseNumber: number,
+            },
+          });
+          return course;
+        },
+        async enableCourseTokens(username) {
+          const account = await prisma.account.findUnique({
+            where: {
+              userName: username,
+            },
+            include: {
+              instructorCourses: true,
+            },
+          });
+          const course = await prisma.course.update({
+            where: {
+              id: account.instructorCourses[0].id,
+            },
+            data: {
+              usesTokens: true,
             },
           });
           return course;
