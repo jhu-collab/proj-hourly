@@ -251,6 +251,92 @@ export default defineConfig({
           });
           return course;
         },
+        async createCourseToken({ courseCode, tokenQuantity, tokenTitle }) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              students: true,
+            },
+          });
+          const token = await prisma.courseToken.create({
+            data: {
+              title: tokenTitle,
+              tokenLimit: tokenQuantity,
+              course: {
+                connect: {
+                  id: course.id,
+                },
+              },
+            },
+          });
+          const array = [];
+          course.students.forEach((student) => {
+            array.push({
+              accountId: student.id,
+              courseTokenId: token.id,
+            });
+          });
+          await prisma.issueToken.createMany({
+            data: array,
+          });
+          return token;
+        },
+        async deleteAllTokens(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              students: true,
+            },
+          });
+          await prisma.issueToken.deleteMany({
+            where: {
+              CourseToken: {
+                courseId: course.id,
+              },
+            },
+          });
+          const token = await prisma.courseToken.deleteMany({
+            where: {
+              courseId: course.id,
+            },
+          });
+
+          return null;
+        },
+        async useStudentsToken({ userName, tokenName, courseCode }) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          const acc = await prisma.account.findUnique({
+            where: {
+              userName,
+            },
+          });
+          const token = await prisma.courseToken.findFirst({
+            where: {
+              title: tokenName,
+              courseId: course.id,
+            },
+          });
+          const issueToken = await prisma.issueToken.updateMany({
+            where: {
+              courseTokenId: token.id,
+              accountId: acc.id,
+            },
+            data: {
+              datesUsed: {
+                push: new Date(),
+              },
+            },
+          });
+          return null;
+        },
       });
       return config;
     },

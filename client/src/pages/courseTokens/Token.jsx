@@ -90,7 +90,9 @@ function Token({ token }) {
                 sx={{ width: 230 }}
               />
             ) : (
-              <Typography variant="h5">{token.description}</Typography>
+              <Typography variant="h5" data-cy="token-description">
+                {token.description}
+              </Typography>
             )}
             {edit && courseType === "Instructor" ? (
               <FormInputNumber
@@ -100,11 +102,11 @@ function Token({ token }) {
                 sx={{ width: 230 }}
               />
             ) : courseType !== "Student" ? (
-              <Typography variant="h5">
+              <Typography variant="h5" data-cy="token-quantity">
                 Token Limit: {token.tokenLimit}
               </Typography>
             ) : (
-              <Typography variant="h5">
+              <Typography variant="h5" data-cy="token-quantity-student">
                 Token Balance: {token.tokenLimit - token.datesUsed.length}/
                 {token.tokenLimit}
               </Typography>
