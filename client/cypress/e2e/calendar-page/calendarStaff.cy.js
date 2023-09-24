@@ -186,8 +186,11 @@ describe("Calendar Page: Staff Office Hours", () => {
 
       const newDate = new Date(now.setMonth(now.getMonth() + 1));
       const newDateStr = formatCypressDate(newDate);
+      let startDate;
+      cy.get('input[name="startDate"]')
+        .invoke("val")
+        .then((sometext) => (startDate = new Date(sometext)));
       cy.get('[data-cy="create-end-date-text"]').clear().type(newDateStr);
-
       const locationName = "Mark's Location";
       cy.get('[data-cy="create-location-input"]')
         .should("be.visible")
@@ -211,13 +214,18 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('div[class="fc-event-title"]').then(($elements) => {
         cy.log($elements.length);
         countOfElements += $elements.length;
-        cy.get('button[title="Next month"]').should("be.visible").click();
-        cy.get('div[class="fc-event-title"]').then(($elements) => {
-          cy.log($elements.length);
-          countOfElements += $elements.length;
+        if (startDate.getMonth() !== newDate.getMonth()) {
+          cy.get('button[title="Next month"]').should("be.visible").click();
+          cy.get('div[class="fc-event-title"]').then(($elements) => {
+            cy.log($elements.length);
+            countOfElements += $elements.length;
+            cy.wrap(countOfElements).should("be.lte", 14);
+            cy.wrap(countOfElements).should("be.gte", 10);
+          });
+        } else {
           cy.wrap(countOfElements).should("be.lte", 14);
-          cy.wrap(countOfElements).should("be.gte", 10);
-        });
+          cy.wrap(countOfElements).should("be.gte", 9);
+        }
       });
     });
   });
@@ -542,6 +550,10 @@ describe("Calendar Page: Staff Office Hours", () => {
       let newDate = new Date();
       newDate.setDate(now.getDate() + 15);
       const newDateStr = formatCypressDate(newDate);
+      let startDate;
+      cy.get('input[name="startDate"]')
+        .invoke("val")
+        .then((sometext) => (startDate = new Date(sometext)));
       cy.get('[data-cy="edit-end-date-text"]').clear().type(newDateStr);
 
       cy.get('button[value="Monday"]').click();
@@ -555,13 +567,18 @@ describe("Calendar Page: Staff Office Hours", () => {
       cy.get('div[class="fc-event-title"]').then(($elements) => {
         cy.log($elements.length);
         countOfElements += $elements.length;
-        cy.get('button[title="Next month"]').should("be.visible").click();
-        cy.get('div[class="fc-event-title"]').then(($elements) => {
-          cy.log($elements.length);
-          countOfElements += $elements.length;
+        if (startDate.getMonth() !== newDate.getMonth()) {
+          cy.get('button[title="Next month"]').should("be.visible").click();
+          cy.get('div[class="fc-event-title"]').then(($elements) => {
+            cy.log($elements.length);
+            countOfElements += $elements.length;
+            cy.wrap(countOfElements).should("be.lte", 8);
+            cy.wrap(countOfElements).should("be.gte", 3);
+          });
+        } else {
           cy.wrap(countOfElements).should("be.lte", 8);
           cy.wrap(countOfElements).should("be.gte", 3);
-        });
+        }
       });
     });
     // TODO more scenarios
