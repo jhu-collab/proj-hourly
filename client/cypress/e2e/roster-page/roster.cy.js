@@ -47,40 +47,29 @@ describe("Roster Page", () => {
     const confirmRoleChangeButton = '[data-cy="confirm-role-change-button"]';
     // cancel (x) button?
   
-    const courseTitle = "Computer System Fundamentals";
-    const courseNumber = "601.229";
-    const courseSemester = "Fall";
+    const courseTitle = "Data Structures";
+    const courseNumber = "601.226";
+    const courseSemester = "Spring";
     const courseYear = "2023";
+    const courseCode = "ABCDEF";
   
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
     const courseCard = `[data-cy="${courseNumber}"]`;
-
-    beforeAll(() => {
-      const courseCode = cy.task("getCourseCode", "courseTitle", "courseNumber", "courseSemester", "courseYear");
-    })
   
     beforeEach(() => {
-      cy.task("deleteStudentCourses", "user-1");
-      cy.task("deleteInstructorCourses", "user-1");
+      cy.task("deleteStudentCourses", "ali-the-student");
+      cy.task("deleteInstructorCourses", "ali-the-professor]");
+      cy.task("deleteStaffCourses", "ali-the-ta");
 
-      cy.task("addStudent", "courseCode");
-      cy.task("addStaff", "courseCode");
+      cy.task("addStudent", courseCode);
+      cy.task("addStaff", courseCode);
   
       cy.visit(BASE_URL + "login");
   
-      cy.get(userNameInputText).type("user-1");
-      cy.get(passwordInputText).type("user-1");
+      cy.get(userNameInputText).type("ali-the-professor");
+      cy.get(passwordInputText).type("ali-the-professor");
       cy.get(loginButton).click();
-  
-      cy.get(addCourseButton).click();
-      cy.get(createCourseButton).click();
-      cy.get(createCourseTitle).type(courseTitle);
-      cy.get(createCourseNumber).type(courseNumber);
-      cy.get(createCourseSemesterDropdown).click();
-      cy.get(createCourseSemester).click();
-      cy.get(createCourseYear).type(courseYear);
-      cy.get(createButton).click();
-  
+
       cy.wait(1000);
   
       cy.get(courseCard).click();
@@ -96,11 +85,6 @@ describe("Roster Page", () => {
       cy.wait(1000);
 
     });
-
-    afterEach(() => {
-      cy.task("removeStudent", "courseCode");
-      cy.task("removeStaff", "courseCode");
-    })
   
     it("Layout Contains All Required Elements", () => {
       cy.get(navbarButton).should("be.visible").should("be.enabled");
@@ -115,16 +99,23 @@ describe("Roster Page", () => {
       cy.get(rosterToolbarInstructor).contains("Instructors").should("be.visible");  
     });
 
-    // it("Student tab looks as expected", () => {
-      //  cy.get(rosterToolbarStudent).contains("Students").click();
-      // if(students) {
+    it("Student tab looks as expected", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+      if(cy.task("currentStudents", "ABCDEF")) {
+        cy.get("body").click()
+        cy.wait(1000)
+        cy.get('div[class="MuiDataGrid-virtualScrollerRenderZone"]').then(($elements) => {
+          countOfElements += $elements.length;
+          cy.wrap(countOfElements).should("be.lte", 2);
+          cy.wrap(countOfElements).should("be.gte", 2);
+        });
       //   check first row that columns, filters, density export
       //   check second row that says checkbox, first name, last name, email
       //   check every other row for checkbox, first name, last name, email of user
-      // } else {
-      //   cy.get(noRosterAlert).contains("Students").should("be.visible");
-      // }
-    // });
+      } else {
+        cy.get(noRosterAlert).contains("Students").should("be.visible");
+      }
+    });
 
     // it("Promotion/demotion student pop-up has required elements", () => {
       //  cy.get(changeRoleButton).click();

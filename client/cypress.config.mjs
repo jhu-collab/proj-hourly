@@ -159,6 +159,19 @@ export default defineConfig({
           });
           return null;
         },
+        async deleteStaffCourses(userName) {
+          await prisma.account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              staffCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
         async deleteInstructorCourses(userName) {
           const user = await prisma.account.findUnique({
             where: {
@@ -172,7 +185,7 @@ export default defineConfig({
             return null;
           }
           for (const c of user.instructorCourses) {
-            console.log(c);
+            await prisma.courseToken.deleteMany({where: { courseId: c.id}})
             await prisma.officeHourTimeOptions.deleteMany({
               where: { courseId: c.id },
             });
@@ -220,11 +233,12 @@ export default defineConfig({
             data: {
               studentCourses: {
                 connect: {
-                  id: courseCode,
+                  code: courseCode,
                 }
               },
             },
           });
+          return null;
         },
         async addStaff(courseCode) {
           const aliTheTA = await prisma.account.update({
@@ -234,11 +248,12 @@ export default defineConfig({
             data: {
               staffCourses: {
                 connect: {
-                  id: courseCode,
+                  code: courseCode,
                 }
               },
             },
           });
+          return null;
         },
         async removeStudent(courseCode) {
           const aliTheStudent = await prisma.account.update({
@@ -248,11 +263,12 @@ export default defineConfig({
             data: {
               studentCourses: {
                 disconnect: {
-                  id: courseCode,
+                  code: courseCode,
                 }
               },
             },
           });
+          return null;
         },
         async removeStaff(courseCode) {
           const aliTheTA = await prisma.account.update({
@@ -262,22 +278,45 @@ export default defineConfig({
             data: {
               staffCourses: {
                 disconnect: {
-                  id: courseCode,
+                  code: courseCode,
                 }
               },
             },
           });
+          return null;
         },
-        async getCourseCode(courseTitle, courseNumber, courseSemester, courseYear) {
-          const course = await prisma.account.findUnique({
+        async currentStudents(courseCode) {
+          const course = await prisma.course.findUnique({
             where: {
-              title: courseTitle,
-              courseNumber,
-              semester: courseSemester,
-              calendarYear: courseYear,
+              code: courseCode,
+            },
+            include: {
+              students: true,
             },
           });
-          return course.code;
+          return course.students != null;
+        },
+        async currentStaff(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              courseStaff: true,
+            },
+          });
+          return course.courseStaff != null;
+        },
+        async currentInstructors(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              instructors: true,
+            },
+          });
+          return course.instructors != null;
         },
       });
       return config;
