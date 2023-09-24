@@ -157,6 +157,7 @@ export const isOfficeHourOnDay = async (req, res, next) => {
       }
     });
   }
+
   if (officeHour === null || isCancelled) {
     debug("office hour is not on day");
     return res
@@ -476,7 +477,7 @@ export const isInFuture = async (req, res, next) => {
   debug("checking if office hour is in future");
   const { date } = req.params;
   const officeHourId = parseInt(req.params.officeHourId, 10);
-  const dateObj = spacetime(date).goto("America/New_York");
+  const dateObj = spacetime(req.targetDate).goto("America/New_York");
   const current = spacetime.now().goto("America/New_York");
   if (dateObj.isBefore(current)) {
     return res
@@ -868,9 +869,17 @@ export const isRegistrationInFutureByIdParams = async (req, res, next) => {
   });
   debug("got registration");
   const startTimeObj = spacetime(registration.startTime);
-  const dateObj = spacetime(registration.date);
-  dateObj.hour(startTimeObj.hour());
-  dateObj.minute(startTimeObj.minute());
+  let dateObj = spacetime(registration.date);
+  dateObj = dateObj.add(
+    startTimeObj.hour() + startTimeObj.toNativeDate().getTimezoneOffset() / 60,
+    "hour"
+  );
+  dateObj = dateObj.add(startTimeObj.minute(), "minute");
+  dateObj = dateObj.add(
+    startTimeObj.toNativeDate().getTimezoneOffset() / 60 -
+      dateObj.toNativeDate().getTimezoneOffset() / 60,
+    "hour"
+  );
   if (dateObj.isAfter(spacetime.now())) {
     debug("registration is in future");
     next();
@@ -896,6 +905,9 @@ export const isRegistrationInFuture = async (req, res, next) => {
   const dateObj = new Date(date);
   dateObj.setUTCHours(startTimeObj.getUTCHours());
   dateObj.setUTCMinutes(startTimeObj.getUTCMinutes());
+  if (startTimeObj.getUTCHours() < req.targetDate.getUTCHours()) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
   if (dateObj > new Date()) {
     debug("registration is in future");
     next();
@@ -1069,7 +1081,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
                 60 //handles daylight savings
           );
         }
-        if (currEnd < start) {
+        if (currEnd.toNativeDate() < start.toNativeDate()) {
           currEnd.date(currEnd.date() + 1);
         }
         if (equalDates(start.toNativeDate(), dateObj.toNativeDate())) {

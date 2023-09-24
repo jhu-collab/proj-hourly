@@ -9,11 +9,10 @@ ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Read arguments passed to docker build command through --build-arg
-ARG TARGET=${TARGET}
-ARG DATABASE_URL=${DATABASE_URL}
+ARG DATABASE_URL
 
 # Set environment variables
-ENV DATABASE_URL=${DATABASE_URL}
+ENV DATABASE_URL=$DATABASE_URL
 # We set the ARG as ENV because the app needs it during runtime as well as build time
 
 WORKDIR /app
@@ -29,10 +28,12 @@ COPY . .
 # ^ Copy all the files located in the current directory to WORKDIR
 # Won't copy directory/files noted in .dockerignore
 
-RUN npx prisma generate
+RUN yarn prisma generate --schema=./prisma/schema.prisma
 # ^ Generates assets like Prisma Client based on the generator and data model 
 
-RUN if [ "$TARGET" = "production" ] ; then DATABASE_URL=$DATABASE_URL npx prisma migrate deploy ; else DATABASE_URL=$DATABASE_URL npx prisma migrate reset --force ; fi
+# RUN if [ "$TARGET" = "production" ] ; then DATABASE_URL=$DATABASE_URL npx prisma migrate deploy ; else DATABASE_URL=$DATABASE_URL npx prisma migrate reset --force ; fi
+RUN DATABASE_URL=$DATABASE_URL && npx prisma migrate deploy
+
 # ^ Apply migrations 
 
 EXPOSE 5050

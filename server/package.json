@@ -19,7 +19,7 @@
     "coverage": "yarn prisma:test && vitest run --coverage"
   },
   "dependencies": {
-    "@prisma/client": "^4.10.1",
+    "@prisma/client": "^4.13",
     "@vitest/coverage-c8": "^0.30.1",
     "accesscontrol": "^2.2.1",
     "axios": "^0.27.2",
@@ -47,7 +47,7 @@
     "jest": "^28.1.3",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "prisma": "^4.10.1",
+    "prisma": "^4.13",
     "supertest": "^6.2.4",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4",

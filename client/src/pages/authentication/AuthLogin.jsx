@@ -12,9 +12,9 @@ import FormInputText from "../../components/form-ui/FormInputText";
 import useAuth from "../../hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
@@ -37,7 +37,8 @@ function AuthLogin() {
     signIn(data);
   };
 
-  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
+  const handleClickShowPassword = () =>
+    setShowPassword((showPassword) => !showPassword);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -49,6 +50,7 @@ function AuthLogin() {
         <Stack spacing={1}>
           <AnimateButton>
             <Button
+              data-cy="sign-in-as-user-button"
               variant="contained"
               fullWidth
               size="large"
@@ -73,6 +75,7 @@ function AuthLogin() {
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} marginTop={-0.5} alignItems="center">
           <FormInputText
+            data-cy="username-input-text"
             name="username"
             control={control}
             variant="standard"
@@ -80,27 +83,30 @@ function AuthLogin() {
             InputLabelProps={{ shrink: true }}
           />
           <FormInputText
+            data-cy="password-input-text"
             name="password"
             control={control}
             variant="standard"
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             InputLabelProps={{ shrink: true }}
             InputProps={{
-              endAdornment:
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
           <AnimateButton>
             <Button
+              data-cy="login-button"
               type="submit"
               variant="contained"
               size="large"

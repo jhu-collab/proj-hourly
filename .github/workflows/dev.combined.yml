@@ -1,0 +1,65 @@
+# name: (dev) Deploy the app in single container
+
+# # on:
+# #   push:
+# #     branches:
+# #       - dev
+# #     paths:
+# #       - "client/**"
+# #       - "server/**"
+# #       - ".github/workflows/dev.combined.yml"
+# #       - "docker-compose.debug.yml"
+
+# env:
+#   VITE_RUN_MODE: dev
+#   VITE_DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
+#   VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+#   VITE_ROSTER_SSO_JHU_URL: ${{ secrets.ROSTER_SSO_JHU_URL }}
+#   DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout GitHub Action
+#         uses: actions/checkout@v3
+
+#       - name: Login to GitHub Container Registry
+#         uses: docker/login-action@v2
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
+
+#       - name: Build the docker image
+#         run: |
+#           docker-compose -f docker-compose.debug.yml build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --build-arg DATABASE_URL=$DATABASE_URL
+#           docker tag proj-hourly-client:latest ghcr.io/${{ github.repository }}/client-dev:latest
+#           docker tag proj-hourly-server:latest ghcr.io/${{ github.repository }}/server-dev:latest
+#           docker tag proj-hourly-nginx:latest ghcr.io/${{ github.repository }}/nginx-dev:latest
+#           docker push ghcr.io/${{ github.repository }}/client-dev:latest
+#           docker push ghcr.io/${{ github.repository }}/server-dev:latest
+#           docker push ghcr.io/${{ github.repository }}/nginx-dev:latest
+#       - name: Deploy nginx to Caprover
+#         uses: caprover/deploy-from-github@v1.1.2
+#         with:
+#           server: ${{ secrets.CAPROVER_SERVER }}
+#           app: ${{ secrets.DEV_APP_NAME }}
+#           token: ${{ secrets.DEV_APP_TOKEN }}
+#           image: ghcr.io/${{ github.repository }}/nginx-dev:latest
+
+#       - name: Deploy to Server Caprover
+#         uses: caprover/deploy-from-github@v1.1.2
+#         with:
+#           server: ${{ secrets.CAPROVER_SERVER }}
+#           app: ${{ secrets.DEV_APP_NAME }}
+#           token: ${{ secrets.DEV_APP_TOKEN }}
+#           image: ghcr.io/${{ github.repository }}/server-dev:latest
+#       - name: Deploy to Client Caprover
+#         uses: caprover/deploy-from-github@v1.1.2
+#         with:
+#           server: ${{ secrets.CAPROVER_SERVER }}
+#           app: ${{ secrets.DEV_APP_NAME }}
+#           token: ${{ secrets.DEV_APP_TOKEN }}
+#           image: ghcr.io/${{ github.repository }}/client-dev:latest

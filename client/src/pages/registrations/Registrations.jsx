@@ -46,6 +46,11 @@ const filterByTime = (array, registrationTab) => {
     const endObj = new Date(item.date);
     const startTimeObj = new Date(item.startTime);
     const endTimeObj = new Date(item.endTime);
+    if (startObj.getUTCHours() < new Date().getHours()) {
+      startObj.setUTCDate(startObj.getUTCDate() + 1);
+      endObj.setUTCDate(endObj.getUTCDate() + 1);
+    }
+
     startObj.setUTCHours(startTimeObj.getUTCHours());
     startObj.setUTCMinutes(startTimeObj.getUTCMinutes());
     endObj.setUTCHours(endTimeObj.getUTCHours());

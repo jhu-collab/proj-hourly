@@ -50,7 +50,12 @@ function RegistrationTypes({ index, types, isLoading, error }) {
           {types.length === 0 ? (
             noRegistrations()
           ) : (
-            <Grid container spacing={2} marginTop={2}>
+            <Grid
+              data-cy="registration-type-list"
+              container
+              spacing={2}
+              marginTop={2}
+            >
               {types.map((type, index2) => {
                 return (
                   <Grid item xs={12}>
@@ -62,6 +67,7 @@ function RegistrationTypes({ index, types, isLoading, error }) {
           )}
           {courseType === "Instructor" && (
             <Fab
+              data-cy="add-registration-type-button"
               color="primary"
               onClick={() => NiceModal.show("create-registration-type")}
               sx={{

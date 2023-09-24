@@ -18,7 +18,7 @@ function Topics() {
 
   const noRegistrations = () => {
     return (
-      <Alert severity="info" sx={{ mt: 2 }}>
+      <Alert data-cy="no-topics-alert" severity="info" sx={{ mt: 2 }}>
         No Topics
       </Alert>
     );
@@ -40,10 +40,10 @@ function Topics() {
       {data.length === 0 ? (
         noRegistrations()
       ) : (
-        <Grid container spacing={2}>
+        <Grid container data-cy="course-topics-list" spacing={2}>
           {data.map((topic) => {
             return (
-              <Grid item xs={12} key={topic.id}>
+              <Grid data-cy={topic.value} item xs={12} key={topic.id}>
                 <Topic topic={topic} />
               </Grid>
             );
@@ -52,6 +52,7 @@ function Topics() {
       )}
       {courseType === "Instructor" && (
         <Fab
+          data-cy="add-topic-button"
           color="primary"
           onClick={() => NiceModal.show("create-topic")}
           sx={{
