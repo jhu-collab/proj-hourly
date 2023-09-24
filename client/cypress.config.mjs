@@ -172,6 +172,19 @@ export default defineConfig({
           });
           return null;
         },
+        async deleteInstructorCourse(userName) {
+          await prisma.account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              instructorCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
         async deleteInstructorCourses(userName) {
           const user = await prisma.account.findUnique({
             where: {
@@ -229,6 +242,18 @@ export default defineConfig({
           const aliTheStudent = await prisma.account.update({
             where: {
               userName: "ali-the-student".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                connect: {
+                  code: courseCode,
+                }
+              },
+            },
+          });
+          const thor = await prisma.account.update({
+            where: {
+              userName: "thor".toLocaleLowerCase(),
             },
             data: {
               studentCourses: {

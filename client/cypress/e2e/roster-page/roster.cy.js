@@ -35,7 +35,6 @@ describe("Roster Page", () => {
     const confirmDeleteConfirmButton = '[data-cy="confirm-delete-button"]';
 
     const roleForm = '[data-cy="role-form"]';
-    const roleStack = '[data-cy="change-role-button"]';
     const changeRoleButton = '[data-cy="change-role-button"]';
     const changeRoleIcon = '[data-cy="change-role-icon"]';
     const studentRoleTitle = '[data-cy="student-role-title"]';
@@ -55,11 +54,19 @@ describe("Roster Page", () => {
   
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
     const courseCard = `[data-cy="${courseNumber}"]`;
-  
+
+    const accounts = new Map();
+    accounts.set("Ali-Student", { firstName: "Ali-Student", lastName: "Student", email: "ali-the-student@jhu.edu"});
+    accounts.set("Thor", { firstName: "Thor", lastName: "Odinson", email: "thor.odinson@gmail.com"}); 
+    accounts.set("Ali-Professor", { firstName: "Ali-Professor", lastName: "Professor", email: "ali-the-professor@jhu.edu"});  
+
     beforeEach(() => {
       cy.task("deleteStudentCourses", "ali-the-student");
-      cy.task("deleteInstructorCourses", "ali-the-professor]");
-      cy.task("deleteStaffCourses", "ali-the-ta");
+      cy.task("deleteStaffCourses", "ali-the-student");
+      cy.task("deleteInstructorCourse", "ali-the-student");
+      cy.task("deleteStudentCourses", "thor");
+      cy.task("deleteStudentCourses", "ali-the-professor");
+      cy.task("deleteStaffCourses", "ali-the-professor");
 
       cy.task("addStudent", courseCode);
       cy.task("addStaff", courseCode);
@@ -103,38 +110,57 @@ describe("Roster Page", () => {
       cy.get(rosterToolbarStudent).contains("Students").click({force: true});
       if(cy.task("currentStudents", "ABCDEF")) {
         cy.get("body").click()
-        cy.wait(1000)
-        cy.get('div[class="MuiDataGrid-virtualScrollerRenderZone"]').then(($elements) => {
-          countOfElements += $elements.length;
-          cy.wrap(countOfElements).should("be.lte", 2);
-          cy.wrap(countOfElements).should("be.gte", 2);
+        cy.get('.MuiDataGrid-row').should('have.length', 2);
+        cy.get('.MuiDataGrid-row').first().within(($element) => {
+          cy.get('.MuiDataGrid-cellCheckbox').should('be.visible');
+          cy.get('.MuiDataGrid-cellCheckbox').should('be.visible');
+          cy.get('.MuiDataGrid-cellCheckbox').should('be.visible');
+          cy.get('.MuiDataGrid-cell--textLeft').should('be.visible').should(($cells) => {
+            const firstCellValue = $cells.eq(0).text();
+            const secondCellValue = $cells.eq(1).text();
+            const thirdCellValue = $cells.eq(2).text();
+            expect(firstCellValue).to.equal(accounts.get(firstCellValue).firstName);
+            expect(secondCellValue).to.equal(accounts.get(firstCellValue).lastName);
+            expect(thirdCellValue).to.equal(accounts.get(firstCellValue).email);
+          });  
+          cy.get('.MuiDataGrid-actionsCell').first().should('be.visible').within(($cells) => {
+            cy.get('.MuiButtonBase-root').should('have.length', 3);
+          });      
         });
-      //   check first row that columns, filters, density export
-      //   check second row that says checkbox, first name, last name, email
-      //   check every other row for checkbox, first name, last name, email of user
       } else {
         cy.get(noRosterAlert).contains("Students").should("be.visible");
       }
     });
 
-    // it("Promotion/demotion student pop-up has required elements", () => {
-      //  cy.get(changeRoleButton).click();
-      //  cy.get(roleForm).should("be-visible");
-      //  cy.get(roleStack).should("be-visible");
-      //  cy.get(confirmRoleChangeButton).should("be-visible");
-      //  cy.get(roleChoicesGroup).should("be-visible");
-      //  cy.get(studentRoleTitle).should("be-visible");
-      //  cy.get(toStaffButton).should("be-visible");
-      //  cy.get(toInstructorButton).should("be-visible");
-    // });
+    it("Promotion/demotion student pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+      cy.get('.MuiDataGrid-row').first().within(($element) => {
+        cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
+          cy.get('.MuiButtonBase-root').eq(1).click();
+        });
+      });
+      cy.get(roleForm).should("be.visible");
+      cy.get(confirmRoleChangeButton).should("be.visible");
+      cy.get(roleChoicesGroup).should("be.visible").within(($cells) => {
+        cy.get(toStaffButton).should("be.visible");
+        cy.get(toInstructorButton).should("be.visible");
+      });
+      cy.get(studentRoleTitle).should("be.visible");
+      cy.get('.MuiDataGrid-row').should('have.length', 1);
+    });
 
-    // it("Successfully promoting student to staff", () => {
-      //  get student
-      //  cy.get(changeRoleIcon).click();  
-      //  cy.get(toStaffButton).click();
-      //  cy.get(confirmRoleChangeButton).click();
-      //  check that student is now staff
-    // });
+    it("Successfully promoting student to staff", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+      cy.get('.MuiDataGrid-row').first().within(($element) => {
+        cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
+          cy.get('.MuiButtonBase-root').eq(1).click();
+        });
+      });
+       cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toStaffButton).click();
+      });
+      cy.get(confirmRoleChangeButton).click();
+    });
 
     // it("Successfully cancelling promotion student to staff", () => {
       //  get student
@@ -172,9 +198,9 @@ describe("Roster Page", () => {
       //  student page, click top student
       //  cy.get(deleteUserButton).should("be.visible").click();
       //  cy.get(deleteConfirmButton).should("be.visible");
-      //  cy.get(closeDeleteConfirmButton).should("be-visible");
-      //  cy.get(cancelDeleteConfirmButton).should("be-visible");
-      //  cy.get(confirmDeleteConfirmButton).should("be-visible");
+      //  cy.get(closeDeleteConfirmButton).should("be.visible");
+      //  cy.get(cancelDeleteConfirmButton).should("be.visible");
+      //  cy.get(confirmDeleteConfirmButton).should("be.visible");
     // });
 
     // it("Successfully deleting student", () => {
@@ -220,8 +246,8 @@ describe("Roster Page", () => {
     // });
 
     // it("Staff tab looks as expected", () => {
-      //  cy.get(rosterToolbarStaff).contains("Staff").click();
-      // if(staff) {
+      // if(cy.task("currentStaff", "ABCDEF")) {
+      //   cy.get(rosterToolbarStaff).contains("Staff").click();
       //   check first row that columns, filters, density export
       //   check second row that says checkbox, first name, last name, email
       //   check every other row for checkbox, first name, last name, email of user
@@ -232,13 +258,13 @@ describe("Roster Page", () => {
 
     // it("Promotion/demotion staff pop-up has required elements", () => {
       //  cy.get(changeRoleButton).click();
-      //  cy.get(roleForm).should("be-visible");
-      //  cy.get(roleStack).should("be-visible");
-      //  cy.get(confirmRoleChangeButton).should("be-visible");
-      //  cy.get(roleChoicesGroup).should("be-visible");
-      //  cy.get(staffRoleTitle).should("be-visible");
-      //  cy.get(toStudentButton).should("be-visible");
-      //  cy.get(toInstructorButton).should("be-visible");
+      //  cy.get(roleForm).should("be.visible");
+      //  cy.get(roleStack).should("be.visible");
+      //  cy.get(confirmRoleChangeButton).should("be.visible");
+      //  cy.get(roleChoicesGroup).should("be.visible");
+      //  cy.get(staffRoleTitle).should("be.visible");
+      //  cy.get(toStudentButton).should("be.visible");
+      //  cy.get(toInstructorButton).should("be.visible");
     // });
 
     // it("Successfully demoting staff to student", () => {
@@ -285,9 +311,9 @@ describe("Roster Page", () => {
       //  staff page, click top staff
       //  cy.get(deleteUserButton).should("be.visible").click();
       //  cy.get(deleteConfirmButton).should("be.visible");
-      //  cy.get(closeDeleteConfirmButton).should("be-visible");
-      //  cy.get(cancelDeleteConfirmButton).should("be-visible");
-      //  cy.get(confirmDeleteConfirmButton).should("be-visible");
+      //  cy.get(closeDeleteConfirmButton).should("be.visible");
+      //  cy.get(cancelDeleteConfirmButton).should("be.visible");
+      //  cy.get(confirmDeleteConfirmButton).should("be.visible");
     // });
 
     // it("Successfully deleting staff", () => {
@@ -311,12 +337,12 @@ describe("Roster Page", () => {
       //  make sure staff still exists
     // });
 
-    // it("Instructor tab looks as expected", () => {
-      //  cy.get(rosterToolbarInstructor).contains("Instructors").click();  
-      //  if(instructor) {
-      //   check first row that columns, filters, density export
-      //   check second row that says checkbox, first name, last name, email
-      //   check every other row for checkbox, first name, last name, email of user
+    // it("Instructor tab looks as expected", () => { 
+      //  if(cy.task("currentInstructors", "ABCDEF")) {
+      //    cy.get(rosterToolbarInstructor).contains("Instructors").click(); 
+      //    check first row that columns, filters, density export
+      //    check second row that says checkbox, first name, last name, email
+      //    check every other row for checkbox, first name, last name, email of user
       //  } else {
       //   cy.get(noRosterAlert).contains("Instructor").should("be.visible");
       // }    
