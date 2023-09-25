@@ -343,6 +343,58 @@ export default defineConfig({
           });
           return course.instructors != null;
         },
+        async addCourseTokens(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              students: true,
+            },
+          });
+          const token = await prisma.courseToken.create({
+            data: {
+              title: "tokenTitle",
+              tokenLimit: 2,
+              course: {
+                connect: {
+                  id: course.id,
+                },
+              },
+            },
+          });
+          const array = [];
+          course.students.forEach((student) => {
+            array.push({
+              accountId: student.id,
+              courseTokenId: token.id,
+            });
+          });
+          await prisma.issueToken.createMany({
+            data: array,
+          });
+          return null;
+        },
+        async deleteCourseTokens(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          await prisma.issueToken.deleteMany({
+            where: {
+              CourseToken: {
+                courseId: course.id,
+              },
+            },
+          });
+          await prisma.courseToken.deleteMany({
+            where: {
+              courseId: course.id,
+            },
+          });
+          return null;
+        },
       });
       return config;
     },
