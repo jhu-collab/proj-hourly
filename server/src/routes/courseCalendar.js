@@ -14,6 +14,9 @@ const param = express_validator.param;
 
 router.use(checkToken);
 
+/**
+ * Route to create a new course event.
+ */
 router.post(
   "/create",
   async (req, res, next) => {
@@ -52,6 +55,9 @@ router.post(
   controller.create
 );
 
+/**
+ * Route to change the cancellation status of a course event.
+ */
 router.post(
   "/changeCancellation",
   async (req, res, next) => {
@@ -69,6 +75,9 @@ router.post(
   controller.changeCancellation
 );
 
+/**
+ * Route to change the remote status of a course event.
+ */
 router.post(
   "/changeRemote",
   async (req, res, next) => {
@@ -86,6 +95,9 @@ router.post(
   controller.changeRemote
 );
 
+/**
+ * Route to edit a course event.
+ */
 router.post(
   "/edit",
   async (req, res, next) => {
@@ -113,8 +125,11 @@ router.post(
   //validator.newDateInFuture,
   validator.isUTCTwoNewDate,
   controller.editEvent
-);
+);;
 
+/**
+ * Route to edit the title of a course event.
+ */
 router.post(
   "/editTitle",
   async (req, res, next) => {
@@ -131,8 +146,11 @@ router.post(
   //validator.dateInFuture,
   validator.isUTC0,
   controller.editEventTitle
-);
+);;
 
+/**
+ * Route to edit the location of a course event.
+ */
 router.post(
   "/editLocation",
   async (req, res, next) => {
@@ -143,7 +161,9 @@ router.post(
   body("date", "Please specify the day of this event").notEmpty(),
   body("location", "Please specify location").notEmpty().isString(),
   body("isRemote", "Please specify whether remote or not")
+    
     .notEmpty()
+    
     .isBoolean(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseId,
@@ -152,8 +172,11 @@ router.post(
   //validator.dateInFuture,
   validator.isUTC0,
   controller.editEventLocation
-);
+);;
 
+/**
+ * Route to get all events for a course.
+ */
 router.get(
   "/getAllEventsForCourse/:courseId",
   async (req, res, next) => {
@@ -165,8 +188,11 @@ router.get(
   courseValidator.isCourseIdParams,
   validator.isInCourse,
   controller.getAllEventsForCourse
-);
+);;
 
+/**
+ * Route to get all non-cancelled events for a course.
+ */
 router.get(
   "/getAllNotCancelledEventsForCourse/:courseId",
   async (req, res, next) => {
@@ -178,8 +204,11 @@ router.get(
   courseValidator.isCourseIdParams,
   validator.isInCourse,
   controller.getAllEventsForCourse
-);
+);;
 
+/**
+ * Route to get all cancelled events for a course.
+ */
 router.get(
   "/getAllCancelledEventsForCourse/:courseId",
   async (req, res, next) => {
@@ -191,8 +220,11 @@ router.get(
   courseValidator.isCourseIdParams,
   validator.isInCourse,
   controller.getAllCancelledEventsForCourse
-);
+);;
 
+/**
+ * Route to create a single event for a course.
+ */
 router.post(
   "/createEvent",
   async (req, res, next) => {
@@ -218,8 +250,11 @@ router.post(
   //validator.dateInFuture,
   validator.isUTC0,
   controller.addCourseEvent
-);
+);;
 
+/**
+ * Route to create new recurring events for a course (which already has course events).
+ */
 router.post(
   "/createRecurringEvent",
   async (req, res, next) => {
@@ -255,8 +290,11 @@ router.post(
   //validator.begDateInFuture,
   validator.isUTCTwo,
   controller.addRecurringCourseEvent
-);
+);;
 
+/**
+ * Route to get an event on a specific day for a given course.
+ */
 router.get(
   "/getEventOnDay/:courseId/date/:date",
   async (req, res, next) => {
@@ -271,8 +309,11 @@ router.get(
   //validator.dateInFutureParams,
   validator.isUTC0Params,
   controller.getEventOnDay
-);
+);;
 
+/**
+ * Route to delete a course event by its ID on a certain date.
+ */
 router.delete(
   "/deleteCourse/:courseId",
   async (req, res, next) => {
@@ -284,8 +325,11 @@ router.delete(
   courseValidator.isCourseIdParams,
   validator.isCourseInstructorParams,
   controller.deleteCourse
-);
+);;
 
+/**
+ * Route to delete all events for a course by its ID.
+ */
 router.delete(
   "/deleteCourse/:courseId/date/:date",
   async (req, res, next) => {
@@ -302,6 +346,7 @@ router.delete(
   //validator.dateInFutureParams,
   validator.isUTC0Params,
   controller.deleteCourseOnDay
-);
+);;
 
 export default router;
+
