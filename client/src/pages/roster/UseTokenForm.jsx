@@ -99,6 +99,7 @@ function UseTokenForm(props) {
           control={control}
           label="Token Type"
           options={tokens}
+          cy-data="token-dropdown-type"
         />
         <FormCheckbox
           name="undoToken"
