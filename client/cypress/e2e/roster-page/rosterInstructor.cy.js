@@ -60,7 +60,7 @@ describe("Roster Page", () => {
       cy.task("deleteInstructorCourse", "thor");
       cy.task("deleteStudentCourses", "ali-the-professor");
       cy.task("deleteStaffCourses", "ali-the-professor");
-      
+
       cy.task("deleteCourseTokens", courseCode);
 
       cy.task("addStudent", courseCode);
@@ -107,7 +107,7 @@ describe("Roster Page", () => {
 
     describe("Student Tab", () => {
       it("Student tab looks as expected", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get("body").click()
           cy.get('.MuiDataGrid-row').should('have.length', 2);
@@ -133,7 +133,7 @@ describe("Roster Page", () => {
       });
   
       it("Promotion/demotion student pop-up has required elements", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -150,7 +150,7 @@ describe("Roster Page", () => {
       });
   
       it("Successfully promoting student to staff", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -163,14 +163,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }
       });
   
       it("Successfully closing promotion student to staff", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -187,14 +187,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
       });
   
       it("Successfully promoting student to instructor", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -207,14 +207,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
-        cy.get(rosterToolbarInstructor).contains("Instructor").click({force: true});
+        cy.get(rosterToolbarInstructor).contains("Instructor").click();
         if(cy.task("currentInstructors", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }    
       });
   
       it("Successfully closing promotion student to instructor", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -231,14 +231,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }
-        cy.get(rosterToolbarInstructor).contains("Instructor").click({force: true});
+        cy.get(rosterToolbarInstructor).contains("Instructor").click();
         if(cy.task("currentInstructors", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
       });
   
       it("Delete student pop-up has required elements", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -257,7 +257,7 @@ describe("Roster Page", () => {
       });
   
       it("Successfully deleting student", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -274,7 +274,7 @@ describe("Roster Page", () => {
       });
   
       it("Successfully cancelling deletion of student", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -291,7 +291,7 @@ describe("Roster Page", () => {
       });
 
       it("Successfully closing deletion of student", () => {
-        cy.get(rosterToolbarStudent).contains("Students").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Students").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -308,6 +308,41 @@ describe("Roster Page", () => {
       });
   
       // it("Course token pop-up has required elements", () => {
+      //   cy.get(rosterToolbarStudent).contains("Students").click();
+      //   cy.get('.MuiDataGrid-row').first().within(($element) => {
+      //     cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
+      //       cy.get('.MuiButtonBase-root').eq(0).click();
+      //     });
+      //   });
+      //   // cy.get('.css-1tbnzuv-MuiTypography-root-MuiDialogTitle-root').should("be.visible");
+      //   cy.get('.css-ypiqx9-MuiDialogContent-root').should("be.visible");
+      //   cy.get('.MuiStack-root').should('be.visible').within(($cells) => {
+      //     // cy.get('.css-143cnbv-MuiTypography-root-MuiDialogTitle-root').should('be.visible');
+      //     // cy.get('.css-ypiqx9-MuiDialogContent-root').should('be.visible').within(($cells) => {
+      //     //   cy.get('.css-2hptoh-MuiTypography-root').should('be.visible');
+      //     //   cy.get('.MuiFormControl-root').should('be.visible').within(($cells) => {
+      //     //     cy.get('.MuiFormLabel-root').should('be.visible');
+      //     //     cy.get('.MuiInputBase-root').should('be.visible');
+      //       // });
+      //       // cy.get('.MuiSvgIcon-root').first().click();
+      //       cy.get('.css-7dkspa-MuiSvgIcon-root-MuiSelect-icon').first().invoke('attr', 'style', 'pointer-events: auto').click().invoke('attr', 'style', 'pointer-events: none');
+      //       cy.get('.css-d16j1o-MuiSvgIcon-root-MuiSelect-icon').should('be.visible');
+      //       cy.get('.MuiList-root').should('be.visible').within(($cells) => {
+      //         cy.get('.MuiButtonBase-root').should('have.length', 2);
+      //         const firstCellValue = $cells.eq(0).text();
+      //         const secondCellValue = $cells.eq(1).text();
+      //         expect(firstCellValue).to.equal('None');
+      //         expect(secondCellValue).to.equal('tokenTitle');
+      //       });
+      //       cy.get('.MuiFormControlLabel-root').should('be.visible');
+      //       cy.get('.MuiButtonBase-root').should('be.visible');
+      //     // });
+      //   });
+      //   cy.get('.css-17oqyao-MuiPaper-root-MuiDialog-paper').first().within(($element) => {
+      //     cy.get('.MuiBox-root').within(($element) => {
+      //       cy.get('.MuiButtonBase-root').should('exist');
+      //     });
+      //   });
       // });
     
       // it("Successfully using student course token", () => {
@@ -325,7 +360,7 @@ describe("Roster Page", () => {
 
     describe("Staff Tab", () => {
       it("Staff tab looks as expected", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get("body").click()
           cy.get('.MuiDataGrid-row').should('have.length', 1);
@@ -351,7 +386,7 @@ describe("Roster Page", () => {
       });
   
       it("Promotion/demotion staff pop-up has required elements", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -368,7 +403,7 @@ describe("Roster Page", () => {
       });
   
       it("Successfully demoting staff to student", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -381,14 +416,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 0);
         }
-        cy.get(rosterToolbarStudent).contains("Student").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Student").click();
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 3);
         }  
       });
   
       it("Successfully closing demotion staff to student", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -405,14 +440,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
-        cy.get(rosterToolbarStudent).contains("Student").click({force: true});
+        cy.get(rosterToolbarStudent).contains("Student").click();
         if(cy.task("currentStudents", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }
       });
   
       it("Successfully promoting staff to instructor", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -425,14 +460,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 0);
         }
-        cy.get(rosterToolbarInstructor).contains("Instructor").click({force: true});
+        cy.get(rosterToolbarInstructor).contains("Instructor").click();
         if(cy.task("currentInstructors", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 2);
         }
       });
   
       it("Successfully closing promotion staff to instructor", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(1).click();
@@ -449,14 +484,14 @@ describe("Roster Page", () => {
         if(cy.task("currentStaff", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }
-        cy.get(rosterToolbarInstructor).contains("Instructor").click({force: true});
+        cy.get(rosterToolbarInstructor).contains("Instructor").click();
         if(cy.task("currentInstructors", "ABCDEF")) {
           cy.get('.MuiDataGrid-row').should('have.length', 1);
         }      
       });
   
       it("Successfully deleting staff", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -464,7 +499,7 @@ describe("Roster Page", () => {
         });
         cy.get('.css-17oqyao-MuiPaper-root-MuiDialog-paper').first().within(($element) => {
           cy.get('.MuiDialogActions-root').within(($element) => {
-            cy.get('.MuiButtonBase-root').eq(1).click({force: true});
+            cy.get('.MuiButtonBase-root').eq(1).click();
           });
         });
         if(cy.task("currentStaff", "ABCDEF")) {
@@ -473,7 +508,7 @@ describe("Roster Page", () => {
       });
 
       it("Successfully cancelling deletion of staff", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -481,7 +516,7 @@ describe("Roster Page", () => {
         });
         cy.get('.css-17oqyao-MuiPaper-root-MuiDialog-paper').first().within(($element) => {
           cy.get('.MuiDialogActions-root').within(($element) => {
-            cy.get('.MuiButtonBase-root').eq(0).click({force: true});
+            cy.get('.MuiButtonBase-root').eq(0).click();
           });
         });
         if(cy.task("currentStaff", "ABCDEF")) {
@@ -490,7 +525,7 @@ describe("Roster Page", () => {
       });
 
       it("Successfully closing deletion of staff", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(2).click();
@@ -498,7 +533,7 @@ describe("Roster Page", () => {
         });
         cy.get('.css-17oqyao-MuiPaper-root-MuiDialog-paper').first().within(($element) => {
           cy.get('.MuiBox-root').within(($element) => {
-            cy.get('.MuiButtonBase-root').click({force: true});
+            cy.get('.MuiButtonBase-root').click();
           });
         });
         if(cy.task("currentStaff", "ABCDEF")) {
@@ -507,7 +542,7 @@ describe("Roster Page", () => {
       });
   
       it("Failure to click token icon for staff", () => {
-        cy.get(rosterToolbarStaff).contains("Staff").click({force: true});
+        cy.get(rosterToolbarStaff).contains("Staff").click();
         cy.get('.MuiDataGrid-row').first().within(($element) => {
           cy.get('.MuiDataGrid-actionsCell').should('be.visible').within(($cells) => {
             cy.get('.MuiButtonBase-root').eq(0).should('be.visible').should('have.attr', 'disabled');
@@ -518,7 +553,7 @@ describe("Roster Page", () => {
 
     describe("Instructor Tab", () => {
       it("Instructor tab looks as expected", () => { 
-        cy.get(rosterToolbarInstructor).contains("Instructor").click({force: true});
+        cy.get(rosterToolbarInstructor).contains("Instructor").click();
         if(cy.task("currentInstructors", "ABCDEF")) {
           cy.get("body").click()
           cy.get('.MuiDataGrid-row').should('have.length', 1);
