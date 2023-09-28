@@ -91,23 +91,25 @@ function UseTokenForm(props) {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
-        <Typography textAlign="center" variant="h4">
+        <Typography data-cy="token-form-subtitle" textAlign="center" variant="h4">
           Select which course token you would like to use:
         </Typography>
         <FormInputDropdown
+          data-cy="token-dropdown-type"
           name="token"
           control={control}
           label="Token Type"
           options={tokens}
-          cy-data="token-dropdown-type"
         />
         <FormCheckbox
+          data-cy="token-undo-label"
           name="undoToken"
           control={control}
           label="Undo Student Token Usage?"
         />
         {undo && token && (
           <FormInputDropdown
+            data-cy="token-date-dropdown"
             name="date"
             control={control}
             label="Date"
@@ -115,6 +117,7 @@ function UseTokenForm(props) {
           />
         )}
         <Button
+          data-cy="token-submit-button"
           color="secondary"
           variant="contained"
           type="submit"

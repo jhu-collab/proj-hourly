@@ -17,7 +17,6 @@ function DeleteButton({ params, isStaff }) {
   return (
     <>
       <GridActionsCellItem 
-      data-cy="delete-user-button"
         icon={<CloseOutlined />}
         onClick={() => {
           confirmDialog("Do you want to delete this user", () => {
