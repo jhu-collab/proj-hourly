@@ -34,6 +34,7 @@ function useMutationUndoUseToken(studentId, courseId) {
 
   const mutation = useMutation(undoUseToken, {
     onSuccess: () => {
+      NiceModal.hide("use-course-token");
       queryClient.invalidateQueries(["remainingTokensPerStudent"]);
       queryClient.invalidateQueries(["remainingTokens"]);
       toast.success(`Successfully unused the user's token`);
