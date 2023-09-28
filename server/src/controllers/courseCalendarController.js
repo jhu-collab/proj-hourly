@@ -18,6 +18,14 @@ export const weekday = [
   "Saturday",
 ];
 
+/**
+ * Controller function to create calendar events for a course using courseId, begDate, endDate, 
+ * daysOfWeek, location, title, additionalInfo, and isRemote. IsCancelled and allDay are default false
+ * and true, respectively.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const create = async (req, res) => {
   const {
     courseId,
@@ -69,6 +77,12 @@ export const create = async (req, res) => {
 };
 // pass in list of topics? assign those to dates until list runs out?
 
+/**
+ * Controller function to change the cancellation status of a calendar event for a course using courseId and date.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const changeCancellation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -102,6 +116,12 @@ export const changeCancellation = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to change the remote status of a calendar event for a course using courseId and date.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const changeRemote = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -135,6 +155,14 @@ export const changeRemote = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to edit a calendar event for a course using courseId, begDate, endDate, 
+ * daysOfWeek, location, title, additionalInfo, isRemote, and isCancelled. allDay cannot be changed.
+ * The courseId and date are used to find the current calendar event, which is then updated. 
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const editEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -181,6 +209,13 @@ export const editEvent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to edit the title of a calendar event for a course using courseId, date, and title.
+ * The courseId and date are used to find the event, whose title is then updated. 
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const editEventTitle = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -206,6 +241,13 @@ export const editEventTitle = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to edit the location of a calendar event for a course using courseId, date, and location.
+ * The courseId and date are used to find the event, whose location is then updated. 
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const editEventLocation = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -232,6 +274,12 @@ export const editEventLocation = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to get the calendar events of a course using the courseId from the request parameters. 
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const getAllEventsForCourse = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -250,6 +298,12 @@ export const getAllEventsForCourse = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
+/**
+ * Controller function to get the non-cancelled calendar events of a course using the courseId from the request parameters.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const getAllNotCancelledEventsForCourse = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -269,6 +323,12 @@ export const getAllNotCancelledEventsForCourse = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
+/**
+ * Controller function to get the cancelled calendar events of a course using the courseId from the request parameters.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const getAllCancelledEventsForCourse = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -288,6 +348,13 @@ export const getAllCancelledEventsForCourse = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
+/**
+ * Controller function to add a single calendar event to a course using courseId, date, location, title, 
+ * additionalInfo, and isRemote. IsCancelled and allDay are default false and true, respectively.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const addCourseEvent = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -315,6 +382,14 @@ export const addCourseEvent = async (req, res) => {
   return res.status(StatusCodes.CREATED).json({ eventJSon });
 };
 
+/**
+ * Controller function to add recurring calendar events to a course using courseId, begDate, endDate, 
+ * daysOfWeek, location, title, additionalInfo, and isRemote. IsCancelled and allDay are default false
+ * and true, respectively.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const addRecurringCourseEvent = async (req, res) => {
   const {
     courseId,
@@ -365,6 +440,13 @@ export const addRecurringCourseEvent = async (req, res) => {
   return res.status(StatusCodes.CREATED).json({ eventJSon });
 };
 
+/**
+ * Controller function to get a calendar event for a course on a specific day using the 
+ * courseId and date, passed in through the request parameters.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const getEventOnDay = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -387,6 +469,13 @@ export const getEventOnDay = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ calendarEvents });
 };
 
+/**
+ * Controller function to delete all events for a course using the 
+ * courseId, passed in through the request parameters.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const deleteCourse = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
@@ -403,6 +492,13 @@ export const deleteCourse = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ eventJSon });
 };
 
+/**
+ * Controller function to delete a calendar event for a course on a specific day using the 
+ * courseId and date, passed in through the request parameters.
+ *
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ */
 export const deleteCourseOnDay = async (req, res) => {
   if (checkValidation(req, res)) {
     return res;
