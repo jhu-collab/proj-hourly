@@ -1,5 +1,5 @@
 describe("Student Roster Page", () => {
-    const BASE_URL = "http://localhost:3000/proj-hourly/";
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
 
   const userNameInputText = '[data-cy="username-input-text"]';
   const passwordInputText = '[data-cy="password-input-text"]';
@@ -79,11 +79,11 @@ describe("Student Roster Page", () => {
     cy.wait(1000);
 
     cy.get(courseCard).click();
-    });
+  });
 
-    it("Roster page is not there for student", () => {
-        const body = cy.get("body");
-        cy.get(navbarButton).click();
-        cy.get(navbar).contains("a", "roster").should('not.exist');
-    });
+  it("Roster page is not there for student", () => {
+    const body = cy.get("body");
+    cy.get(navbarButton).click();
+    cy.get(navbar).contains("a", "roster").should("not.exist");
+  });
 });
