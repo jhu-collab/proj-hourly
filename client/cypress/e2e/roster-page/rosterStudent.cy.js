@@ -7,34 +7,6 @@ describe("Student Roster Page", () => {
 
   const navbarButton = '[data-cy="navbar-button"]';
   const navbar = '[data-cy="navbar"]';
-  const ellipsisIconButton = '[data-cy="ellipsis-icon-button"]';
-  const profileNameButton = '[data-cy="profile-name-button"]';
-  const rosterToolbarRoles = '[data-cy="roster-toolbar-roles"]';
-  const rosterToolbarStudent = '[data-cy="roster-toolbar-students"]';
-  const rosterToolbarStaff = '[data-cy="roster-toolbar-staff"]';
-  const rosterToolbarInstructor = '[data-cy="roster-toolbar-instructors"]';
-  const noRosterAlert = '[data-cy="no-roster-alert"]';
-
-  const closeDeleteConfirmButton = '[data-cy="close-delete-button"]';
-  const cancelDeleteConfirmButton = '[data-cy="cancel-delete-button"]';
-  const confirmDeleteConfirmButton = '[data-cy="confirm-delete-button"]';
-
-  const roleForm = '[data-cy="role-form"]';
-  const studentRoleTitle = '[data-cy="student-role-title"]';
-  const staffRoleTitle = '[data-cy="staff-role-title"]';
-  const roleChoicesGroup = '[data-cy="role-choices-group"]';
-  const toStaffButton = '[data-cy="to-staff-label"]';
-  const toStudentButton = '[data-cy="to-student-label"]';
-  const toInstructorButton = '[data-cy="to-instructor-label"]';
-  const confirmRoleChangeButton = '[data-cy="confirm-role-change-button"]';
-
-  const tokenSubtitle = '[data-cy="token-form-subtitle"]';
-  const tokenDropdown = '[data-cy="token-dropdown-type"]';
-  const tokenUndo = '[data-cy="token-undo-label"]';
-  const tokenUndoDate = '[data-cy="token-date-dropdown"]';
-  const tokenNone = '[data-cy="token-none"]';
-  const tokenTokenTitle = '[data-cy="tokenTitle"]';
-  const tokenSubmit = '[data-cy="token-submit-button"]';
 
   const courseTitle = "Data Structures";
   const courseNumber = "601.226";
