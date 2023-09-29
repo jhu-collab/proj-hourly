@@ -7,6 +7,7 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 import Debug from "debug";
+import NiceModal from "@ebay/nice-modal-react";
 
 const debug = new Debug(`hourly:hooks:useMutationUseToken.jsx`);
 
