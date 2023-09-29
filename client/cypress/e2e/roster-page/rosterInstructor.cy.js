@@ -197,6 +197,13 @@ describe("Roster Page", () => {
         });
       cy.get(studentRoleTitle).should("be.visible");
       cy.get(".MuiDataGrid-row").should("have.length", 2);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
     });
 
     it("Successfully promoting student to staff", () => {
@@ -330,6 +337,13 @@ describe("Roster Page", () => {
             cy.get(closeDeleteConfirmButton).should("exist");
           });
         });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
     });
 
     it("Successfully deleting student", () => {
@@ -538,6 +552,13 @@ describe("Roster Page", () => {
         });
       cy.get(staffRoleTitle).should("be.visible");
       cy.get(".MuiDataGrid-row").should("have.length", 1);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
     });
 
     it("Successfully demoting staff to student", () => {
