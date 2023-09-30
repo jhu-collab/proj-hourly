@@ -119,330 +119,330 @@ describe("Roster Page", () => {
     cy.wait(1000);
   });
 
-  // describe("Roster Layout", () => {
-  //   it("Layout Contains All Required Elements", () => {
-  //     cy.get(navbarButton).should("be.visible").should("be.enabled");
-  //     if (window.innerWidth < 1024) {
-  //       cy.get(ellipsisIconButton).should("be.visible");
-  //     } else {
-  //       cy.get(profileNameButton).should("be.visible");
-  //     }
-  //     cy.get(rosterToolbarRoles).should("be.visible");
-  //     cy.get(rosterToolbarStudent).contains("Students").should("be.visible");
-  //     cy.get(rosterToolbarStaff).contains("Staff").should("be.visible");
-  //     cy.get(rosterToolbarInstructor)
-  //       .contains("Instructors")
-  //       .should("be.visible");
-  //   });
-  // });
+  describe("Roster Layout", () => {
+    it("Layout Contains All Required Elements", () => {
+      cy.get(navbarButton).should("be.visible").should("be.enabled");
+      if (window.innerWidth < 1024) {
+        cy.get(ellipsisIconButton).should("be.visible");
+      } else {
+        cy.get(profileNameButton).should("be.visible");
+      }
+      cy.get(rosterToolbarRoles).should("be.visible");
+      cy.get(rosterToolbarStudent).contains("Students").should("be.visible");
+      cy.get(rosterToolbarStaff).contains("Staff").should("be.visible");
+      cy.get(rosterToolbarInstructor)
+        .contains("Instructors")
+        .should("be.visible");
+    });
+  });
 
   describe("Student Tab", () => {
-    // it("Student tab looks as expected", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get("body").click();
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //     cy.get(".MuiDataGrid-row")
-    //       .first()
-    //       .within(($element) => {
-    //         cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-    //         cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-    //         cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-    //         cy.get(".MuiDataGrid-cell--textLeft")
-    //           .should("be.visible")
-    //           .should(($cells) => {
-    //             const firstCellValue = $cells.eq(0).text();
-    //             const secondCellValue = $cells.eq(1).text();
-    //             const thirdCellValue = $cells.eq(2).text();
-    //             expect(firstCellValue).to.equal(
-    //               accounts.get(firstCellValue).firstName
-    //             );
-    //             expect(secondCellValue).to.equal(
-    //               accounts.get(firstCellValue).lastName
-    //             );
-    //             expect(thirdCellValue).to.equal(
-    //               accounts.get(firstCellValue).email
-    //             );
-    //           });
-    //         cy.get(".MuiDataGrid-actionsCell")
-    //           .first()
-    //           .should("be.visible")
-    //           .within(($cells) => {
-    //             cy.get(".MuiButtonBase-root").should("have.length", 3);
-    //           });
-    //       });
-    //   } else {
-    //     cy.get(noRosterAlert).contains("Students").should("be.visible");
-    //   }
-    // });
+    it("Student tab looks as expected", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get("body").click();
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+        cy.get(".MuiDataGrid-row")
+          .first()
+          .within(($element) => {
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cell--textLeft")
+              .should("be.visible")
+              .should(($cells) => {
+                const firstCellValue = $cells.eq(0).text();
+                const secondCellValue = $cells.eq(1).text();
+                const thirdCellValue = $cells.eq(2).text();
+                expect(firstCellValue).to.equal(
+                  accounts.get(firstCellValue).firstName
+                );
+                expect(secondCellValue).to.equal(
+                  accounts.get(firstCellValue).lastName
+                );
+                expect(thirdCellValue).to.equal(
+                  accounts.get(firstCellValue).email
+                );
+              });
+            cy.get(".MuiDataGrid-actionsCell")
+              .first()
+              .should("be.visible")
+              .within(($cells) => {
+                cy.get(".MuiButtonBase-root").should("have.length", 3);
+              });
+          });
+      } else {
+        cy.get(noRosterAlert).contains("Students").should("be.visible");
+      }
+    });
 
-    // it("Promotion/demotion student pop-up has required elements", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //         .should("be.visible")
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(1).click();
-    //         });
-    //     });
-    //   cy.get(roleForm).should("be.visible");
-    //   cy.get(confirmRoleChangeButton).should("be.visible");
-    //   cy.get(roleChoicesGroup)
-    //     .should("be.visible")
-    //     .within(($cells) => {
-    //       cy.get(toStaffButton).should("be.visible");
-    //       cy.get(toInstructorButton).should("be.visible");
-    //     });
-    //   cy.get(studentRoleTitle).should("be.visible");
-    //   cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //   .first()
-    //   .within(($element) => {
-    //     cy.get(".MuiBox-root").within(($element) => {
-    //       cy.get(".MuiButtonBase-root").should("exist");
-    //     });
-    //   });
-    // });
+    it("Promotion/demotion student pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleForm).should("be.visible");
+      cy.get(confirmRoleChangeButton).should("be.visible");
+      cy.get(roleChoicesGroup)
+        .should("be.visible")
+        .within(($cells) => {
+          cy.get(toStaffButton).should("be.visible");
+          cy.get(toInstructorButton).should("be.visible");
+        });
+      cy.get(studentRoleTitle).should("be.visible");
+      cy.get(".MuiDataGrid-row").should("have.length", 2);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
+    });
 
-    // it("Successfully promoting student to staff", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(1).click();
-    //         });
-    //     });
-    //   cy.get(roleChoicesGroup).within(($cells) => {
-    //     cy.get(toStaffButton).click();
-    //   });
-    //   cy.get(confirmRoleChangeButton).click();
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-    //   }
-    //   cy.get(rosterToolbarStaff).contains("Staff").click();
-    //   if (cy.task("currentStaff", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    // });
+    it("Successfully promoting student to staff", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toStaffButton).click();
+      });
+      cy.get(confirmRoleChangeButton).click();
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-    // it("Successfully closing promotion student to staff", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(1).click();
-    //         });
-    //     });
-    //   cy.get(roleChoicesGroup).within(($cells) => {
-    //     cy.get(toStaffButton).click();
-    //   });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
-    //     ($element) => {
-    //       cy.get(".MuiBox-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").click();
-    //       });
-    //     }
-    //   );
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    //   cy.get(rosterToolbarStaff).contains("Staff").click();
-    //   if (cy.task("currentStaff", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-    //   }
-    // });
+    it("Successfully closing promotion student to staff", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toStaffButton).click();
+      });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-    // it("Successfully promoting student to instructor", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(1).click();
-    //         });
-    //     });
-    //   cy.get(roleChoicesGroup).within(($cells) => {
-    //     cy.get(toInstructorButton).click();
-    //   });
-    //   cy.get(confirmRoleChangeButton).click();
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-    //   }
-    //   cy.get(rosterToolbarInstructor).contains("Instructor").click();
-    //   if (cy.task("currentInstructors", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    // });
+    it("Successfully promoting student to instructor", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toInstructorButton).click();
+      });
+      cy.get(confirmRoleChangeButton).click();
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-    // it("Successfully closing promotion student to instructor", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(1).click();
-    //         });
-    //     });
-    //   cy.get(roleChoicesGroup).within(($cells) => {
-    //     cy.get(toInstructorButton).click();
-    //   });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
-    //     ($element) => {
-    //       cy.get(".MuiBox-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").click();
-    //       });
-    //     }
-    //   );
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    //   cy.get(rosterToolbarInstructor).contains("Instructor").click();
-    //   if (cy.task("currentInstructors", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-    //   }
-    // });
+    it("Successfully closing promotion student to instructor", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toInstructorButton).click();
+      });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-    // it("Delete student pop-up has required elements", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //         .should("be.visible")
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(2).click();
-    //         });
-    //     });
-    //   cy.contains("Confirm the action").should("exist");
-    //   cy.contains("Do you want to delete this user").should("exist");
-    //   cy.get(cancelDeleteConfirmButton).should("be.visible");
-    //   cy.get(confirmDeleteConfirmButton).should("be.visible");
-    //   cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiBox-root").within(($element) => {
-    //         cy.get(closeDeleteConfirmButton).should("exist");
-    //       });
-    //     });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //   .first()
-    //   .within(($element) => {
-    //     cy.get(".MuiBox-root").within(($element) => {
-    //       cy.get(".MuiButtonBase-root").should("exist");
-    //     });
-    //   });
-    // });
+    it("Delete student pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.contains("Confirm the action").should("exist");
+      cy.contains("Do you want to delete this user").should("exist");
+      cy.get(cancelDeleteConfirmButton).should("be.visible");
+      cy.get(confirmDeleteConfirmButton).should("be.visible");
+      cy.get(".MuiDataGrid-row").should("have.length", 2);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(closeDeleteConfirmButton).should("exist");
+          });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
+    });
 
-    // it("Successfully deleting student", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(2).click();
-    //         });
-    //     });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDialogActions-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").eq(1).click({ force: true });
-    //       });
-    //     });
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-    //   }
-    // });
+    it("Successfully deleting student", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDialogActions-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").eq(1).click({ force: true });
+          });
+        });
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-    // it("Successfully cancelling deletion of student", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(2).click();
-    //         });
-    //     });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDialogActions-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").eq(0).click({ force: true });
-    //       });
-    //     });
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    // });
+    it("Successfully cancelling deletion of student", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDialogActions-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").eq(0).click({ force: true });
+          });
+        });
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-    // it("Successfully closing deletion of student", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(2).click();
-    //         });
-    //     });
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiBox-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").click({ force: true });
-    //       });
-    //     });
-    //   if (cy.task("currentStudents", "ABCDEF")) {
-    //     cy.get(".MuiDataGrid-row").should("have.length", 2);
-    //   }
-    // });
+    it("Successfully closing deletion of student", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click({ force: true });
+          });
+        });
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-    // it("Course token pop-up has required elements", () => {
-    //   cy.get(rosterToolbarStudent).contains("Students").click();
-    //   cy.get(".MuiDataGrid-row")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiDataGrid-actionsCell")
-    //         .should("be.visible")
-    //         .within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(0).click();
-    //         });
-    //     });
-    //   cy.contains("Use Course Token").should("exist");
-    //   cy.get(tokenSubtitle).should("be.visible");
-    //   cy.get(tokenDropdown).should("be.visible").click();
-    //   cy.get(tokenNone).should("be.visible");
-    //   cy.get(tokenTokenTitle).should("be.visible").click();
-    //   cy.get(tokenUndo).should("be.visible").click();
-    //   cy.get(tokenUndoDate).should("be.visible").click();
-    //   cy.get("body").click();
-    //   cy.get(tokenSubmit).should("be.visible");
-    //   cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //     .first()
-    //     .within(($element) => {
-    //       cy.get(".MuiBox-root").within(($element) => {
-    //         cy.get(".MuiButtonBase-root").should("exist");
-    //       });
-    //     });
-    // });
+    it("Course token pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(0).click();
+            });
+        });
+      cy.contains("Use Course Token").should("exist");
+      cy.get(tokenSubtitle).should("be.visible");
+      cy.get(tokenDropdown).should("be.visible").click();
+      cy.get(tokenNone).should("be.visible");
+      cy.get(tokenTokenTitle).should("be.visible").click();
+      cy.get(tokenUndo).should("be.visible").click();
+      cy.get(tokenUndoDate).should("be.visible").click();
+      cy.get("body").click();
+      cy.get(tokenSubmit).should("be.visible");
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").should("exist");
+          });
+        });
+    });
 
     it("Successfully using student course token", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
@@ -605,303 +605,303 @@ describe("Roster Page", () => {
     });
   });
 
-  // describe("Staff Tab", () => {
-  //   it("Staff tab looks as expected", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get("body").click();
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //       cy.get(".MuiDataGrid-row")
-  //         .first()
-  //         .within(($element) => {
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cell--textLeft")
-  //             .should("be.visible")
-  //             .should(($cells) => {
-  //               const firstCellValue = $cells.eq(0).text();
-  //               const secondCellValue = $cells.eq(1).text();
-  //               const thirdCellValue = $cells.eq(2).text();
-  //               expect(firstCellValue).to.equal(
-  //                 accounts.get(firstCellValue).firstName
-  //               );
-  //               expect(secondCellValue).to.equal(
-  //                 accounts.get(firstCellValue).lastName
-  //               );
-  //               expect(thirdCellValue).to.equal(
-  //                 accounts.get(firstCellValue).email
-  //               );
-  //             });
-  //           cy.get(".MuiDataGrid-actionsCell")
-  //             .first()
-  //             .should("be.visible")
-  //             .within(($cells) => {
-  //               cy.get(".MuiButtonBase-root").should("have.length", 3);
-  //             });
-  //         });
-  //     } else {
-  //       cy.get(noRosterAlert).contains("Staff").should("be.visible");
-  //     }
-  //   });
+  describe("Staff Tab", () => {
+    it("Staff tab looks as expected", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get("body").click();
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+        cy.get(".MuiDataGrid-row")
+          .first()
+          .within(($element) => {
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cell--textLeft")
+              .should("be.visible")
+              .should(($cells) => {
+                const firstCellValue = $cells.eq(0).text();
+                const secondCellValue = $cells.eq(1).text();
+                const thirdCellValue = $cells.eq(2).text();
+                expect(firstCellValue).to.equal(
+                  accounts.get(firstCellValue).firstName
+                );
+                expect(secondCellValue).to.equal(
+                  accounts.get(firstCellValue).lastName
+                );
+                expect(thirdCellValue).to.equal(
+                  accounts.get(firstCellValue).email
+                );
+              });
+            cy.get(".MuiDataGrid-actionsCell")
+              .first()
+              .should("be.visible")
+              .within(($cells) => {
+                cy.get(".MuiButtonBase-root").should("have.length", 3);
+              });
+          });
+      } else {
+        cy.get(noRosterAlert).contains("Staff").should("be.visible");
+      }
+    });
 
-  //   it("Promotion/demotion staff pop-up has required elements", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //           .should("be.visible")
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(1).click();
-  //           });
-  //       });
-  //     cy.get(roleForm).should("be.visible");
-  //     cy.get(confirmRoleChangeButton).should("be.visible");
-  //     cy.get(roleChoicesGroup)
-  //       .should("be.visible")
-  //       .within(($cells) => {
-  //         cy.get(toStudentButton).should("be.visible");
-  //         cy.get(toInstructorButton).should("be.visible");
-  //       });
-  //     cy.get(staffRoleTitle).should("be.visible");
-  //     cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-  //     .first()
-  //     .within(($element) => {
-  //       cy.get(".MuiBox-root").within(($element) => {
-  //         cy.get(".MuiButtonBase-root").should("exist");
-  //       });
-  //     });
-  //   });
+    it("Promotion/demotion staff pop-up has required elements", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleForm).should("be.visible");
+      cy.get(confirmRoleChangeButton).should("be.visible");
+      cy.get(roleChoicesGroup)
+        .should("be.visible")
+        .within(($cells) => {
+          cy.get(toStudentButton).should("be.visible");
+          cy.get(toInstructorButton).should("be.visible");
+        });
+      cy.get(staffRoleTitle).should("be.visible");
+      cy.get(".MuiDataGrid-row").should("have.length", 1);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+      .first()
+      .within(($element) => {
+        cy.get(".MuiBox-root").within(($element) => {
+          cy.get(".MuiButtonBase-root").should("exist");
+        });
+      });
+    });
 
-  //   it("Successfully demoting staff to student", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(1).click();
-  //           });
-  //       });
-  //     cy.get(roleChoicesGroup).within(($cells) => {
-  //       cy.get(toStudentButton).click();
-  //     });
-  //     cy.get(confirmRoleChangeButton).click();
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 0);
-  //     }
-  //     cy.get(rosterToolbarStudent).contains("Student").click();
-  //     if (cy.task("currentStudents", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 3);
-  //     }
-  //   });
+    it("Successfully demoting staff to student", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toStudentButton).click();
+      });
+      cy.get(confirmRoleChangeButton).click();
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 0);
+      }
+      cy.get(rosterToolbarStudent).contains("Student").click();
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 3);
+      }
+    });
 
-  //   it("Successfully closing demotion staff to student", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(1).click();
-  //           });
-  //       });
-  //     cy.get(roleChoicesGroup).within(($cells) => {
-  //       cy.get(toStudentButton).click();
-  //     });
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
-  //       ($element) => {
-  //         cy.get(".MuiBox-root").within(($element) => {
-  //           cy.get(".MuiButtonBase-root").click();
-  //         });
-  //       }
-  //     );
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     }
-  //     cy.get(rosterToolbarStudent).contains("Student").click();
-  //     if (cy.task("currentStudents", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 2);
-  //     }
-  //   });
+    it("Successfully closing demotion staff to student", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toStudentButton).click();
+      });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+      cy.get(rosterToolbarStudent).contains("Student").click();
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-  //   it("Successfully promoting staff to instructor", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(1).click();
-  //           });
-  //       });
-  //     cy.get(roleChoicesGroup).within(($cells) => {
-  //       cy.get(toInstructorButton).click();
-  //     });
-  //     cy.get(confirmRoleChangeButton).click();
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 0);
-  //     }
-  //     cy.get(rosterToolbarInstructor).contains("Instructor").click();
-  //     if (cy.task("currentInstructors", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 2);
-  //     }
-  //   });
+    it("Successfully promoting staff to instructor", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toInstructorButton).click();
+      });
+      cy.get(confirmRoleChangeButton).click();
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 0);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+    });
 
-  //   it("Successfully closing promotion staff to instructor", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(1).click();
-  //           });
-  //       });
-  //     cy.get(roleChoicesGroup).within(($cells) => {
-  //       cy.get(toInstructorButton).click();
-  //     });
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
-  //       ($element) => {
-  //         cy.get(".MuiBox-root").within(($element) => {
-  //           cy.get(".MuiButtonBase-root").click();
-  //         });
-  //       }
-  //     );
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     }
-  //     cy.get(rosterToolbarInstructor).contains("Instructor").click();
-  //     if (cy.task("currentInstructors", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     }
-  //   });
+    it("Successfully closing promotion staff to instructor", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(roleChoicesGroup).within(($cells) => {
+        cy.get(toInstructorButton).click();
+      });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-  //   it("Successfully deleting staff", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(2).click();
-  //           });
-  //       });
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDialogActions-root").within(($element) => {
-  //           cy.get(".MuiButtonBase-root").eq(1).click();
-  //         });
-  //       });
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 0);
-  //     }
-  //   });
+    it("Successfully deleting staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDialogActions-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").eq(1).click();
+          });
+        });
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 0);
+      }
+    });
 
-  //   it("Successfully cancelling deletion of staff", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(2).click();
-  //           });
-  //       });
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDialogActions-root").within(($element) => {
-  //           cy.get(".MuiButtonBase-root").eq(0).click();
-  //         });
-  //       });
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     }
-  //   });
+    it("Successfully cancelling deletion of staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDialogActions-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-  //   it("Successfully closing deletion of staff", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root").eq(2).click();
-  //           });
-  //       });
-  //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiBox-root").within(($element) => {
-  //           cy.get(".MuiButtonBase-root").click();
-  //         });
-  //       });
-  //     if (cy.task("currentStaff", "ABCDEF")) {
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //     }
-  //   });
+    it("Successfully closing deletion of staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(2).click();
+            });
+        });
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        });
+      if (cy.task("currentStaff", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
 
-  //   it("Failure to click token icon for staff", () => {
-  //     cy.get(rosterToolbarStaff).contains("Staff").click();
-  //     cy.get(".MuiDataGrid-row")
-  //       .first()
-  //       .within(($element) => {
-  //         cy.get(".MuiDataGrid-actionsCell")
-  //
-  //           .within(($cells) => {
-  //             cy.get(".MuiButtonBase-root")
-  //               .eq(0)
-  //
-  //               .should("have.attr", "disabled");
-  //           });
-  //       });
-  //   });
-  // });
+    it("Failure to click token icon for staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+  
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root")
+                .eq(0)
+  
+                .should("have.attr", "disabled");
+            });
+        });
+    });
+  });
 
-  // describe("Instructor Tab", () => {
-  //   it("Instructor tab looks as expected", () => {
-  //     cy.get(rosterToolbarInstructor).contains("Instructor").click();
-  //     if (cy.task("currentInstructors", "ABCDEF")) {
-  //       cy.get("body").click();
-  //       cy.get(".MuiDataGrid-row").should("have.length", 1);
-  //       cy.get(".MuiDataGrid-row")
-  //         .first()
-  //         .within(($element) => {
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
-  //           cy.get(".MuiDataGrid-cell--textLeft")
-  //             .should("be.visible")
-  //             .should(($cells) => {
-  //               const firstCellValue = $cells.eq(0).text();
-  //               const secondCellValue = $cells.eq(1).text();
-  //               const thirdCellValue = $cells.eq(2).text();
-  //               expect(firstCellValue).to.equal(
-  //                 accounts.get(firstCellValue).firstName
-  //               );
-  //               expect(secondCellValue).to.equal(
-  //                 accounts.get(firstCellValue).lastName
-  //               );
-  //               expect(thirdCellValue).to.equal(
-  //                 accounts.get(firstCellValue).email
-  //               );
-  //             });
-  //           cy.get(".MuiDataGrid-actionsCell").should("not.exist");
-  //         });
-  //     } else {
-  //       cy.get(noRosterAlert).contains("Instructor").should("be.visible");
-  //     }
-  //   });
-  // });
+  describe("Instructor Tab", () => {
+    it("Instructor tab looks as expected", () => {
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get("body").click();
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+        cy.get(".MuiDataGrid-row")
+          .first()
+          .within(($element) => {
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cellCheckbox").should("be.visible");
+            cy.get(".MuiDataGrid-cell--textLeft")
+              .should("be.visible")
+              .should(($cells) => {
+                const firstCellValue = $cells.eq(0).text();
+                const secondCellValue = $cells.eq(1).text();
+                const thirdCellValue = $cells.eq(2).text();
+                expect(firstCellValue).to.equal(
+                  accounts.get(firstCellValue).firstName
+                );
+                expect(secondCellValue).to.equal(
+                  accounts.get(firstCellValue).lastName
+                );
+                expect(thirdCellValue).to.equal(
+                  accounts.get(firstCellValue).email
+                );
+              });
+            cy.get(".MuiDataGrid-actionsCell").should("not.exist");
+          });
+      } else {
+        cy.get(noRosterAlert).contains("Instructor").should("be.visible");
+      }
+    });
+  });
 });

@@ -195,80 +195,194 @@ describe("Roster Page", () => {
         });
     });
 
-    //   it("Course token pop-up has required elements", () => {
-    //     cy.get(rosterToolbarStudent).contains("Students").click();
-    //     cy.get(".MuiDataGrid-row")
-    //       .first()
-    //       .within(($element) => {
-    //         cy.get(".MuiDataGrid-actionsCell")
-    //           .should("be.visible")
-    //           .within(($cells) => {
-    //             cy.get(".MuiButtonBase-root").eq(0).click();
-    //           });
-    //       });
-    //     cy.contains("Use Course Token").should("exist");
-    //     cy.get(tokenSubtitle).should("be.visible");
-    //     cy.get(tokenDropdown).should("be.visible").click();
-    //     cy.get(tokenNone).should("be.visible");
-    //     cy.get(tokenTokenTitle).should("be.visible").click();
-    //     cy.get(tokenUndo).should("be.visible").click();
-    //     cy.get(tokenUndoDate).should("be.visible").click();
-    //     cy.get("body").click();
-    //     cy.get(tokenSubmit).should("be.visible");
-    //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //       .first()
-    //       .within(($element) => {
-    //         cy.get(".MuiBox-root").within(($element) => {
-    //           cy.get(".MuiButtonBase-root").should("exist");
-    //         });
-    //       });
-    //   });
+    it("Course token pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(0).click();
+            });
+        });
+      cy.contains("Use Course Token").should("exist");
+      cy.get(tokenSubtitle).should("be.visible");
+      cy.get(tokenDropdown).should("be.visible").click();
+      cy.get(tokenNone).should("be.visible");
+      cy.get(tokenTokenTitle).should("be.visible").click();
+      cy.get(tokenUndo).should("be.visible").click();
+      cy.get(tokenUndoDate).should("be.visible").click();
+      cy.get("body").click();
+      cy.get(tokenSubmit).should("be.visible");
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").should("exist");
+          });
+        });
+    });
 
-    //   it("Successfully using student course token", () => {
-    //     cy.get(rosterToolbarStudent).contains("Students").click();
-    //     cy.get(".MuiDataGrid-row")
-    //       .first()
-    //       .within(($element) => {
-    //         cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
-    //           cy.get(".MuiButtonBase-root").eq(0).click();
-    //         });
-    //       });
-    //     cy.get(tokenDropdown).click();
-    //     cy.get(tokenTokenTitle).click();
-    //     cy.get(tokenSubmit).click();
-    //     cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-    //       .first()
-    //       .within(($element) => {
-    //         cy.get(".MuiBox-root").within(($element) => {
-    //           cy.get(".MuiButtonBase-root").click();
-    //         });
-    //       });
-    //     cy.get(".MuiDataGrid-row")
-    //       .first()
-    //       .find(".MuiDataGrid-cell--textLeft")
-    //       .first()
-    //       .invoke("text")
-    //       .as("firstCellValue")
-    //       .then((firstCellValue) => {
-    //         cy.log(firstCellValue);
-    //         cy.log(courseCode);
-    //         cy.task("getTokenCount", {
-    //           firstName: firstCellValue,
-    //           courseCode: courseCode,
-    //         }).then((tokenCount) => {
-    //           expect(tokenCount).to.equal(1);
-    //         });
-    //       });
-    //   });
+    it("Successfully using student course token", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .find(".MuiDataGrid-cell--textLeft")
+        .first()
+        .invoke("text")
+        .as("firstCellValue")
+        .then((firstCellValue) => {
+          cy.log(firstCellValue);
+          cy.log(courseCode);
+          cy.task("getTokenCount", {
+            accountValue: firstCellValue,
+            courseCode: courseCode,
+          }).then((tokenCount) => {
+            expect(tokenCount).to.equal(1);
+          });
+        });
+    });
 
-    // it("Successfully closing student course token form", () => {
-    // });
+    it("Successfully closing student course token form", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        });
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .find(".MuiDataGrid-cell--textLeft")
+        .first()
+        .invoke("text")
+        .as("firstCellValue")
+        .then((firstCellValue) => {
+          cy.log(firstCellValue);
+          cy.log(courseCode);
+          cy.task("getTokenCount", {
+            accountValue: firstCellValue,
+            courseCode: courseCode,
+          }).then((tokenCount) => {
+            expect(tokenCount).to.equal(2);
+          });
+        });
+    });
 
-    // it("Successfully undoing student course token usage", () => {
-    // });
+    it("Successfully undoing student course token usage", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      const currentDate = new Date().toISOString().split("T")[0];
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenUndo).click();
+      cy.get(tokenUndoDate).click();
+      cy.log(currentDate);
+      cy.get(`[data-cy="${currentDate}"]`).click();
+      cy.get(tokenSubmit).click();
+      cy.wait(1000);
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .find(".MuiDataGrid-cell--textLeft")
+        .first()
+        .invoke("text")
+        .as("firstCellValue")
+        .then((firstCellValue) => {
+          cy.log(firstCellValue);
+          cy.log(courseCode);
+          cy.task("getTokenCount", {
+            accountValue: firstCellValue,
+            courseCode: courseCode,
+          }).then((tokenCount) => {
+            expect(tokenCount).to.equal(2);
+          });
+        });
+    });
 
-    // it("Successfully closing student course token form after clicking undo", () => {
-    // });
+    it("Successfully closing student course token form after clicking undo", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenUndo).click();
+      cy.get(tokenUndoDate).click();
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click({ force: true });
+          });
+        });
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .find(".MuiDataGrid-cell--textLeft")
+        .first()
+        .invoke("text")
+        .as("firstCellValue")
+        .then((firstCellValue) => {
+          cy.log(firstCellValue);
+          cy.log(courseCode);
+          cy.task("getTokenCount", {
+            accountValue: firstCellValue,
+            courseCode: courseCode,
+          }).then((tokenCount) => {
+            expect(tokenCount).to.equal(1);
+          });
+        });
+    });
   });
 
   describe("Staff Tab", () => {
