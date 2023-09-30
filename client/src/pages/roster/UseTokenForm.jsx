@@ -19,6 +19,7 @@ const getTokenOptions = (tokens) => {
       id: token.CourseToken.id,
       value: token.CourseToken.title,
       label: token.CourseToken.title,
+      "data-cy": token.CourseToken.title,
     });
   });
   return tokenArr;
@@ -77,7 +78,12 @@ function UseTokenForm(props) {
     let useDatesWithId = [];
     let i = 0;
     usedDatesSelected.forEach((date) => {
-      useDatesWithId.push({ id: i, value: date, label: date.split("T")[0] });
+      useDatesWithId.push({
+        id: i,
+        value: date.split("T")[0],
+        label: date.split("T")[0],
+        "data-cy": date.split("T")[0],
+      });
       i += 1;
     });
     setUsedDates(useDatesWithId);
@@ -91,7 +97,11 @@ function UseTokenForm(props) {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack alignItems={"center"} direction={"column"} spacing={2}>
-        <Typography data-cy="token-form-subtitle" textAlign="center" variant="h4">
+        <Typography
+          data-cy="token-form-subtitle"
+          textAlign="center"
+          variant="h4"
+        >
           Select which course token you would like to use:
         </Typography>
         <FormInputDropdown

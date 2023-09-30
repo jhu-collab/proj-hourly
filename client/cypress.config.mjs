@@ -395,26 +395,26 @@ export default defineConfig({
           });
           return null;
         },
-        async getTokenCount(firstName, courseCode) {
+        async getTokenCount({ accountValue, courseCode }) {
           const course = await prisma.course.findUnique({
             where: {
               code: courseCode,
             },
           });
-          const student = await prisma.student.findUnique({
+          const student = await prisma.account.findFirst({
             where: {
-              firstName: firstName,
+              firstName: accountValue,
             },
           });
-          const courseToken = await prisma.courseToken.findUnique({
+          const courseToken = await prisma.courseToken.findFirst({
             where: {
-              id: course.id,
+              courseId: course.id,
             },
           });
           const issueToken = await prisma.issueToken.findFirst({
             where: {
               accountId: student.id,
-              courseTokenId: course.id,
+              courseTokenId: courseToken.id,
             },
           });
           const numTokenLimit = courseToken.tokenLimit;

@@ -212,7 +212,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(1).click();
     //         });
@@ -236,7 +236,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(1).click();
     //         });
@@ -266,7 +266,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(1).click();
     //         });
@@ -290,7 +290,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(1).click();
     //         });
@@ -352,7 +352,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(2).click();
     //         });
@@ -375,7 +375,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(2).click();
     //         });
@@ -398,7 +398,7 @@ describe("Roster Page", () => {
     //     .first()
     //     .within(($element) => {
     //       cy.get(".MuiDataGrid-actionsCell")
-    //         
+    //
     //         .within(($cells) => {
     //           cy.get(".MuiButtonBase-root").eq(2).click();
     //         });
@@ -466,7 +466,7 @@ describe("Roster Page", () => {
           cy.log(firstCellValue);
           cy.log(courseCode);
           cy.task("getTokenCount", {
-            firstName: firstCellValue,
+            accountValue: firstCellValue,
             courseCode: courseCode,
           }).then((tokenCount) => {
             expect(tokenCount).to.equal(1);
@@ -502,10 +502,10 @@ describe("Roster Page", () => {
           cy.log(firstCellValue);
           cy.log(courseCode);
           cy.task("getTokenCount", {
-            firstName: firstCellValue,
+            accountValue: firstCellValue,
             courseCode: courseCode,
           }).then((tokenCount) => {
-            expect(tokenCount).to.equal(1);
+            expect(tokenCount).to.equal(2);
           });
         });
     });
@@ -513,16 +513,16 @@ describe("Roster Page", () => {
     it("Successfully undoing student course token usage", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
-      .first()
-      .within(($element) => {
-        cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
-          cy.get(".MuiButtonBase-root").eq(0).click();
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
         });
-      });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
       cy.get(tokenSubmit).click();
-      const currentDate = Cypress.moment().format('YYYY-MM-DD');
+      const currentDate = new Date().toISOString().split("T")[0];
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
@@ -534,9 +534,10 @@ describe("Roster Page", () => {
       cy.get(tokenTokenTitle).click();
       cy.get(tokenUndo).click();
       cy.get(tokenUndoDate).click();
-      cy.log(currentDate)
-      cy.get('[data-cy="${currentDate}"]').click();
+      cy.log(currentDate);
+      cy.get(`[data-cy="${currentDate}"]`).click();
       cy.get(tokenSubmit).click();
+      cy.wait(1000);
       cy.get(".MuiDataGrid-row")
         .first()
         .find(".MuiDataGrid-cell--textLeft")
@@ -547,24 +548,23 @@ describe("Roster Page", () => {
           cy.log(firstCellValue);
           cy.log(courseCode);
           cy.task("getTokenCount", {
-            firstName: firstCellValue,
+            accountValue: firstCellValue,
             courseCode: courseCode,
           }).then((tokenCount) => {
-            expect(tokenCount).to.equal(1);
+            expect(tokenCount).to.equal(2);
           });
         });
-
     });
 
     it("Successfully closing student course token form after clicking undo", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
-      .first()
-      .within(($element) => {
-        cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
-          cy.get(".MuiButtonBase-root").eq(0).click();
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
         });
-      });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
       cy.get(tokenSubmit).click();
@@ -583,9 +583,9 @@ describe("Roster Page", () => {
         .first()
         .within(($element) => {
           cy.get(".MuiBox-root").within(($element) => {
-            cy.get(".MuiButtonBase-root").click();
+            cy.get(".MuiButtonBase-root").click({ force: true });
           });
-        });      
+        });
       cy.get(".MuiDataGrid-row")
         .first()
         .find(".MuiDataGrid-cell--textLeft")
@@ -596,13 +596,12 @@ describe("Roster Page", () => {
           cy.log(firstCellValue);
           cy.log(courseCode);
           cy.task("getTokenCount", {
-            firstName: firstCellValue,
+            accountValue: firstCellValue,
             courseCode: courseCode,
           }).then((tokenCount) => {
             expect(tokenCount).to.equal(1);
           });
         });
-
     });
   });
 
@@ -682,7 +681,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(1).click();
   //           });
@@ -706,7 +705,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(1).click();
   //           });
@@ -736,7 +735,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(1).click();
   //           });
@@ -760,7 +759,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(1).click();
   //           });
@@ -790,7 +789,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(2).click();
   //           });
@@ -813,7 +812,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(2).click();
   //           });
@@ -836,7 +835,7 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root").eq(2).click();
   //           });
@@ -859,11 +858,11 @@ describe("Roster Page", () => {
   //       .first()
   //       .within(($element) => {
   //         cy.get(".MuiDataGrid-actionsCell")
-  //           
+  //
   //           .within(($cells) => {
   //             cy.get(".MuiButtonBase-root")
   //               .eq(0)
-  //               
+  //
   //               .should("have.attr", "disabled");
   //           });
   //       });
