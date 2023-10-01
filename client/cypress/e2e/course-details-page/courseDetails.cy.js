@@ -71,7 +71,9 @@ describe("Course Details Page: Staff", () => {
     cy.wait(1000);
 
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "course details").click();
+
     cy.get("body").click();
 
     // enable all initial course to use tokens
@@ -89,8 +91,9 @@ describe("Course Details Page: Staff", () => {
     cy.get(navbarButton).click();
     cy.wait(1000);
     cy.get(navbar).contains("a", "course tokens");
+    cy.wait(1000);
     cy.get(navbar).contains("a", "course details").click();
-    cy.wait(1000)
+    cy.wait(1000);
     cy.get("body").click();
   });
 
@@ -143,6 +146,7 @@ describe("Course Details Page: Staff", () => {
     cy.get('[data-cy="create-event-submit"]').click();
 
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "calendar").click();
     cy.get("body").click();
 
@@ -212,6 +216,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(navbarButton).click();
     cy.wait(1000);
     cy.get(navbar).contains("a", "course details").should("exist");
+    cy.wait(1000);
     cy.get(navbar).contains("course tokens").should("not.exist");
   });
 
@@ -257,6 +262,7 @@ describe("Course Details Page: Staff", () => {
     // check if events disappear in calendar correctly - hard coded (creating events on Sunday, recurring on every Tues, Thurs, & Sun)
     cy.get(navbarButton).click();
     cy.get(navbar).contains("a", "calendar").click();
+    cy.wait(1000);
     cy.get("body").click();
     cy.get('button[title="Next week"]').should("be.visible").click();
     cy.get('div[class="fc-daygrid-event-harness"]').should("not.exist");
