@@ -541,7 +541,6 @@ export const cancelAll = async (req, res) => {
     await prisma.registration.deleteMany({
       where: {
         officeHourId: officeHourId,
-        isCancelled: false,
       },
     });
     debug("registrations are cancelled");
@@ -721,7 +720,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
   const now = spacetime.now();
   start = createJustTimeObjectSpacetime(startDate.clone());
   timeLengths.forEach((timeLength) => {
-    sessionStartTime = startDate.clone();
+    sessionStartTime = spacetime(req.targetDate).clone();
     let times = [];
     const length = timeLength.duration;
     // loops over the number of 5 minute time intervals
@@ -738,7 +737,7 @@ export const getTimeSlotsRemaining = async (req, res) => {
         }
       }
       // if available, adds to times array
-      const justDate = spacetime(date).goto("America/New_York");
+      const justDate = spacetime(sessionStartTime).goto("America/New_York");
       let beforeConstraint = spacetime(justDate);
       // beforeConstraint = beforeConstraint.date(
       //   beforeConstraint.date() + sessionStartTime.date() - 1

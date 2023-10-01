@@ -333,6 +333,7 @@ export const tokenSchema = yup.object({
   description: yup.string(), //.required("Token description is required"),
   quantity: yup
     .number()
-    .required("Toke quantity is required")
-    .min(1, "Must have at least 1 of each token"),
+    .required("Token quantity is required")
+    .min(1, "Must have at least 1 of each token")
+    .typeError("You must specify a number"),
 });
