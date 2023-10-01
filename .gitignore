@@ -12,3 +12,4 @@ __MACOSX/*
 .env*
 **/coverage/*
 **/.nyc_output/*
+client/.nyc_output/*

@@ -64,6 +64,7 @@ function AuthLogin() {
         <SingleSignOn />
       )}
       <Divider
+        data-cy="login-divider-or"
         sx={{
           fontSize: "17px",
           "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
@@ -94,6 +95,7 @@ function AuthLogin() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
+                    data-cy="login-password-eye"
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}

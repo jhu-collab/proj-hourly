@@ -131,7 +131,7 @@ function UseTokenForm(props) {
           color="secondary"
           variant="contained"
           type="submit"
-          disabled={undo && token && usedDates.length === 0}
+          disabled={(undo && token && usedDates.length === 0) || !token}
         >
           Submit
         </Button>
