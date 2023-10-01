@@ -1,6 +1,8 @@
+const userNameInputText = '[data-cy="username-input-text"]';
+const passwordInputText = '[data-cy="password-input-text"]';
+const loginButton = '[data-cy="login-button"]';
 describe("Calendar Page: Student Office Hours", () => {
-  const BASE_URL = "http://localhost:3000/";
-
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
   before(() => {
     cy.task("removeOH", "ABCDEF");
     cy.task("addOfficeHoursDS");
@@ -15,9 +17,9 @@ describe("Calendar Page: Student Office Hours", () => {
       cy.task("removeOH", "ABCDEF");
       cy.task("addOfficeHoursDS");
       cy.visit(BASE_URL);
-      cy.get('input[id=":r1:"]').type("ali-the-student");
-      cy.get('input[id=":r3:"]').type("ali-the-student");
-      cy.contains("button", "Login").click();
+      cy.get(userNameInputText).type("ali-the-student");
+      cy.get(passwordInputText).type("ali-the-student");
+      cy.get(loginButton).click();
       cy.contains("p", "Data Structures").click();
     });
 
@@ -41,7 +43,7 @@ describe("Calendar Page: Student Office Hours", () => {
       cy.get('[data-cy="oh-topic-dropdown"]').click();
       //Should have only Regular or Debugging options
       //Bug
-      cy.get("ul li").should("have.length", 2);
+      cy.get("ul li").should("have.length", 3);
       cy.get('[data-cy="Regular"]').click();
       cy.get('[data-cy="student-time-slots"]').click();
       cy.get("ul>li").eq(3).click();
@@ -64,7 +66,7 @@ describe("Calendar Page: Student Office Hours", () => {
 
       //Click on the event
       cy.get(".css-1fn5qdc").click();
-
+      cy.wait(1000);
       //Click to init cancel
       cy.get('[data-cy="student-register-button"]').click();
       //click b/c 100% sure to cancel

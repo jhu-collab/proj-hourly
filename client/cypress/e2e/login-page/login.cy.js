@@ -1,5 +1,5 @@
 describe("Login Page", () => {
-  const BASE_URL = "http://localhost:3000/";
+  const BASE_URL = "http://localhost:3000/proj-hourly/";
 
   const signInAsUserButton = '[data-cy="sign-in-as-user-button"]';
   const userNameInputText = '[data-cy="username-input-text"]';

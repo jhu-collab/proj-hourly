@@ -128,6 +128,7 @@ export const register = async (req, res) => {
     },
     include: {
       instructors: true,
+      CourseToken: true,
     },
   });
   debug("Updating account...");
@@ -142,6 +143,17 @@ export const register = async (req, res) => {
         },
       },
     },
+  });
+  debug("Creating issue tokens...");
+  const issueTokens = [];
+  course.CourseToken.forEach((token) => {
+    issueTokens.push({
+      accountId: id,
+      courseTokenId: token.id,
+    });
+  });
+  await prisma.issueToken.createMany({
+    data: issueTokens,
   });
   let instructors = "";
   let counter = 0;

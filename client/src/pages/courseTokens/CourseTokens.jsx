@@ -24,7 +24,7 @@ function CourseTokens() {
   let filteredRemainingTokens = [];
   const noTokens = () => {
     return (
-      <Alert severity="info" sx={{ mt: 2 }}>
+      <Alert data-cy="no-tokens-alert" severity="info" sx={{ mt: 2 }}>
         No Tokens
       </Alert>
     );
@@ -67,10 +67,10 @@ function CourseTokens() {
       {data.length === 0 ? (
         noTokens()
       ) : courseType !== "Student" ? (
-        <Grid container spacing={2}>
+        <Grid data-cy="course-tokens-list-staff" container spacing={2}>
           {data.map((token) => {
             return (
-              <Grid item xs={12} key={token.id}>
+              <Grid data-cy={token.title} item xs={12} key={token.id}>
                 <Token token={token} />
               </Grid>
             );
@@ -80,8 +80,13 @@ function CourseTokens() {
         <Grid container spacing={2}>
           {filteredRemainingTokens.map((token) => {
             return (
-              <Grid item xs={12} key={token.id}>
-                <Token token={token} />
+              <Grid
+                item
+                xs={12}
+                key={token.id}
+                data-cy="course-topics-list-student"
+              >
+                <Token data-cy={token.title} token={token} />
               </Grid>
             );
           })}
@@ -89,6 +94,7 @@ function CourseTokens() {
       )}
       {courseType === "Instructor" && (
         <Fab
+          data-cy="add-token-button"
           color="primary"
           onClick={() => NiceModal.show("create-token")}
           sx={{
