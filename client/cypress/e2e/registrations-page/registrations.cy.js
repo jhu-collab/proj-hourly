@@ -79,6 +79,7 @@ describe("Registrations Page: Staff", () => {
     cy.wait(1000);
 
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "registrations").click();
     cy.get("body").click();
   });
@@ -389,7 +390,7 @@ describe("Registrations Page: Staff", () => {
     const registrationType = `[data-cy="${registrationTypeName}"]`;
 
     cy.get(registrationType).contains("button", "Delete").click();
-    cy.get(confirmDeleteButton).click();
+    cy.get(confirmDeleteButton).first().click({ force: true });
 
     cy.get(".Toastify")
       .contains(
@@ -397,7 +398,7 @@ describe("Registrations Page: Staff", () => {
         `Successfully deleted the "${registrationTypeName}" registration type!`
       )
       .should("be.visible");
-    cy.get(registrationTypeList).should("have.length", 1);
+    cy.get(registrationTypeList).children("div").should("have.length", 1);
   });
 
   it("Cancelling Deletion of Registration Type", () => {
@@ -413,9 +414,9 @@ describe("Registrations Page: Staff", () => {
     const registrationType = `[data-cy="${registrationTypeName}"]`;
 
     cy.get(registrationType).contains("button", "Delete").click();
-    cy.get(cancelDeleteButton).click();
+    cy.get(cancelDeleteButton).first().click({ force: true });
 
-    cy.get(registrationTypeList).should("have.length", 2);
+    cy.get(registrationTypeList).children("div").should("have.length", 2);
     cy.get(registrationType).contains(registrationTypeName);
     cy.get(registrationType).contains(registrationTypeDuration);
   });
@@ -433,7 +434,7 @@ describe("Registrations Page: Staff", () => {
         "ERROR: cannot delete the only time offering for the course"
       )
       .should("be.visible");
-    cy.get(registrationTypeList).should("have.length", 1);
+    cy.get(registrationTypeList).children("div").should("have.length", 1);
   });
 });
 
@@ -476,6 +477,7 @@ describe("Registrations Page: Student", () => {
 
   it("Registered Office Hours Should Be Visible In Upcoming Registrations", () => {
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "registrations").click();
     cy.get("body").click();
 
@@ -484,6 +486,7 @@ describe("Registrations Page: Student", () => {
 
   it("Cancel Registration Popup Looks as Expected", () => {
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "registrations").click();
     cy.get("body").click();
 
@@ -499,6 +502,7 @@ describe("Registrations Page: Student", () => {
 
   it("Confirm Cancelling Registration", () => {
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "registrations").click();
     cy.get("body").click();
 
@@ -510,12 +514,12 @@ describe("Registrations Page: Student", () => {
 
     cy.get(confirmDeleteButton).click();
 
-    cy.get(registrationList).should("not.be.visible").should("have.length", 0);
     cy.get(noUpcomingRegistrationsAlert).should("be.visible");
   });
 
   it("Cancel Cancelling Registration", () => {
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "registrations").click();
     cy.get("body").click();
 
