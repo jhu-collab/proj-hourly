@@ -8,7 +8,6 @@ function UseTokenIcon(props) {
   const { params, isStaff, index } = props;
   const courseType = useStoreLayout((state) => state.courseType);
   const course = useStoreCourse((state) => state.course);
-  console.log(course)
 
   return (
     <>
