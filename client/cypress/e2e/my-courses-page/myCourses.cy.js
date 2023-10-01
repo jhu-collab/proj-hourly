@@ -339,7 +339,7 @@ describe("My Courses Page", () => {
       .should("have.length", 1);
   });
 
-  it("Failed Creation of Two Different Courses with Same Course Number", () => {
+  it("Successful Creation of Two Different Courses with Same Course Number but different names (ex. diff sections)", () => {
     const courseTitle1 = "Test Course";
     const courseTitle2 = "Test Course 2";
     const courseNumber = "601.002";
@@ -371,7 +371,7 @@ describe("My Courses Page", () => {
     cy.get(staffCourseList)
       .children()
       .should("be.visible")
-      .should("have.length", 1);
+      .should("have.length", 2);
   });
 
   it("Successfully Opening a Student Course", () => {
