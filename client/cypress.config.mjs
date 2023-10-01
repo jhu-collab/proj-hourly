@@ -216,7 +216,7 @@ export default defineConfig({
                 usesTokens: false,
               },
             });
-
+            return null;
           }
 
         },
