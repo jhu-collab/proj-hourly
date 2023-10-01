@@ -61,6 +61,7 @@ describe("Topics Page", () => {
     cy.wait(1000);
 
     cy.get(navbarButton).click();
+    cy.wait(1000);
     cy.get(navbar).contains("a", "topics").click();
     cy.get("body").click();
   });
