@@ -45,6 +45,8 @@ describe("Course Details Page: Staff", () => {
   beforeEach(() => {
     cy.task("deleteStudentCourses", "user-1");
     cy.task("deleteInstructorCourses", "user-1");
+    // task to change course token to false / opt out everytime
+    // cy.task("optOutCourseToken", "Machine Learning");
 
     cy.visit(BASE_URL + "/login");
 
@@ -60,6 +62,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(createCourseSemester).click();
     cy.get(createCourseYear).type(courseYear);
     cy.get(createButton).click();
+    cy.task("optOutCourseToken", "Machine Learning");
 
     cy.wait(1000);
 

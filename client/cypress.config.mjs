@@ -174,7 +174,7 @@ export default defineConfig({
           for (const c of user.instructorCourses) {
             console.log(c);
             await prisma.calendarEvent.deleteMany({
-              where: {courseId: c.id}
+              where: { courseId: c.id }
             })
             await prisma.officeHourTimeOptions.deleteMany({
               where: { courseId: c.id },
@@ -199,6 +199,28 @@ export default defineConfig({
           });
           return null;
         },
+        async optOutCourseToken(courseTitle) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseTitle,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.update({
+              where: {
+                title: courseTitle,
+              },
+              data: {
+                usesTokens: false,
+              },
+            });
+
+          }
+
+        },
+
         async getCourseByCode(code) {
           const course = await prisma.course.findUnique({
             where: {
