@@ -12,6 +12,7 @@ import { Controller } from "react-hook-form";
 function FormInputText({ name, control, label, ...other }) {
   return (
     <Controller
+      data-cy="input-text-field"
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
