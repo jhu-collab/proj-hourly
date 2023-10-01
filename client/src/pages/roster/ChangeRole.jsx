@@ -6,7 +6,7 @@ const ChangeRole = NiceModal.create(({ params, isStaff }) => {
   const modal = useModal("change-user-role");
   return (
     <>
-      <Popup modal={modal} title="Change Role">
+      <Popup modal={modal} data-cy="change-role-button" title="Change Role">
         <ChangeRoleForm params={params} isStaff={isStaff} />
       </Popup>
     </>

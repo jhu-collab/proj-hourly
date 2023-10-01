@@ -6,7 +6,7 @@ const UseToken = NiceModal.create(({ params, isStaff }) => {
   const modal = useModal("use-course-token");
   return (
     <>
-      <Popup modal={modal} title="Use Course Token">
+      <Popup data-cy="token-title" modal={modal} title="Use Course Token">
         <UseTokenForm params={params} isStaff={isStaff} />
       </Popup>
     </>

@@ -38,7 +38,7 @@ function FormInputDropdown({ name, control, label, options, ...other }) {
         >
           <InputLabel>{label}</InputLabel>
           <Select {...field} label={label} {...other}>
-            <MenuItem value="" disabled>
+            <MenuItem data-cy="token-none" value="" disabled>
               <em>None</em>
             </MenuItem>
             {generateSingleOptions()}
