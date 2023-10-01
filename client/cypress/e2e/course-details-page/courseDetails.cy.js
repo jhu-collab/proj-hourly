@@ -71,6 +71,7 @@ describe("Course Details Page: Staff", () => {
 
     cy.get(navbarButton).click();
     const body = cy.get("body");
+    cy.wait(1000);
     cy.get(navbar).contains("a", "course details").click();
     body.click();
 
@@ -86,6 +87,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(navbarButton).click();
     cy.wait(1000);
     cy.get(navbar).contains("a", "course tokens");
+    cy.wait(1000);
     cy.get(navbar).contains("a", "course details").click();
     body.click();
   });
@@ -129,6 +131,7 @@ describe("Course Details Page: Staff", () => {
 
     cy.get(navbarButton).click();
     const body = cy.get("body");
+    cy.wait(1000);
     cy.get(navbar).contains("a", "calendar").click();
     body.click();
 
@@ -191,6 +194,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(navbarButton).click();
     cy.wait(1000);
     cy.get(navbar).contains("a", "course details").should('exist');
+    cy.wait(1000);
     cy.get(navbar).contains("course tokens").should('not.exist');
   });
 
@@ -226,6 +230,7 @@ describe("Course Details Page: Staff", () => {
     // check if events disappear in calendar correctly - hard coded (creating events on Sunday, recurring on every Tues, Thurs, & Sun)
     cy.get(navbarButton).click();
     const body = cy.get("body");
+    cy.wait(1000);
     cy.get(navbar).contains("a", "calendar").click();
     body.click();
     cy.get('button[title="Next week"]').should("be.visible").click();
