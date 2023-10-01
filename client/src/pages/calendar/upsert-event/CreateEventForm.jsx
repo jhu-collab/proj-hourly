@@ -154,7 +154,7 @@ function CreateEventForm() {
               control={control}
               label="Recurring event"
             />
-            <FormCheckbox name="remote" control={control} label="Remote" />
+            <FormCheckbox data-cy="create-remote-checkbox" name="remote" control={control} label="Remote" />
           </Stack>
           <FormInputText
             data-cy="create-start-date-text"
