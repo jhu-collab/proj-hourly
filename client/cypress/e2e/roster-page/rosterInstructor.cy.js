@@ -340,10 +340,6 @@ describe("Roster Page", () => {
       if (cy.task("currentStudents", "ABCDEF")) {
         cy.get(".MuiDataGrid-row").should("have.length", 2);
       }
-      cy.get(rosterToolbarInstructor).contains("Instructor").click();
-      if (cy.task("currentInstructors", "ABCDEF")) {
-        cy.get(".MuiDataGrid-row").should("have.length", 1);
-      }
     });
 
     it("Delete student pop-up has required elements", () => {
@@ -852,7 +848,7 @@ describe("Roster Page", () => {
       }
     });
 
-    it("Failure to promote/demote student without choosing option", () => {
+    it("Failure to promote/demote staff without choosing option", () => {
       cy.get(rosterToolbarStaff).contains("Staff").click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -875,11 +871,7 @@ describe("Roster Page", () => {
           });
         }
       );
-      if (cy.task("currentStudents", "ABCDEF")) {
-        cy.get(".MuiDataGrid-row").should("have.length", 2);
-      }
-      cy.get(rosterToolbarInstructor).contains("Instructor").click();
-      if (cy.task("currentInstructors", "ABCDEF")) {
+      if (cy.task("currentStaff", "ABCDEF")) {
         cy.get(".MuiDataGrid-row").should("have.length", 1);
       }
     });
@@ -964,7 +956,6 @@ describe("Roster Page", () => {
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
                 .eq(0)
-  
                 .should("have.attr", "disabled");
             });
         });
