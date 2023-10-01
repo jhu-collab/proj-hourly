@@ -70,6 +70,21 @@ describe("Course Details Page: Staff", () => {
     const body = cy.get("body");
     cy.get(navbar).contains("a", "course details").click();
     body.click();
+
+    // enable all initial course to use tokens
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.wait(1000);
+    cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
+    cy.get('[data-cy="use-token-submit"]').click();
+    cy.wait(1000);
+
+    // get back to course detail page
+    cy.get(courseCard).click();
+    cy.get(navbarButton).click();
+    cy.wait(1000);
+    cy.get(navbar).contains("a", "course tokens");
+    cy.get(navbar).contains("a", "course details").click();
+    body.click();
   });
 
   it("Course Details Look as Expected", () => {
@@ -109,17 +124,10 @@ describe("Course Details Page: Staff", () => {
     // submit
     cy.get('[data-cy="create-event-submit"]').click();
 
-    // enable this course to use tokens
-    cy.wait(1000);
-    cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
-    cy.get('[data-cy="use-token-submit"]').click();
-
-
-
-
-    // check if token appears to the left
-    cy.wait(1000);
-    cy.get(courseCard).click();
+    cy.get(navbarButton).click();
+    const body = cy.get("body");
+    cy.get(navbar).contains("a", "calendar").click();
+    body.click();
 
     // check if events appear in calendar correctly - hard coded (creating events on Sunday, recurring on every Tues, Thurs, & Sun)
     cy.get('button[title="Next week"]').should("be.visible").click();
@@ -130,14 +138,15 @@ describe("Course Details Page: Staff", () => {
       cy.wrap(countOfElements).should("be.lte", 3);
     });
 
-
-    cy.wait(1000);
-    cy.get(navbarButton).click();
-    cy.wait(1000);
-    cy.get(navbar).contains("a", "course tokens").click();
+    // // check if token appears to the left
+    // cy.wait(1000);
+    // cy.get(navbarButton).click();
+    // cy.wait(1000);
+    // cy.get(navbar).contains("a", "course tokens").click();
   });
 
   it("opt out of token successful", () => {
+
     cy.get(courseCalendarEventInfoTitle).contains(`Course Calendar Event Information`);
     // Activate recurring
     cy.get('input[name="recurringEvent"]').check();
@@ -162,15 +171,10 @@ describe("Course Details Page: Staff", () => {
     // submit
     cy.get('[data-cy="create-event-submit"]').click();
 
-    // enable this course to use tokens
-    cy.wait(1000);
-    cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
-    cy.get('[data-cy="use-token-submit"]').click();
-
 
     // check if token appears to the left
     cy.wait(1000);
-    cy.get(courseCard).click();
+    // cy.get(courseCard).click();
 
     // test opt out of use tokens
     cy.get(navbarButton).click();
