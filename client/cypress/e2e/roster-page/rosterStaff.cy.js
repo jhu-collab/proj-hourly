@@ -383,6 +383,43 @@ describe("Roster Page", () => {
           });
         });
     });
+    
+    it("Failure to use more course tokens than allowed", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".Toastify")
+      .contains("div", "Student has used all their tokens")
+      .should("be.visible");
+    });
   });
 
   describe("Staff Tab", () => {

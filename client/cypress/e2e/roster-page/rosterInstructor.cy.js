@@ -314,6 +314,38 @@ describe("Roster Page", () => {
       }
     });
 
+    it("Failure to promote/demote student without choosing option", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(confirmRoleChangeButton).click();
+      cy.get(".Toastify")
+      .contains("div", "invalid promotion role")
+      .should("be.visible");
+      cy.wait(1000);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
+
     it("Delete student pop-up has required elements", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
@@ -603,6 +635,43 @@ describe("Roster Page", () => {
           });
         });
     });
+
+    it("Failure to use more course tokens than allowed", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(".Toastify")
+      .contains("div", "Student has used all their tokens")
+      .should("be.visible");
+    });
   });
 
   describe("Staff Tab", () => {
@@ -782,6 +851,39 @@ describe("Roster Page", () => {
         cy.get(".MuiDataGrid-row").should("have.length", 1);
       }
     });
+
+    it("Failure to promote/demote student without choosing option", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+    
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(confirmRoleChangeButton).click();
+      cy.get(".Toastify")
+      .contains("div", "invalid promotion role")
+      .should("be.visible");
+      cy.wait(1000);
+      cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
+        ($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").click();
+          });
+        }
+      );
+      if (cy.task("currentStudents", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 2);
+      }
+      cy.get(rosterToolbarInstructor).contains("Instructor").click();
+      if (cy.task("currentInstructors", "ABCDEF")) {
+        cy.get(".MuiDataGrid-row").should("have.length", 1);
+      }
+    });
+
 
     it("Successfully deleting staff", () => {
       cy.get(rosterToolbarStaff).contains("Staff").click();
