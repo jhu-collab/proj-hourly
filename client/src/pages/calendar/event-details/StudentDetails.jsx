@@ -37,7 +37,6 @@ function StudentDetails() {
 
     for (let i = 0; i < dataRegTypes.times.length; i++) {
       if (timeSlots.timeSlotsPerType[i].times.length > 0) {
-        console.log(timeSlots.timeSlotsPerType[i].times.length);
         return false;
       }
     }

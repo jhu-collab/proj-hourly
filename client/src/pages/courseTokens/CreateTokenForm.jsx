@@ -39,20 +39,32 @@ function CreateTopicForm() {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2} alignItems="center">
-        <FormInputText name="name" control={control} label="Name" />
         <FormInputText
+          data-cy="token-name-input"
+          name="name"
+          control={control}
+          label="Name"
+        />
+        <FormInputText
+          data-cy="token-description-input"
           name="description"
           control={control}
           label="Description"
         />
         <FormInputText
+          data-cy="token-quantity-input"
           name="quantity"
           control={control}
           label="Quantity"
           type="number"
         />
         <AnimateButton>
-          <Button type="submit" variant="contained" size="large">
+          <Button
+            data-cy="create-token-button"
+            type="submit"
+            variant="contained"
+            size="large"
+          >
             Create
           </Button>
         </AnimateButton>

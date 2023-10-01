@@ -9,12 +9,12 @@ import { Controller } from "react-hook-form";
  * @param {string} label: the label of the field
  * @returns A reusuable text field component.
  */
-function FormInputText({ name, control, label, ...other }) {
+function FormInputNumber({ name, control, label, ...other }) {
   return (
     <Controller
-      data-cy="input-text-field"
       name={name}
       control={control}
+      type="number"
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
@@ -30,4 +30,4 @@ function FormInputText({ name, control, label, ...other }) {
   );
 }
 
-export default FormInputText;
+export default FormInputNumber;
