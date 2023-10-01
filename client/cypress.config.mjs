@@ -200,15 +200,15 @@ export default defineConfig({
           return null;
         },
         async optOutCourseToken(courseTitle) {
-          const course = await prisma.course.findUnique({
+          const course = await prisma.course.findFirst({
             where: {
-              code: courseTitle,
+              title: courseTitle,
             },
           });
           if (!course) {
             return null;
           } else {
-            await prisma.course.update({
+            await prisma.course.updateMany({
               where: {
                 title: courseTitle,
               },
