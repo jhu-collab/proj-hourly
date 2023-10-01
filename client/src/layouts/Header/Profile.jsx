@@ -62,7 +62,7 @@ function Profile() {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Typography variant="subtitle1">{name}</Typography>
+          <Typography data-cy="profile-name" variant="subtitle1">{name}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
