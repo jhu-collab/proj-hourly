@@ -84,7 +84,7 @@ describe("Course Details Page: Staff", () => {
   });
 
 
-  it("create course calendar event successful", ()=> {
+  it("create course calendar event successful", () => {
     cy.get(courseCalendarEventInfoTitle).contains(`Course Calendar Event Information`);
     // Activate recurring
     cy.get('input[name="recurringEvent"]').check();
@@ -114,7 +114,7 @@ describe("Course Details Page: Staff", () => {
     cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
     cy.get('[data-cy="use-token-submit"]').click();
 
-    
+
 
 
     // check if token appears to the left
@@ -135,6 +135,94 @@ describe("Course Details Page: Staff", () => {
     cy.get(navbarButton).click();
     cy.wait(1000);
     cy.get(navbar).contains("a", "course tokens").click();
+  });
+
+  it("opt out of token successful", () => {
+    cy.get(courseCalendarEventInfoTitle).contains(`Course Calendar Event Information`);
+    // Activate recurring
+    cy.get('input[name="recurringEvent"]').check();
+    // Hardcode date
+    const now = new Date();
+    const beginDate = new Date(now);
+    const endDate = new Date(now.setMonth(now.getMonth() + 1));
+    // Enter start and end date
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.get('[data-cy="create-start-date-text"]').clear().type(formatCypressDate(beginDate));
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.get('[data-cy="create-end-date-text"]').clear().type(formatCypressDate(endDate));
+    // Course happens on which days
+    cy.get('button[value="Tuesday"]').click();
+    cy.get('button[value="Thursday"]').click();
+    cy.get('button[value="Sunday"]').click();
+
+    // location
+    const locationName = "Malone";
+    cy.get('[data-cy="create-location-input"]').type(locationName);
+
+    // submit
+    cy.get('[data-cy="create-event-submit"]').click();
+
+    // enable this course to use tokens
+    cy.wait(1000);
+    cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
+    cy.get('[data-cy="use-token-submit"]').click();
+
+
+    // check if token appears to the left
+    cy.wait(1000);
+    cy.get(courseCard).click();
+
+    // test opt out of use tokens
+    cy.get(navbarButton).click();
+    const body = cy.get("body");
+    cy.get(navbar).contains("a", "course details").click();
+    body.click();
+    cy.get(courseTokenOptionTitle).contains(`Course Token Option`);
+    cy.get('[data-cy="use-token-submit"]').click();
+    cy.wait(1000);
+    cy.get(courseCard).click();
+    cy.get(navbarButton).click();
+    cy.wait(1000);
+    cy.get(navbar).contains("a", "course details").should('exist');
+    cy.get(navbar).contains("course tokens").should('not.exist');
+  });
+
+  it("delete course calendar event successful", () => {
+    cy.get(courseCalendarEventInfoTitle).contains(`Course Calendar Event Information`);
+    // Activate recurring
+    cy.get('input[name="recurringEvent"]').check();
+    // Hardcode date
+    const now = new Date();
+    const beginDate = new Date(now);
+    const endDate = new Date(now.setMonth(now.getMonth() + 1));
+    // Enter start and end date
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.get('[data-cy="create-start-date-text"]').clear().type(formatCypressDate(beginDate));
+    Cypress.on('uncaught:exception', () => { return false });
+    cy.get('[data-cy="create-end-date-text"]').clear().type(formatCypressDate(endDate));
+    // Course happens on which days
+    cy.get('button[value="Tuesday"]').click();
+    cy.get('button[value="Thursday"]').click();
+    cy.get('button[value="Sunday"]').click();
+
+    // location
+    const locationName = "Malone";
+    cy.get('[data-cy="create-location-input"]').type(locationName);
+
+    // submit
+    cy.get('[data-cy="create-event-submit"]').click();
+    cy.wait(1000);
+
+    // submit
+    cy.get('[data-cy="delete-event-submit"]').click();
+
+    // check if events disappear in calendar correctly - hard coded (creating events on Sunday, recurring on every Tues, Thurs, & Sun)
+    cy.get(navbarButton).click();
+    const body = cy.get("body");
+    cy.get(navbar).contains("a", "calendar").click();
+    body.click();
+    cy.get('button[title="Next week"]').should("be.visible").click();
+    cy.get('div[class="fc-daygrid-event-harness"]').should("not.exist");
   });
 });
 
@@ -189,7 +277,7 @@ describe("Course Details Page: Student", () => {
       const body = cy.get("body");
       cy.get(navbar).contains("a", "course details").click();
       body.click();
-      });
+    });
   });
 
   it("Course Details Look as Expected", () => {
@@ -211,7 +299,7 @@ describe("Course Details Page: Student", () => {
     cy.get(leaveCourseConfirmButton).should("be.visible");
 
     cy.get(leaveCourseConfirmButton).click();
-    
+
     cy.url().should("be.equal", BASE_URL);
     cy.get(".Toastify")
       .contains("div", "Successfully removed course!")
