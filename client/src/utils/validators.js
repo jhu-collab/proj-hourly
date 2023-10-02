@@ -237,6 +237,7 @@ export const createCourseEventSchema = yup.object().shape({
   startDate: yup
     .date()
     .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
   recurringEvent: yup.boolean(),
   endDate: yup
@@ -288,17 +289,17 @@ export const createCourseEventSchema = yup.object().shape({
   isRemote: yup.boolean(),
 });
 
-export const createCourseEventAlternateSchema = yup.object().shape({
-  startDate: yup
-    .date()
-    .typeError("Please enter a valid date")
-    //.min(today, `Date must be on or after ${today.toLocaleDateString()}`)
-    .required("Date is required"),
-  recurringEvent: yup.boolean(),
-  //location: yup.string().required("Location is required"),
-  resources: yup.string(),
-  isRemote: yup.boolean(),
-});
+// export const createCourseEventAlternateSchema = yup.object().shape({
+//   startDate: yup
+//     .date()
+//     .typeError("Please enter a valid date")
+//     //.min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+//     .required("Date is required"),
+//   recurringEvent: yup.boolean(),
+//   //location: yup.string().required("Location is required"),
+//   resources: yup.string(),
+//   isRemote: yup.boolean(),
+// });
 
 export const createIndividualCourseEventSchema = yup.object().shape({
   title: yup.string().required("Agenda description is required"),
@@ -336,4 +337,16 @@ export const tokenSchema = yup.object({
     .required("Token quantity is required")
     .min(1, "Must have at least 1 of each token")
     .typeError("You must specify a number"),
+});
+
+export const useTokenSchema = yup.object().shape({
+  token: yup.string().required("Token name is required"),
+  undoToken: yup.boolean(),
+  date: yup
+    .date()
+    .nullable()
+    .when(["undoToken"], {
+      is: (undoToken) => undoToken === true,
+      then: yup.string().required("Date is required"),
+    }),
 });

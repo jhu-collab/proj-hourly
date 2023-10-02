@@ -14,7 +14,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
 import { createCourseEventSchema } from "../../utils/validators";
-import { createCourseEventAlternateSchema } from "../../utils/validators";
+// import { createCourseEventAlternateSchema } from "../../utils/validators";
 import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Typography } from "@mui/material";
@@ -87,9 +87,8 @@ function CourseCalendarEventForm() {
       location: "",
       resources: "",
     },
-    resolver: recurring
-      ? yupResolver(createCourseEventSchema)
-      : yupResolver(createCourseEventAlternateSchema),
+    resolver:
+      yupResolver(createCourseEventSchema),
   });
 
   recurring = watch("recurringEvent");
