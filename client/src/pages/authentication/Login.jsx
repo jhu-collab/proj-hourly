@@ -8,7 +8,7 @@ function Login() {
     <AuthWrapper>
       <Grid container spacing={1.5}>
         <Grid item xs={12}>
-          <Typography fontSize="30px" fontWeight={400}>
+          <Typography fontSize="30px" data-cy="login-subtitle" fontWeight={400}>
             Login
           </Typography>
         </Grid>

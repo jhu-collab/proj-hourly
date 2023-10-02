@@ -140,8 +140,9 @@ function CourseCalendarEventForm() {
   return (
     <>
       {!doEventsExist() && (
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit)} >
           <Typography variant="h5" fontWeight={400}>
+
             Create course calendar events using this form:
           </Typography>
           <Stack direction="column" alignItems="center" spacing={3}>
@@ -155,6 +156,7 @@ function CourseCalendarEventForm() {
             </Stack>
             <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
               <FormInputText
+                data-cy="create-start-date-text"
                 name="startDate"
                 control={control}
                 label={recurring ? "Start Date" : "Date"}
@@ -163,6 +165,7 @@ function CourseCalendarEventForm() {
               />
               {recurring && (
                 <FormInputText
+                  data-cy="create-end-date-text"
                   name="endDate"
                   control={control}
                   label="End Date"
@@ -178,8 +181,9 @@ function CourseCalendarEventForm() {
                 buttons={BUTTONS}
               />
             )}
-            <FormInputText name="location" control={control} label="Location" />
+            <FormInputText name="location" control={control} label="Location" data-cy="create-location-input" />
             <FormInputText
+
               name="resources"
               control={control}
               label="Additional Resources"
@@ -187,6 +191,7 @@ function CourseCalendarEventForm() {
               rows={4}
             />
             <Button
+              data-cy="create-event-submit"
               type="submit"
               variant="contained"
               disabled={createIsLoading}
@@ -205,6 +210,7 @@ function CourseCalendarEventForm() {
           <Button
             onClick={onDelete}
             variant="contained"
+            data-cy="delete-event-submit"
             disabled={deleteIsLoading}
             fullWidth
           >

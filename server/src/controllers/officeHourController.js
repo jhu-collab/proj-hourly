@@ -996,7 +996,7 @@ export const editLocationRecurringDay = async (req, res) => {
       officeHourId: officeHourId,
     },
     data: {
-      officeHour: newOfficeHour,
+      officeHourId: newOfficeHour.id,
     },
   });
   debug("Office hour updated...");

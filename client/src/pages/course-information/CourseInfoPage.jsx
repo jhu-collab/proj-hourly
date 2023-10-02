@@ -56,17 +56,20 @@ function CourseInfoPage() {
           <RemoveCourseAction courseId={course.id} />
         )}
       </MainCard>
+
       {courseType === "Instructor" && (
         <MainCard
+          data-cy="coursetype-calendar-event_info_title"
           title="Course Calendar Event Information"
           sx={{ padding: 0 }}
           content={true}
         >
-          <CourseCalendarEventForm />
+          <CourseCalendarEventForm data-cy="form"/>
         </MainCard>
       )}
       {courseType === "Instructor" && (
         <MainCard
+        data-cy="coursetype-course-token-title"
           title="Course Token Option"
           sx={{ padding: 0 }}
           content={true}

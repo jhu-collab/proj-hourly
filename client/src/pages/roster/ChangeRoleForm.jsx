@@ -21,41 +21,49 @@ function ChangeRoleForm(props) {
   };
 
   return (
-    <Form onSubmit={onSubmit}>
-      <Stack alignItems={"center"} direction={"column"} spacing={2}>
+    <Form data-cy="role-form" onSubmit={onSubmit}>
+      <Stack data-cy="role-stack" alignItems={"center"} direction={"column"} spacing={2}>
         {!isStaff && (
-          <Typography variant="h4" align="center">
+          <Typography data-cy="student-role-title" variant="h4" align="center">
             Change Role to Staff or Instructor?
           </Typography>
         )}
         {isStaff && (
-          <Typography variant="h4" align="center">
+          <Typography data-cy="staff-role-title" variant="h4" align="center">
             Change Role to Student or Instructor?
           </Typography>
         )}
         <RadioGroup
+          data-cy="role-choices-group"
           row
           name="row-radio-buttons-group"
           value={role}
           onChange={handleRoleChange}
         >
           {!isStaff && (
-            <FormControlLabel value="Staff" control={<Radio />} label="Staff" />
+            <FormControlLabel 
+              data-cy="to-staff-label" 
+              value="Staff" 
+              control={<Radio />} 
+              label="Staff" 
+            />
           )}
           {isStaff && (
             <FormControlLabel
+              data-cy="to-student-label"
               value="Student"
               control={<Radio />}
               label="Student"
             />
           )}
           <FormControlLabel
+            data-cy="to-instructor-label"
             value="Instructor"
             control={<Radio />}
             label="Instructor"
           />
         </RadioGroup>
-        <Button color="secondary" variant="contained" type="submit">
+        <Button data-cy="confirm-role-change-button" color="secondary" variant="contained" type="submit">
           Change
         </Button>
       </Stack>

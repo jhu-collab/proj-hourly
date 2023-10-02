@@ -159,6 +159,32 @@ export default defineConfig({
           });
           return null;
         },
+        async deleteStaffCourses(userName) {
+          await prisma.account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              staffCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
+        async deleteInstructorCourse(userName) {
+          await prisma.account.update({
+            where: {
+              userName: userName,
+            },
+            data: {
+              instructorCourses: {
+                set: [],
+              },
+            },
+          });
+          return null;
+        },
         async deleteInstructorCourses(userName) {
           const user = await prisma.account.findUnique({
             where: {
@@ -172,7 +198,9 @@ export default defineConfig({
             return null;
           }
           for (const c of user.instructorCourses) {
-            console.log(c);
+            await prisma.calendarEvent.deleteMany({
+              where: { courseId: c.id },
+            });
             const tokens = await prisma.courseToken.findMany({
               where: {
                 courseId: c.id,
@@ -216,6 +244,27 @@ export default defineConfig({
           });
           return null;
         },
+        async optOutCourseToken(courseTitle) {
+          const course = await prisma.course.findFirst({
+            where: {
+              title: courseTitle,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                title: courseTitle,
+              },
+              data: {
+                usesTokens: false,
+              },
+            });
+            return null;
+          }
+        },
+
         async getCourseByCode(code) {
           const course = await prisma.course.findUnique({
             where: {
@@ -231,6 +280,190 @@ export default defineConfig({
             },
           });
           return course;
+        },
+        async addStudent(courseCode) {
+          const aliTheStudent = await prisma.account.update({
+            where: {
+              userName: "ali-the-student".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                connect: {
+                  code: courseCode,
+                },
+              },
+            },
+          });
+          const thor = await prisma.account.update({
+            where: {
+              userName: "thor".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                connect: {
+                  code: courseCode,
+                },
+              },
+            },
+          });
+          return null;
+        },
+        async addStaff(courseCode) {
+          const aliTheTA = await prisma.account.update({
+            where: {
+              userName: "ali-the-ta".toLocaleLowerCase(),
+            },
+            data: {
+              staffCourses: {
+                connect: {
+                  code: courseCode,
+                },
+              },
+            },
+          });
+          return null;
+        },
+        async removeStudent(courseCode) {
+          const aliTheStudent = await prisma.account.update({
+            where: {
+              userName: "ali-the-student".toLocaleLowerCase(),
+            },
+            data: {
+              studentCourses: {
+                disconnect: {
+                  code: courseCode,
+                },
+              },
+            },
+          });
+          return null;
+        },
+        async removeStaff(courseCode) {
+          const aliTheTA = await prisma.account.update({
+            where: {
+              userName: "ali-the-ta".toLocaleLowerCase(),
+            },
+            data: {
+              staffCourses: {
+                disconnect: {
+                  code: courseCode,
+                },
+              },
+            },
+          });
+          return null;
+        },
+        async currentStudents(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              students: true,
+            },
+          });
+          return course.students != null;
+        },
+        async currentStaff(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              courseStaff: true,
+            },
+          });
+          return course.courseStaff != null;
+        },
+        async currentInstructors(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              instructors: true,
+            },
+          });
+          return course.instructors != null;
+        },
+        async addCourseTokens(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+            include: {
+              students: true,
+            },
+          });
+          const token = await prisma.courseToken.create({
+            data: {
+              title: "tokenTitle",
+              tokenLimit: 2,
+              course: {
+                connect: {
+                  id: course.id,
+                },
+              },
+            },
+          });
+          const array = [];
+          course.students.forEach((student) => {
+            array.push({
+              accountId: student.id,
+              courseTokenId: token.id,
+            });
+          });
+          await prisma.issueToken.createMany({
+            data: array,
+          });
+          return null;
+        },
+        async deleteCourseTokens(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          await prisma.issueToken.deleteMany({
+            where: {
+              CourseToken: {
+                courseId: course.id,
+              },
+            },
+          });
+          await prisma.courseToken.deleteMany({
+            where: {
+              courseId: course.id,
+            },
+          });
+          return null;
+        },
+        async getTokenCount({ accountValue, courseCode }) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          const student = await prisma.account.findFirst({
+            where: {
+              firstName: accountValue,
+            },
+          });
+          const courseToken = await prisma.courseToken.findFirst({
+            where: {
+              courseId: course.id,
+            },
+          });
+          const issueToken = await prisma.issueToken.findFirst({
+            where: {
+              accountId: student.id,
+              courseTokenId: courseToken.id,
+            },
+          });
+          const numTokenLimit = courseToken.tokenLimit;
+          const datesUsedLength = issueToken.datesUsed.length;
+          const remainingTokens = numTokenLimit - datesUsedLength;
+          return remainingTokens;
         },
         async enableCourseTokens(username) {
           const account = await prisma.account.findUnique({

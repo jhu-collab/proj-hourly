@@ -40,6 +40,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   courseValidator.isInCourseFromHeader,
+  validator.isCourseUsingTokens,
   controller.getTokens
 );
 
@@ -53,6 +54,7 @@ router.get(
   courseValidator.isCourseIdParams,
   courseValidator.isCourseStaffOrInstructor,
   courseValidator.isAccountStudentParams,
+  validator.isCourseUsingTokens,
   controller.getTokensForStudent
 );
 
@@ -67,6 +69,7 @@ router.get(
   //   accountValidator.isAccountStudent,
   courseValidator.isCourseIdParams,
   courseValidator.isInCourseFromHeader,
+  validator.isCourseUsingTokens,
   controller.getAllRemainingTokens
 );
 
@@ -118,6 +121,7 @@ router.post(
   accountValidator.isAccountInstructor,
   validator.isCourseToken,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.editCourseToken
 );
 
@@ -139,6 +143,7 @@ router.post(
   validator.tokenLimitReached,
   courseValidator.isCoursePaused,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.usedToken
 );
 
@@ -159,6 +164,7 @@ router.post(
   validator.isCourseToken,
   courseValidator.isCoursePaused,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.undoUsedToken
 );
 
@@ -213,6 +219,7 @@ router.delete(
   accountValidator.isAccountInstructor,
   validator.isCourseToken,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.deleteSingle
 );
 
@@ -227,6 +234,7 @@ router.delete(
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.deleteAll
 );
 
