@@ -162,6 +162,33 @@ const defaultUsers = [
   },
 ];
 
+const generateManyFakeUsers = async () => {
+  let count = 0;
+  let users = [];
+  while (count < 1000) {
+    const firstName = "fake-user" + count;
+    const lastName = "fake-user" + count;
+    const email = faker.internet.email(firstName, lastName, "jhu.edu");
+    const hashedPassword = hashPassword(firstName.toLowerCase());
+    users.push({
+      userName: firstName.toLocaleLowerCase(),
+      hashedPassword: hashedPassword,
+      email: email.toLowerCase(),
+      firstName: firstName,
+      lastName: lastName,
+      preferredName: firstName,
+      role: Role.User,
+    });
+    console.log(count);
+    count += 1;
+  }
+  const accs = await prisma.account.createMany({
+    data: users,
+  });
+  console.log("created");
+  return accs;
+};
+
 const generateFakeUser = async (role, username) => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
@@ -190,6 +217,8 @@ const generateFakeUser = async (role, username) => {
 
 export const generateFakeData = async () => {
   await prisma.Account.deleteMany();
+  // await generateManyFakeUsers();
+  // const accs = await prisma.account.findMany();
 
   // Generate fake users
   for (let index = 0; index < 5; index++) {
@@ -271,6 +300,21 @@ export const generateFakeData = async () => {
       },
     },
   });
+
+  // accs.forEach(async (acc) => {
+  //   await prisma.account.update({
+  //     where: {
+  //       id: acc.id,
+  //     },
+  //     data: {
+  //       studentCourses: {
+  //         connect: {
+  //           id: course.id,
+  //         },
+  //       },
+  //     },
+  //   });
+  // });
 
   await generateFakeUser(Role.Admin, `admin-1`);
   await createDataStructures();

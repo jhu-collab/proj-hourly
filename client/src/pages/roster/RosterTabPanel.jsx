@@ -85,9 +85,10 @@ function RosterTabPanel({ index, rows }) {
             }
             autoHeight
             getRowHeight={() => "auto"}
-            rowsPerPageOptions={[5, 10, 20]}
+            // autoPageSize
+            // rowsPerPageOptions={[5, 10, 20]}
             checkboxSelection
-            hideFooter
+            // hideFooter
             disableSelectionOnClick
             components={{
               Toolbar: GridToolbar,
