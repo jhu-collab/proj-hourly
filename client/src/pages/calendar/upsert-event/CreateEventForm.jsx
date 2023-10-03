@@ -14,6 +14,7 @@ import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeH
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
+import { compose } from "@mui/system";
 
 const DAYS = [
   "Sunday",
@@ -104,13 +105,19 @@ function CreateEventForm() {
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
     const startTime = data.startTime.split(":");
+    console.log(start)
+    console.log(startTime)
     start.setHours(startTime[0]);
     start.setMinutes(startTime[1]);
     let end = new Date(data.startDate);
-    if (data.endDate !== null) {
+    console.log(data.endDate !== null)
+    console.log(data.endDate !== data.startDate)
+    if (recurring && (data.endDate !== null || data.endDate !== data.startDate)) {
       end = new Date(data.endDate);
     }
     const endTime = data.endTime.split(":");
+    console.log(end)
+    console.log(endTime)
     end.setHours(endTime[0]);
     end.setMinutes(endTime[1]);
     mutate({
@@ -121,7 +128,7 @@ function CreateEventForm() {
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       remote: data.remote,
-      hosts: [id], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TODO: For now, there will be no additional hosts
     });
   };
 
