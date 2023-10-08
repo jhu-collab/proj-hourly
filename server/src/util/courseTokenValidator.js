@@ -81,7 +81,7 @@ export const tokenLimitReached = async (req, res, next) => {
   }
   if (
     (courseToken.overrideAmount !== null &&
-      dates.length >= courseToken.overrideAmount) ||
+      dates.length >= issueToken.overrideAmount) ||
     (courseToken.overrideAmount === null &&
       dates.length >= courseToken.tokenLimit)
   ) {

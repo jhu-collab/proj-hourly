@@ -241,6 +241,5 @@ router.delete(
 // route for adding override limit for student
 // route for editing override limit for student
 // route for deleting override limit for student
-// route for getting override limit for student
 
 export default router;

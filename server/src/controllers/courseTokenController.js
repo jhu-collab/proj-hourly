@@ -131,16 +131,17 @@ export const editCourseToken = async (req, res) => {
     },
   });
   const issueTokenIds = issueTokens.map((issueToken) => issueToken.id);
-  for (const issueTokenId of issueTokenIds) {
-    const issueToken = await prisma.issueToken.update({
-      where: {
-        id: issueTokenId,
-      },
-      data: {
-        overrideAmount: null,
-      },
-    });
-  }
+  // for (const issueTokenId of issueTokenIds) {
+  //   const issueToken = await prisma.issueToken.update({
+  //     where: {
+  //       id: issueTokenId,
+  //     },
+  //     data: {
+  //       overrideAmount: null,
+  //     },
+  //   });
+  // }
+  // can't do for loop --> updatemany somehow? 
   debug("Updated issue tokens...");
   return res.status(StatusCodes.ACCEPTED).json({ courseToken });
 };
@@ -229,7 +230,7 @@ export const getRemainingTokens = async (req, res) => {
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
-  const overrideAmount = courseToken.overrideAmount;
+  const overrideAmount = issueToken.overrideAmount;
   const datesUsedLength = issueToken.datesUsed.length;
   const remainingTokens =
     overrideAmount !== null
