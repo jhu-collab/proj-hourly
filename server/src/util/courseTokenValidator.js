@@ -80,14 +80,11 @@ export const tokenLimitReached = async (req, res, next) => {
     next();
   }
   if (
-    courseToken.overrideAmount != null &&
-    dates.length >= courseToken.overrideAmount
+    (courseToken.overrideAmount !== null &&
+      dates.length >= courseToken.overrideAmount) ||
+    (courseToken.overrideAmount === null &&
+      dates.length >= courseToken.tokenLimit)
   ) {
-    debug("Course token limit reached!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Student has used all their tokens" });
-  } else if (dates.length >= courseToken.tokenLimit) {
     debug("Course token limit reached!");
     return res
       .status(StatusCodes.BAD_REQUEST)
