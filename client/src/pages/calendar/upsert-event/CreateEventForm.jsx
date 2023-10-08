@@ -105,19 +105,13 @@ function CreateEventForm() {
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
     const startTime = data.startTime.split(":");
-    console.log(start)
-    console.log(startTime)
     start.setHours(startTime[0]);
     start.setMinutes(startTime[1]);
     let end = new Date(data.startDate);
-    console.log(data.endDate !== null)
-    console.log(data.endDate !== data.startDate)
     if (recurring && (data.endDate !== null || data.endDate !== data.startDate)) {
       end = new Date(data.endDate);
     }
     const endTime = data.endTime.split(":");
-    console.log(end)
-    console.log(endTime)
     end.setHours(endTime[0]);
     end.setMinutes(endTime[1]);
     mutate({
