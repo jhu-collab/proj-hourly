@@ -12,7 +12,8 @@ import useMutationCreateCourseCalendarEvent from "../../../hooks/useMutationCrea
 import { createIndividualCourseEventSchema } from "../../../utils/validators";
 import { DateTime } from "luxon";
 import useStoreEvent from "../../../hooks/useStoreEvent";
-
+import { useModal } from "@ebay/nice-modal-react";
+import Popup from "../../../components/Popup";
 
 
 /**
@@ -24,6 +25,7 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 function CreateAllDayEventForm() {
     const { mutate } = useMutationCreateCourseCalendarEvent("one");
     const course = useStoreCourse((state) => state.course);
+    const modal = useModal();
 
     const start = useStoreEvent((state) => state.start);
 
@@ -52,8 +54,12 @@ function CreateAllDayEventForm() {
     };
 
 
+
     return (
-        <>
+        <Popup
+            modal={modal}
+            title="Create Course Calendar Event"
+        >
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Stack alignItems="center" spacing={2}>
                     <FormInputText
@@ -98,7 +104,7 @@ function CreateAllDayEventForm() {
                 </Stack>
 
             </Form >
-        </>
+        </Popup>
     );
 }
 

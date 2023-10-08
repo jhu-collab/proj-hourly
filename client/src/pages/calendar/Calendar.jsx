@@ -95,7 +95,6 @@ function Calendar() {
 
   const handleSelect = (info) => {
     if (info.allDay && isInstructor) { // clicking on the all-day section & is instructor
-      console.log("info.allDay = true!!!");
       setEvent({
         start: info.start,
         end: info.end,
