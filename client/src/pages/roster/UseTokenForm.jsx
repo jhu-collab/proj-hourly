@@ -61,7 +61,7 @@ function UseTokenForm(props) {
       }
     });
     if (!e.undoToken) {
-      mutate({ token: selectedToken });
+      mutate({ selectedToken });
     } else {
       undoMutate({ token: selectedToken, date: e.date });
     }
