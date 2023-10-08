@@ -154,12 +154,14 @@ export const undoUsedToken = async (req, res) => {
     },
   });
   debug("Found issueToken for student...");
-  const updatedDatesUsed = issueToken.datesUsed.filter(
-    (dateTime) =>
-      !new Date(dateTime)
-        .toISOString()
-        .startsWith(dateObj.format("iso").slice(0, 10))
+  const dateToFind = dateObj.format("iso").slice(0, 10);
+  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) =>
+    new Date(dateTime).toISOString().startsWith(dateToFind)
   );
+  let updatedDatesUsed = issueToken.datesUsed;
+  if (indexToRemove !== -1) {
+    updatedDatesUsed = issueToken.datesUsed.splice(indexToRemove, 1);
+  }
   debug("Updating issueToken for student...");
   const updateIssueToken = await prisma.issueToken.update({
     where: {
