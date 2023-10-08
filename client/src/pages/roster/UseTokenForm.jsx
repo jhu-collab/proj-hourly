@@ -120,7 +120,7 @@ function UseTokenForm(props) {
           control={control}
           label="Undo Student Token Usage?"
         />
-        {undoToken && (
+        {undoToken && token && (
           <FormInputDropdown
             data-cy="token-date-dropdown"
             name="date"

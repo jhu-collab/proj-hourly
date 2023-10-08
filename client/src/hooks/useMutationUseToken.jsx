@@ -23,7 +23,7 @@ function useMutationUseToken(studentId, courseId) {
       const endpoint = `${BASE_URL}/api/courseToken/${courseId}/usedToken/${tokenId}/student/${studentId}`;
       const res = await axios.post(
         endpoint,
-        { date: (new Date()).toISOString() },
+        { date: new Date().toISOString() },
         getConfig(token)
       );
       debug("Successful! Returning result data...");
