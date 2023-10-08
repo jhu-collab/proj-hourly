@@ -41,6 +41,7 @@ function JoinCourseForm() {
         </Typography>
         <Stack direction="column" spacing={0.5}>
           <FormInputText
+            data-cy="join-course-input"
             name="code"
             label="Course Code"
             control={control}
@@ -51,6 +52,7 @@ function JoinCourseForm() {
               fullWidth
               type="submit"
               sx={{ marginTop: 1 }}
+              data-cy="join-course-button"
             >
               Join Course
             </Button>
@@ -74,6 +76,7 @@ function JoinCourseForm() {
                 NiceModal.hide("join-course");
                 NiceModal.show("create-course");
               }}
+              data-cy="create-course-button"
             >
               Create a new course
             </Button>

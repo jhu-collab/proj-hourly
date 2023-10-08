@@ -25,7 +25,9 @@ model Account {
   preferredName     String?
   role              Role           @default(User)
   token             String?
-  IssueToken        IssueToken[]   
+  IssueToken        IssueToken[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @default(now()) @updatedAt
 }
 
 enum Role {
@@ -54,7 +56,9 @@ model Course {
   usesTokens         Boolean                 @default(false)
   calendarEvents     CalendarEvent[]
   isPaused           Boolean                 @default(false)
-  isArchived           Boolean               @default(false)
+  isArchived         Boolean                 @default(false)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @default(now()) @updatedAt
 }
 
 model OfficeHourTimeOptions {
@@ -64,6 +68,8 @@ model OfficeHourTimeOptions {
   course       Course         @relation("isCourseTimeOption", fields: [courseId], references: [id])
   courseId     Int
   Registration Registration[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 }
 
 model OfficeHour {
@@ -83,6 +89,8 @@ model OfficeHour {
   registrations Registration[]
   isDeleted     Boolean             @default(false)
   isRemote      Boolean             @default(false)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @default(now()) @updatedAt
 }
 
 model numberToDayOfWeek {
@@ -109,6 +117,8 @@ model Registration {
   officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
   officeHourTimeOptionId Int
   isNoShow               Boolean               @default(false)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @default(now()) @updatedAt
 }
 
 model Topic {
@@ -117,38 +127,47 @@ model Topic {
   course        Course         @relation(fields: [courseId], references: [id])
   courseId      Int
   registrations Registration[] @relation("withTopics")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
 }
 
 model CourseToken {
   //relations to the course
-  id                     Int                   @id @default(autoincrement())
-  course                 Course                @relation(fields: [courseId], references:[id])
-  title                  String
-  description            String                @default("")
-  courseId               Int
-  tokenLimit             Int
-  IssueToken             IssueToken[] 
+  id          Int          @id @default(autoincrement())
+  course      Course       @relation(fields: [courseId], references: [id])
+  title       String
+  description String       @default("")
+  courseId    Int
+  tokenLimit  Int
+  IssueToken  IssueToken[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
 }
 
 model IssueToken {
   //relation to student
-  id                     Int                   @id @default(autoincrement())
-  datesUsed              DateTime[]
-  account                Account               @relation(fields: [accountId], references: [id])
-  accountId              Int
-  CourseToken            CourseToken           @relation(fields: [courseTokenId], references: [id])
-  courseTokenId          Int
+  id            Int         @id @default(autoincrement())
+  datesUsed     DateTime[]
+  account       Account     @relation(fields: [accountId], references: [id])
+  accountId     Int
+  CourseToken   CourseToken @relation(fields: [courseTokenId], references: [id])
+  courseTokenId Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now()) @updatedAt
 }
+
 model CalendarEvent {
   course         Course   @relation(fields: [courseId], references: [id])
   courseId       Int
   date           DateTime //@db.Date()
-  title  String   @default("")
+  title          String   @default("")
   additionalInfo String?
   isCancelled    Boolean  @default(false)
   isRemote       Boolean  @default(false)
-  location       String
+  location       String   @default("")
   allDay         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 
   @@unique([courseId, date])
 }

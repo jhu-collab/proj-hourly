@@ -58,7 +58,7 @@ function RosterTabPanel({ index, rows }) {
 
   const noRows = () => {
     return (
-      <Alert severity="info">
+      <Alert data-cy="no-roster-alert" severity="info">
         {index === 0
           ? "No Students"
           : index === 1
@@ -85,9 +85,10 @@ function RosterTabPanel({ index, rows }) {
             }
             autoHeight
             getRowHeight={() => "auto"}
-            rowsPerPageOptions={[5, 10, 20]}
+            // autoPageSize
+            // rowsPerPageOptions={[5, 10, 20]}
             checkboxSelection
-            hideFooter
+            // hideFooter
             disableSelectionOnClick
             components={{
               Toolbar: GridToolbar,

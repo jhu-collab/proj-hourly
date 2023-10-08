@@ -1,0 +1,25 @@
+name: Deploy API Server to Heroku 
+
+on:
+  # Runs on pushes to the main branch
+  push:
+    branches:
+      - ali-move-heroku
+    paths:
+      - "server/**"
+      - ".github/workflows/heroku.server.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy to Heroku
+        uses: AkhileshNS/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_TOKEN}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          appdir: "server" 

@@ -40,6 +40,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   courseValidator.isInCourseFromHeader,
+  validator.isCourseUsingTokens,
   controller.getTokens
 );
 
@@ -53,6 +54,7 @@ router.get(
   courseValidator.isCourseIdParams,
   courseValidator.isCourseStaffOrInstructor,
   courseValidator.isAccountStudentParams,
+  validator.isCourseUsingTokens,
   controller.getTokensForStudent
 );
 
@@ -67,6 +69,7 @@ router.get(
   //   accountValidator.isAccountStudent,
   courseValidator.isCourseIdParams,
   courseValidator.isInCourseFromHeader,
+  validator.isCourseUsingTokens,
   controller.getAllRemainingTokens
 );
 
@@ -79,10 +82,9 @@ router.post(
   },
   param("courseId", "Please enter a valid course id").isInt(),
   body("title", "Please enter a title for this course token").notEmpty(),
-  body(
-    "description",
-    "Please enter a description for this course token"
-  ).notEmpty(),
+  body("description", "Please enter a description for this course token")
+    .optional()
+    .isString(),
   body(
     "tokenLimit",
     "Please enter a token limit for this course token"
@@ -110,13 +112,16 @@ router.post(
   body(
     "description",
     "Please indicate what the description should be changed to."
-  ).notEmpty(),
+  )
+    .optional()
+    .isString(),
   body("tokenLimit", "Please indicate the new token limit.").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   validator.isCourseToken,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.editCourseToken
 );
 
@@ -138,6 +143,7 @@ router.post(
   validator.tokenLimitReached,
   courseValidator.isCoursePaused,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.usedToken
 );
 
@@ -158,6 +164,7 @@ router.post(
   validator.isCourseToken,
   courseValidator.isCoursePaused,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.undoUsedToken
 );
 
@@ -212,6 +219,7 @@ router.delete(
   accountValidator.isAccountInstructor,
   validator.isCourseToken,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.deleteSingle
 );
 
@@ -226,6 +234,7 @@ router.delete(
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
   controller.deleteAll
 );
 

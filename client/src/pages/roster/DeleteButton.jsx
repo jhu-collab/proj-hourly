@@ -16,7 +16,7 @@ function DeleteButton({ params, isStaff }) {
 
   return (
     <>
-      <GridActionsCellItem
+      <GridActionsCellItem 
         icon={<CloseOutlined />}
         onClick={() => {
           confirmDialog("Do you want to delete this user", () => {
@@ -27,7 +27,7 @@ function DeleteButton({ params, isStaff }) {
         label="Delete"
         size="large"
       />
-      <ConfirmPopup />
+      <ConfirmPopup data-cy="delete-user-confirmation-button"/>
     </>
   );
 }

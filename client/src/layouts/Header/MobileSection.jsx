@@ -42,6 +42,7 @@ function MobileSection() {
     <>
       <Box sx={{ flexShrink: 0, ml: 0.75 }}>
         <IconButton
+          data-cy="ellipsis-icon-button"
           component="span"
           disableRipple
           sx={{

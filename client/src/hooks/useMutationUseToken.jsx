@@ -7,6 +7,7 @@ import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import useStoreCourse from "./useStoreCourse";
 import Debug from "debug";
+import NiceModal from "@ebay/nice-modal-react";
 
 const debug = new Debug(`hourly:hooks:useMutationUseToken.jsx`);
 
@@ -34,6 +35,7 @@ function useMutationUseToken(studentId, courseId) {
 
   const mutation = useMutation(useToken, {
     onSuccess: () => {
+      NiceModal.hide("use-course-token");
       queryClient.invalidateQueries(["remainingTokensPerStudent"]);
       queryClient.invalidateQueries(["remainingTokens"]);
       toast.success(`Successfully used the user's token`);

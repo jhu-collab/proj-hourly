@@ -33,7 +33,7 @@ export const generateTitle = (officeHour) => {
   if (officeHour.hosts.length > 1) {
     summary = "Office Hours for " + officeHour.course.title;
   } else if (officeHour.hosts.length === 1) {
-    summary = officeHour.hosts[0].firstName + "'s Office Hours";
+    summary = officeHour.hosts[0].firstName; // + "'s Office Hours";
   } else {
     summary = "Office Hours";
   }
@@ -157,7 +157,7 @@ export const generateRecurringEventJson = (officeHour) => {
           location: officeHour.location,
           id: officeHour.id,
           isRecurring: true,
-          isRemote: officeHour.isRemote
+          isRemote: officeHour.isRemote,
         },
       });
     }
@@ -212,7 +212,7 @@ export const generateSingleEventJson = (officeHour) => {
       location: officeHour.location,
       id: officeHour.id,
       isRecurring: false,
-      isRemote: officeHour.isRemote
+      isRemote: officeHour.isRemote,
     },
   };
 };
@@ -407,7 +407,7 @@ export const generateSingleEventJsonCourse = (calendarEvent, i) => {
       isCancelled: calendarEvent.isCancelled,
       isRemote: calendarEvent.isRemote,
       location: calendarEvent.location,
-      allDay: calendarEvent.allDay
+      allDay: calendarEvent.allDay,
     },
   };
 };
@@ -422,7 +422,7 @@ export const generateCourseCalendar = async (courseId) => {
     },
     include: {
       course: true,
-    }
+    },
   });
   let i = 1;
   calendarEvents.forEach((calendarEvent) => {
