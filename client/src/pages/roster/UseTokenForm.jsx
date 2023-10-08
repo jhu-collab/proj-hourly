@@ -11,6 +11,8 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import FormCheckbox from "../../components/form-ui/FormCheckbox";
 import FormInputText from "../../components/form-ui/FormInputText";
 import useMutationUndoUseToken from "../../hooks/useMutationUndoUseToken";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useTokenSchema } from "../../utils/validators";
 
 const getTokenOptions = (tokens) => {
   const tokenArr = [];
@@ -45,6 +47,7 @@ function UseTokenForm(props) {
       undoToken: false,
       date: "",
     },
+    resolver: yupResolver(useTokenSchema),
   });
 
   const tokens = getTokenOptions(queriedTokens || []);
@@ -66,7 +69,7 @@ function UseTokenForm(props) {
 
   // tokens with students count
   const token = watch("token");
-  const undo = watch("undoToken");
+  const undoToken = watch("undoToken");
 
   function onTokenChange() {
     let usedDatesSelected = [];
@@ -117,7 +120,7 @@ function UseTokenForm(props) {
           control={control}
           label="Undo Student Token Usage?"
         />
-        {undo && token && (
+        {undoToken && token && (
           <FormInputDropdown
             data-cy="token-date-dropdown"
             name="date"
@@ -131,7 +134,7 @@ function UseTokenForm(props) {
           color="secondary"
           variant="contained"
           type="submit"
-          disabled={(undo && token && usedDates.length === 0) || !token}
+          disabled={isLoading}
         >
           Submit
         </Button>
