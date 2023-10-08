@@ -197,8 +197,12 @@ export const getRemainingTokens = async (req, res) => {
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
+  const overrideAmount = courseToken.overrideAmount;
   const datesUsedLength = issueToken.datesUsed.length;
-  const remainingTokens = numTokenLimit - datesUsedLength;
+  const remainingTokens =
+    overrideAmount !== null
+      ? overrideAmount - datesUsedLength
+      : numTokenLimit - datesUsedLength;
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
