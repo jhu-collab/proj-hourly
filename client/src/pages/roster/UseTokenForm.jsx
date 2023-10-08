@@ -134,6 +134,7 @@ function UseTokenForm(props) {
           color="secondary"
           variant="contained"
           type="submit"
+          disabled={isLoading}
         >
           Submit
         </Button>
