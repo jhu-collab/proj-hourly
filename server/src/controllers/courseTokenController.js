@@ -111,37 +111,17 @@ export const editCourseToken = async (req, res) => {
   });
   debug("Updated course tokens...");
   debug("Updating issue tokens...");
-  const courseTokens = await prisma.courseToken.findMany({
+  const issueTokens = await prisma.issueToken.updateMany({
     where: {
-      id: courseTokenId,
-    },
-  });
-  const courseTokenIds = courseTokens.map((courseToken) => courseToken.id);
-  const issueTokens = await prisma.issueToken.findMany({
-    where: {
-      courseTokenId: {
-        in: courseTokenIds,
-      },
+      courseTokenId : courseTokenId, 
       overrideAmount: {
         lte: tokenLimit,
       },
     },
-    include: {
-      CourseToken: true,
+    data: {
+      overrideAmount: null,
     },
   });
-  const issueTokenIds = issueTokens.map((issueToken) => issueToken.id);
-  // for (const issueTokenId of issueTokenIds) {
-  //   const issueToken = await prisma.issueToken.update({
-  //     where: {
-  //       id: issueTokenId,
-  //     },
-  //     data: {
-  //       overrideAmount: null,
-  //     },
-  //   });
-  // }
-  // can't do for loop --> updatemany somehow? 
   debug("Updated issue tokens...");
   return res.status(StatusCodes.ACCEPTED).json({ courseToken });
 };
