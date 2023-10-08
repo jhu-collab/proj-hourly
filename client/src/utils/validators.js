@@ -335,10 +335,9 @@ export const useTokenSchema = yup.object().shape({
     .typeError("Date is required")
     .when("undoToken", {
       is: true,
-      then: 
-        yup
-          .string()
-          .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd")
-          .required("Date is required"),
+      then: yup
+        .string()
+        .required("Date is required")
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
     }),
 });
