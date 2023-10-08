@@ -14,7 +14,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
 import { createCourseEventSchema } from "../../utils/validators";
-import { createCourseEventAlternateSchema } from "../../utils/validators";
+// import { createCourseEventAlternateSchema } from "../../utils/validators";
 import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Typography } from "@mui/material";
@@ -73,9 +73,8 @@ const BUTTONS = [
  */
 
 function CourseCalendarEventForm() {
-  const token = useStoreToken((state) => state.token);
-
   const course = useStoreCourse((state) => state.course);
+
   let recurring = true;
 
   const { control, handleSubmit, watch } = useForm({
@@ -86,10 +85,10 @@ function CourseCalendarEventForm() {
       endDate: "",
       location: "",
       resources: "",
+      days: [],
     },
-    resolver: recurring
-      ? yupResolver(createCourseEventSchema)
-      : yupResolver(createCourseEventAlternateSchema),
+    resolver:
+      yupResolver(createCourseEventSchema),
   });
 
   recurring = watch("recurringEvent");
@@ -106,8 +105,13 @@ function CourseCalendarEventForm() {
 
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
-    const end = recurring ? new Date(data.endDate) : new Date(data.startDate);
-
+    let end = new Date(data.startDate);
+    if (
+      recurring &&
+      (data.endDate !== null || data.endDate !== data.startDate)
+    ) {
+      end = new Date(data.endDate);
+    }
     createMutate({
       courseId: course.id,
       begDate: start.toISOString(),
@@ -126,23 +130,26 @@ function CourseCalendarEventForm() {
   };
 
   const doEventsExist = () => {
-    if (
-      Array.isArray(courseEventsData?.calendarEvents) &&
-      courseEventsData &&
-      courseEventsData.calendarEvents &&
-      courseEventsData.calendarEvents.length !== 0
-    ) {
-      return true;
+    if (!courseEventsData) {
+      return false;
     }
-    return false;
+
+    if (!Array.isArray(courseEventsData.calendarEvents)) {
+      return false;
+    }
+
+    if (courseEventsData.calendarEvents.length === 0) {
+      return false;
+    }
+
+    return true;
   };
 
   return (
     <>
       {!doEventsExist() && (
-        <Form onSubmit={handleSubmit(onSubmit)} >
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Typography variant="h5" fontWeight={400}>
-
             Create course calendar events using this form:
           </Typography>
           <Stack direction="column" alignItems="center" spacing={3}>
@@ -181,9 +188,13 @@ function CourseCalendarEventForm() {
                 buttons={BUTTONS}
               />
             )}
-            <FormInputText name="location" control={control} label="Location" data-cy="create-location-input" />
             <FormInputText
-
+              name="location"
+              control={control}
+              label="Location"
+              data-cy="create-location-input"
+            />
+            <FormInputText
               name="resources"
               control={control}
               label="Additional Resources"
