@@ -14,7 +14,6 @@ import useMutationCreateOfficeHour from "../../../hooks/useMutationCreateOfficeH
 import useStoreToken from "../../../hooks/useStoreToken";
 import useStoreEvent from "../../../hooks/useStoreEvent";
 import useStoreCourse from "../../../hooks/useStoreCourse";
-import { compose } from "@mui/system";
 
 const DAYS = [
   "Sunday",
