@@ -238,8 +238,45 @@ router.delete(
   controller.deleteAll
 );
 
-// route for adding override limit for student
-// route for editing override limit for student
-// route for deleting override limit for student
+//allow instructor to add override limit to student's issue token
+router.post(
+  "/:courseId/editOverrideAmount/:courseTokenId/student/:studentId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
+  body("overrideAmount", "Please enter valid overrideAmount").isInt(),
+  courseValidator.isCourseIdParams,
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountInstructor,
+  courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
+  validator.isCourseToken,
+  courseValidator.isCoursePaused,
+  validator.tokenLessThanOverride,
+  controller.editOverride
+);
 
+//allow instructor to remove override limit to student's issue token
+router.post(
+  "/:courseId/deleteOverrideAmount/:courseTokenId/student/:studentId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("studentId", "Please enter a valid student id").isInt(),
+  courseValidator.isCourseIdParams,
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountInstructor,
+  courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
+  validator.isCourseToken,
+  courseValidator.isCoursePaused,
+  controller.deleteOverride
+);
 export default router;

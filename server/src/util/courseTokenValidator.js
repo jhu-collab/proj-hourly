@@ -95,4 +95,26 @@ export const tokenLimitReached = async (req, res, next) => {
   }
 };
 
-// validator that override amount is greater than token limit
+export const tokenLessThanOverride = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  debug("Finding course token...");
+  const courseToken = await prisma.courseToken.findUnique({
+    where: {
+      id: courseTokenId,
+    },
+  });
+  debug("Course token found...");
+  if (courseToken.tokenLimit >= overrideAmount) {
+    debug("Override limit is lte token limit!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Override limit is lte token limit" });
+  } else {
+    debug("Override limit is gt token limit!");
+    next();
+  }
+};
