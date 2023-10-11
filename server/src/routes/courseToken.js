@@ -30,6 +30,7 @@ router.post(
   controller.optIn
 );
 
+// gets course tokens for course
 router.get(
   "/:courseId",
   async (req, res, next) => {
@@ -44,6 +45,7 @@ router.get(
   controller.getTokens
 );
 
+// gets all remaining issue tokens for student
 router.get(
   "/:courseId/tokensRemainingForStudent/:accountId",
   async (req, res, next) => {
@@ -58,6 +60,7 @@ router.get(
   controller.getTokensForStudent
 );
 
+// gets all remining issue tokens for self
 router.get(
   "/:courseId/tokensRemaining",
   async (req, res, next) => {
@@ -97,6 +100,7 @@ router.post(
   controller.createToken
 );
 
+// edits course token
 router.post(
   "/:courseId/editCourseToken/:courseTokenId",
   async (req, res, next) => {

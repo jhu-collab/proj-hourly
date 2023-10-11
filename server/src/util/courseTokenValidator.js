@@ -80,9 +80,11 @@ export const tokenLimitReached = async (req, res, next) => {
     next();
   }
   if (
-    (courseToken.overrideAmount !== null &&
+    (courseToken.overrideAmount !== undefined &&
+      courseToken.overrideAmount !== null &&
       dates.length >= issueToken.overrideAmount) ||
-    (courseToken.overrideAmount === null &&
+    ((courseToken.overrideAmount === null ||
+      courseToken.overrideAmount === undefined) &&
       dates.length >= courseToken.tokenLimit)
   ) {
     debug("Course token limit reached!");
@@ -145,26 +147,26 @@ export const overrideNotNull = async (req, res, next) => {
 };
 
 export const overrideNull = async (req, res, next) => {
-    if (validate(req, res)) {
-      return res;
-    }
-    const courseTokenId = parseInt(req.params.courseTokenId, 10);
-    const studentId = parseInt(req.params.studentId, 10);
-    debug("Finding issue token...");
-    const issueToken = await prisma.issueToken.findFirst({
-      where: {
-        accountId: studentId,
-        courseTokenId,
-      },
-    });
-    debug("Found issue token...");
-    if (issueToken.overrideAmount != null) {
-      debug("Override limit is not null!");
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "Override limit is not null" });
-    } else {
-      debug("Override limit is null!");
-      next();
-    }
-  };
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token...");
+  const issueToken = await prisma.issueToken.findFirst({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+  });
+  debug("Found issue token...");
+  if (issueToken.overrideAmount != null) {
+    debug("Override limit is not null!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Override limit is not null" });
+  } else {
+    debug("Override limit is null!");
+    next();
+  }
+};
