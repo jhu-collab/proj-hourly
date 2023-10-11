@@ -257,6 +257,7 @@ router.post(
   validator.isCourseToken,
   courseValidator.isCoursePaused,
   validator.tokenLessThanOverride,
+  validator.overrideNull,
   controller.addOverride
 );
 
@@ -284,7 +285,7 @@ router.post(
 );
 
 //allow instructor to remove override limit to student's issue token
-router.post(
+router.delete(
   "/:courseId/deleteOverrideAmount/:courseTokenId/student/:studentId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
@@ -300,6 +301,7 @@ router.post(
   validator.isCourseUsingTokens,
   validator.isCourseToken,
   courseValidator.isCoursePaused,
+  validator.overrideNotNull,
   controller.deleteOverride
 );
 export default router;

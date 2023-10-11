@@ -824,6 +824,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courseTokens.length).toBe(0);
     });
   });
+  describe("HTTP POST request - add override amount", () => {});
+  describe("HTTP POST request - edit override amount", () => {});
+  describe("HTTP DELETE request - delete override amount", () => {});
   afterAll(async () => {
     const userIds = users.map((user) => user.id);
     const courseIds = courses.map((course) => course.id);
