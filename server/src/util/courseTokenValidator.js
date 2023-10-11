@@ -118,3 +118,28 @@ export const tokenLessThanOverride = async (req, res, next) => {
     next();
   }
 };
+
+export const overrideNotNull = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token...");
+  const issueToken = await prisma.issueToken.findFirst({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+  });
+  debug("Found issue token...");
+  if (issueToken.overrideAmount == null) {
+    debug("Override limit is null!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Override limit is null" });
+  } else {
+    debug("Override limit is not null!");
+    next();
+  }
+};

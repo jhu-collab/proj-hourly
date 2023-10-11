@@ -347,6 +347,27 @@ export const getTokensForStudent = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
 };
 
+export const addOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+    data: {
+      overrideAmount,
+    },
+  });
+  debug("Added override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
 export const editOverride = async (req, res) => {
   if (validate(req, res)) {
     return res;
