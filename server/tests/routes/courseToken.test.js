@@ -86,8 +86,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     }));
   });
 
-  describe("HTTP Post request: optIn", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+  describe("HTTP Post request-  optIn", () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(`${endpoint}/${courses[0].id}/optIn`);
       expect(response.status).toBe(401);
     });
@@ -134,8 +134,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(course.usesTokens).toBe(true);
     });
   });
-  describe("HTTP POST request: createToken", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+  describe("HTTP POST request - create token", () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
         `${endpoint}/${courses[0].id}/createToken`
       );
@@ -248,8 +248,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(issueTokens.length).toBe(0);
     });
   });
-  describe("HTTP POST request edit", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+  describe("HTTP POST request - edit token", () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
         `${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`
       );
@@ -369,7 +369,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
   describe("HTTP POST request - use token", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
         `${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`
       );
@@ -555,8 +555,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(issueToken.datesUsed.length).toBe(0);
     });
   });
-  describe("HTTP GET request - remaining", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+  describe("HTTP GET request - course tokens for course", () => {});
+  describe("HTTP GET request - remaining for self", () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
         `${endpoint}/${courses[0].id}/tokensRemaining/${courseTokens[0].id}`
       );
@@ -602,8 +603,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
   });
+  describe("HTTP GET request - remaining tokens for student", () => {});
   describe("HTTP GET request - used", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
         `${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`
       );
@@ -643,8 +645,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
   });
+  describe("HTTP GET request - get num of tokens used", () => {});
+  describe("HTTP GET request - get num of tokens remaining", () => {});
   describe("HTTP Delete Request - delete single", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.delete(
         `${endpoint}/${courses[0].id}/deleteSingle/${courseTokens[0].id}`
       );
@@ -719,7 +723,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
   describe("HTTP Delete Request - delete all", () => {
-    it("Return 401 when no authorization toke is provided", async () => {
+    it("Return 401 when no authorization token is provided", async () => {
       const response = await request.delete(
         `${endpoint}/${courses[0].id}/deleteAll`
       );
