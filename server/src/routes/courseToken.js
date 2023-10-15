@@ -60,7 +60,7 @@ router.get(
   controller.getTokensForStudent
 );
 
-// gets all remining issue tokens for self
+// gets all remaining issue tokens for self
 router.get(
   "/:courseId/tokensRemaining",
   async (req, res, next) => {

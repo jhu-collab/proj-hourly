@@ -10,7 +10,6 @@ const endpoint = "/api/courseToken";
 
 describe(`Test endpoint ${endpoint}`, () => {
   let courseTokens = [];
-  let issueTokens = [];
   let courses = [];
   let users = [];
 
@@ -245,7 +244,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courseToken.title).toBe("title");
       expect(courseToken.description).toBe("This is a description");
       expect(courseToken.tokenLimit).toBe(5);
-      expect(issueTokens.length).toBe(0);
     });
   });
   describe("HTTP POST request - edit token", () => {
@@ -555,17 +553,395 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(issueToken.datesUsed.length).toBe(0);
     });
   });
-  describe("HTTP GET request - course tokens for course", () => {});
-  describe("HTTP GET request - remaining for self", () => {
+  describe("HTTP POST request - add override amount", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/-1/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when invalid course token id is provided", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/-1/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not in course", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
+        )
+        .send(attributes)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 400 when no body is included", async () => {
+      const attributes = {};
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of archived test is created", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when override amount is created", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      let issueToken;
+
+      issueToken = await prisma.issueToken.findFirst({
+        where: {
+          CourseToken: {
+            courseId: courses[0].id,
+          },
+        },
+      });
+      expect(response.status).toBe(202);
+      expect(issueToken.overrideAmount).toBe(15);
+    });
+  });
+  describe("HTTP POST request - edit override amount", () => {
     it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
-        `${endpoint}/${courses[0].id}/tokensRemaining/${courseTokens[0].id}`
+        `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
       );
       expect(response.status).toBe(401);
     });
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
         .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when body not included", async () => {
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course id is not valid", async () => {
+      const attributes = {
+        overrideAmount: 20,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/-1/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when course token id is not valid", async () => {
+      const attributes = {
+        overrideAmount: 20,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/-1/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not student in course", async () => {
+      const attributes = {
+        overrideAmount: 20,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(403);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of archived course edited", async () => {
+      const attributes = {
+        overrideAmount: 20,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course token successfully edited", async () => {
+      const attributes = {
+        overrideAmount: 20,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      let issueToken;
+
+      issueToken = await prisma.issueToken.findFirst({
+        where: {
+          CourseToken: {
+            courseId: courses[0].id,
+          },
+        },
+      });
+      expect(response.status).toBe(202);
+      expect(issueToken.overrideAmount).toBe(20);
+    });
+  });
+  describe("HTTP GET request - course tokens for course", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.get(`${endpoint}/${courses[0].id}`);
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/-1`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when no body is included", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+  });
+  describe("HTTP GET request - remaining for self", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/tokensRemaining`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensRemaining`)
+        .set("Authorization", "bearer " + users[0].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/tokensRemaining`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when invalid courseToken id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensRemaining/-1`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensRemaining`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 200 when no body is included", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensRemaining`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+    });
+  });
+  describe("HTTP GET request - remaining tokens for student", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/tokensRemainingForStudent/${users[0].id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/tokensRemainingForStudent/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[0].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/tokensRemainingForStudent/${users[0].id}`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when invalid user id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensRemainingForStudent/-1`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 400 when user is not a student in course", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/tokensRemainingForStudent/${users[2].id}}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 200 when no body is included", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/tokensRemainingForStudent/${users[0].id}}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+  });
+  describe("HTTP GET request - get num of tokens used", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
+        .set("Authorization", "bearer " + users[0].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when invalid course id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/tokensUsed/${courseTokens[0].id}`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when invalid courseToken id is provided", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensUsed/-1`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 403 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(403);
+    });
+    it("Return 200 when no body is included", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+    });
+  });
+  describe("HTTP GET request - get num of tokens remaining", () => {
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/tokensRemaining/${courseTokens[0].id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(
           `${endpoint}/${courses[0].id}/tokensRemaining/${courseTokens[0].id}`
         )
         .set("Authorization", "bearer " + users[0].expiredToken);
@@ -603,51 +979,90 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
   });
-  describe("HTTP GET request - remaining tokens for student", () => {});
-  describe("HTTP GET request - used", () => {
+  describe("HTTP DELETE request - delete override amount", () => {
     it("Return 401 when no authorization token is provided", async () => {
-      const response = await request.post(
-        `${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`
+      const response = await request.delete(
+        `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
       );
       expect(response.status).toBe(401);
     });
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
-        .post(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
-        .set("Authorization", "bearer " + users[0].expiredToken);
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
-    it("Return 400 when invalid course id is provided", async () => {
+    it("Return 400 when course id is not valid", async () => {
       const response = await request
-        .get(`${endpoint}/-1/tokensUsed/${courseTokens[0].id}`)
-        .set("Authorization", "bearer " + users[0].token);
+        .delete(
+          `${endpoint}/-1/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    it("Return 400 when invalid courseToken id is provided", async () => {
+    it("Return 400 when course token id is not valid", async () => {
       const response = await request
-        .get(`${endpoint}/${courses[0].id}/tokensUsed/-1`)
-        .set("Authorization", "bearer " + users[0].token);
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/-1/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    it("Return 403 when user is not in course", async () => {
+    it("Return 403 when user is not student in course", async () => {
       const response = await request
-        .get(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
-        .set(
-          "Authorization",
-          "bearer " + users.find((u) => u.userName === "user2").token
-        );
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
+      console.log(response.status);
       expect(response.status).toBe(403);
     });
-    it("Return 200 when no body is included", async () => {
+    it("Return 202 when course successfully archived", async () => {
       const response = await request
-        .get(`${endpoint}/${courses[0].id}/tokensUsed/${courseTokens[0].id}`)
-        .set("Authorization", "bearer " + users[0].token);
+        .delete(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
       expect(response.status).toBe(202);
     });
+    it("Return 400 when course token of archived course edited", async () => {
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .delete(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
+      expect(response.status).toBe(202);
+    });
+    it("Return 200 when no body included", async () => {
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      let issueToken;
+
+      issueToken = await prisma.issueToken.findFirst({
+        where: {
+          CourseToken: {
+            courseId: courses[0].id,
+          },
+        },
+      });
+      expect(response.status).toBe(202);
+      expect(issueToken.overrideAmount).toBe(null);
+    });
   });
-  describe("HTTP GET request - get num of tokens used", () => {});
-  describe("HTTP GET request - get num of tokens remaining", () => {});
-  describe("HTTP Delete Request - delete single", () => {
+  describe("HTTP DELETE Request - delete single", () => {
     it("Return 401 when no authorization token is provided", async () => {
       const response = await request.delete(
         `${endpoint}/${courses[0].id}/deleteSingle/${courseTokens[0].id}`
@@ -722,7 +1137,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courseTokens.length).toBe(0);
     });
   });
-  describe("HTTP Delete Request - delete all", () => {
+  describe("HTTP DELETE Request - delete all", () => {
     it("Return 401 when no authorization token is provided", async () => {
       const response = await request.delete(
         `${endpoint}/${courses[0].id}/deleteAll`
@@ -828,9 +1243,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courseTokens.length).toBe(0);
     });
   });
-  describe("HTTP POST request - add override amount", () => {});
-  describe("HTTP POST request - edit override amount", () => {});
-  describe("HTTP DELETE request - delete override amount", () => {});
   afterAll(async () => {
     const userIds = users.map((user) => user.id);
     const courseIds = courses.map((course) => course.id);
@@ -846,7 +1258,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     const deleteUsers = prisma.account.deleteMany();
 
     const deleteCourses = prisma.course.deleteMany();
-    await prisma.$transaction([deleteIssueTokens]);
     await prisma.$transaction([deleteCourseTokens]);
     await prisma.$transaction([deleteTopics]);
     await prisma.$transaction([deleteTimeOptions]);
