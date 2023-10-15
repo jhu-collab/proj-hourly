@@ -599,6 +599,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
       expect(response.status).toBe(400);
     });
     it("Return 403 when user is not in course", async () => {
@@ -610,10 +611,8 @@ describe(`Test endpoint ${endpoint}`, () => {
           `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
         )
         .send(attributes)
-        .set(
-          "Authorization",
-          "bearer " + users.find((u) => u.userName === "user2").token
-        );
+        .set("Authorization", "bearer " + users[2].token);
+      console.log(response.body);
       expect(response.status).toBe(403);
     });
     it("Return 400 when no body is included", async () => {
@@ -1016,31 +1015,26 @@ describe(`Test endpoint ${endpoint}`, () => {
           `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
         )
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
-      console.log(response.status);
       expect(response.status).toBe(403);
     });
     it("Return 202 when course successfully archived", async () => {
       const response = await request
-        .delete(`/api/course/${courses[0].id}/archiveCourse`)
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
       expect(response.status).toBe(202);
     });
-    it("Return 400 when course token of archived course edited", async () => {
+    it("Return 400 when override limit of issue token deleted", async () => {
       const response = await request
         .delete(
           `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
         )
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
       expect(response.status).toBe(400);
     });
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
-        .delete(`/api/course/${courses[0].id}/archiveCourse`)
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
       expect(response.status).toBe(202);
     });
     it("Return 200 when no body included", async () => {
