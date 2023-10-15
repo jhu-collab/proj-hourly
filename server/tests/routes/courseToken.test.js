@@ -599,7 +599,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
       expect(response.status).toBe(400);
     });
     it("Return 400 when user is not in course", async () => {
@@ -608,11 +607,12 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
       const response = await request
         .post(
-          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${-1}`
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${
+            courseTokens[0].id
+          }/student/${-1}`
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.body);
       expect(response.status).toBe(400);
     });
     it("Return 400 when no body is included", async () => {
