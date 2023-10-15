@@ -110,6 +110,19 @@ export const editCourseToken = async (req, res) => {
     },
   });
   debug("Updated course tokens...");
+  debug("Updating issue tokens...");
+  const issueTokens = await prisma.issueToken.updateMany({
+    where: {
+      courseTokenId: courseTokenId,
+      overrideAmount: {
+        lte: tokenLimit,
+      },
+    },
+    data: {
+      overrideAmount: null,
+    },
+  });
+  debug("Updated issue tokens...");
   return res.status(StatusCodes.ACCEPTED).json({ courseToken });
 };
 
@@ -197,8 +210,12 @@ export const getRemainingTokens = async (req, res) => {
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
+  const overrideAmount = issueToken.overrideAmount;
   const datesUsedLength = issueToken.datesUsed.length;
-  const remainingTokens = numTokenLimit - datesUsedLength;
+  const remainingTokens =
+    overrideAmount !== null
+      ? overrideAmount - datesUsedLength
+      : numTokenLimit - datesUsedLength;
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
@@ -328,4 +345,66 @@ export const getTokensForStudent = async (req, res) => {
   });
   debug("Found issue tokens for student...");
   return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+};
+
+export const addOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+    data: {
+      overrideAmount,
+    },
+  });
+  debug("Added override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
+export const editOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+    data: {
+      overrideAmount,
+    },
+  });
+  debug("Added override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
+export const deleteOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const studentId = parseInt(req.params.studentId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      accountId: studentId,
+      courseTokenId,
+    },
+    data: {
+      overrideAmount: null,
+    },
+  });
+  debug("Removed override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
 };

@@ -146,14 +146,15 @@ model CourseToken {
 
 model IssueToken {
   //relation to student
-  id            Int         @id @default(autoincrement())
-  datesUsed     DateTime[]
-  account       Account     @relation(fields: [accountId], references: [id])
-  accountId     Int
-  CourseToken   CourseToken @relation(fields: [courseTokenId], references: [id])
-  courseTokenId Int
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @default(now()) @updatedAt
+  id             Int         @id @default(autoincrement())
+  datesUsed      DateTime[]
+  account        Account     @relation(fields: [accountId], references: [id])
+  accountId      Int
+  CourseToken    CourseToken @relation(fields: [courseTokenId], references: [id])
+  courseTokenId  Int
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now()) @updatedAt
+  overrideAmount Int?
 }
 
 model CalendarEvent {
