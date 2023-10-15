@@ -14,9 +14,8 @@ function useMutationAddTokenOverride(courseId, courseTokenId, studentId) {
   const queryClient = useQueryClient();
 
   const editTopic = async (body) => {
-    console.log(courseId, courseTokenId, studentId);
     try {
-      debug("Sending topic to be edited to the backend...");
+      debug("Sending token to be overrided to the backend...");
       const endpoint = `${BASE_URL}/api/courseToken/${courseId}/addOverrideAmount/${courseTokenId}/student/${studentId}`;
       const res = await axios.post(endpoint, body, getConfig(token));
       debug("Successful! Returning result data...");

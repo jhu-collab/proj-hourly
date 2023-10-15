@@ -14,6 +14,8 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { tokenSchema } from "../../utils/validators";
 import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
+import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
+import useMutationDeleteTokenOverride from "../../hooks/useMutationDeleteTokenOverride";
 
 /**
  * Represents a single Topic card.
@@ -33,6 +35,12 @@ function StudentTokenUsage({ token }) {
     },
   });
   const { mutate } = useMutationAddTokenOverride(
+    token.CourseToken.courseId,
+    token.CourseToken.id,
+    token.accountId
+  );
+
+  const { mutate: mutateDelete } = useMutationDeleteTokenOverride(
     token.CourseToken.courseId,
     token.CourseToken.id,
     token.accountId
@@ -113,6 +121,22 @@ function StudentTokenUsage({ token }) {
                     onClick={handleOnClickEditBtn}
                   >
                     Edit
+                  </Button>
+                </AnimateButton>
+                <AnimateButton>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      confirmDialog(
+                        `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
+                        () => {
+                          mutateDelete();
+                        }
+                      );
+                    }}
+                  >
+                    Remove Override
                   </Button>
                 </AnimateButton>
               </Stack>
