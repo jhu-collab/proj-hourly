@@ -602,18 +602,18 @@ describe(`Test endpoint ${endpoint}`, () => {
       console.log(response.body);
       expect(response.status).toBe(400);
     });
-    it("Return 403 when user is not in course", async () => {
+    it("Return 400 when user is not in course", async () => {
       const attributes = {
         overrideAmount: 15,
       };
       const response = await request
         .post(
-          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${-1}`
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       console.log(response.body);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
     it("Return 400 when no body is included", async () => {
       const attributes = {};
@@ -903,13 +903,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
-    it("Return 403 when user is not student in course", async () => {
+    it("Return 400 when user is not student in course", async () => {
       const response = await request
         .delete(
-          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[2].id}`
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/-1}`
         )
         .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
     });
     it("Return 202 when course successfully archived", async () => {
       const response = await request
