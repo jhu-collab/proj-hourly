@@ -244,14 +244,14 @@ router.delete(
 
 //allow instructor to add override limit to student's issue token
 router.post(
-  "/:courseId/addOverrideAmount/:courseTokenId/student/:studentId",
+  "/:courseId/addOverrideAmount/:courseTokenId/student/:accountId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
   param("courseId", "Please enter a valid course id").isInt(),
   param("courseTokenId", "Please enter a valid course token id").isInt(),
-  param("studentId", "Please enter a valid student id").isInt(),
+  param("accountId", "Please enter a valid student id").isInt(),
   body("overrideAmount", "Please enter valid overrideAmount").isInt(),
   courseValidator.isCourseIdParams,
   accountValidator.isAccountValidHeader,
@@ -262,7 +262,6 @@ router.post(
   validator.isCourseToken,
   courseValidator.isCoursePaused,
   validator.tokenLessThanOverride,
-  validator.overrideNull,
   controller.addOverride
 );
 

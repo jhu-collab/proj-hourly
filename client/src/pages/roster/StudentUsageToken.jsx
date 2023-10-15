@@ -13,6 +13,7 @@ import MainCard from "../../components/MainCard";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import { tokenSchema } from "../../utils/validators";
+import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
 
 /**
  * Represents a single Topic card.
@@ -21,7 +22,6 @@ import { tokenSchema } from "../../utils/validators";
  */
 function StudentTokenUsage({ token }) {
   const [edit, setEdit] = useState(false);
-  console.log(token);
 
   const courseType = useStoreLayout((state) => state.courseType);
 
@@ -32,8 +32,14 @@ function StudentTokenUsage({ token }) {
         : token.overrideAmount,
     },
   });
+  const { mutate } = useMutationAddTokenOverride(
+    token.CourseToken.courseId,
+    token.CourseToken.id,
+    token.accountId
+  );
 
   const onSubmit = (data) => {
+    mutate({ overrideAmount: parseInt(data.quantity) });
     setEdit(false);
   };
 
@@ -46,7 +52,6 @@ function StudentTokenUsage({ token }) {
     e.preventDefault();
     setEdit(true);
   };
-  console.log(token);
   return (
     <>
       <MainCard sx={{ padding: 2 }} content={false}>

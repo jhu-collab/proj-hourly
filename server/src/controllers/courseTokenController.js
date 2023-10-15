@@ -353,11 +353,11 @@ export const addOverride = async (req, res) => {
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const { overrideAmount } = req.body;
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding issue token for student...");
   const issueToken = await prisma.issueToken.updateMany({
     where: {
-      accountId: studentId,
+      accountId,
       courseTokenId,
     },
     data: {
