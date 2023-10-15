@@ -128,13 +128,13 @@ export const editCourseToken = async (req, res) => {
 
 export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const { date } = req.body;
   const dateObj = spacetime(date);
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
@@ -156,13 +156,13 @@ export const usedToken = async (req, res) => {
 
 export const undoUsedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const { date } = req.body;
   const dateObj = spacetime(date);
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
@@ -353,32 +353,11 @@ export const addOverride = async (req, res) => {
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const { overrideAmount } = req.body;
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding issue token for student...");
   const issueToken = await prisma.issueToken.updateMany({
     where: {
-      accountId: studentId,
-      courseTokenId,
-    },
-    data: {
-      overrideAmount,
-    },
-  });
-  debug("Added override amount for student...");
-  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
-};
-
-export const editOverride = async (req, res) => {
-  if (validate(req, res)) {
-    return res;
-  }
-  const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const { overrideAmount } = req.body;
-  const studentId = parseInt(req.params.studentId, 10);
-  debug("Finding issue token for student...");
-  const issueToken = await prisma.issueToken.updateMany({
-    where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
     data: {
@@ -394,11 +373,11 @@ export const deleteOverride = async (req, res) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding issue token for student...");
   const issueToken = await prisma.issueToken.updateMany({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
     data: {

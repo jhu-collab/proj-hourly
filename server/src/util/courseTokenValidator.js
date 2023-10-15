@@ -58,7 +58,7 @@ export const tokenLimitReached = async (req, res, next) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding course token...");
   const courseToken = await prisma.courseToken.findUnique({
     where: {
@@ -69,7 +69,7 @@ export const tokenLimitReached = async (req, res, next) => {
   debug("Finding issue token...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
@@ -126,11 +126,11 @@ export const overrideNotNull = async (req, res, next) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding issue token...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
@@ -142,31 +142,6 @@ export const overrideNotNull = async (req, res, next) => {
       .json({ msg: "Override limit is null" });
   } else {
     debug("Override limit is not null!");
-    next();
-  }
-};
-
-export const overrideNull = async (req, res, next) => {
-  if (validate(req, res)) {
-    return res;
-  }
-  const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
-  debug("Finding issue token...");
-  const issueToken = await prisma.issueToken.findFirst({
-    where: {
-      accountId: studentId,
-      courseTokenId,
-    },
-  });
-  debug("Found issue token...");
-  if (issueToken.overrideAmount != null) {
-    debug("Override limit is not null!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Override limit is not null" });
-  } else {
-    debug("Override limit is null!");
     next();
   }
 };
