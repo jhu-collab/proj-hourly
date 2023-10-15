@@ -11,8 +11,7 @@ import ChangeRole from "../pages/roster/ChangeRole";
 import CreateCourseCalendarEventForm from "../pages/agenda/CreateCourseCalendarEventForm";
 import CreateToken from "../pages/courseTokens/CreateToken";
 import UseToken from "../pages/roster/UseToken";
-import StudentTokenUsage from "../pages/roster/StudentTokenUsagePopup";
-
+import StudentTokenUsagePopup from "../pages/roster/StudentTokenUsagePopup";
 NiceModal.register("create-course", CreateCourse);
 NiceModal.register("join-course", JoinCourse);
 NiceModal.register("mobile-event-popup", MobileEventPopup);
@@ -28,4 +27,4 @@ NiceModal.register(
 );
 NiceModal.register("create-token", CreateToken);
 NiceModal.register("use-course-token", UseToken);
-NiceModal.register("student-token-usage", StudentTokenUsage);
+NiceModal.register("student-token-usage", StudentTokenUsagePopup);

@@ -46,9 +46,10 @@ function RosterTabPanel({ index, rows }) {
     {
       field: "actions",
       type: "actions",
-      flex: 1,
+      flex: 2,
       getActions: (params) => [
         <UseTokenIcon params={params} isStaff={false} index={index} />,
+        <StudentTokenUsageIcon params={params} isStaff={false} index={index} />,
         <ChangeRoleIcon params={params} isStaff={false} />,
         <DeleteButton params={params} isStaff={false} />,
       ],
@@ -56,9 +57,10 @@ function RosterTabPanel({ index, rows }) {
     {
       field: "actions",
       type: "actions",
-      flex: 1,
+      flex: 2,
       getActions: (params) => [
         <UseTokenIcon params={params} isStaff={false} index={index} />,
+        <StudentTokenUsageIcon params={params} isStaff={true} index={index} />,
         <ChangeRoleIcon params={params} isStaff={true} />,
         <DeleteButton params={params} isStaff={true} />,
       ],
@@ -133,7 +135,6 @@ function RosterTabPanel({ index, rows }) {
                       <GridToolbarFilterButton />
                       <GridToolbarDensitySelector />
                       <GridToolbarExport />
-                      {selectedRow && <StudentTokenUsageIcon />}
                     </GridToolbarContainer>
                   </div>
                 ),
