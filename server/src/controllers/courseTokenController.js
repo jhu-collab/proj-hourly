@@ -168,12 +168,14 @@ export const undoUsedToken = async (req, res) => {
   });
   debug("Found issueToken for student...");
   const dateToFind = dateObj.format("iso").slice(0, 10);
-  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) =>
-    new Date(dateTime).toISOString().startsWith(dateToFind)
-  );
+  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) => {
+    return new Date(dateTime).toISOString().startsWith(dateToFind);
+  });
   let updatedDatesUsed = issueToken.datesUsed;
-  if (indexToRemove !== -1) {
-    updatedDatesUsed = issueToken.datesUsed.splice(indexToRemove, 1);
+  if (issueToken.datesUsed.length === 1) {
+    updatedDatesUsed = [];
+  } else if (indexToRemove !== -1) {
+    updatedDatesUsed = updatedDatesUsed.splice(indexToRemove, 1);
   }
   debug("Updating issueToken for student...");
   const updateIssueToken = await prisma.issueToken.update({
@@ -357,7 +359,6 @@ export const addOverride = async (req, res) => {
   debug("Finding issue token for student...");
   const issueToken = await prisma.issueToken.updateMany({
     where: {
-      accountId: accountId,
       courseTokenId,
     },
     data: {
