@@ -30,6 +30,7 @@ router.post(
   controller.optIn
 );
 
+// gets course tokens for course
 router.get(
   "/:courseId",
   async (req, res, next) => {
@@ -44,6 +45,7 @@ router.get(
   controller.getTokens
 );
 
+// gets all remaining issue tokens for student
 router.get(
   "/:courseId/tokensRemainingForStudent/:accountId",
   async (req, res, next) => {
@@ -58,6 +60,7 @@ router.get(
   controller.getTokensForStudent
 );
 
+// gets all remaining issue tokens for self
 router.get(
   "/:courseId/tokensRemaining",
   async (req, res, next) => {
@@ -97,6 +100,7 @@ router.post(
   controller.createToken
 );
 
+// edits course token
 router.post(
   "/:courseId/editCourseToken/:courseTokenId",
   async (req, res, next) => {
@@ -127,14 +131,14 @@ router.post(
 
 //allows instructor to remove a token from a student when they use one
 router.post(
-  "/:courseId/usedToken/:courseTokenId/student/:studentId",
+  "/:courseId/usedToken/:courseTokenId/student/:accountId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
   param("courseId", "Please enter a valid course id").isInt(),
   param("courseTokenId", "Please enter a valid course token id").isInt(),
-  param("studentId", "Please enter a valid student id").isInt(),
+  param("accountId", "Please enter a valid account id").isInt(),
   body("date", "Please specify when this token was used").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
@@ -149,14 +153,14 @@ router.post(
 
 //allows instructor to undo the action of removing token from student
 router.post(
-  "/:courseId/undoUsedToken/:courseTokenId/student/:studentId",
+  "/:courseId/undoUsedToken/:courseTokenId/student/:accountId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
   param("courseId", "Please enter a valid course id").isInt(),
   param("courseTokenId", "Please enter a valid course token id").isInt(),
-  param("studentId", "Please enter a valid student id").isInt(),
+  param("accountId", "Please enter a valid account id").isInt(),
   body("date", "Please specify when this token was used").notEmpty(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
@@ -238,4 +242,48 @@ router.delete(
   controller.deleteAll
 );
 
+//allow instructor to add override limit to student's issue token
+router.post(
+  "/:courseId/addOverrideAmount/:courseTokenId/student/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("accountId", "Please enter a valid account id").isInt(),
+  body("overrideAmount", "Please enter valid overrideAmount").isInt(),
+  courseValidator.isCourseIdParams,
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountInstructor,
+  courseValidator.isCourseArchived,
+  courseValidator.isAccountStudentParams,
+  validator.isCourseUsingTokens,
+  validator.isCourseToken,
+  courseValidator.isCoursePaused,
+  validator.tokenLessThanOverride,
+  controller.addOverride
+);
+
+//allow instructor to remove override limit to student's issue token
+router.delete(
+  "/:courseId/deleteOverrideAmount/:courseTokenId/student/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseTokenId", "Please enter a valid course token id").isInt(),
+  param("accountId", "Please enter a valid account id").isInt(),
+  courseValidator.isCourseIdParams,
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountInstructor,
+  courseValidator.isCourseArchived,
+  courseValidator.isAccountStudentParams,
+  validator.isCourseUsingTokens,
+  validator.isCourseToken,
+  courseValidator.isCoursePaused,
+  validator.overrideNotNull,
+  controller.deleteOverride
+);
 export default router;

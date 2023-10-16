@@ -110,18 +110,31 @@ export const editCourseToken = async (req, res) => {
     },
   });
   debug("Updated course tokens...");
+  debug("Updating issue tokens...");
+  const issueTokens = await prisma.issueToken.updateMany({
+    where: {
+      courseTokenId: courseTokenId,
+      overrideAmount: {
+        lte: tokenLimit,
+      },
+    },
+    data: {
+      overrideAmount: null,
+    },
+  });
+  debug("Updated issue tokens...");
   return res.status(StatusCodes.ACCEPTED).json({ courseToken });
 };
 
 export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const { date } = req.body;
   const dateObj = spacetime(date);
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
@@ -143,24 +156,26 @@ export const usedToken = async (req, res) => {
 
 export const undoUsedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const { date } = req.body;
   const dateObj = spacetime(date);
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
     },
   });
   debug("Found issueToken for student...");
   const dateToFind = dateObj.format("iso").slice(0, 10);
-  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) =>
-    new Date(dateTime).toISOString().startsWith(dateToFind)
-  );
+  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) => {
+    return new Date(dateTime).toISOString().startsWith(dateToFind);
+  });
   let updatedDatesUsed = issueToken.datesUsed;
-  if (indexToRemove !== -1) {
-    updatedDatesUsed = issueToken.datesUsed.splice(indexToRemove, 1);
+  if (issueToken.datesUsed.length === 1) {
+    updatedDatesUsed = [];
+  } else if (indexToRemove !== -1) {
+    updatedDatesUsed = updatedDatesUsed.splice(indexToRemove, 1);
   }
   debug("Updating issueToken for student...");
   const updateIssueToken = await prisma.issueToken.update({
@@ -197,8 +212,12 @@ export const getRemainingTokens = async (req, res) => {
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
+  const overrideAmount = issueToken.overrideAmount;
   const datesUsedLength = issueToken.datesUsed.length;
-  const remainingTokens = numTokenLimit - datesUsedLength;
+  const remainingTokens =
+    overrideAmount !== null
+      ? overrideAmount - datesUsedLength
+      : numTokenLimit - datesUsedLength;
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
@@ -328,4 +347,44 @@ export const getTokensForStudent = async (req, res) => {
   });
   debug("Found issue tokens for student...");
   return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+};
+
+export const addOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  const accountId = parseInt(req.params.accountId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      courseTokenId,
+    },
+    data: {
+      overrideAmount,
+    },
+  });
+  debug("Added override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
+export const deleteOverride = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
+  debug("Finding issue token for student...");
+  const issueToken = await prisma.issueToken.updateMany({
+    where: {
+      accountId: accountId,
+      courseTokenId,
+    },
+    data: {
+      overrideAmount: null,
+    },
+  });
+  debug("Removed override amount for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ issueToken });
 };
