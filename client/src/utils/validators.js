@@ -237,12 +237,12 @@ export const createCourseEventSchema = yup.object().shape({
   startDate: yup
     .date()
     .typeError("Please enter a valid date")
-    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
   recurringEvent: yup.boolean(),
   endDate: yup
     .date()
     .nullable()
+    .typeError("Please enter a valid date")
     .when("recurringEvent", {
       is: true,
       then: yup
@@ -279,24 +279,11 @@ export const createCourseEventSchema = yup.object().shape({
                 return true;
               }
             }
-
             return false;
           }
         ),
     }),
-  location: yup.string().required("Location is required"),
-  resources: yup.string(),
-  isRemote: yup.boolean(),
-});
-
-export const createCourseEventAlternateSchema = yup.object().shape({
-  startDate: yup
-    .date()
-    .typeError("Please enter a valid date")
-    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
-    .required("Date is required"),
-  recurringEvent: yup.boolean(),
-  location: yup.string().required("Location is required"),
+  //location: yup.string().required("Location is required"),
   resources: yup.string(),
   isRemote: yup.boolean(),
 });
@@ -308,7 +295,7 @@ export const createIndividualCourseEventSchema = yup.object().shape({
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  location: yup.string().required("Location is required"),
+  location: yup.string(), //.required("Location is required"),
   resources: yup.string(),
   isRemote: yup.boolean(),
 });
@@ -320,7 +307,7 @@ export const editCourseEventSchema = yup.object().shape({
     .typeError("Please enter a valid date")
     .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
     .required("Date is required"),
-  location: yup.string().required("Location is required"),
+  location: yup.string(), //.required("Location is required"),
   isRemote: yup.boolean(),
   resources: yup.string(),
 });
@@ -331,9 +318,26 @@ export const editTitleSchema = yup.object().shape({
 
 export const tokenSchema = yup.object({
   name: yup.string().required("Token name is required"),
-  description: yup.string().required("Token description is required"),
+  description: yup.string(), //.required("Token description is required"),
   quantity: yup
     .number()
-    .required("Toke quantity is required")
-    .min(1, "Must have at least 1 of each token"),
+    .required("Token quantity is required")
+    .min(1, "Must have at least 1 of each token")
+    .typeError("You must specify a number"),
+});
+
+export const useTokenSchema = yup.object().shape({
+  token: yup.string().required("Token name is required"),
+  undoToken: yup.boolean(),
+  date: yup
+    .string()
+    .nullable()
+    .typeError("Date is required")
+    .when("undoToken", {
+      is: true,
+      then: yup
+        .string()
+        .required("Date is required")
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
+    }),
 });

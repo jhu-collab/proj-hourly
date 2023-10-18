@@ -80,55 +80,63 @@ function EditLocationForm() {
   const { mutate, isLoading } = useMutationEditLocation(editType);
 
   const onSubmit = (data) => {
-    recurring ?
-    mutate({
-        date: start.toISOString(),
-        location: data.location,
-        isRemote: data.isRemote
-    })
-    : mutate({
-        location: data.location,
-        isRemote: data.isRemote
-    })
+    recurring
+      ? mutate({
+          date: start.toISOString(),
+          location: data.location,
+          isRemote: data.isRemote,
+        })
+      : mutate({
+          location: data.location,
+          isRemote: data.isRemote,
+        });
   };
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)} data-cy="edit-location-form">
         <Stack direction="column" alignItems="center" spacing={3}>
-          <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
-          </Stack>
+          <Stack direction="row" sx={{ width: "100%" }} spacing={3}></Stack>
           {recurring && (
             <RadioGroup
               value={editType}
               onChange={(event) => setEditType(event.target.value)}
             >
               <Stack direction="row" sx={{ width: "100%" }} spacing={1}>
-              <FormControlLabel
-                value="this"
-                control={<Radio />}
-                label="This event only"
-              />
-              <FormControlLabel
-                value="all"
-                control={<Radio />}
-                label="All events"
-              />
+                <FormControlLabel
+                  value="this"
+                  control={<Radio />}
+                  label="This event only"
+                  data-cy="this-event-location"
+                />
+                <FormControlLabel
+                  value="all"
+                  control={<Radio />}
+                  label="All events"
+                  data-cy="all-events-location"
+                />
               </Stack>
             </RadioGroup>
           )}
-          <FormInputText name="location" control={control} label="Location" />
-          
+          <FormInputText
+            name="location"
+            control={control}
+            label="Location"
+            data-cy="edit-location-input"
+          />
+
           <FormCheckbox
-              name="isRemote"
-              control = {control}
-              label="Remote"
-            />
+            name="isRemote"
+            control={control}
+            label="Remote"
+            data-cy="edit-remote-input"
+          />
           <Button
             type="submit"
             variant="contained"
             disabled={isLoading}
             fullWidth
+            data-cy="edit-location-submit"
           >
             Update
           </Button>

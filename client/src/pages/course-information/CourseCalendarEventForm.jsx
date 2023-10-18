@@ -14,7 +14,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useMutationCreateCourseCalendarEvent from "../../hooks/useMutationCreateCourseCalendarEvent";
 import { createCourseEventSchema } from "../../utils/validators";
-import { createCourseEventAlternateSchema } from "../../utils/validators";
+// import { createCourseEventAlternateSchema } from "../../utils/validators";
 import useMutationDeleteCourseCalendarEvent from "../../hooks/useMutationDeleteCourseCalendarEvent";
 import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import { Typography } from "@mui/material";
@@ -73,9 +73,8 @@ const BUTTONS = [
  */
 
 function CourseCalendarEventForm() {
-  const token = useStoreToken((state) => state.token);
-
   const course = useStoreCourse((state) => state.course);
+
   let recurring = true;
 
   const { control, handleSubmit, watch } = useForm({
@@ -83,13 +82,13 @@ function CourseCalendarEventForm() {
       recurringEvent: true,
       isRemote: false,
       startDate: "",
-      endDate: null,
+      endDate: "",
       location: "",
       resources: "",
+      days: [],
     },
-    resolver: recurring
-      ? yupResolver(createCourseEventSchema)
-      : yupResolver(createCourseEventAlternateSchema),
+    resolver:
+      yupResolver(createCourseEventSchema),
   });
 
   recurring = watch("recurringEvent");
@@ -106,8 +105,13 @@ function CourseCalendarEventForm() {
 
   const onSubmit = (data) => {
     const start = new Date(data.startDate);
-    const end = recurring ? new Date(data.endDate) : new Date(data.startDate);
-
+    let end = new Date(data.startDate);
+    if (
+      recurring &&
+      (data.endDate !== null || data.endDate !== data.startDate)
+    ) {
+      end = new Date(data.endDate);
+    }
     createMutate({
       courseId: course.id,
       begDate: start.toISOString(),
@@ -126,15 +130,19 @@ function CourseCalendarEventForm() {
   };
 
   const doEventsExist = () => {
-    if (
-      Array.isArray(courseEventsData?.calendarEvents) &&
-      courseEventsData &&
-      courseEventsData.calendarEvents &&
-      courseEventsData.calendarEvents.length !== 0
-    ) {
-      return true;
+    if (!courseEventsData) {
+      return false;
     }
-    return false;
+
+    if (!Array.isArray(courseEventsData.calendarEvents)) {
+      return false;
+    }
+
+    if (courseEventsData.calendarEvents.length === 0) {
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -155,6 +163,7 @@ function CourseCalendarEventForm() {
             </Stack>
             <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
               <FormInputText
+                data-cy="create-start-date-text"
                 name="startDate"
                 control={control}
                 label={recurring ? "Start Date" : "Date"}
@@ -163,6 +172,7 @@ function CourseCalendarEventForm() {
               />
               {recurring && (
                 <FormInputText
+                  data-cy="create-end-date-text"
                   name="endDate"
                   control={control}
                   label="End Date"
@@ -178,7 +188,12 @@ function CourseCalendarEventForm() {
                 buttons={BUTTONS}
               />
             )}
-            <FormInputText name="location" control={control} label="Location" />
+            <FormInputText
+              name="location"
+              control={control}
+              label="Location"
+              data-cy="create-location-input"
+            />
             <FormInputText
               name="resources"
               control={control}
@@ -187,6 +202,7 @@ function CourseCalendarEventForm() {
               rows={4}
             />
             <Button
+              data-cy="create-event-submit"
               type="submit"
               variant="contained"
               disabled={createIsLoading}
@@ -205,6 +221,7 @@ function CourseCalendarEventForm() {
           <Button
             onClick={onDelete}
             variant="contained"
+            data-cy="delete-event-submit"
             disabled={deleteIsLoading}
             fullWidth
           >

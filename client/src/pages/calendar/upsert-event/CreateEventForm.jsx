@@ -107,7 +107,7 @@ function CreateEventForm() {
     start.setHours(startTime[0]);
     start.setMinutes(startTime[1]);
     let end = new Date(data.startDate);
-    if (data.endDate !== null) {
+    if (recurring && (data.endDate !== null || data.endDate !== data.startDate)) {
       end = new Date(data.endDate);
     }
     const endTime = data.endTime.split(":");
@@ -121,16 +121,17 @@ function CreateEventForm() {
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       remote: data.remote,
-      hosts: [id], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TODO: For now, there will be no additional hosts
     });
   };
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)} data-cy="create-event-form">
         <Stack direction="column" alignItems="center" spacing={3}>
           <Stack direction="row" sx={{ width: "100%" }} spacing={3}>
             <FormInputText
+              data-cy="create-start-time-text"
               name="startTime"
               control={control}
               label="Start Time"
@@ -138,6 +139,7 @@ function CreateEventForm() {
               InputLabelProps={{ shrink: true }}
             />
             <FormInputText
+              data-cy="create-end-time-text"
               name="endTime"
               control={control}
               label="End Time"
@@ -147,17 +149,15 @@ function CreateEventForm() {
           </Stack>
           <Stack direction="row" spacing={3} alignItems="center">
             <FormCheckbox
+              data-cy="create-recurring-checkbox"
               name="recurringEvent"
               control={control}
               label="Recurring event"
             />
-            <FormCheckbox
-              name="remote"
-              control = {control}
-              label="Remote"
-            />
+            <FormCheckbox data-cy="create-remote-checkbox" name="remote" control={control} label="Remote" />
           </Stack>
           <FormInputText
+            data-cy="create-start-date-text"
             name="startDate"
             control={control}
             label={recurring ? "Start Date" : "Date"}
@@ -166,6 +166,7 @@ function CreateEventForm() {
           />
           {recurring && (
             <FormInputText
+              data-cy="create-end-date-text"
               name="endDate"
               control={control}
               label="End Date"
@@ -180,8 +181,14 @@ function CreateEventForm() {
               buttons={BUTTONS}
             />
           )}
-          <FormInputText name="location" control={control} label="Location" /> 
+          <FormInputText
+            data-cy="create-location-input"
+            name="location"
+            control={control}
+            label="Location"
+          />
           <Button
+            data-cy="create-event-submit"
             type="submit"
             variant="contained"
             disabled={isLoading}

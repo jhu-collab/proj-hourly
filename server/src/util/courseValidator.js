@@ -797,6 +797,9 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
   const timeObj = stringToTimeObj(startTime);
   dateObj.setUTCHours(timeObj.getUTCHours());
   dateObj.setUTCMinutes(timeObj.getUTCMinutes());
+  if (dateObj < req.targetDate) {
+    dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+  }
   const before = new Date(dateObj);
   const end = new Date(dateObj);
   before.setUTCHours(before.getUTCHours() - course.startRegConstraint);
@@ -1005,7 +1008,7 @@ export const isValidFilterValue = async (req, res, next) => {
 
 export const isAccountStudentParams = async (req, res, next) => {
   debug("isAccountStudentParams is called!");
-  const accoundId = parseInt(req.params.accountId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const courseId = parseInt(req.params.courseId, 10);
   debug("Checking if account is a student...");
   const isStudent = await prisma.course.findUnique({
@@ -1015,7 +1018,7 @@ export const isAccountStudentParams = async (req, res, next) => {
     include: {
       students: {
         where: {
-          id: accoundId,
+          id: accountId,
         },
       },
     },

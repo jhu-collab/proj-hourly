@@ -48,6 +48,7 @@ function Profile() {
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
+        data-cy="profile-name-button"
         sx={{
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : "transparent",
@@ -61,7 +62,7 @@ function Profile() {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Typography variant="subtitle1">{name}</Typography>
+          <Typography data-cy="profile-name" variant="subtitle1">{name}</Typography>
         </Stack>
       </ButtonBase>
       <Popper

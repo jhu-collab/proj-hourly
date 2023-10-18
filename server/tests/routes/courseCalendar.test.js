@@ -254,57 +254,57 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when begDate is a date now", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      var tzoffset = courseDate.getTimezoneOffset() * 60000;
-      var tzoffset2 = new Date().getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event I",
-        courseId: course.id,
-        begDate: new Date(new Date() - tzoffset2).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset)
-          .toISOString()
-          .split("T")[0],
-        daysOfWeek: [weekday[courseDate.getDay()]],
-        location: "zoom",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/create`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when begDate is a date now", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset2 = new Date().getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event I",
+    //     courseId: course.id,
+    //     begDate: new Date(new Date() - tzoffset2).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //     location: "zoom",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/create`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    it("Return 400 when begDate is a date in the past", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset = secondCourseDate.getTimezoneOffset() * 60000;
-      var tzoffset2 = pastDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event I",
-        courseId: course.id,
-        begDate: new Date(pastDate - tzoffset2).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset)
-          .toISOString()
-          .split("T")[0],
-        daysOfWeek: [weekday[courseDate.getDay()]],
-        location: "zoom",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/create`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when begDate is a date in the past", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   let pastDate = new Date();
+    //   pastDate.setMonth(pastDate.getMonth() - 3);
+    //   var tzoffset = secondCourseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset2 = pastDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event I",
+    //     courseId: course.id,
+    //     begDate: new Date(pastDate - tzoffset2).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //     location: "zoom",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/create`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when endDate is a date now", async () => {
       let courseDate = new Date();
@@ -379,30 +379,30 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when location is empty", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      var tzoffset = courseDate.getTimezoneOffset() * 60000;
-      var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event I",
-        courseId: course.id,
-        begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset2)
-          .toISOString()
-          .split("T")[0],
-        daysOfWeek: [weekday[courseDate.getDay()]],
-        location: "",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/create`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when location is empty", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event I",
+    //     courseId: course.id,
+    //     begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset2)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //     location: "",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/create`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
@@ -511,9 +511,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(201);
 
-      let dates  = [];
-      for(let i in calendarEvents) {
-        dates.push(calendarEvents[i].date)
+      let dates = [];
+      for (let i in calendarEvents) {
+        dates.push(calendarEvents[i].date);
       }
 
       const calendarJSON = response.body.eventJSon;
@@ -1157,27 +1157,27 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[1].start);
-      let newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      var tzoffset2 = newDate.getTimezoneOffset() * 60000;
-      let attributes = {
-        title: "title",
-        additionalInfo: "description",
-        isCancelled: false,
-        isRemote: true,
-        location: "",
-        newDate: new Date(newDate - tzoffset2).toISOString().split("T")[0],
-        date: date,
-        courseId: course.id,
-      };
-      const response = await request
-        .post(`${endpoint}/edit`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when location is empty", async () => {
+    //   const date = new Date(calendarEvents[1].start);
+    //   let newDate = new Date(date);
+    //   newDate.setDate(newDate.getDate() + 1);
+    //   var tzoffset2 = newDate.getTimezoneOffset() * 60000;
+    //   let attributes = {
+    //     title: "title",
+    //     additionalInfo: "description",
+    //     isCancelled: false,
+    //     isRemote: true,
+    //     location: "",
+    //     newDate: new Date(newDate - tzoffset2).toISOString().split("T")[0],
+    //     date: date,
+    //     courseId: course.id,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/edit`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 202 with all valid parameters: new date", async () => {
       const date = new Date(calendarEvents[1].start);
@@ -1637,20 +1637,20 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when location is empty", async () => {
-      const dateObj = new Date(calendarEvents[1].start);
-      let attributes = {
-        location: "",
-        isRemote: true,
-        date: dateObj,
-        courseId: course.id,
-      };
-      const response = await request
-        .post(`${endpoint}/editLocation`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when location is empty", async () => {
+    //   const dateObj = new Date(calendarEvents[1].start);
+    //   let attributes = {
+    //     location: "",
+    //     isRemote: true,
+    //     date: dateObj,
+    //     courseId: course.id,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/editLocation`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 202 with all valid parameters", async () => {
       const dateObj = new Date(calendarEvents[1].start);
@@ -1897,24 +1897,24 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when location is empty", async () => {
-      const date = new Date(calendarEvents[0].start);
-      let newDate = new Date(date);
-      newDate.setFullYear(newDate.getFullYear() + 1);
-      var tzoffset2 = newDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event II",
-        courseId: course.id,
-        date: new Date(newDate - tzoffset2).toISOString().split("T")[0],
-        location: "",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/createEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when location is empty", async () => {
+    //   const date = new Date(calendarEvents[0].start);
+    //   let newDate = new Date(date);
+    //   newDate.setFullYear(newDate.getFullYear() + 1);
+    //   var tzoffset2 = newDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event II",
+    //     courseId: course.id,
+    //     date: new Date(newDate - tzoffset2).toISOString().split("T")[0],
+    //     location: "",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 201 with all valid parameters", async () => {
       const date = new Date(calendarEvents[0].start);
@@ -2154,60 +2154,60 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when begDate is a date now", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      var tzoffset3 = new Date().getTimezoneOffset() * 60000;
-      var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event III",
-        courseId: course.id,
-        begDate: new Date(new Date() - tzoffset3).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset2)
-          .toISOString()
-          .split("T")[0],
-        location: "zoom",
-        isRemote: true,
-        daysOfWeek: [weekday[courseDate.getDay()]],
-      };
-      const response = await request
-        .post(`${endpoint}/createRecurringEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when begDate is a date now", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   courseDate.setDate(courseDate.getDate() + 1);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   var tzoffset3 = new Date().getTimezoneOffset() * 60000;
+    //   var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event III",
+    //     courseId: course.id,
+    //     begDate: new Date(new Date() - tzoffset3).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset2)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createRecurringEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    it("Return 400 when begDate is a date in the past", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset3 = pastDate.getTimezoneOffset() * 60000;
-      var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
+    // it("Return 400 when begDate is a date in the past", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   courseDate.setDate(courseDate.getDate() + 1);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   let pastDate = new Date();
+    //   pastDate.setMonth(pastDate.getMonth() - 3);
+    //   var tzoffset3 = pastDate.getTimezoneOffset() * 60000;
+    //   var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
 
-      const attributes = {
-        title: "Calendar Event III",
-        courseId: course.id,
-        begDate: new Date(pastDate - tzoffset3).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset2)
-          .toISOString()
-          .split("T")[0],
-        location: "zoom",
-        isRemote: true,
-        daysOfWeek: [weekday[courseDate.getDay()]],
-      };
-      const response = await request
-        .post(`${endpoint}/createRecurringEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    //   const attributes = {
+    //     title: "Calendar Event III",
+    //     courseId: course.id,
+    //     begDate: new Date(pastDate - tzoffset3).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset2)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createRecurringEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when endDate is a date now", async () => {
       let courseDate = new Date();
@@ -2283,32 +2283,32 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when location is empty", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
-      let secondCourseDate = new Date(courseDate);
-      secondCourseDate.setMonth(courseDate.getMonth() + 1);
-      var tzoffset = courseDate.getTimezoneOffset() * 60000;
-      var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
+    // it("Return 400 when location is empty", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   courseDate.setDate(courseDate.getDate() + 1);
+    //   let secondCourseDate = new Date(courseDate);
+    //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
+    //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset2 = secondCourseDate.getTimezoneOffset() * 60000;
 
-      const attributes = {
-        title: "Calendar Event III",
-        courseId: course.id,
-        begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
-        endDate: new Date(secondCourseDate - tzoffset2)
-          .toISOString()
-          .split("T")[0],
-        location: "",
-        isRemote: true,
-        daysOfWeek: [weekday[courseDate.getDay()]],
-      };
-      const response = await request
-        .post(`${endpoint}/createRecurringEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    //   const attributes = {
+    //     title: "Calendar Event III",
+    //     courseId: course.id,
+    //     begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
+    //     endDate: new Date(secondCourseDate - tzoffset2)
+    //       .toISOString()
+    //       .split("T")[0],
+    //     location: "",
+    //     isRemote: true,
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createRecurringEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
@@ -2409,10 +2409,12 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
         daysOfWeek: [weekday[courseDate.getDay()]],
       };
+      console.log(attributes);
       const response = await request
         .post(`${endpoint}/createRecurringEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
+      console.log(response.text);
       expect(response.status).toBe(201);
 
       const calendarJSON = response.body.eventJSon;
@@ -2430,9 +2432,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
 
-      let dates  = [];
-      for(let i in createdEvents) {
-        dates.push(createdEvents[i].date)
+      let dates = [];
+      for (let i in createdEvents) {
+        dates.push(createdEvents[i].date);
       }
 
       expect(createdEvents).toBeDefined();

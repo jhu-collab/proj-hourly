@@ -64,8 +64,14 @@ function CreateCourseForm() {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column" spacing={theme.spacing(3)}>
-          <FormInputText name="title" control={control} label="Course Title" />
           <FormInputText
+            data-cy="course-title-input"
+            name="title"
+            control={control}
+            label="Course Title"
+          />
+          <FormInputText
+            data-cy="course-number-input"
             name="number"
             control={control}
             label="Course Number"
@@ -76,8 +82,18 @@ function CreateCourseForm() {
             label="Semester"
             options={options}
           />
-          <FormInputText name="year" control={control} label="Year" />
-          <Button type="submit" variant="contained" fullWidth>
+          <FormInputText
+            data-cy="course-year-input"
+            name="year"
+            control={control}
+            label="Year"
+          />
+          <Button
+            data-cy="create-button"
+            type="submit"
+            variant="contained"
+            fullWidth
+          >
             Create
           </Button>
         </Stack>

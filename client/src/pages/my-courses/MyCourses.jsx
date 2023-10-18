@@ -22,16 +22,36 @@ function MyCourses() {
 
   return (
     <>
-      <Typography fontWeight={500} fontSize="23px">
+      <Typography
+        data-cy="staff-courses-label"
+        fontWeight={500}
+        fontSize="23px"
+      >
         Staff Courses
       </Typography>
-      <Grid container columnSpacing={6} rowSpacing={3} marginBottom={2}>
+      <Grid
+        container
+        columnSpacing={6}
+        rowSpacing={3}
+        marginBottom={2}
+        data-cy="staff-course-list"
+      >
         <CourseList courseType="staff" />
       </Grid>
-      <Typography fontWeight={500} fontSize="23px">
+      <Typography
+        data-cy="student-courses-label"
+        fontWeight={500}
+        fontSize="23px"
+      >
         Student Courses
       </Typography>
-      <Grid container columnSpacing={6} rowSpacing={3} marginBottom={2}>
+      <Grid
+        container
+        columnSpacing={6}
+        rowSpacing={3}
+        marginBottom={2}
+        data-cy="student-course-list"
+      >
         <CourseList courseType="student" />
       </Grid>
       <AddCourseButton />

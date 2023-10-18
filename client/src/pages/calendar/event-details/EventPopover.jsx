@@ -80,6 +80,7 @@ function EventPopover() {
               {!allDay && (isHost || isInstructor) && <EditLocation />}
               {!allDay && (isHost || isInstructor) && <DeleteAction />}
               <IconButton
+                data-cy="close-event-popover"
                 sx={{ fontSize: "20px" }}
                 onClick={() => setAnchorEl(null)}
               >

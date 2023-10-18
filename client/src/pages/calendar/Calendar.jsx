@@ -54,6 +54,8 @@ function Calendar() {
   const [isStaff, setIsStaff] = useState(false);
   const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
+  const [isInstructor, setIsInstructor] = useState(false);
+
   const {
     isLoading: isOfficeHoursLoading,
     error: officeHoursError,
@@ -67,6 +69,7 @@ function Calendar() {
 
   useEffect(() => {
     setIsStaff(courseType === "Staff" || courseType === "Instructor");
+    setIsInstructor(courseType === "Instructor");
   }, [courseType]);
 
   useEffect(() => {
@@ -91,11 +94,19 @@ function Calendar() {
   };
 
   const handleSelect = (info) => {
-    setEvent({
-      start: info.start,
-      end: info.end,
-    });
-    NiceModal.show("upsert-event", { type: "create" });
+    if (info.allDay && isInstructor) { // clicking on the all-day section & is instructor
+      setEvent({
+        start: info.start,
+        end: info.end,
+      });
+      NiceModal.show("upsert-event", { type: "createAllDay" });
+    } else if (!info.allDay) { // clicking on non-all-day section
+      setEvent({
+        start: info.start,
+        end: info.end,
+      });
+      NiceModal.show("upsert-event", { type: "create" });
+    }
   };
 
   const handleSelectAllow = (event) => {
@@ -175,7 +186,10 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        <Box sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}>
+        <Box
+          data-cy="full-calendar"
+          sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}
+        >
           <StyleWrapper>
             {matchUpSm && (
               <CalendarMenu
@@ -203,10 +217,10 @@ function Calendar() {
               headerToolbar={
                 matchUpSm
                   ? {
-                      start: "",
-                      center: "prev title next",
-                      end: "",
-                    }
+                    start: "",
+                    center: "prev title next",
+                    end: "",
+                  }
                   : { start: "title", end: "prev,next" }
               }
               initialView="timeGridWeek"

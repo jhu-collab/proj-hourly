@@ -52,7 +52,7 @@ function RegistrationType({ type }) {
 
   return (
     <>
-      <MainCard sx={{ padding: 2 }} content={false}>
+      <MainCard data-cy={type.title} sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -63,12 +63,14 @@ function RegistrationType({ type }) {
             {edit && courseType === "Instructor" ? (
               <>
                 <FormInputText
+                  data-cy="edit-registration-type-name-input"
                   name="title"
                   control={control}
                   sx={{ width: 230 }}
                 />
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <FormInputText
+                    data-cy="edit-registration-type-duration-input"
                     name="length"
                     control={control}
                     type="number"
