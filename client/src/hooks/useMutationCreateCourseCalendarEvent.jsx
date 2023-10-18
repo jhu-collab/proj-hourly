@@ -27,7 +27,7 @@ function useMutationCreateCourseCalendarEvent(createType) {
       throw err;
     }
   };
-  
+
   const createCourseCalendarEvents = async (courseEvent) => {
     try {
       debug("Sending course calendar events to be created to the backend...");
@@ -47,7 +47,7 @@ function useMutationCreateCourseCalendarEvent(createType) {
 
       queryClient.invalidateQueries(["courseEvents"]);
       NiceModal.hide("create-course-calendar-event");
-
+      NiceModal.hide("upsert-event")
       toast.success("Successfully created course calendar events!");
     },
     onError: (error) => {
