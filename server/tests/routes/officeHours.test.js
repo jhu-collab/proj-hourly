@@ -235,7 +235,6 @@ async function setup() {
       isOnDayOfWeek: true,
     },
   });
-  console.log(officeHour);
 
   // Create office hour time options
   await prisma.officeHourTimeOptions.create({
@@ -360,6 +359,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 with all valid parameters", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -374,6 +376,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when course ID is invalid and nonzero", async () => {
       const attributes = { ...baseAttributes, courseId: course.id * 2 };
       const response = await request
@@ -384,6 +389,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when course ID is 0", async () => {
       const attributes = { ...baseAttributes, courseId: 0 };
       const response = await request
@@ -394,6 +402,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when Course ID < 0", async () => {
       const attributes = { ...baseAttributes, courseId: -course.id };
       const response = await request
@@ -469,12 +480,18 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const attributes = { ...baseAttributes, endTime: "Hello World" };
       const response = await request
         .post(`/api/course/${attributes.courseId}/archiveCourse`)
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 400 when recurringEvent is false of archivec course", async () => {
       const attributes = { ...baseAttributes, recurringEvent: false };
@@ -483,6 +500,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const attributes = { ...baseAttributes, endTime: "Hello World" };
@@ -493,6 +513,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 11
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 when recurringEvent is false", async () => {
       const attributes = { ...baseAttributes, recurringEvent: false };
       const response = await request
@@ -509,6 +532,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 12
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 or 201 when start date is now (current time, depends on multiple of 5)", async () => {
       const attributes = {
         ...baseAttributes,
@@ -535,6 +561,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 13
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 when start date is a valid date in the past", async () => {
       const yesterday = new Date(baseAttributes.startDate);
       yesterday.setDate(yesterday.getDate() - 2);
@@ -553,6 +582,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 14
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is a date now", async () => {
       const attributes = {
         ...baseAttributes,
@@ -566,6 +598,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 15
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is a date in the past", async () => {
       const attributes = {
         ...baseAttributes,
@@ -599,6 +634,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // });
 
     // Row 18
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 when there is only one host", async () => {
       const attributes = { ...baseAttributes, hosts: [staff[0].id] };
       const response = await request
@@ -613,6 +651,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 19
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when there are no hosts", async () => {
       const attributes = { ...baseAttributes, hosts: [] };
       const response = await request
@@ -623,6 +664,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 20
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 when daysOfWeek is a singleton", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: ["Monday"] };
       const response = await request
@@ -637,6 +681,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 21
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: [] };
       const response = await request
@@ -647,6 +694,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 22
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when location is empty", async () => {
       const attributes = { ...baseAttributes, location: "" };
       const response = await request
@@ -700,6 +750,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       await teardown();
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -712,6 +765,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -719,6 +775,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -732,6 +791,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully paused", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -744,6 +806,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when all parameters are valid for paused course", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -751,6 +816,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unpaused", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -765,6 +833,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -787,6 +858,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
     });
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const attributes = { ...baseAttributes, officeHourId: officeHour.id * 2 };
       const response = await request
@@ -797,6 +871,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: 0 };
       const response = await request
@@ -807,6 +884,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is less than 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: -officeHour.id };
       const response = await request
@@ -817,6 +897,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when startTime and endTime are PM", async () => {
       const attributes = {
         ...baseAttributes,
@@ -840,6 +923,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 403 when startTime is empty", async () => {
       const attributes = { ...baseAttributes, startTime: "" };
       const response = await request
@@ -850,6 +936,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 7
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 403 when startTime is not a time string", async () => {
       const attributes = { ...baseAttributes, startTime: "Hello World" };
       const response = await request
@@ -860,6 +949,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 8
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when endTime is empty", async () => {
       const attributes = { ...baseAttributes, endTime: "" };
       const response = await request
@@ -870,6 +962,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when endTime is not a time string", async () => {
       const attributes = { ...baseAttributes, endTime: "Hello World" };
       const response = await request
@@ -880,6 +975,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when date is today", async () => {
       const curr = new Date();
       if (curr.getUTCHours() < Math.abs(curr.getTimezoneOffset() / 60)) {
@@ -893,11 +991,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/register`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
-      console.log(response.text);
       expect(response.status).toBe(400); // will always be outside of range of the scheduled office hour
     });
 
     // Row 11
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 403 when date is in the past", async () => {
       const attributes = { ...baseAttributes, date: "2002-11-05T04:00:00.000" };
       const response = await request
@@ -908,6 +1008,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 12
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when question is empty", async () => {
       const attributes = {
         ...baseAttributes,
@@ -931,6 +1034,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 13
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when TopicIds is a singleton", async () => {
       const attributes = {
         ...baseAttributes,
@@ -954,6 +1060,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 14
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when TopicIds is empty", async () => {
       const attributes = {
         ...baseAttributes,
@@ -1015,6 +1124,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1027,6 +1139,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 with all valid parameters of archived course", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1034,6 +1149,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -1048,6 +1166,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 with all valid parameters", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1064,6 +1185,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is positive but does not exist", async () => {
       const attributes = { ...baseAttributes, officeHourId: officeHour.id * 2 };
       const response = await request
@@ -1074,6 +1198,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: 0 };
       const response = await request
@@ -1084,6 +1211,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is negative", async () => {
       const attributes = { ...baseAttributes, officeHourId: -officeHour.id };
       const response = await request
@@ -1094,6 +1224,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is now", async () => {
       const mdy = new Date(Date.now())
         .toLocaleString("en-US", { hour12: false })
@@ -1111,6 +1244,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is in the past", async () => {
       const attributes = { ...baseAttributes, date: "01-01-2002" };
       const response = await request
@@ -1151,7 +1287,6 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      console.log(officeHour);
       await prisma.officeHour.updateMany({
         data: {
           isCancelledOn: [],
@@ -1159,6 +1294,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1171,6 +1309,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when all parameters are valid of archived course", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1179,6 +1320,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + staff[0].token)
         .set("id", staff[0].id);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -1193,6 +1337,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1209,6 +1356,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const attributes = { ...baseAttributes, officeHourId: officeHour.id * 2 };
       const response = await request
@@ -1219,6 +1369,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: 0 };
       const response = await request
@@ -1229,6 +1382,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is less than 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: -officeHour.id };
       const response = await request
@@ -1239,6 +1395,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when date is now", async () => {
       const mdy = new Date(Date.now())
         .toLocaleString("en-US", { hour12: false })
@@ -1257,6 +1416,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when date is in the past", async () => {
       const attributes = { ...baseAttributes, date: "01-01-2002" };
       const response = await request
@@ -1318,6 +1480,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1329,6 +1494,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 400 when all parameters are valid of archived course", async () => {
       const mdy = new Date(officeHour.startDate)
@@ -1343,6 +1511,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(400);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1356,6 +1527,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1376,6 +1550,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1391,6 +1568,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     }, 1000);
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1406,6 +1586,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     }, 1000);
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is less than 0", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1421,6 +1604,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     }, 1000);
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is now", async () => {
       const mdy = new Date(Date.now())
         .toLocaleString("en-US", { hour12: false })
@@ -1436,6 +1622,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is in the past", async () => {
       const date = "01-01-2002";
       const attributes = { ...baseAttributes };
@@ -1447,6 +1636,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 7
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return either 202 or 400 when date is now (depends on 5 minute interval)", async () => {
       const now = new Date(Date.now());
       const end = new Date(baseAttributes.endDate);
@@ -1468,6 +1660,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 8
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when startDate is in the past", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1486,6 +1681,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is now", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1501,6 +1699,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is in the past", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1519,6 +1720,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 11
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when location is empty", async () => {
       const mdy = new Date(officeHour.startDate)
         .toLocaleString("en-US", { hour12: false })
@@ -1588,6 +1792,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1600,6 +1807,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 with all valid parameters of archived course", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1607,6 +1817,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toEqual(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -1621,6 +1834,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 201 with all valid parameters", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1631,6 +1847,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1641,6 +1860,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1651,6 +1873,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is less than 0", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1661,6 +1886,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return either 202 or 400 when date is now (depends on 5 minute interval)", async () => {
       const now = new Date(Date.now());
       const end = new Date(baseAttributes.endDate);
@@ -1677,6 +1905,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when startDate is in the past", async () => {
       const attributes = {
         ...baseAttributes,
@@ -1686,11 +1917,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editAll`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
     // Row 7
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is now", async () => {
       const now = new Date(Date.now());
       const attributes = { ...baseAttributes, endDate: now.toISOString };
@@ -1702,6 +1935,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 8
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when endDate is in the past", async () => {
       const attributes = {
         ...baseAttributes,
@@ -1715,6 +1951,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when location is an empty string", async () => {
       const attributes = { ...baseAttributes, location: "" };
       const response = await request
@@ -1725,6 +1964,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when daysOfWeek is a singleton", async () => {
       const startDay = new Date(baseAttributes.startDate).getDay();
       const attributes = {
@@ -1739,6 +1981,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     }, 2000);
 
     // Row 11
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: [] };
       const response = await request
@@ -1749,6 +1994,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 12
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when endDateOldOfficeHour is now", async () => {
       const attributes = {
         ...baseAttributes,
@@ -1762,6 +2010,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 13
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when endDateOldOfficeHour is in the past", async () => {
       const attributes = {
         ...baseAttributes,
@@ -1775,6 +2026,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 14
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when editAfterDate is false", async () => {
       const attributes = { ...baseAttributes, editAfterDate: false };
       const response = await request
@@ -1813,17 +2067,26 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
         .post(`/api/course/${course.id}/archiveCourse`)
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const response = await request
         .post(`${endpoint}/cancelRegistration/${registration.id}`)
         .set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
@@ -1832,6 +2095,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const response = await request
         .post(`${endpoint}/cancelRegistration/${registration.id}`)
@@ -1841,6 +2107,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
       const response = await request
         .post(`${endpoint}/cancelRegistration/${registration.id * 2}`)
@@ -1849,6 +2118,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is 0", async () => {
       const response = await request
         .post(`${endpoint}/cancelRegistration/${0}`)
@@ -1857,6 +2129,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is negative", async () => {
       const response = await request
         .post(`${endpoint}/cancelRegistration/${-registration.id}`)
@@ -1915,6 +2190,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
       const officeHour = await prisma.officeHour.findUnique({
@@ -1927,6 +2205,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when all parameters are valid of archived course", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1934,6 +2215,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
+    });
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     });
     it("Return 202 when course successfully archived", async () => {
       const officeHourId = baseAttributes.officeHourId;
@@ -1948,6 +2232,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
     // Row 1
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when all parameters are valid", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1958,6 +2245,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 2
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1968,6 +2258,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 3
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is 0", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1978,6 +2271,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 4
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when registrationId is negative", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
@@ -1988,6 +2284,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is a positive integer but the officeHour does not exist", async () => {
       const attributes = { ...baseAttributes, officeHourId: officeHour.id * 2 };
       const response = await request
@@ -1998,6 +2297,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: 0 };
       const response = await request
@@ -2008,6 +2310,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 7
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is less than 0", async () => {
       const attributes = { ...baseAttributes, officeHourId: -officeHour.id };
       const response = await request
@@ -2018,6 +2323,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 8
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when startTime and endTime are PM", async () => {
       const attributes = {
         ...baseAttributes,
@@ -2032,6 +2340,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when startTime is empty", async () => {
       const attributes = { ...baseAttributes, startTime: "" };
       const response = await request
@@ -2042,6 +2353,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when startTime is not a time string", async () => {
       const attributes = { ...baseAttributes, startTime: "Hello World" };
       const response = await request
@@ -2052,6 +2366,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 11
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when endTime is empty", async () => {
       const attributes = { ...baseAttributes, endTime: "" };
       const response = await request
@@ -2062,6 +2379,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 12
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 409 when endTime is not a time string", async () => {
       const attributes = { ...baseAttributes, endTime: "Hello World" };
       const response = await request
@@ -2072,6 +2392,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 13
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is now", async () => {
       const attributes = {
         ...baseAttributes,
@@ -2088,6 +2411,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 14
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when date is in the past", async () => {
       const attributes = { ...baseAttributes, date: "2002-01-01" };
       const response = await request
@@ -2098,6 +2424,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 15
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when question is empty", async () => {
       const attributes = { ...baseAttributes, question: "" };
       const response = await request
@@ -2108,6 +2437,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 16
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when TopicIds is a singleton", async () => {
       const attributes = { ...baseAttributes, TopicIds: [topics[0].id] };
       const response = await request
@@ -2118,6 +2450,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 17
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when TopicIds is empty", async () => {
       const attributes = { ...baseAttributes, TopicIds: [] };
       const response = await request
@@ -2145,6 +2480,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       await teardown();
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 for valid date", async () => {
       const date = new Date(officeHour.startDate)
         .toLocaleDateString("en-us")
@@ -2156,6 +2494,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.body.timeSlotsPerType).toBeDefined();
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 for invalid date", async () => {
       const date = new Date(officeHour.startDate);
       date.setDate(date.getDate() + 1);
@@ -2166,6 +2507,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when officeHourId is invalid", async () => {
       const date = new Date(officeHour.startDate);
       date.setDate(date.getDate() + 1);
@@ -2193,6 +2537,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       await teardown();
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 202 when ID is valid", async () => {
       const response = await request
         .get(`${endpoint}/${officeHour.id}`)
@@ -2201,6 +2548,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.body.officeHour.id).toEqual(officeHour.id);
     });
 
+    it("Delay for 2 seconds", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    });
     it("Return 400 when ID is invalid", async () => {
       const response = await request
         .get(`${endpoint}/${officeHour.id * 2}`)
