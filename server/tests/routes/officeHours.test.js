@@ -415,7 +415,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 5
-    it.skip("start time is a valid PM time", async () => {
+    it("start time is a valid PM time", async () => {
       const attributes = { ...baseAttributes, startTime: "18:30:00" };
       const response = await request
         .post(`${endpoint}/create`)
@@ -428,7 +428,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 6
-    it.skip("start time is an empty string", async () => {
+    it("start time is an empty string", async () => {
       const attributes = { ...baseAttributes, startTime: "" };
       const response = await request
         .post(`${endpoint}/create`)
@@ -438,7 +438,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 7
-    it.skip("start time is invalid and non-empty (not a time)", async () => {
+    it("start time is invalid and non-empty (not a time)", async () => {
       const attributes = { ...baseAttributes, startTime: "Hello World" };
       const response = await request
         .post(`${endpoint}/create`)
@@ -448,7 +448,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 8
-    it.skip("end time is a valid PM time", async () => {
+    it("end time is a valid PM time", async () => {
       const attributes = { ...baseAttributes, endTime: "18:30:00" };
       const response = await request
         .post(`${endpoint}/create`)
@@ -461,7 +461,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 9
-    it.skip("Return 400 when endTime is empty", async () => {
+    it("Return 400 when endTime is empty", async () => {
       const attributes = { ...baseAttributes, endTime: "" };
       const response = await request
         .post(`${endpoint}/create`)
@@ -471,7 +471,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     // Row 10
-    it.skip("Return 400 when endTime is not a time string", async () => {
+    it("Return 400 when endTime is not a time string", async () => {
       const attributes = { ...baseAttributes, endTime: "Hello World" };
       const response = await request
         .post(`${endpoint}/create`)
