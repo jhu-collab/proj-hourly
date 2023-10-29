@@ -1644,7 +1644,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + staff[0].token);
       if (
         new Date(baseAttributes.startDate).getTime() <
-        new Date(attributes.endDateOldOfficeHour).getTime()
+        new Date(baseAttributes.endDateOldOfficeHour).getTime()
       ) {
         expect(response.status).toBe(202);
       } else {
