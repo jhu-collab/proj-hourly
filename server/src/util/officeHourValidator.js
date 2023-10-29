@@ -1233,3 +1233,9 @@ export const isRegistrationHostOrInstructor = async (req, res, next) => {
     next();
   }
 };
+
+export const endDateOldPreStart = async(req, res, next) => {
+  const { startDate, endDateOldOfficeHour } =
+  req.body;
+
+};
