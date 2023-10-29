@@ -52,7 +52,7 @@ function StudentTokenUsageForm(props) {
                 item
                 xs={12}
                 key={token.id}
-                data-cy="course-topics-list-student"
+                data-cy="token-balance-list-student"
               >
                 <StudentTokenUsage token={token} />
               </Grid>
