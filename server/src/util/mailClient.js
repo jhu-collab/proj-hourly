@@ -3,7 +3,7 @@ import { config, env } from "process";
 
 let transporter;
 
-if (process.env.DISABLE_EMAIL_SENDING) {
+if (process.env.DISABLE_EMAIL_SENDING === "true") {
   transporter = nodemailer.createTransport({
     jsonTransport: true,
   });
