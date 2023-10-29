@@ -92,6 +92,8 @@ describe("Roster Page", () => {
         }
       );
     }
+    
+    cy.task("optInIfNeeded", courseCode);
 
     cy.visit(BASE_URL + "login");
 
