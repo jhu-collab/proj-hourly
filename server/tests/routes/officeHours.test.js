@@ -9,8 +9,8 @@ import { createToken } from "../../src/util/helpers.js";
 const request = supertest(app);
 const endpoint = "/api/officeHour";
 
-// CHANGE THE TRANSPORTOR IN mailClient.js IF YOU WANT TO RUN THESE TESTS
-// IF YOU DO NOT CHANGE THE TRANSPORTER THEN THE TESTS WILL FAIL BECAUSE OF MAILTRAP OVERRUSE
+// CHANGE DISABLE_EMAIL_SENDING=true to DISABLE_EMAIL_SENDING=false IN .env SERVER FILE BEFORE RUNNING THESE TESTS
+
 let ids = {
   users: [],
   course: 0,
