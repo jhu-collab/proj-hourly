@@ -348,9 +348,11 @@ export const removeStaff = async (req, res) => {
     },
   });
   const officeHourIds = [];
-  officeHours.forEach((officeHour) =>
-    officeHourIds.push({ id: officeHour.id })
-  );
+  const registrationOfficeHourIds = [];
+  officeHours.forEach((officeHour) => {
+    officeHourIds.push({ id: officeHour.id });
+    registrationOfficeHourIds.push(officeHour.id);
+  });
   debug("Updating account...");
   await prisma.account.update({
     where: {
@@ -359,6 +361,14 @@ export const removeStaff = async (req, res) => {
     data: {
       isHosting: {
         disconnect: officeHourIds,
+      },
+    },
+  });
+  debug("Deleting registrations...");
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: registrationOfficeHourIds,
       },
     },
   });
