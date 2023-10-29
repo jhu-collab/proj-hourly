@@ -1611,18 +1611,18 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    // it("Return 202 when daysOfWeek is a singleton", async () => {
-    //   const startDay = new Date(baseAttributes.startDate).getDay();
-    //   const attributes = {
-    //     ...baseAttributes,
-    //     daysOfWeek: [weekday[startDay % 7]],
-    //   };
-    //   const response = await request
-    //     .post(`${endpoint}/${officeHour.id}/editAll`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + staff[0].token);
-    //   expect(response.status).toBe(202);
-    // });
+    it("Return 202 when daysOfWeek is a singleton", async () => {
+      const startDay = new Date(baseAttributes.startDate).getDay();
+      const attributes = {
+        ...baseAttributes,
+        daysOfWeek: [weekday[startDay % 7]],
+      };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    }, 7000);
 
     it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: [] };
@@ -1633,59 +1633,59 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    // it("Return 202 or 400 when endDateOldOfficeHour is now", async () => {
-    //   const attributes = {
-    //     ...baseAttributes,
-    //     endDateOldOfficeHour: new Date(Date.now()).toISOString(),
-    //   };
-    //   const response = await request
-    //     .post(`${endpoint}/${officeHour.id}/editAll`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + staff[0].token);
-    //   if (
-    //     new Date(baseAttributes.startDate).getTime() <
-    //     endDateOldOfficeHour.getTime()
-    //   ) {
-    //     expect(response.status).toBe(202);
-    //   } else {
-    //     expect(response.status).toBe(400);
-    //   }
-    // });
+    it("Return 202 or 400 when endDateOldOfficeHour is now", async () => {
+      const attributes = {
+        ...baseAttributes,
+        endDateOldOfficeHour: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      if (
+        new Date(baseAttributes.startDate).getTime() <
+        new Date(attributes.endDateOldOfficeHour).getTime()
+      ) {
+        expect(response.status).toBe(202);
+      } else {
+        expect(response.status).toBe(400);
+      }
+    }, 7000);
 
-    // it("Return 202 or 400 when endDateOldOfficeHour is in the past", async () => {
-    //   const attributes = {
-    //     ...baseAttributes,
-    //     endDateOldOfficeHour: "2003-04-15T19:00:00.000Z",
-    //   };
-    //   const response = await request
-    //     .post(`${endpoint}/${officeHour.id}/editAll`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + staff[0].token);
-    //   if (
-    //     new Date(baseAttributes.startDate).getTime() <
-    //     endDateOldOfficeHour.getTime()
-    //   ) {
-    //     expect(response.status).toBe(202);
-    //   } else {
-    //     expect(response.status).toBe(400);
-    //   }
-    // });
+    it("Return 202 or 400 when endDateOldOfficeHour is in the past", async () => {
+      const attributes = {
+        ...baseAttributes,
+        endDateOldOfficeHour: "2003-04-15T19:00:00.000Z",
+      };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      if (
+        new Date(baseAttributes.startDate).getTime() <
+        new Date(baseAttributes.endDateOldOfficeHour).getTime()
+      ) {
+        expect(response.status).toBe(202);
+      } else {
+        expect(response.status).toBe(400);
+      }
+    }, 7000);
 
-    // it("Return 202 when editAfterDate is false", async () => {
-    //   const attributes = { ...baseAttributes, editAfterDate: false };
-    //   const response = await request
-    //     .post(`${endpoint}/${officeHour.id}/editAll`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + staff[0].token);
-    //   if (
-    //     new Date(baseAttributes.startDate).getTime() <
-    //     endDateOldOfficeHour.getTime()
-    //   ) {
-    //     expect(response.status).toBe(202);
-    //   } else {
-    //     expect(response.status).toBe(400);
-    //   }
-    // });
+    it("Return 202 when editAfterDate is false", async () => {
+      const attributes = { ...baseAttributes, editAfterDate: false };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editAll`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      if (
+        new Date(baseAttributes.startDate).getTime() <
+        new Date(baseAttributes.endDateOldOfficeHour).getTime()
+      ) {
+        expect(response.status).toBe(202);
+      } else {
+        expect(response.status).toBe(400);
+      }
+    }, 7000);
   });
 
   describe(`Test POST: ${endpoint}/cancelRegistration/:registrationId`, async () => {
