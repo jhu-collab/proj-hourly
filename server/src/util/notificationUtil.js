@@ -22,13 +22,19 @@ export const sendEmail = async (req) => {
 
   // send mail with defined transport object
   debug("sending mail...");
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return "stop";
-    }
-  });
-  debug("sendEmail done!");
+  if (process.env.DISABLE_EMAIL_SENDING === "true") {
+    debug("emails are disabled - not sending");
+    console.log("hi");
+    return;
+  } else {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        return "stop";
+      }
+    });
+    debug("sendEmail done!");
+  }
 };
 
 export default sendEmail;

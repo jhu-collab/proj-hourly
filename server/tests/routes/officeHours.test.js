@@ -9,7 +9,7 @@ import { createToken } from "../../src/util/helpers.js";
 const request = supertest(app);
 const endpoint = "/api/officeHour";
 
-// CHANGE DISABLE_EMAIL_SENDING=true to DISABLE_EMAIL_SENDING=false IN .env SERVER FILE BEFORE RUNNING THESE TESTS
+// CHANGE DISABLE_EMAIL_SENDING=true to DISABLE_EMAIL_SENDING=false IN .env.test SERVER FILE BEFORE RUNNING THESE TESTS
 
 let ids = {
   users: [],
@@ -1578,7 +1578,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(202);
-    });
+    }, 7000);
 
     it("Return 400 when endDate is now", async () => {
       const now = new Date(Date.now());
