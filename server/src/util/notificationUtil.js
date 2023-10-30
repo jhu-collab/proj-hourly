@@ -22,7 +22,7 @@ export const sendEmail = async (req) => {
 
   // send mail with defined transport object
   debug("sending mail...");
-  if (process.env.DISABLE_EMAIL_SENDING === "true") {
+  if (process.env.DISABLE_EMAIL_SENDING) {
     debug("emails are disabled - not sending");
     console.log("hi");
     return;
