@@ -24,7 +24,6 @@ export const sendEmail = async (req) => {
   debug("sending mail...");
   if (process.env.DISABLE_EMAIL_SENDING) {
     debug("emails are disabled - not sending");
-    console.log("hi");
     return;
   } else {
     transporter.sendMail(mailOptions, function (error, info) {
