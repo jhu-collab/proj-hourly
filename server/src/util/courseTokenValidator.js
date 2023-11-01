@@ -21,7 +21,7 @@ export const isCourseUsingTokens = async (req, res, next) => {
     debug("Course not using course tokens...");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Course not using tokens" });
+      .json({ msg: "Course not using tokens, enable tokens to proceed" });
   } else {
     debug("Course using course tokens!");
     next();
@@ -45,7 +45,7 @@ export const isCourseToken = async (req, res, next) => {
     debug("Course token doesn't exist...");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Course Token does not exist" });
+      .json({ msg: "Course Token does not exist for this courseTokenId" });
   } else {
     debug("Course Token exists!");
     next();
@@ -58,7 +58,7 @@ export const tokenLimitReached = async (req, res, next) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const accountId = parseInt(req.params.accountId, 10);
+  const studentId = parseInt(req.params.studentId, 10);
   debug("Finding course token...");
   const courseToken = await prisma.courseToken.findUnique({
     where: {
@@ -69,7 +69,7 @@ export const tokenLimitReached = async (req, res, next) => {
   debug("Finding issue token...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: accountId,
+      accountId: studentId,
       courseTokenId,
     },
   });
