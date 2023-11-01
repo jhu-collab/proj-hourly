@@ -348,9 +348,11 @@ export const removeStaff = async (req, res) => {
     },
   });
   const officeHourIds = [];
-  officeHours.forEach((officeHour) =>
-    officeHourIds.push({ id: officeHour.id })
-  );
+  const registrationOfficeHourIds = [];
+  officeHours.forEach((officeHour) => {
+    officeHourIds.push({ id: officeHour.id });
+    registrationOfficeHourIds.push(officeHour.id);
+  });
   debug("Updating account...");
   await prisma.account.update({
     where: {
@@ -359,6 +361,14 @@ export const removeStaff = async (req, res) => {
     data: {
       isHosting: {
         disconnect: officeHourIds,
+      },
+    },
+  });
+  debug("Deleting registrations...");
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: registrationOfficeHourIds,
       },
     },
   });
@@ -1023,6 +1033,53 @@ export const demote = async (req, res) => {
         },
       },
     });
+    debug("Getting office hours...");
+    const officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+    });
+    const officeHourIds = [];
+    const registrationOfficeHourIds = [];
+    officeHours.forEach((officeHour) => {
+      officeHourIds.push({ id: officeHour.id });
+      registrationOfficeHourIds.push(officeHour.id);
+    });
+    debug("Updating account...");
+    await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        isHosting: {
+          disconnect: officeHourIds,
+        },
+      },
+    });
+    debug("Deleting registrations...");
+    await prisma.registration.deleteMany({
+      where: {
+        officeHourId: {
+          in: registrationOfficeHourIds,
+        },
+      },
+    });
+    debug("Deleting office hours...");
+    await prisma.officeHour.deleteMany({
+      where: {
+        courseId,
+        hosts: {
+          none: {},
+        },
+      },
+    });
+    debug("updating calendar...");
+    await generateCalendar(courseId);
   }
   debug("demote is done!");
   delete account["token"];

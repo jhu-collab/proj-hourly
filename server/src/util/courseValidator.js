@@ -1182,7 +1182,7 @@ export const isCourseArchivedCourseCode = async (req, res, next) => {
       code: code,
     },
   });
-  if (course.isArchived === true) {
+  if (course && course.isArchived === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Course is archived" });
