@@ -12,7 +12,7 @@ import FormInputNumber from "../../components/form-ui/FormInputNumber";
 import MainCard from "../../components/MainCard";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import { tokenSchema } from "../../utils/validators";
+import { tokenEditLimitSchema, tokenSchema } from "../../utils/validators";
 import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
 import useMutationDeleteTokenOverride from "../../hooks/useMutationDeleteTokenOverride";
@@ -33,6 +33,7 @@ function StudentTokenUsage({ token }) {
         ? token.CourseToken.tokenLimit
         : token.overrideAmount,
     },
+    resolver: yupResolver(tokenEditLimitSchema),
   });
   const { mutate } = useMutationAddTokenOverride(
     token.CourseToken.courseId,
@@ -116,7 +117,7 @@ function StudentTokenUsage({ token }) {
               <Stack direction="row" spacing={1}>
                 <AnimateButton>
                   <Button
-                    data-cy="edit-token-button"
+                    data-cy="edit-token-limit-button"
                     variant="contained"
                     onClick={handleOnClickEditBtn}
                   >
@@ -126,8 +127,10 @@ function StudentTokenUsage({ token }) {
                 <AnimateButton>
                   <Button
                     variant="contained"
+                    data-cy="remove-token-limit-button"
                     color="error"
                     onClick={() => {
+                      console.log("clicked");
                       confirmDialog(
                         `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
                         () => {

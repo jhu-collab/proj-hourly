@@ -264,6 +264,26 @@ export default defineConfig({
             return null;
           }
         },
+        async optInIfNeeded(courseCode) {
+          const course = await prisma.course.findFirst({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                usesTokens: true,
+              },
+            });
+            return null;
+          }
+        },
 
         async getCourseByCode(code) {
           const course = await prisma.course.findUnique({

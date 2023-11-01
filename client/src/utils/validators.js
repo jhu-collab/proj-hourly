@@ -341,3 +341,10 @@ export const useTokenSchema = yup.object().shape({
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
     }),
 });
+
+export const tokenEditLimitSchema = yup.object().shape({
+  quantity: yup
+    .number()
+    .required("Quantity is required for an override")
+    .min(1, "Must have positive override"),
+});
