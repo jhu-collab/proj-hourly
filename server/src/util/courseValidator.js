@@ -1010,7 +1010,7 @@ export const isValidFilterValue = async (req, res, next) => {
 
 export const isAccountStudentParams = async (req, res, next) => {
   debug("isAccountStudentParams is called!");
-  const accoundId = parseInt(req.params.accountId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   const courseId = parseInt(req.params.courseId, 10);
   debug("Checking if account is a student...");
   const isStudent = await prisma.course.findUnique({
@@ -1020,7 +1020,7 @@ export const isAccountStudentParams = async (req, res, next) => {
     include: {
       students: {
         where: {
-          id: accoundId,
+          id: accountId,
         },
       },
     },
@@ -1186,7 +1186,7 @@ export const isCourseArchivedCourseCode = async (req, res, next) => {
       code: code,
     },
   });
-  if (course.isArchived === true) {
+  if (course && course.isArchived === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: Course is archived, cannot join course" });

@@ -79,13 +79,69 @@ export const tokenLimitReached = async (req, res, next) => {
     debug("Student has used no tokens yet!");
     next();
   }
-  if (dates.length >= courseToken.tokenLimit) {
+  if (
+    (issueToken.overrideAmount !== undefined &&
+      issueToken.overrideAmount !== null &&
+      dates.length >= issueToken.overrideAmount) ||
+    ((issueToken.overrideAmount === null ||
+      issueToken.overrideAmount === undefined) &&
+      dates.length >= courseToken.tokenLimit)
+  ) {
     debug("Course token limit reached!");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Student has used all their tokens" });
   } else {
     debug("Student has not yet reached course token limit!");
+    next();
+  }
+};
+
+export const tokenLessThanOverride = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const { overrideAmount } = req.body;
+  debug("Finding course token...");
+  const courseToken = await prisma.courseToken.findUnique({
+    where: {
+      id: courseTokenId,
+    },
+  });
+  debug("Course token found...");
+  if (courseToken.tokenLimit >= overrideAmount) {
+    debug("Override limit is lte token limit!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Override limit is lte token limit" });
+  } else {
+    debug("Override limit is gt token limit!");
+    next();
+  }
+};
+
+export const overrideNotNull = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
+  debug("Finding issue token...");
+  const issueToken = await prisma.issueToken.findFirst({
+    where: {
+      accountId: accountId,
+      courseTokenId,
+    },
+  });
+  debug("Found issue token...");
+  if (issueToken.overrideAmount == null) {
+    debug("Override limit is null!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Override limit is null" });
+  } else {
+    debug("Override limit is not null!");
     next();
   }
 };

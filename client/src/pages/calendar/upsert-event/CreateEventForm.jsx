@@ -107,7 +107,7 @@ function CreateEventForm() {
     start.setHours(startTime[0]);
     start.setMinutes(startTime[1]);
     let end = new Date(data.startDate);
-    if (data.endDate !== null) {
+    if (recurring && (data.endDate !== null || data.endDate !== data.startDate)) {
       end = new Date(data.endDate);
     }
     const endTime = data.endTime.split(":");
@@ -121,7 +121,7 @@ function CreateEventForm() {
       location: data.location,
       daysOfWeek: recurring ? data.days : [DAYS[data.startDate.getDay()]],
       remote: data.remote,
-      hosts: [id], // TOOD: For now, there will be no additional hosts
+      hosts: [id], // TODO: For now, there will be no additional hosts
     });
   };
 
