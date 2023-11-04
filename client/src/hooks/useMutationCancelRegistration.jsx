@@ -38,13 +38,14 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-      const startTime = DateTime.fromISO(registration.startTime).toLocaleString(
-        DateTime.TIME_SIMPLE
-      );
-      const endTime = DateTime.fromISO(registration.endTime).toLocaleString(
-        DateTime.TIME_SIMPLE
-      );
-
+      console.log(registration);
+      const startTime = DateTime.fromISO(
+        registration.date.substring(0, 10) +
+          registration.startTime.substring(10)
+      ).toLocaleString(DateTime.TIME_SIMPLE);
+      const endTime = DateTime.fromISO(
+        registration.date.substring(0, 10) + registration.endTime.substring(10)
+      ).toLocaleString(DateTime.TIME_SIMPLE);
       queryClient.invalidateQueries(["registrationStatus"]);
       queryClient.invalidateQueries(["allRegistrations"]);
 
@@ -55,7 +56,7 @@ function useMutationCancelRegistration(registrationId) {
       );
     },
     onError: (error) => {
-      debug( {error} );
+      debug({ error });
       errorToast(error);
     },
   });
