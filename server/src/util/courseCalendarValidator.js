@@ -42,7 +42,9 @@ export const doesEventExist = async (req, res, next) => {
     debug("calendar event does not exist");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event does not exist" });
+      .json({
+        msg: "ERROR: calendar event does not exist for given date and course",
+      });
   } else {
     debug("calendar event exists");
     next();
@@ -78,7 +80,7 @@ export const doesEventExistParams = async (req, res, next) => {
     debug("calendar event does not exist");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event does not exist" });
+      .json({ msg: "ERROR: calendar event does not exist for date and course" });
   } else {
     debug("calendar event exists");
     next();
@@ -136,7 +138,7 @@ export const doesEventExistRecurring = async (req, res, next) => {
     debug("calendar events exist on proposed days");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event exists on days" });
+      .json({ msg: "ERROR: there is already a course calendar event present on at least one of these dates" });
   }
 };
 
@@ -171,14 +173,14 @@ export const doesEventNotExist = async (req, res, next) => {
     debug("calendar event exists");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event exists" });
+      .json({ msg: "ERROR: calendar event exists for given date and course" });
   }
 };
 
 /**
  * Middleware function to check whether the end date is after the start date.
  * If the end date is after the start date, the request is allowed to proceed,
- * otherwise an error response is sent. Extracts begDate and endDate from the 
+ * otherwise an error response is sent. Extracts begDate and endDate from the
  * request body.
  *
  * @param {object} req - Express request object.
@@ -201,14 +203,14 @@ export const endAfterStart = async (req, res, next) => {
     debug("end date is before beginning date");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: end date is before beginning date" });
+      .json({ msg: "ERROR: end date is before start date" });
   }
 };
 
 /**
  * Middleware function to check whether the course begins on a specified day of the week.
  * If the course begins on the specified day, the request is allowed to proceed,
- * otherwise an error response is sent. Extracts begDate and daysOfWeek from the request 
+ * otherwise an error response is sent. Extracts begDate and daysOfWeek from the request
  * body.
  *
  * @param {object} req - Express request object.
@@ -233,14 +235,14 @@ export const doesCourseBeginOnDay = async (req, res, next) => {
   } else {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: course does not occur on this day" });
+      .json({ msg: "ERROR: course does not occur on the start date" });
   }
 };
 
 /**
  * Middleware function to check whether the user is an instructor of the specified course.
  * If the user is an instructor of the course, the request is allowed to proceed,
- * otherwise a forbidden response is sent. Extracts courseId from the request body and id 
+ * otherwise a forbidden response is sent. Extracts courseId from the request body and id
  * from the request id.
  *
  * @param {object} req - Express request object.
@@ -264,7 +266,7 @@ export const isCourseInstructor = async (req, res, next) => {
   });
   if (course.instructors.length === 0) {
     return res.status(StatusCodes.FORBIDDEN).json({
-      msg: "ERROR: must be instructor",
+      msg: "ERROR: must be instructor for calendar events",
     });
   } else {
     next();
@@ -298,7 +300,7 @@ export const isCourseInstructorParams = async (req, res, next) => {
   });
   if (course.instructors.length === 0) {
     return res.status(StatusCodes.FORBIDDEN).json({
-      msg: "ERROR: must be instructor",
+      msg: "ERROR: must be instructor for calendar events",
     });
   } else {
     next();
@@ -321,14 +323,14 @@ export const areValidDOW = (req, res, next) => {
     debug("days of week not included");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: days of the week not included" });
+      .json({ msg: "ERROR: days of the week not included in request" });
   }
   daysOfWeek.forEach((dow) => {
     if (!weekday.includes(dow)) {
       debug("invalid days of week");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "ERROR: invalid days of week" });
+        .json({ msg: "ERROR: invalid days of week in request" });
     }
   });
   debug("days of week are valid");
@@ -365,7 +367,7 @@ export const startDateIsValidDOW = (req, res, next) => {
 /**
  * Middleware function to check whether the user is a member of the specified course.
  * If the user is a member of the course, the request is allowed to proceed,
- * otherwise a forbidden response is sent. Extracts courseId from the request parameters 
+ * otherwise a forbidden response is sent. Extracts courseId from the request parameters
  * and id from the request id.
  *
  * @param {object} req - Express request object.
@@ -425,7 +427,7 @@ export const isInCourse = async (req, res, next) => {
     debug("Error in isInCourse!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "ERROR: User is not in course" });
+      .json({ msg: "ERROR: User is not in course with the given id" });
   } else {
     debug("Account is a course member!");
     debug("isInCourse is done!");
@@ -466,7 +468,7 @@ export const newDateNotOldDate = async (req, res, next) => {
     debug("Course already occurs on this day");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course already exists on this day" });
+      .json({ msg: "ERROR: Course event already exists on this day" });
   }
 };
 

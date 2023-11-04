@@ -245,6 +245,9 @@ export const getAllRemainingTokens = async (req, res) => {
     include: {
       CourseToken: true,
     },
+    orderBy: {
+      id: "asc",
+    },
   });
   debug("Found issueToken...");
   return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
@@ -343,6 +346,9 @@ export const getTokensForStudent = async (req, res) => {
     },
     include: {
       CourseToken: true,
+    },
+    orderBy: {
+      id: "asc",
     },
   });
   debug("Found issue tokens for student...");
