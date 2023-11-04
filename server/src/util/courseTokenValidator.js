@@ -58,7 +58,7 @@ export const tokenLimitReached = async (req, res, next) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.studentId, 10);
+  const studentId = parseInt(req.params.accountId, 10);
   debug("Finding course token...");
   const courseToken = await prisma.courseToken.findUnique({
     where: {
