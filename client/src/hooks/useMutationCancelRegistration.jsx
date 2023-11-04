@@ -38,7 +38,6 @@ function useMutationCancelRegistration(registrationId) {
   const mutation = useMutation(cancelRegistration, {
     onSuccess: (data) => {
       const registration = data.registration;
-      console.log(registration);
       const startTime = DateTime.fromISO(
         registration.date.substring(0, 10) +
           registration.startTime.substring(10)
