@@ -325,20 +325,23 @@ export const isTimeAvailable = async (req, res, next) => {
   const dateObj = new Date(date);
   debug("got registrations");
   let valid = true;
-  if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
-    startTimeObj.setUTCHours(
-      startTimeObj.getUTCHours() -
-        (officeHour.startDate.getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-    endTimeObj.setUTCHours(
-      endTimeObj.getUTCHours() -
-        (officeHour.startDate.getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-  }
+  // if (startTimeObj.getUTCHours() > dateObj.getTimezoneOffset() / 60) {
+  //   dateObj.setUTCHours(dateObj.getTimezoneOffset() / 60 + 3);
+  // }
+  // if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
+  //   startTimeObj.setUTCHours(
+  //     startTimeObj.getUTCHours() -
+  //       (officeHour.startDate.getTimezoneOffset() -
+  //         dateObj.getTimezoneOffset()) /
+  //         60
+  //   );
+  //   endTimeObj.setUTCHours(
+  //     endTimeObj.getUTCHours() -
+  //       (officeHour.startDate.getTimezoneOffset() -
+  //         dateObj.getTimezoneOffset()) /
+  //         60
+  //   );
+  // }
   registrations.forEach((registration) => {
     if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
