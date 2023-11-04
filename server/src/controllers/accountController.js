@@ -14,13 +14,13 @@ export const create = async (req, res) => {
     return res;
   }
   const { email, name } = req.body;
-  await prisma.Account.create({
+  await prisma.account.create({
     data: {
       email,
       userName: name,
     },
   });
-  const account = await prisma.Account.findUnique({
+  const account = await prisma.account.findUnique({
     where: {
       email,
     },
@@ -47,7 +47,7 @@ export const create = async (req, res) => {
 
   await sendEmail({
     email: email,
-    subject: "Hourly Account Creation",
+    subject: "Hourly account Creation",
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
     return res;
   }
   const { email } = req.body;
-  const account = await prisma.Account.findUnique({
+  const account = await prisma.account.findUnique({
     where: {
       email,
     },
@@ -115,7 +115,7 @@ export const getCourses = async (req, res) => {
   });
 };
 
-export const deleteAccount = async (req, res) => {
+export const deleteaccount = async (req, res) => {
   debug("deleting account...");
   if (validate(req, res)) {
     return res;
@@ -241,12 +241,12 @@ export const deleteAccount = async (req, res) => {
     donotreply;
   await sendEmail({
     email: account.email,
-    subject: "Hourly Account Deletion",
+    subject: "Hourly account Deletion",
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
   debug("account deletion email sent...");
-  return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
+  return res.status(StatusCodes.ACCEPTED).json({ msg: "account deleted!" });
 };
 
 export const getAll = async (req, res) => {
