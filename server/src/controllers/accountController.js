@@ -47,7 +47,7 @@ export const create = async (req, res) => {
 
   await sendEmail({
     email: email,
-    subject: "Hourly account Creation",
+    subject: "Hourly Account Creation",
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
@@ -115,7 +115,7 @@ export const getCourses = async (req, res) => {
   });
 };
 
-export const deleteaccount = async (req, res) => {
+export const deleteAccount = async (req, res) => {
   debug("deleting account...");
   if (validate(req, res)) {
     return res;
@@ -241,12 +241,12 @@ export const deleteaccount = async (req, res) => {
     donotreply;
   await sendEmail({
     email: account.email,
-    subject: "Hourly account Deletion",
+    subject: "Hourly Account Deletion",
     text: emailBody,
     html: "<p> " + emailBody + " </p>",
   });
   debug("account deletion email sent...");
-  return res.status(StatusCodes.ACCEPTED).json({ msg: "account deleted!" });
+  return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
 };
 
 export const getAll = async (req, res) => {
