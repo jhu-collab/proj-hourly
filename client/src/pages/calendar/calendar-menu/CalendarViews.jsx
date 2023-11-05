@@ -11,25 +11,31 @@ import Typography from "@mui/material/Typography";
  *                    Calendar.jsx
  * @returns Calendar view toggle.
  */
-function CalendarViews({ calendarRef }) {
+function CalendarViews({ calendarRef, setMaxEventsStacked }) {
   const [alignment, setAlignment] = useState("week");
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment != null) {
       setAlignment(newAlignment);
       let calendarApi = calendarRef.current.getApi();
-      newAlignment === "day"
-        ? calendarApi.changeView("timeGridDay")
-        : newAlignment === "week"
-        ? calendarApi.changeView("timeGridWeek")
-        : calendarApi.changeView("dayGridMonth");
+
+      if (newAlignment === "day") {
+        calendarApi.changeView("timeGridDay");
+        setMaxEventsStacked(-1);
+      } else if (newAlignment === "week") {
+        calendarApi.changeView("timeGridWeek");
+        setMaxEventsStacked(2);
+      } else {
+        calendarApi.changeView("dayGridMonth");
+        setMaxEventsStacked(-1);
+      }
     }
   };
 
   const sxToggleButton = {
     color: "white",
     border: 0,
-    fontWeight: 600,
+    fontWeight: 500,
     "&:hover": {
       bgcolor: "secondary.main",
       color: "text.primary",
@@ -51,7 +57,11 @@ function CalendarViews({ calendarRef }) {
         view by
       </Typography>
       <ToggleButtonGroup
-        sx={{ bgcolor: "tertiary.main" }}
+        sx={{
+          bgcolor: "tertiary.main",
+          boxShadow:
+            "0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+        }}
         value={alignment}
         exclusive
         fullWidth

@@ -1,14 +1,12 @@
 import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import NiceModal from "@ebay/nice-modal-react";
 import Topic from "./Topic";
 import Typography from "@mui/material/Typography";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
-import Loader from "../../components/Loader";
 import useQueryTopics from "../../hooks/useQueryTopics";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Represents the Topics page.
@@ -16,12 +14,12 @@ import useQueryTopics from "../../hooks/useQueryTopics";
  */
 function Topics() {
   const { isLoading, error, data } = useQueryTopics();
-  const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const noRegistrations = () => {
     return (
-      <Alert severity="info" sx={{ mt: 2 }}>
-        <AlertTitle>No Topics</AlertTitle>
+      <Alert data-cy="no-topics-alert" severity="info" sx={{ mt: 2 }}>
+        No Topics
       </Alert>
     );
   };
@@ -30,32 +28,31 @@ function Topics() {
     return <Alert severity="warning">Retrieving topics ...</Alert>;
   }
 
-  if (isLoadingRole) {
-    return <Loader />;
-  }
-
   if (error) {
     return <Alert severity="error">Unable to retrieve topics</Alert>;
   }
 
   return (
     <>
-      <Typography variant="h4">Topics</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Topics
+      </Typography>
       {data.length === 0 ? (
         noRegistrations()
       ) : (
-        <Grid container spacing={2} marginTop={1}>
+        <Grid container data-cy="course-topics-list" spacing={2}>
           {data.map((topic) => {
             return (
-              <Grid item xs={12} key={topic.id}>
+              <Grid data-cy={topic.value} item xs={12} key={topic.id}>
                 <Topic topic={topic} />
               </Grid>
             );
           })}
         </Grid>
       )}
-      {dataRole.role === "Instructor" && (
+      {courseType === "Instructor" && (
         <Fab
+          data-cy="add-topic-button"
           color="primary"
           onClick={() => NiceModal.show("create-topic")}
           sx={{

@@ -11,6 +11,9 @@ import { DateTime } from "luxon";
 import useStoreToken from "./useStoreToken";
 import useStoreEvent from "./useStoreEvent";
 import useStoreLayout from "./useStoreLayout";
+import Debug from "debug";
+
+const debug = new Debug(`hourly:hooks:useMutationEditEvent.jsx`);
 
 function useMutationEditEvent(recurringEvent) {
   const { token } = useStoreToken();
@@ -30,8 +33,10 @@ function useMutationEditEvent(recurringEvent) {
 
   const editEventAll = async (officeHour) => {
     try {
+      debug("Sending office hour to edit all occurrences to the backend...");
       const endpoint = `${BASE_URL}/api/officeHour/${id}/editAll`;
       const res = await axios.post(endpoint, officeHour, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -40,8 +45,10 @@ function useMutationEditEvent(recurringEvent) {
 
   const editEventOnDate = async (officeHour) => {
     try {
+      debug("Sending office hour to edit one occurrence to the backend...");
       const endpoint = `${BASE_URL}/api/officeHour/${id}/editForDate/${date}`;
       const res = await axios.post(endpoint, officeHour, getConfig(token));
+      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
@@ -49,7 +56,7 @@ function useMutationEditEvent(recurringEvent) {
   };
 
   const mutation = useMutation(
-    recurringEvent ? editEventAll : editEventOnDate,
+    recurringEvent ? editEventAll: editEventOnDate,
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["officeHours"]);
@@ -59,6 +66,7 @@ function useMutationEditEvent(recurringEvent) {
         toast.success(`Successfully edited event`);
       },
       onError: (error) => {
+        debug( {error} );
         errorToast(error);
       },
     }

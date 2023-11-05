@@ -1,5 +1,4 @@
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import Typography from "@mui/material/Typography";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import useQueryRegistrations from "../../hooks/useQueryRegistrations";
@@ -9,44 +8,56 @@ import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
 
-// TODO: Need route to retrieve registration types
-const types = [
-  {
-    name: "Regular",
-    nameDisabled: true,
-    duration: 10,
-    deletionDisabled: true,
-  },
-  {
-    name: "Debugging",
-    nameDisabled: false,
-    duration: 30,
-    deletionDisabled: false,
-  },
-];
-
 function latestEventsFirst(a, b) {
-  return b.startObj < a.startObj ? 1 : b.startObj > a.startObj ? -1 : 0;
+  const endObjectA = new Date(a.date);
+  const startObjectB = new Date(b.date);
+
+  const endTimeObjA = new Date(a.endTime);
+  const startTimeObjB = new Date(b.startTime);
+
+  startObjectB.setUTCHours(startTimeObjB.getUTCHours());
+  startObjectB.setUTCMinutes(startTimeObjB.getUTCMinutes());
+  endObjectA.setUTCHours(endTimeObjA.getUTCHours());
+  endObjectA.setUTCMinutes(endTimeObjA.getUTCMinutes());
+
+  return startObjectB > endObjectA ? 1 : startObjectB < endObjectA ? -1 : 0;
 }
 
 function earliestEventsFirst(a, b) {
-  return b.startObj > a.startObj ? 1 : b.startObj < a.startObj ? -1 : 0;
+  const endObjectA = new Date(a.date);
+  const startObjectB = new Date(b.date);
+
+  const endTimeObjA = new Date(a.endTime);
+  const startTimeObjB = new Date(b.startTime);
+
+  startObjectB.setUTCHours(startTimeObjB.getUTCHours());
+  startObjectB.setUTCMinutes(startTimeObjB.getUTCMinutes());
+  endObjectA.setUTCHours(endTimeObjA.getUTCHours());
+  endObjectA.setUTCMinutes(endTimeObjA.getUTCMinutes());
+
+  return startObjectB < endObjectA ? 1 : startObjectB > endObjectA ? -1 : 0;
 }
 
 const filterByTime = (array, registrationTab) => {
   const today = new Date();
-  today.setUTCHours(today.getHours());
 
   return array.filter(function (item) {
     const startObj = new Date(item.date);
     const endObj = new Date(item.date);
     const startTimeObj = new Date(item.startTime);
     const endTimeObj = new Date(item.endTime);
+    if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
+      startObj.setUTCHours(startObj.getTimezoneOffset() / 60 + 3);
+      endObj.setUTCHours(endObj.getTimezoneOffset() / 60 + 3);
+    }
+    if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
+      startObj.setUTCDate(startObj.getUTCDate() + 1);
+      endObj.setUTCDate(endObj.getUTCDate() + 1);
+    }
     startObj.setUTCHours(startTimeObj.getUTCHours());
-    startObj.setUTCHours(startTimeObj.getUTCHours());
+    startObj.setUTCMinutes(startTimeObj.getUTCMinutes());
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
-
     switch (registrationTab) {
       case 0:
         return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
@@ -61,6 +72,26 @@ const filterByTime = (array, registrationTab) => {
         return true;
     }
   });
+};
+
+const addRegistrationTypes = (registrations, registrationTypes) => {
+  const durationToRegTypes = new Map();
+
+  for (let i = 0; i < registrationTypes.length; i++) {
+    durationToRegTypes.set(
+      registrationTypes[i].duration,
+      registrationTypes[i].title
+    );
+  }
+
+  for (let j = 0; j < registrations.length; j++) {
+    const end = DateTime.fromISO(registrations[j].endTime);
+    const start = DateTime.fromISO(registrations[j].startTime);
+
+    const diffInMinutes = end.diff(start, "minutes").toObject().minutes;
+
+    registrations[j].type = durationToRegTypes.get(diffInMinutes) || "Unknown";
+  }
 };
 
 /**
@@ -78,38 +109,45 @@ function Registrations() {
     error: errorTypes,
     data: dataTypes,
   } = useQueryRegistrationTypes();
-
   useEffect(() => {
     let result = data?.registrations || [];
+    let registrationTypes = dataTypes?.times || [];
+    addRegistrationTypes(result, registrationTypes);
     result = filterByTime(result, registrationTab);
+    registrationTab === 2
+      ? result.sort(latestEventsFirst)
+      : result.sort(earliestEventsFirst);
     setRegistrations(result);
-  }, [data, registrationTab]);
+  }, [data, dataTypes, registrationTab]);
 
   return (
     <>
+      <Typography variant="h4" sx={{ marginBottom: 2.25 }}>
+        Registrations
+      </Typography>
       <RegistrationsBar />
       <RegistrationsPanel
         value={registrationTab}
         index={0}
-        registrations={registrations.sort(earliestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
       <RegistrationsPanel
         value={registrationTab}
         index={1}
-        registrations={registrations.sort(earliestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
       <RegistrationsPanel
         value={registrationTab}
         index={2}
-        registrations={registrations.sort(latestEventsFirst)}
+        registrations={registrations}
         isLoading={isLoading}
         error={error}
       />
-      {courseType === "staff" && (
+      {(courseType === "Staff" || courseType === "Instructor") && (
         <RegistrationTypes
           index={4}
           types={dataTypes?.times || []}

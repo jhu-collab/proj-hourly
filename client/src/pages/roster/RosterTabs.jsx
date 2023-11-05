@@ -1,6 +1,8 @@
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
 import RosterTabPanel from "./RosterTabPanel";
 import useStoreLayout from "../../hooks/useStoreLayout";
 
@@ -20,16 +22,22 @@ function RosterTabs({ rows }) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={rosterTab} onChange={handleChange}>
-          <Tab label="Students" />
-          <Tab label="Staff" />
-          <Tab label="Instructors" />
-        </Tabs>
-      </Box>
-      <RosterTabPanel index={0} rows={rows.students} />
-      <RosterTabPanel index={1} rows={rows.staff} />
-      <RosterTabPanel index={2} rows={rows.instructors} />
+      <AppBar
+        position="static"
+        elevation={1}
+        sx={{ borderRadius: 1, backgroundColor: "background.paper" }}
+      >
+        <Toolbar data-cy="roster-toolbar-roles">
+          <Tabs value={rosterTab} onChange={handleChange}>
+            <Tab label="Students" data-cy="roster-toolbar-students"/>
+            <Tab label="Staff" data-cy="roster-toolbar-staff"/>
+            <Tab label="Instructors" data-cy="roster-toolbar-instructors"/>
+          </Tabs>
+        </Toolbar>
+      </AppBar>
+      <RosterTabPanel index={0} rows={rows.students} data-cy="roster-student-rows"/>
+      <RosterTabPanel index={1} rows={rows.staff} data-cy="roster-staff-rows"/>
+      <RosterTabPanel index={2} rows={rows.instructors} data-cy="roster-instructor-rows"/>
     </Box>
   );
 }

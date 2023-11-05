@@ -1,4 +1,6 @@
 import { merge } from "lodash";
+import Alert from "./Alert";
+import AlertTitle from "./AlertTitle";
 import Badge from "./Badge";
 import Button from "./Button";
 import CardContent from "./CardContent";
@@ -20,6 +22,8 @@ import Typography from "./Typography";
 
 export default function ComponentsOverrides(theme) {
   return merge(
+    Alert(),
+    AlertTitle(),
     Button(theme),
     Badge(theme),
     CardContent(),

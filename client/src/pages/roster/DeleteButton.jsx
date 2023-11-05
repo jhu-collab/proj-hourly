@@ -2,7 +2,7 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import ConfirmPopup, { confirmDialog } from "../../components/ConfirmPopup";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import useMutationRemoveUser from "../../hooks/useMutationRemoveUser";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
+import useStoreLayout from "../../hooks/useStoreLayout";
 
 /**
  * Delete button for each row of Roster grid
@@ -12,22 +12,22 @@ import useQueryMyRole from "../../hooks/useQueryMyRole";
  */
 function DeleteButton({ params, isStaff }) {
   const { mutate } = useMutationRemoveUser(params.id, isStaff);
-  const { data } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   return (
     <>
-      <GridActionsCellItem
+      <GridActionsCellItem 
         icon={<CloseOutlined />}
         onClick={() => {
           confirmDialog("Do you want to delete this user", () => {
             mutate();
           });
         }}
-        disabled={data?.role !== "Instructor"}
+        disabled={courseType !== "Instructor"}
         label="Delete"
         size="large"
       />
-      <ConfirmPopup />
+      <ConfirmPopup data-cy="delete-user-confirmation-button"/>
     </>
   );
 }

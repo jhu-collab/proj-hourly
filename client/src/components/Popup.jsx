@@ -15,16 +15,21 @@ import IconButton from "@mui/material/IconButton";
  * @param {*} children (optional) children to fill up the component
  * @returns Reusable popup component.
  */
-function Popup({ modal, title, children }) {
+function Popup({ modal, title, children, width }) {
   return (
-    <Dialog fullWidth maxWidth="xs" open={modal.visible} onClose={modal.hide}>
+    <Dialog
+      fullWidth
+      maxWidth={!width ? "xs" : width}
+      open={modal.visible}
+      onClose={modal.hide}
+    >
       {title && (
         <DialogTitle align="center" variant="h2" sx={{ mb: -2, mt: 2 }}>
           {title}
         </DialogTitle>
       )}
       <Box position="absolute" top={2} right={2}>
-        <IconButton sx={{ fontSize: "22px" }} onClick={modal.hide}>
+        <IconButton sx={{ fontSize: "16px" }} onClick={modal.hide}>
           <CloseOutlined />
         </IconButton>
       </Box>

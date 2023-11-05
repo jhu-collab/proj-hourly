@@ -4,7 +4,9 @@ import pkg from "rrule";
 const { RRule, RRuleSet } = pkg;
 import { createTimeString } from "./helpers.js";
 import { weekday } from "./officeHourValidator.js";
+import { factory } from "./debug.js";
 
+const debug = factory(import.meta.url);
 /**
  * Javascript Date object will often be one day off if you provide
  * it with the format of yyyy-mm-dd. However, if you pass in
@@ -29,9 +31,9 @@ export const getIsoDate = (dateObj) => {
 export const generateTitle = (officeHour) => {
   let summary = "";
   if (officeHour.hosts.length > 1) {
-    summary = "Office Hours for " + course.title;
+    summary = "Office Hours for " + officeHour.course.title;
   } else if (officeHour.hosts.length === 1) {
-    summary = officeHour.hosts[0].firstName + "'s Office Hours";
+    summary = officeHour.hosts[0].firstName; // + "'s Office Hours";
   } else {
     summary = "Office Hours";
   }
@@ -113,8 +115,16 @@ export const generateRecurringEventJson = (officeHour) => {
   indexes.sort();
   const entries = [];
   let i = indexes.indexOf(officeHour.startDate.getDay());
-  let start = new Date(officeHour.startDate);
-  const end = new Date(officeHour.endDate);
+  let start = new Date(
+    new Date(officeHour.startDate).toLocaleString("en-US", {
+      timezone: "America/New_York",
+    })
+  );
+  const end = new Date(
+    new Date(officeHour.endDate).toLocaleString("en-US", {
+      timezone: "America/New_York",
+    })
+  );
   while (start < end) {
     let notCancelled = true;
     for (const date of officeHour.isCancelledOn) {
@@ -128,6 +138,15 @@ export const generateRecurringEventJson = (officeHour) => {
       currEnd.setUTCHours(end.getUTCHours());
       currEnd.setUTCMinutes(end.getUTCMinutes());
       currEnd.setUTCSeconds(end.getUTCSeconds());
+      if (end.getTimezoneOffset() !== start.getTimezoneOffset()) {
+        currEnd.setUTCHours(
+          currEnd.getUTCHours() +
+            (-end.getTimezoneOffset() + start.getTimezoneOffset()) / 60 //handles daylight savings
+        );
+      }
+      if (currEnd < start) {
+        currEnd.setUTCDate(currEnd.getUTCDate() + 1);
+      }
       entries.push({
         title: generateTitle(officeHour),
         start: start.toISOString(),
@@ -138,6 +157,7 @@ export const generateRecurringEventJson = (officeHour) => {
           location: officeHour.location,
           id: officeHour.id,
           isRecurring: true,
+          isRemote: officeHour.isRemote,
         },
       });
     }
@@ -192,12 +212,15 @@ export const generateSingleEventJson = (officeHour) => {
       location: officeHour.location,
       id: officeHour.id,
       isRecurring: false,
+      isRemote: officeHour.isRemote,
     },
   };
 };
 
 export const generateCalendar = async (courseId) => {
+  debug("generateCalendar called!");
   const events = [];
+  debug("getting office hours...");
   const officeHours = await prisma.officeHour.findMany({
     where: {
       courseId,
@@ -227,6 +250,7 @@ export const generateCalendar = async (courseId) => {
       events.push(generateSingleEventJson(officeHour));
     }
   });
+  debug("updating course...");
   await prisma.course.update({
     where: {
       id: courseId,
@@ -235,6 +259,7 @@ export const generateCalendar = async (courseId) => {
       iCalJson: events,
     },
   });
+  debug("generateCalendar done!");
   return events;
 };
 
@@ -368,4 +393,51 @@ const generateRRule = (officeHour) => {
   // });
   // console.log(rruleSet.toString());
   //return rruleSet;
+};
+
+export const generateSingleEventJsonCourse = (calendarEvent, i) => {
+  return {
+    id: i,
+    title: calendarEvent.title,
+    start: getIsoDate(calendarEvent.date),
+    end: getIsoDate(calendarEvent.date),
+    extendedProps: {
+      courseId: calendarEvent.course.id,
+      additionalInfo: calendarEvent.additionalInfo,
+      isCancelled: calendarEvent.isCancelled,
+      isRemote: calendarEvent.isRemote,
+      location: calendarEvent.location,
+      allDay: calendarEvent.allDay,
+    },
+  };
+};
+
+export const generateCourseCalendar = async (courseId) => {
+  debug("generateCourseCalendar called!");
+  const events = [];
+  debug("getting calendar events...");
+  const calendarEvents = await prisma.calendarEvent.findMany({
+    where: {
+      courseId,
+    },
+    include: {
+      course: true,
+    },
+  });
+  let i = 1;
+  calendarEvents.forEach((calendarEvent) => {
+    i++;
+    events.push(generateSingleEventJsonCourse(calendarEvent, i));
+  });
+  debug("updating course...");
+  await prisma.course.update({
+    where: {
+      id: courseId,
+    },
+    data: {
+      iCalJsonCalEvent: events,
+    },
+  });
+  debug("generateCourseCalendar done!");
+  return events;
 };

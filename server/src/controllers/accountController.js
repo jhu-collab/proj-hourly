@@ -2,45 +2,61 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import validate from "../util/checkValidation.js";
 import sendEmail from "../util/notificationUtil.js";
+import { Role } from "@prisma/client";
+import { generateCalendar } from "../util/icalHelpers.js";
+import { factory } from "../util/debug.js";
+
+const debug = factory(import.meta.url);
 
 export const create = async (req, res) => {
+  debug("creating account...");
   if (validate(req, res)) {
     return res;
   }
-  const { email, name, phoneNumber } = req.body;
-  if (phoneNumber === null || phoneNumber === undefined) {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-      },
-    });
-  } else {
-    await prisma.Account.create({
-      data: {
-        email,
-        userName: name,
-        phoneNumber,
-      },
-    });
-  }
-
+  const { email, name } = req.body;
+  await prisma.Account.create({
+    data: {
+      email,
+      userName: name,
+    },
+  });
   const account = await prisma.Account.findUnique({
     where: {
       email,
     },
   });
-  const text = account.userName + " congrats on creating your Hourly account!";
+  debug("account created...");
+
+  debug("sending account creation email...");
+  const donotreply = "--- Do not reply to this email ---";
+  const text = "Congrats on creating your Hourly account!";
+  const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    account.firstName +
+    " " +
+    account.lastName +
+    ",\n\n" +
+    text +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team" +
+    "\n\n" +
+    donotreply;
+
   await sendEmail({
-    email,
+    email: email,
     subject: "Hourly Account Creation",
-    text,
-    html: "<p> " + text + " </p>",
+    text: emailBody,
+    html: "<p> " + emailBody + " </p>",
   });
+  debug("account creation email sent...");
   return res.status(StatusCodes.CREATED).json({ account });
 };
 
 export const login = async (req, res) => {
+  debug("logging in...");
   if (validate(req, res)) {
     return res;
   }
@@ -50,10 +66,12 @@ export const login = async (req, res) => {
       email,
     },
   });
+  debug("logged in...");
   return res.status(StatusCodes.ACCEPTED).json({ account });
 };
 
 export const getCourses = async (req, res) => {
+  debug("retrieving all courses...");
   if (validate(req, res)) {
     return res;
   }
@@ -65,6 +83,7 @@ export const getCourses = async (req, res) => {
           id,
         },
       },
+      isArchived: false,
     },
   });
   studentCourses.forEach((course) => {
@@ -88,6 +107,7 @@ export const getCourses = async (req, res) => {
       },
     },
   });
+  debug("courses retrieved...");
   return res.status(StatusCodes.ACCEPTED).json({
     student: studentCourses,
     staff: staffCourses,
@@ -96,6 +116,7 @@ export const getCourses = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
+  debug("deleting account...");
   if (validate(req, res)) {
     return res;
   }
@@ -113,12 +134,25 @@ export const deleteAccount = async (req, res) => {
         },
       },
     },
+    include: {
+      hosts: true,
+      course: true,
+    },
   });
   let deleteOH = [];
-  officeHours.forEach(async (officeHour) => {
+  let courseDeletedOH = [];
+  officeHours.forEach((officeHour) => {
     if (officeHour.hosts.length === 1) {
       deleteOH.push(officeHour.id);
+      courseDeletedOH.push(officeHour.course.id);
     }
+  });
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: deleteOH,
+      },
+    },
   });
   await prisma.officeHour.deleteMany({
     where: {
@@ -126,6 +160,9 @@ export const deleteAccount = async (req, res) => {
         in: deleteOH,
       },
     },
+  });
+  courseDeletedOH.forEach(async (id) => {
+    await generateCalendar(id);
   });
   const courses = await prisma.course.findMany({
     where: {
@@ -135,12 +172,36 @@ export const deleteAccount = async (req, res) => {
         },
       },
     },
+    include: {
+      instructors: true,
+    },
   });
   let deleteCourse = [];
-  courses.forEach(async (course) => {
+  courses.forEach((course) => {
     if (course.instructors.length === 1) {
       deleteCourse.push(course.id);
     }
+  });
+  await prisma.topic.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
+  });
+  await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
+  });
+  await prisma.officeHour.deleteMany({
+    where: {
+      courseId: {
+        in: deleteCourse,
+      },
+    },
   });
   await prisma.course.deleteMany({
     where: {
@@ -159,14 +220,63 @@ export const deleteAccount = async (req, res) => {
       id,
     },
   });
+  debug("account deleted...");
+  debug("sending account deletion email...");
+  const donotreply = "--- Do not reply to this email ---";
   const text =
-    account.userName +
-    " your Hourly account has been succeesfully deleted. All of your associated data has been removed";
+    "Your Hourly account has been succeesfully deleted. All of your associated data has been removed";
+  const emailBody =
+    donotreply +
+    "\n\n" +
+    "Dear " +
+    account.firstName +
+    " " +
+    account.lastName +
+    ",\n\n" +
+    text +
+    "\n\n" +
+    "Thanks,\n" +
+    "The Hourly Team" +
+    "\n\n" +
+    donotreply;
   await sendEmail({
     email: account.email,
     subject: "Hourly Account Deletion",
-    text: text,
-    html: "<p> " + text + " </p>",
+    text: emailBody,
+    html: "<p> " + emailBody + " </p>",
   });
+  debug("account deletion email sent...");
   return res.status(StatusCodes.ACCEPTED).json({ msg: "Account deleted!" });
+};
+
+export const getAll = async (req, res) => {
+  debug("retrieving all account...");
+  const accounts = await prisma.account.findMany({
+    select: {
+      id: true,
+      userName: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      preferredName: true,
+      role: true,
+    },
+  });
+  debug("accounts retrieved...");
+  return res.status(StatusCodes.ACCEPTED).json({ accounts });
+};
+
+export const promoteToAdmin = async (req, res) => {
+  debug("promoting to admin...");
+  const id = parseInt(req.params.id, 10);
+  const account = await prisma.account.update({
+    where: {
+      id,
+    },
+    data: {
+      role: Role.Admin,
+    },
+  });
+  debug("promoted to admin...");
+  return res.status(StatusCodes.ACCEPTED).json(account);
 };

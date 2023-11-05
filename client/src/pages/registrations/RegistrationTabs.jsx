@@ -14,11 +14,6 @@ function RegistrationTabs() {
     (state) => state.setRegistrationTab
   );
 
-  // TODO: For now, I am using the course type to decide whether
-  // a user has access to the Registration Types tab. Later,
-  // we should only permit instructors access to this tab. Or, rather,
-  // TAs can view registration types but they can't perform CRUD operations.
-  // TLDR: Need a route that returns role of user
   const courseType = useStoreLayout((state) => state.courseType);
 
   const handleChange = (event, newValue) => {
@@ -31,17 +26,24 @@ function RegistrationTabs() {
       variant="scrollable"
       scrollButtons="auto"
       allowScrollButtonsMobile
+      sx={{
+        "& .MuiTabScrollButton-root": {
+          color: "primary.main",
+        },
+      }}
     >
-      <Tab label="Upcoming" />
-      <Tab label="Ongoing" />
-      <Tab label="Past" />
-      {courseType == "staff" && (
+      <Tab data-cy="upcoming-registrations-tab" label="Upcoming" />
+      <Tab data-cy="ongoing-registrations-tab" label="Ongoing" />
+      <Tab data-cy="past-registrations-tab" label="Past" />
+      {(courseType === "Staff" || courseType === "Instructor") && (
         <Divider
           orientation="vertical"
           sx={{ height: 30, alignSelf: "center", marginX: 3 }}
         />
       )}
-      {courseType == "staff" && <Tab label="Registration Types" />}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <Tab data-cy="registration-types-tab" label="Registration Types" />
+      )}
     </Tabs>
   );
 }

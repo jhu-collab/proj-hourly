@@ -26,6 +26,7 @@ function DeleteAction() {
   return (
     <>
       <IconButton
+        data-cy="delete-action-icon"
         sx={{ fontSize: "20px" }}
         onClick={() => {
           confirmDialog("Do you really want to delete this event?", () =>
@@ -52,13 +53,13 @@ function DeleteAction() {
               value="this"
               control={<Radio />}
               label="This event"
+              data-cy="this-event-delete"
             />
-            {/* TODO: Backend needs to create a route to delete this and following
-          events */}
             <FormControlLabel
               value="all"
               control={<Radio />}
               label="All events"
+              data-cy="all-events-delete"
             />
           </RadioGroup>
         )}

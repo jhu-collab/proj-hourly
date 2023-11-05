@@ -8,8 +8,12 @@ export const useStoreEvent = create((set) => ({
   end: null,
   location: "",
   id: null,
-  timeInterval: 10,
   recurring: false,
+  hosts: [],
+  allDay: false,
+  resources: "",
+  isCancelled: false,
+  isRemote: false,
   setEvent: (event) =>
     set({
       title: event.title || "",
@@ -17,8 +21,12 @@ export const useStoreEvent = create((set) => ({
       end: event.end || null,
       location: event.location || "",
       id: event.id || null,
-      timeInterval: event.timeInterval || 10,
       recurring: event.recurring || false,
+      hosts: event.hosts || [],
+      allDay: event.allDay || false,
+      resources: event.resources || "",
+      isCancelled: event.isCancelled || false,
+      isRemote: event.isRemote || false,
     }),
 
   days: "",

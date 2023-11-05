@@ -14,9 +14,21 @@ import NiceModal from "@ebay/nice-modal-react";
 import CalendarMenu from "./calendar-menu/CalendarMenu";
 import MobileCalendarMenu from "./calendar-menu/MobileCalendarMenu";
 import useQueryOfficeHours from "../../hooks/useQueryOfficeHours";
+import useQueryCourseEvents from "../../hooks/useQueryCourseEvents";
 import useStoreEvent from "../../hooks/useStoreEvent";
 import useStoreLayout from "../../hooks/useStoreLayout";
+
+import useStoreToken from "../../hooks/useStoreToken";
+import { decodeToken } from "react-jwt";
+
 import Box from "@mui/material/Box";
+import StyleWrapper, {
+  dayHeaderContent,
+  eventColorPalette,
+  eventContent,
+  nowIndicatorContent,
+  slotLabelContent,
+} from "./CalendarTheme";
 
 /**
  * A component that represents the Calendar page for a course.
@@ -33,15 +45,36 @@ function Calendar() {
   const setAnchorEl = useStoreLayout((state) => state.setEventAnchorEl);
   const mobileCalMenu = useStoreLayout((state) => state.mobileCalMenu);
   const setMobileCalMenu = useStoreLayout((state) => state.setMobileCalMenu);
+  const openSidebar = useStoreLayout((state) => state.openSidebar);
 
+  const token = useStoreToken((state) => state.token);
+  const { id } = decodeToken(token);
+
+  const [filtered, setFiltered] = useState("all");
   const [isStaff, setIsStaff] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [maxEventsStacked, setMaxEventsStacked] = useState(2);
 
-  const { isLoading, error, data } = useQueryOfficeHours();
+  const [isInstructor, setIsInstructor] = useState(false);
+
+  const {
+    isLoading: isOfficeHoursLoading,
+    error: officeHoursError,
+    data: officeHoursData,
+  } = useQueryOfficeHours();
+  const {
+    isLoading: isCourseEventsLoading,
+    error: courseEventsError,
+    data: courseEventsData,
+  } = useQueryCourseEvents();
 
   useEffect(() => {
-    setIsStaff(courseType === "staff");
+    setIsStaff(courseType === "Staff" || courseType === "Instructor");
+    setIsInstructor(courseType === "Instructor");
   }, [courseType]);
+
+  useEffect(() => {
+    setTimeout(() => calendarRef.current.getApi().updateSize(), 500);
+  }, [openSidebar]);
 
   const handleEventClick = (info) => {
     matchUpSm ? setAnchorEl(info.el) : NiceModal.show("mobile-event-popup");
@@ -52,15 +85,39 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
+      hosts: info.event.extendedProps.hosts,
+      isRemote: info.event.extendedProps.isRemote,
+      allDay: info.event.allDay,
+      resources: info.event.extendedProps.additionalInfo,
+      isCancelled: info.event.extendedProps.isCancelled,
     });
   };
 
   const handleSelect = (info) => {
-    setEvent({
-      start: info.start,
-      end: info.end,
-    });
-    NiceModal.show("upsert-event", { type: "create" });
+    if (info.allDay && isInstructor) { // clicking on the all-day section & is instructor
+      setEvent({
+        start: info.start,
+        end: info.end,
+      });
+      NiceModal.show("upsert-event", { type: "createAllDay" });
+    } else if (!info.allDay) { // clicking on non-all-day section
+      setEvent({
+        start: info.start,
+        end: info.end,
+      });
+      NiceModal.show("upsert-event", { type: "create" });
+    }
+  };
+
+  const handleSelectAllow = (event) => {
+    const startDate = event.start;
+    const endDate = event.end;
+    endDate.setSeconds(endDate.getSeconds() - 1);
+    if (startDate.getDate() === endDate.getDate()) {
+      return true;
+    }
+
+    return false;
   };
 
   const handleEventDrop = (info) => {
@@ -71,9 +128,56 @@ function Calendar() {
       location: info.event.extendedProps.location,
       id: info.event.extendedProps.id,
       recurring: info.event.extendedProps.isRecurring,
+      isRemote: info.event.extendedProps.isRemote,
     });
     NiceModal.show("upsert-event", { type: "edit" });
     info.revert();
+  };
+
+  const filter = (data) => {
+    const filtered = data.calendar.filter(function (officeHour) {
+      const hosts = officeHour.extendedProps.hosts;
+      for (let i = 0; i < hosts.length; i++) {
+        if (hosts[i].id == id) {
+          return true;
+        }
+      }
+      return false;
+    });
+    return filtered;
+  };
+
+  const chosenData = (data) => {
+    if (!data || !data.calendar || data.calendar.length === 0) {
+      return [];
+    } else {
+      if (filtered === "all") {
+        return data.calendar;
+      } else if (filtered === "mine") {
+        return filter(data);
+      } else {
+        return [];
+      }
+    }
+  };
+
+  const allChosenData = () => {
+    let data = [];
+
+    if (Array.isArray(officeHoursData?.calendar)) {
+      data = data.concat(chosenData(officeHoursData));
+    }
+
+    if (
+      Array.isArray(courseEventsData?.calendarEvents) &&
+      courseEventsData &&
+      courseEventsData.calendarEvents &&
+      courseEventsData.calendarEvents.length !== 0
+    ) {
+      data = data.concat(courseEventsData.calendarEvents);
+    }
+
+    return data;
   };
 
   return (
@@ -82,61 +186,92 @@ function Calendar() {
         direction="row"
         sx={{ m: { xs: -2, sm: -3 }, pb: 1, height: "100%" }}
       >
-        <Box sx={{ flexGrow: 1, pr: 2, pl: 2, pt: 2 }}>
-          <FullCalendar
-            plugins={[
-              rrulePlugin,
-              dayGridPlugin,
-              timeGridPlugin,
-              interactionPlugin,
-            ]}
-            customButtons={{
-              mobileCalMenu: {
-                text: "menu",
-                click: function () {
-                  setMobileCalMenu(!mobileCalMenu);
+        <Box
+          data-cy="full-calendar"
+          sx={{ flexGrow: 1, paddingX: 4, pt: 2, pb: 15 }}
+        >
+          <StyleWrapper>
+            {matchUpSm && (
+              <CalendarMenu
+                calendarRef={calendarRef}
+                isStaff={isStaff}
+                setFiltered={setFiltered}
+                setMaxEventsStacked={setMaxEventsStacked}
+              />
+            )}
+            <FullCalendar
+              plugins={[
+                rrulePlugin,
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin,
+              ]}
+              customButtons={{
+                mobileCalMenu: {
+                  text: "view options",
+                  click: function () {
+                    setMobileCalMenu(!mobileCalMenu);
+                  },
                 },
-              },
-            }}
-            headerToolbar={
-              matchUpSm
-                ? {
-                    start: "prev",
-                    center: "title",
-                    end: "next",
+              }}
+              headerToolbar={
+                matchUpSm
+                  ? {
+                    start: "",
+                    center: "prev title next",
+                    end: "",
                   }
-                : { start: "title", end: "prev,next" }
-            }
-            initialView="timeGridWeek"
-            height="100%"
-            eventClick={handleEventClick}
-            eventDrop={handleEventDrop}
-            editable={isStaff ? true : false}
-            selectable={isStaff ? true : false}
-            selectMirror={isStaff ? true : false}
-            unselectAuto={false}
-            events={data?.calendar || []}
-            select={handleSelect}
-            ref={calendarRef}
-            {...(!matchUpSm && { footerToolbar: { start: "mobileCalMenu" } })}
-          />
+                  : { start: "title", end: "prev,next" }
+              }
+              initialView="timeGridWeek"
+              height="100%"
+              eventClick={handleEventClick}
+              eventBackgroundColor={eventColorPalette[0].bottomColor}
+              eventContent={eventContent}
+              eventDrop={handleEventDrop}
+              editable={isStaff ? true : false}
+              eventStartEditable={false}
+              eventDurationEditable={false}
+              eventMaxStack={maxEventsStacked}
+              selectable={isStaff ? true : false}
+              selectAllow={handleSelectAllow}
+              selectMirror={isStaff ? true : false}
+              unselectAuto={true}
+              events={allChosenData()}
+              select={handleSelect}
+              slotDuration="0:30:00"
+              slotLabelFormat={{
+                hour: "numeric",
+                minute: "2-digit",
+                omitZeroMinute: false,
+              }}
+              slotLabelContent={slotLabelContent}
+              slotEventOverlap={false}
+              ref={calendarRef}
+              dayHeaderContent={dayHeaderContent}
+              allDaySlot={true}
+              nowIndicator
+              nowIndicatorContent={nowIndicatorContent}
+              {...(!matchUpSm && {
+                headerToolbar: {
+                  start: "mobileCalMenu",
+                  center: "prev title next",
+                  end: "",
+                },
+              })}
+            />
+          </StyleWrapper>
         </Box>
-        {matchUpSm && (
-          <Box
-            variant="outlined"
-            sx={{
-              height: "100%",
-              boxShadow: theme.customShadows.z1,
-              borderLeft: `2px solid ${theme.palette.divider}`,
-            }}
-          >
-            <CalendarMenu calendarRef={calendarRef} />
-          </Box>
-        )}
       </Stack>
       {matchUpSm && <EventPopover />}
-      {!matchUpSm && <MobileCalendarMenu calendarRef={calendarRef} />}
-      {isLoading && <Loader />}
+      {!matchUpSm && (
+        <MobileCalendarMenu
+          calendarRef={calendarRef}
+          isStaff={isStaff}
+          setFiltered={setFiltered}
+        />
+      )}
+      {(isOfficeHoursLoading || isCourseEventsLoading) && <Loader />}
     </>
   );
 }

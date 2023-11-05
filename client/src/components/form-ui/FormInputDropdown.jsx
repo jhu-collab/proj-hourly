@@ -18,7 +18,7 @@ function FormInputDropdown({ name, control, label, options, ...other }) {
   const generateSingleOptions = () => {
     return options.map((option) => {
       return (
-        <MenuItem key={option.id} value={option.value}>
+        <MenuItem data-cy={option.value} key={option.id} value={option.value}>
           {option.label}
         </MenuItem>
       );
@@ -31,12 +31,16 @@ function FormInputDropdown({ name, control, label, options, ...other }) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <FormControl
+          data-cy="form-input-dropdown"
           variant="outlined"
           fullWidth
           {...(error && { error: true })}
         >
           <InputLabel>{label}</InputLabel>
           <Select {...field} label={label} {...other}>
+            <MenuItem data-cy="token-none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
             {generateSingleOptions()}
           </Select>
           {error && <FormHelperText>{error.message}</FormHelperText>}

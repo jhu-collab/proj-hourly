@@ -1,7 +1,5 @@
 import create from "zustand";
 
-// Manages states that involves the ConfirmPopup
-// component
 export const useStoreConfirmDialog = create((set) => ({
   message: "",
   onSubmit: undefined,

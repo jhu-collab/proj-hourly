@@ -11,6 +11,7 @@ function EditAction() {
   return (
     <>
       <IconButton
+        data-cy="edit-action-icon"
         sx={{ fontSize: "20px" }}
         onClick={() => NiceModal.show("upsert-event", { type: "edit" })}
       >

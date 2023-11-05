@@ -12,35 +12,27 @@ function EventDetails() {
   const start = useStoreEvent((state) => state.start);
   const end = useStoreEvent((state) => state.end);
   const location = useStoreEvent((state) => state.location);
-  // TODO: need to be the time of the registration type!
-  const timeInterval = useStoreEvent((state) => state.timeInterval);
 
   const date = start.toDateString();
   const startTime = DateTime.fromJSDate(start).toLocaleString(
     DateTime.TIME_SIMPLE
   );
   const endTime = DateTime.fromJSDate(end).toLocaleString(DateTime.TIME_SIMPLE);
-  const minutes = " minutes";
 
   return (
     <Stack direction="column" spacing={1}>
       <Typography variant="h4">{title}</Typography>
-      <Typography>
+      <Typography data-cy="date-text">
         <strong>Date: </strong>
         {date}
       </Typography>
-      <Typography>
+      <Typography data-cy="time-text">
         <strong>Time: </strong>
         {startTime} - {endTime}
       </Typography>
-      <Typography>
+      <Typography data-cy="location-text">
         <strong>Location: </strong>
         {location}
-      </Typography>
-      <Typography>
-        <strong>Time Limit Per Student: </strong>
-        {timeInterval}
-        {minutes}
       </Typography>
     </Stack>
   );

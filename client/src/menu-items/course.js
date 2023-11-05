@@ -4,7 +4,8 @@ import SafetyCertificateOutlined from "@ant-design/icons/SafetyCertificateOutlin
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import BulbOutlined from "@ant-design/icons/BulbOutlined";
 import BarChartOutlined from "@ant-design/icons/BarChartOutlined";
-import useStoreLayout from "../hooks/useStoreLayout";
+import UnorderedListOutlined from "@ant-design/icons/UnorderedListOutlined";
+import DollarOutlined from "@ant-design/icons/DollarOutlined";
 const icons = {
   CalendarOutlined,
   TeamOutlined,
@@ -12,13 +13,12 @@ const icons = {
   InfoCircleOutlined,
   BulbOutlined,
   BarChartOutlined,
+  UnorderedListOutlined,
+  DollarOutlined,
 };
 
-export const course = (currentCourse) => {
-  const courseType = useStoreLayout.getState().courseType;
-
+export const course = (currentCourse, courseType) => {
   const children = [];
-
   children.push({
     id: "calendar",
     title: "calendar",
@@ -36,8 +36,18 @@ export const course = (currentCourse) => {
     icon: icons.SafetyCertificateOutlined,
     breadcrumbs: false,
   });
+  if (currentCourse.usesTokens) {
+    children.push({
+      id: "tokens",
+      title: "course tokens",
+      type: "item",
+      url: "/tokens",
+      icon: icons.DollarOutlined,
+      breadcrumbs: false,
+    });
+  }
 
-  if (courseType === "staff") {
+  if (courseType === "Staff" || courseType === "Instructor") {
     children.push({
       id: "roster",
       title: "roster",
@@ -54,14 +64,6 @@ export const course = (currentCourse) => {
       icon: icons.BulbOutlined,
       breadcrumbs: false,
     });
-    children.push({
-      id: "statistics",
-      title: "statistics",
-      type: "item",
-      url: "/statistics",
-      icon: icons.BarChartOutlined,
-      breadcrumbs: false,
-    });
   }
 
   children.push({
@@ -70,6 +72,15 @@ export const course = (currentCourse) => {
     type: "item",
     url: "/courseinformation",
     icon: icons.InfoCircleOutlined,
+    breadcrumbs: false,
+  });
+
+  children.push({
+    id: "agenda",
+    title: "agenda",
+    type: "item",
+    url: "/agenda",
+    icon: icons.UnorderedListOutlined,
     breadcrumbs: false,
   });
 

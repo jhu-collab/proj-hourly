@@ -61,60 +61,44 @@ function Profile() {
         <Stack spacing={4}>
           <FormInputText
             disabled
-            name="username"
-            control={control}
-            label="Username"
-          />
-          <FormInputText
-            disabled
             name="firstName"
             control={control}
             label="First Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
           <FormInputText
             disabled={!edit}
             name="preferredName"
             control={control}
             label="Preferred Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
           <FormInputText
             disabled
             name="lastName"
             control={control}
             label="Last Name"
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+            sx={{ backgroundColor: "background.paper" }}
           />
-          <FormInputText disabled name="role" control={control} label="Role" />
-          <Stack direction="row" justifyContent="flex-end">
-            {edit ? (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    size="large"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button variant="contained" size="large" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            ) : (
-              <AnimateButton>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={handleOnClickEditBtn}
-                >
-                  Edit
-                </Button>
-              </AnimateButton>
-            )}
-          </Stack>
+          <FormInputText
+            disabled
+            name="role"
+            control={control}
+            label="Role"
+            sx={{ backgroundColor: "background.paper" }}
+            InputLabelProps={{
+              style: { backgroundColor: "rgba(255,255,255,0)" },
+            }}
+          />
         </Stack>
       </Form>
       <DeleteAccountAction userid={id} />

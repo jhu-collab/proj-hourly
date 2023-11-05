@@ -29,6 +29,32 @@ const getLastDaySemester = (semester, year) => {
   return new Date(`${year}-04-30`);
 };
 
+/**
+ * Converts string to a number from 0-6 to represent the day of the week.
+ * @param {String} dayStr String representing the day of the week
+ * @return A number from 0-6 representing the day of the week
+ */
+const getDayNum = (dayStr) => {
+  switch (dayStr) {
+    case "Sunday":
+      return 0;
+    case "Monday":
+      return 1;
+    case "Tuesday":
+      return 2;
+    case "Wednesday":
+      return 3;
+    case "Thursday":
+      return 4;
+    case "Friday":
+      return 5;
+    case "Saturday":
+      return 6;
+    default:
+      return -1;
+  }
+};
+
 export const createCourseSchema = yup.object().shape({
   title: yup.string().required("Course title is required"),
   number: yup
@@ -107,9 +133,39 @@ export const createEventSchema = yup.object().shape({
       then: yup
         .array()
         .typeError("Please select at least one recurring day")
-        .min(1, "Please select at least one recurring day"),
+        .min(1, "Please select at least one recurring day")
+        .test(
+          "start-date-matches-recurring-day",
+          "One of the recurring days must match the start date",
+          function (value) {
+            const { startDate } = this.parent;
+            const startDay = startDate.getDay();
+
+            for (let i = 0; i < value.length; i++) {
+              if (startDay === getDayNum(value[i])) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        ),
     }),
-  startTime: yup.string().required("Start time is required"),
+  startTime: yup
+    .string()
+    .required("Start time is required")
+    .test(
+      "future-event",
+      "Start time must be after the current time",
+      function (value) {
+        const { startDate } = this.parent;
+        const now = DateTime.now();
+        return (
+          DateTime.fromJSDate(startDate) > DateTime.fromJSDate(today) ||
+          DateTime.fromFormat(value, "T") > now
+        );
+      }
+    ),
   endTime: yup
     .string()
     .required("End time is required")
@@ -158,4 +214,137 @@ export const registrationTypeSchema = yup.object({
 
 export const topicSchema = yup.object({
   name: yup.string().required("Topic name is required"),
+});
+
+export const agendaSchema = yup.object({
+  title: yup.string().required("Agenda description is required"),
+});
+
+export const editLocationSchema = yup.object({
+  location: yup.string().required("Location is required"),
+  remote: yup.boolean(),
+});
+
+// export const courseIdSchema = yup.object({
+//   number({
+//     required_error: "Course ID must be provided",
+//     invalid_type_error: "Course ID must be a number",
+//   }),
+//   positive({message: "Course ID must be a positive integer"}
+// });
+
+export const createCourseEventSchema = yup.object().shape({
+  startDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .required("Date is required"),
+  recurringEvent: yup.boolean(),
+  endDate: yup
+    .date()
+    .nullable()
+    .typeError("Please enter a valid date")
+    .when("recurringEvent", {
+      is: true,
+      then: yup
+        .date()
+        .typeError("Please enter a valid date")
+        .required("Date is required")
+        .test(
+          "is-greater",
+          "End date must be after start date",
+          function (value) {
+            const { startDate } = this.parent;
+            return DateTime.fromJSDate(value) > DateTime.fromJSDate(startDate);
+          }
+        ),
+    }),
+  days: yup
+    .array()
+    .nullable()
+    .when("recurringEvent", {
+      is: true,
+      then: yup
+        .array()
+        .typeError("Please select at least one recurring day")
+        .min(1, "Please select at least one recurring day")
+        .test(
+          "start-date-matches-recurring-day",
+          "One of the recurring days must match the start date",
+          function (value) {
+            const { startDate } = this.parent;
+            const startDay = startDate.getDay();
+
+            for (let i = 0; i < value.length; i++) {
+              if (startDay === getDayNum(value[i])) {
+                return true;
+              }
+            }
+            return false;
+          }
+        ),
+    }),
+  //location: yup.string().required("Location is required"),
+  resources: yup.string(),
+  isRemote: yup.boolean(),
+});
+
+export const createIndividualCourseEventSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
+  date: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  location: yup.string(), //.required("Location is required"),
+  resources: yup.string(),
+  isRemote: yup.boolean(),
+});
+
+export const editCourseEventSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
+  newDate: yup
+    .date()
+    .typeError("Please enter a valid date")
+    .min(today, `Date must be on or after ${today.toLocaleDateString()}`)
+    .required("Date is required"),
+  location: yup.string(), //.required("Location is required"),
+  isRemote: yup.boolean(),
+  resources: yup.string(),
+});
+
+export const editTitleSchema = yup.object().shape({
+  title: yup.string().required("Agenda description is required"),
+});
+
+export const tokenSchema = yup.object({
+  name: yup.string().required("Token name is required"),
+  description: yup.string(), //.required("Token description is required"),
+  quantity: yup
+    .number()
+    .required("Token quantity is required")
+    .min(1, "Must have at least 1 of each token")
+    .typeError("You must specify a number"),
+});
+
+export const useTokenSchema = yup.object().shape({
+  token: yup.string().required("Token name is required"),
+  undoToken: yup.boolean(),
+  date: yup
+    .string()
+    .nullable()
+    .typeError("Date is required")
+    .when("undoToken", {
+      is: true,
+      then: yup
+        .string()
+        .required("Date is required")
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
+    }),
+});
+
+export const tokenEditLimitSchema = yup.object().shape({
+  quantity: yup
+    .number()
+    .required("Quantity is required for an override")
+    .min(1, "Must have positive override"),
 });

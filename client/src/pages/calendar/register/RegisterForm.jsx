@@ -16,6 +16,7 @@ import useStoreEvent from "../../../hooks/useStoreEvent";
 import useQueryTopics from "../../../hooks/useQueryTopics";
 import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 import { useEffect, useState } from "react";
+import FormInputText from "../../../components/form-ui/FormInputText";
 
 const getTimeSlotOptions = (timeSlotsPerType, type) => {
   const found = timeSlotsPerType.find((element) => element.type === type);
@@ -100,6 +101,7 @@ function RegisterForm() {
     defaultValues: {
       type: "",
       times: "",
+      question: "",
       topicIds: [],
     },
     resolver: yupResolver(registerSchema),
@@ -122,12 +124,18 @@ function RegisterForm() {
 
   const onSubmit = (data) => {
     const [startTime, endTime] = data.times.split(" - ");
+    let timeOptionId = -1;
+    registrationTypeOptions.forEach((option) => {
+      if (option.label === data.type) timeOptionId = option.id;
+    });
     mutate({
       officeHourId: id,
       startTime: startTime,
       endTime: endTime,
       date: DateTime.fromJSDate(start, { zone: "utc" }).toFormat("MM-dd-yyyy"),
+      question: data.question,
       TopicIds: data.topicIds,
+      timeOptionId: timeOptionId,
     });
   };
 
@@ -139,7 +147,11 @@ function RegisterForm() {
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack alignItems="center" mt={2} direction="column" spacing={3}>
-          <Typography textAlign="center" variant="h4">
+          <Typography
+            data-cy="student-register-text"
+            textAlign="center"
+            variant="h4"
+          >
             You are about to register for <br /> <u> {title} </u> <br /> on{" "}
             <u> {date} </u> from{" "}
             <u>
@@ -148,6 +160,7 @@ function RegisterForm() {
             </u>
           </Typography>
           <FormInputDropdown
+            data-cy="oh-topic-dropdown"
             name="type"
             control={control}
             label="Registration Type"
@@ -156,12 +169,14 @@ function RegisterForm() {
           {type !== "" && (
             <>
               <FormInputDropdown
+                data-cy="student-time-slots"
                 name="times"
                 control={control}
                 label="Available Time Slots"
                 options={timeSlots}
               />
               <FormInputDropdown
+                data-cy="student-topic-options"
                 name="topicIds"
                 control={control}
                 label="Topics (optional)"
@@ -173,12 +188,21 @@ function RegisterForm() {
                       const item = topicOptions.find(
                         ({ value: v }) => v === value
                       );
-                      return <Chip key={value} label={item.label} />;
+                      if (Boolean(item))
+                        return <Chip key={value} label={item.label} />;
                     })}
                   </Box>
                 )}
               />
+              <FormInputText
+                name="question"
+                control={control}
+                label="Additional Notes (optional)"
+                multiline
+                rows={4}
+              />
               <Button
+                data-cy="student-submit-register"
                 type="submit"
                 variant="contained"
                 fullWidth

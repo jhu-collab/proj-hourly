@@ -1,18 +1,20 @@
 # Hourly
 
-Hourly is Calendly for instructors, students, and TAs. The app helps schedule, book, and manage office hours. It allows students and teaching staff to be productive and utilize their time more effectively.
+Hourly is Calendly for instructors, students, and TAs. The app helps schedule,
+book, and manage office hours. It allows students and teaching staff
+to be productive and utilize their time more effectively.
 
 ## Links
 
 **Production**
 
-- [Client](https://proj-hourly-prod.netlify.app/ )
-- [Server](https://proj-hourly-prod.herokuapp.com/)
+- [Client](https://hourly.caprover.madooei.com/)
+- [Server](https://hourly-api.caprover.madooei.com/)
 
 **Development**
 
-- [Client](https://proj-hourly-dev.netlify.app/ )
-- [Server](https://proj-hourly-dev.herokuapp.com/)
+- [Client](https://hourly-dev.caprover.madooei.com/)
+- [Server](https://hourly-api-dev.caprover.madooei.com/)
 
 **Documentation**
 

@@ -6,7 +6,6 @@ import RegistrationType from "./RegistrationType";
 import Fab from "@mui/material/Fab";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import NiceModal from "@ebay/nice-modal-react";
-import useQueryMyRole from "../../hooks/useQueryMyRole";
 
 /**
  * Represents the tab panel for Registration Type cards.
@@ -17,13 +16,12 @@ import useQueryMyRole from "../../hooks/useQueryMyRole";
  */
 function RegistrationTypes({ index, types, isLoading, error }) {
   const registrationTab = useStoreLayout((state) => state.registrationTab);
-
-  const { isLoading: isLoadingRole, data: dataRole } = useQueryMyRole();
+  const courseType = useStoreLayout((state) => state.courseType);
 
   const noRegistrations = () => {
     return (
       <Alert severity="info" sx={{ mt: 4 }}>
-        <AlertTitle>No Registration Types</AlertTitle>
+        No Registration Types
       </Alert>
     );
   };
@@ -31,7 +29,7 @@ function RegistrationTypes({ index, types, isLoading, error }) {
   if (isLoading && registrationTab === index) {
     return (
       <Alert severity="warning" sx={{ mt: 2 }}>
-        <AlertTitle>Loading registrations types ...</AlertTitle>
+        Loading registrations types ...
       </Alert>
     );
   }
@@ -52,7 +50,12 @@ function RegistrationTypes({ index, types, isLoading, error }) {
           {types.length === 0 ? (
             noRegistrations()
           ) : (
-            <Grid container spacing={2} marginTop={2}>
+            <Grid
+              data-cy="registration-type-list"
+              container
+              spacing={2}
+              marginTop={2}
+            >
               {types.map((type, index2) => {
                 return (
                   <Grid item xs={12}>
@@ -62,8 +65,9 @@ function RegistrationTypes({ index, types, isLoading, error }) {
               })}
             </Grid>
           )}
-          {dataRole?.role === "Instructor" && (
+          {courseType === "Instructor" && (
             <Fab
+              data-cy="add-registration-type-button"
               color="primary"
               onClick={() => NiceModal.show("create-registration-type")}
               sx={{

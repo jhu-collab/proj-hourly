@@ -6,9 +6,11 @@ import AuthWrapper from "./AuthWrapper";
 function Login() {
   return (
     <AuthWrapper>
-      <Grid container spacing={3}>
+      <Grid container spacing={1.5}>
         <Grid item xs={12}>
-          <Typography variant="h3">Login</Typography>
+          <Typography fontSize="30px" data-cy="login-subtitle" fontWeight={400}>
+            Login
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <AuthLogin />

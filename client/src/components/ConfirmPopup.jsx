@@ -33,14 +33,18 @@ export const confirmDialog = (message, onSubmit) => {
  */
 function ConfirmPopup({ header, children }) {
   const { message, onSubmit, close } = useStoreConfirmDialog();
-
   return (
-    <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth>
+
+    <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="xs" fullWidth >
       <DialogTitle variant="h4">
         {header ? header : "Confirm the action"}
       </DialogTitle>
       <Box position="absolute" top={8} right={0}>
-        <IconButton sx={{ fontSize: "20px" }} onClick={close}>
+        <IconButton
+          data-cy="close-delete-button"
+          sx={{ fontSize: "20px" }}
+          onClick={close}
+        >
           <CloseOutlined />
         </IconButton>
       </Box>
@@ -48,10 +52,16 @@ function ConfirmPopup({ header, children }) {
         {!children ? <Typography>{message}</Typography> : children}
       </DialogContent>
       <DialogActions>
-        <Button color="primary" variant="contained" onClick={close}>
+        <Button
+          data-cy="cancel-delete-button"
+          color="primary"
+          variant="contained"
+          onClick={close}
+        >
           Cancel
         </Button>
         <Button
+          data-cy="confirm-delete-button"
           color="secondary"
           variant="contained"
           onClick={() => {
