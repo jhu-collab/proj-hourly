@@ -6,6 +6,8 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import CourseCalendarEventForm from "./CourseCalendarEventForm";
 import CourseTokenOptInForm from "./CourseTokenOptInForm";
+import CoursePauseForm from "./CoursePauseForm";
+import CourseArchiveForm from "./CourseArchiveForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
@@ -64,12 +66,12 @@ function CourseInfoPage() {
           sx={{ padding: 0 }}
           content={true}
         >
-          <CourseCalendarEventForm data-cy="form"/>
+          <CourseCalendarEventForm data-cy="form" />
         </MainCard>
       )}
       {courseType === "Instructor" && (
         <MainCard
-        data-cy="coursetype-course-token-title"
+          data-cy="coursetype-course-token-title"
           title="Course Token Option"
           sx={{ padding: 0 }}
           content={true}
@@ -77,6 +79,23 @@ function CourseInfoPage() {
           <CourseTokenOptInForm />
         </MainCard>
       )}
+      {courseType === "Instructor" && (
+        <MainCard
+          title="Pause or Archive Course"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CoursePauseForm />
+          <CourseArchiveForm />
+          {/* <Stack direction="column" spacing={3} alignItems="center">
+            <CoursePauseForm />
+            <CourseArchiveForm />
+          </Stack> */}
+
+
+        </MainCard>
+      )}
+
     </>
   );
 }
