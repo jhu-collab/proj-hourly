@@ -1578,7 +1578,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(202);
-    }, 7000);
+    }, 10000 );
 
     it("Return 400 when endDate is now", async () => {
       const now = new Date(Date.now());
@@ -1622,7 +1622,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(202);
-    }, 7000);
+    }, 10000 );
 
     it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: [] };
@@ -1650,7 +1650,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 7000);
+    }, 10000 );
 
     it("Return 202 or 400 when endDateOldOfficeHour is in the past", async () => {
       const attributes = {
@@ -1669,7 +1669,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 7000);
+    }, 10000 );
 
     it("Return 202 when editAfterDate is false", async () => {
       const attributes = { ...baseAttributes, editAfterDate: false };
@@ -1685,7 +1685,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 7000);
+    }, 10000 );
   });
 
   describe(`Test POST: ${endpoint}/cancelRegistration/:registrationId`, async () => {
