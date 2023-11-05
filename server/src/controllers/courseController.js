@@ -814,6 +814,16 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  debug("retrieving course tokens from db...");
+  const tokens = await prisma.courseToken.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let courseTokenIds = [];
+  tokens.forEach((token) => {
+    courseTokenIds.push(token.id);
+  });
   let officeHourIds = [];
   officeHour.forEach((oh) => {
     officeHourIds.push(oh.id);
@@ -824,6 +834,20 @@ export const deleteCourse = async (req, res) => {
       officeHourId: {
         in: officeHourIds,
       },
+    },
+  });
+  debug("delete issue tokens...");
+  await prisma.issueToken.deleteMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+  });
+  debug("deleting course tokens...");
+  await prisma.courseToken.deleteMany({
+    where: {
+      courseId: id,
     },
   });
   debug("deleting topics...");
@@ -840,6 +864,12 @@ export const deleteCourse = async (req, res) => {
   });
   debug("deleting time options...");
   await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  debug("deleting course calendar events...");
+  await prisma.CalendarEvent.deleteMany({
     where: {
       courseId: id,
     },

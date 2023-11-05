@@ -1,6 +1,7 @@
 import MainCard from "../../components/MainCard";
 import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
+import DeleteCourseAction from "./DeleteCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
@@ -55,6 +56,9 @@ function CourseInfoPage() {
         {courseType === "Student" && (
           <RemoveCourseAction courseId={course.id} />
         )}
+        {courseType === "Instructor" && (
+          <DeleteCourseAction courseId={course.id} />
+        )}
       </MainCard>
 
       {courseType === "Instructor" && (
@@ -64,12 +68,12 @@ function CourseInfoPage() {
           sx={{ padding: 0 }}
           content={true}
         >
-          <CourseCalendarEventForm data-cy="form"/>
+          <CourseCalendarEventForm data-cy="form" />
         </MainCard>
       )}
       {courseType === "Instructor" && (
         <MainCard
-        data-cy="coursetype-course-token-title"
+          data-cy="coursetype-course-token-title"
           title="Course Token Option"
           sx={{ padding: 0 }}
           content={true}
