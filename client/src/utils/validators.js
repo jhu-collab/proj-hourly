@@ -341,3 +341,8 @@ export const useTokenSchema = yup.object().shape({
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
     }),
 });
+
+export const createRegConstraint = yup.object().shape({
+  start: yup.number().required("Start is required"),
+  end: yup.number().required("End is required"),
+});

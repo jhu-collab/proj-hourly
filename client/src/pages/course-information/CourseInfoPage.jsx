@@ -6,6 +6,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import CourseCalendarEventForm from "./CourseCalendarEventForm";
 import CourseTokenOptInForm from "./CourseTokenOptInForm";
+import CourseRegistrationConstraintForm from "./CourseRegistrationConstraintForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
@@ -64,12 +65,21 @@ function CourseInfoPage() {
           sx={{ padding: 0 }}
           content={true}
         >
-          <CourseCalendarEventForm data-cy="form"/>
+          <CourseCalendarEventForm data-cy="form" />
+        </MainCard>
+      )}
+      {courseType === "Instructor" && ( // newly added
+        <MainCard
+          title="Course Registration Constraints"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CourseRegistrationConstraintForm data-cy="form" />
         </MainCard>
       )}
       {courseType === "Instructor" && (
         <MainCard
-        data-cy="coursetype-course-token-title"
+          data-cy="coursetype-course-token-title"
           title="Course Token Option"
           sx={{ padding: 0 }}
           content={true}
