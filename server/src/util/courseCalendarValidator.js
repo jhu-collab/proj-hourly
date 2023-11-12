@@ -542,22 +542,22 @@ export const newDateNotOldDate = async (req, res, next) => {
  * @param {object} res - Express response object.
  * @param {function} next - Express next middleware function.
  */
-export const dateInFuture = async (req, res, next) => {
-  const { date } = req.body;
-  let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
-  const nowDate = spacetime(new Date().setUTCHours(23));
-  let spaceDate = spacetime(dateObj);
-  if (spaceDate.isBefore(nowDate)) {
-    debug("date is not in the future");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: date is not in the future" });
-  } else {
-    debug("date is in the future");
-    next();
-  }
-};
+// export const dateInFuture = async (req, res, next) => {
+//   const { date } = req.body;
+//   let dateObj = new Date(date);
+//   dateObj.setUTCHours(23);
+//   const nowDate = spacetime(new Date().setUTCHours(23));
+//   let spaceDate = spacetime(dateObj);
+//   if (spaceDate.isBefore(nowDate)) {
+//     debug("date is not in the future");
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ msg: "ERROR: date is not in the future" });
+//   } else {
+//     debug("date is in the future");
+//     next();
+//   }
+// };
 
 /**
  * Middleware function to check whether the original date is in the future.
@@ -568,22 +568,22 @@ export const dateInFuture = async (req, res, next) => {
  * @param {object} res - Express response object.
  * @param {function} next - Express next middleware function.
  */
-export const dateInFutureParams = async (req, res, next) => {
-  const date = req.params.date;
-  let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
-  const nowDate = spacetime(new Date().setUTCHours(23));
-  let spaceDate = spacetime(dateObj);
-  if (spaceDate.isBefore(nowDate)) {
-    debug("date is not in the future");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: date is not in the future" });
-  } else {
-    debug("date is in the future");
-    next();
-  }
-};
+// export const dateInFutureParams = async (req, res, next) => {
+//   const date = req.params.date;
+//   let dateObj = new Date(date);
+//   dateObj.setUTCHours(23);
+//   const nowDate = spacetime(new Date().setUTCHours(23));
+//   let spaceDate = spacetime(dateObj);
+//   if (spaceDate.isBefore(nowDate)) {
+//     debug("date is not in the future");
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ msg: "ERROR: date is not in the future" });
+//   } else {
+//     debug("date is in the future");
+//     next();
+//   }
+// };
 
 /**
  * Middleware function to check whether the provided date is in correct UTC timezone.
