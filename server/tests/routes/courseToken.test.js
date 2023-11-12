@@ -1465,6 +1465,23 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       expect(issueToken.overrideAmount).toBe(null);
     });
+    it("Return 400 when no override amount", async () => {
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      let issueToken;
+
+      issueToken = await prisma.issueToken.findFirst({
+        where: {
+          CourseToken: {
+            courseId: courses[0].id,
+          },
+        },
+      });
+      expect(response.status).toBe(400);
+    });
   });
   describe("HTTP DELETE Request - delete single", () => {
     it("Return 202 when course successfully opted out", async () => {
