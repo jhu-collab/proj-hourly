@@ -1276,7 +1276,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
     });
-    
+
     it("Return 202 with all valid parameters: new date", async () => {
       const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
