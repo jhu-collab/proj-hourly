@@ -1253,6 +1253,30 @@ describe(`Test endpoint ${endpoint}`, () => {
     //   expect(response.status).toBe(400);
     // });
 
+    it("Return 400 with all valid parameters: diff date, course already on date", async () => {
+      const date = new Date(calendarEvents[1].start);
+      const newDate = new Date(calendarEvents[2].start);
+      let attributes = {
+        title: "title",
+        additionalInfo: "this is the new edited description",
+        isCancelled: false,
+        isRemote: true,
+        location: "zoom",
+        newDate: newDate.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0],
+        courseId: course.id,
+      };
+
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
+      const response = await request
+        .post(`${endpoint}/edit`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+    
     it("Return 202 with all valid parameters: new date", async () => {
       const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
