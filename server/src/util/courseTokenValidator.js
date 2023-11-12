@@ -75,7 +75,7 @@ export const tokenLimitReached = async (req, res, next) => {
   });
   debug("Found issue token...");
   const dates = issueToken.datesUsed;
-  if (dates === null) {
+  if (dates.length === 0) {
     debug("Student has used no tokens yet!");
     next();
   }
