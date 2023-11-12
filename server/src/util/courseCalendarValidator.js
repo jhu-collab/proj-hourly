@@ -484,25 +484,25 @@ export const newDateNotOldDate = async (req, res, next) => {
  * @param {object} res - Express response object.
  * @param {function} next - Express next middleware function.
  */
-export const newDateInFuture = async (req, res, next) => {
-  const { date, newDate } = req.body;
-  let dateObj = new Date(date);
-  dateObj.setUTCHours(23);
-  let newDateObj = new Date(newDate);
-  newDateObj.setUTCHours(23);
-  const nowDate = spacetime(new Date().setUTCHours(23));
-  let spaceDate = spacetime(dateObj);
-  let spaceNewDate = spacetime(newDateObj);
-  if (spaceDate.isBefore(nowDate) || spaceNewDate.isBefore(nowDate)) {
-    debug("dates are not in the future");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: dates are not in the future" });
-  } else {
-    debug("dates are in the future");
-    next();
-  }
-};
+// export const newDateInFuture = async (req, res, next) => {
+//   const { date, newDate } = req.body;
+//   let dateObj = new Date(date);
+//   dateObj.setUTCHours(23);
+//   let newDateObj = new Date(newDate);
+//   newDateObj.setUTCHours(23);
+//   const nowDate = spacetime(new Date().setUTCHours(23));
+//   let spaceDate = spacetime(dateObj);
+//   let spaceNewDate = spacetime(newDateObj);
+//   if (spaceDate.isBefore(nowDate) || spaceNewDate.isBefore(nowDate)) {
+//     debug("dates are not in the future");
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ msg: "ERROR: dates are not in the future" });
+//   } else {
+//     debug("dates are in the future");
+//     next();
+//   }
+// };
 
 /**
  * Middleware function to check whether both the beg date and the end date are in the future.
@@ -513,25 +513,25 @@ export const newDateInFuture = async (req, res, next) => {
  * @param {object} res - Express response object.
  * @param {function} next - Express next middleware function.
  */
-export const begDateInFuture = async (req, res, next) => {
-  const { begDate, endDate } = req.body;
-  let begDateObj = new Date(begDate);
-  begDateObj.setUTCHours(23);
-  let endDateObj = new Date(endDate);
-  endDateObj.setUTCHours(23);
-  const nowDate = spacetime(new Date().setUTCHours(23));
-  let spaceBeg = spacetime(begDateObj);
-  let spaceEnd = spacetime(endDateObj);
-  if (spaceBeg.isBefore(nowDate) || spaceEnd.isBefore(nowDate)) {
-    debug("dates are not in the future");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: dates are not in the future" });
-  } else {
-    debug("dates are in the future");
-    next();
-  }
-};
+// export const begDateInFuture = async (req, res, next) => {
+//   const { begDate, endDate } = req.body;
+//   let begDateObj = new Date(begDate);
+//   begDateObj.setUTCHours(23);
+//   let endDateObj = new Date(endDate);
+//   endDateObj.setUTCHours(23);
+//   const nowDate = spacetime(new Date().setUTCHours(23));
+//   let spaceBeg = spacetime(begDateObj);
+//   let spaceEnd = spacetime(endDateObj);
+//   if (spaceBeg.isBefore(nowDate) || spaceEnd.isBefore(nowDate)) {
+//     debug("dates are not in the future");
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ msg: "ERROR: dates are not in the future" });
+//   } else {
+//     debug("dates are in the future");
+//     next();
+//   }
+// };
 
 /**
  * Middleware function to check whether the original date is in the future.
