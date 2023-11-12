@@ -81,6 +81,7 @@ function CourseInfoPage() {
       )}
       {courseType === "Instructor" && (
         <MainCard
+          data-cy="coursetype-course-pause-or-archive-title"
           title="Pause or Archive Course"
           sx={{ padding: 0 }}
           content={true}

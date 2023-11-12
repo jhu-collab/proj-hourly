@@ -45,7 +45,7 @@ function useMutationArchiveCourse() {
             queryClient.invalidateQueries(["officeHour"]);
             setCourse(updatedCourse);
             toast.success(
-                `Successfully changed ${course.title}'s isArchived to ${course.isArchived} `
+                `Successfully changed ${course.title}'s isArchived to ${updatedCourse.isArchived} `
             );
         },
         onError: (error) => {

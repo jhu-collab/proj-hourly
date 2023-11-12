@@ -44,6 +44,7 @@ function CoursePauseForm() {
                 <Stack direction="column" alignItems="center" spacing={3}>
                     <Stack direction="row" spacing={3} alignItems="center"></Stack>
                     <Button
+                        data-cy="pause-course-submit"
                         type="submit"
                         variant="contained"
                         disabled={isLoading}

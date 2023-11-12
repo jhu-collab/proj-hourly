@@ -44,7 +44,7 @@ function useMutationPauseCourse() {
             queryClient.invalidateQueries(["officeHour"]);
             setCourse(updatedCourse);
             toast.success(
-                `Successfully changed ${course.title}'s isPaused to ${course.isPaused} `
+                `Successfully changed ${course.title}'s isPaused to ${updatedCourse.isPaused} `
             );
         },
         onError: (error) => {
