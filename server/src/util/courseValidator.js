@@ -319,7 +319,7 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHour!");
     return res
@@ -357,7 +357,7 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHourParam!");
     return res
@@ -841,11 +841,9 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   if (start <= end) {
     debug("Start is less than or equal to end...");
     debug("Error in startIsGreaterThanEnd!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: start constraint must be greater than end constraint",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: start constraint must be greater than end constraint",
+    });
   } else {
     debug("Start is greater than end!");
     debug("startIsGreaterThanEnd is done!");
@@ -1143,11 +1141,9 @@ export const isCourseArchivedRegistrationId = async (req, res, next) => {
     },
   });
   if (course.isArchived === true) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: Course is archived, cannot manipulate registration",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: Course is archived, cannot manipulate registration",
+    });
   } else {
     debug("Course is not archived.");
     next();

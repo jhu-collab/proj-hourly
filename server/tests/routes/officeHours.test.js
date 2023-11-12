@@ -315,6 +315,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     let staff = [];
     let instructor = {};
     let course = {};
+    let students = [];
 
     let baseAttributes = {
       // startTime: "10:30:00",
@@ -330,6 +331,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       staff = params.staff;
       instructor = params.instructor;
       course = params.course;
+      students = params.students;
 
       const today = new Date();
       const tomorrow = new Date(today);
@@ -500,24 +502,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    // it("Return 400 when timeInterval is 0", async () => {
-    //   const attributes = { ...baseAttributes, timeInterval: 0 };
-    //   const response = await request
-    //     .post(`${endpoint}/create`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + instructor.token);
-    //   expect(response.status).toBe(400);
-    // });
-
-    // it("Return 400 when timeInterval is less than 0", async () => {
-    //   const attributes = { ...baseAttributes, timeInterval: -5 };
-    //   const response = await request
-    //     .post(`${endpoint}/create`)
-    //     .send(attributes)
-    //     .set("Authorization", "Bearer " + instructor.token);
-    //   expect(response.status).toBe(409);
-    // });
-
     it("Return 201 when there is only one host", async () => {
       const attributes = { ...baseAttributes, hosts: [staff[0].id] };
       const response = await request
@@ -538,6 +522,24 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
+    });
+
+    it("Return 403 when there hosts are not in course", async () => {
+      const attributes = { ...baseAttributes, hosts: [-1] };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 403 when not staff or instructor", async () => {
+      const attributes = { ...baseAttributes, hosts: [students[0].id] };
+      const response = await request
+        .post(`${endpoint}/create`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
     });
 
     it("Return 201 when daysOfWeek is a singleton", async () => {
@@ -583,6 +585,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       endTime: "12:50:00",
       question: "Test Question",
     };
+    let studentNotInCourse = {};
 
     beforeAll(async () => {
       const params = await setup();
@@ -601,6 +604,17 @@ describe(`Test endpoint ${endpoint}`, () => {
           courseId: officeHour.courseId,
         },
       });
+      studentNotInCourse = await prisma.account.create({
+        data: {
+          userName: "Test Student Bad",
+          email: "student_bad@test.io",
+          role: Role.User,
+        },
+      });
+      studentNotInCourse = {
+        ...studentNotInCourse,
+        token: createToken({ user: studentNotInCourse }),
+      };
 
       baseAttributes = {
         ...baseAttributes,
@@ -648,6 +662,23 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`/api/course/${officeHour.courseId}/archiveCourse`)
         .set("Authorization", "bearer " + instructor.token);
       expect(response.status).toBe(202);
+    });
+    it("Return 403 when all parameters are valid but is not within registration constraint", async () => {
+      const date = new Date(officeHour.startDate);
+      date.setUTCDate(date.getUTCDate() + 7);
+      const mdy = date
+        .toLocaleString("en-US", { hour12: false })
+        .split(" ")[0]
+        .split("/");
+      const attributes = {
+        ...baseAttributes,
+        date: mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",", ""),
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(403);
     });
 
     it("Return 202 when course successfully paused", async () => {
@@ -732,6 +763,16 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + students[1].token);
       expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when student is not in course", async () => {
+      const attributes = { ...baseAttributes };
+      console.log(studentNotInCourse);
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + studentNotInCourse.token);
+      expect(response.status).toBe(403);
     });
 
     it("Return 202 when startTime and endTime are PM", async () => {
@@ -849,7 +890,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
-        .set("Authorization", "Bearer " + students[3].token);
+        .set("Authorization", "Bearer " + students[1].token);
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({
@@ -857,11 +898,16 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
-      expect(registration.accountId).toEqual(students[3].id);
+      expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
     });
 
     it("Return 202 when TopicIds is empty", async () => {
+      await prisma.registration.deleteMany({
+        where: {
+          accountId: students[1].id,
+        },
+      });
       const attributes = {
         ...baseAttributes,
         startTime: "13:10:00",
@@ -871,7 +917,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
-        .set("Authorization", "Bearer " + students[4].token);
+        .set("Authorization", "Bearer " + students[1].token);
       expect(response.status).toBe(202);
       const id = response.body.registration.id;
       const registration = await prisma.registration.findUniqueOrThrow({
@@ -879,8 +925,54 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       updateIds("registrations", registration.id);
       expect(registration).toBeDefined();
-      expect(registration.accountId).toEqual(students[4].id);
+      expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
+    });
+
+    it("Return 202 when TopicIds is empty", async () => {
+      await prisma.registration.deleteMany({
+        where: {
+          accountId: students[1].id,
+        },
+      });
+      const attributes = {
+        ...baseAttributes,
+        startTime: "13:10:00",
+        endTime: "13:20:00",
+      };
+      delete attributes.TopicIds;
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(202);
+      const id = response.body.registration.id;
+      const registration = await prisma.registration.findUniqueOrThrow({
+        where: { id },
+      });
+      updateIds("registrations", registration.id);
+      expect(registration).toBeDefined();
+      expect(registration.accountId).toEqual(students[1].id);
+      expect(registration.officeHourId).toEqual(officeHour.id);
+    });
+
+    it("Return 403 when a TopicId is invalid", async () => {
+      await prisma.registration.deleteMany({
+        where: {
+          accountId: students[1].id,
+        },
+      });
+      const attributes = {
+        ...baseAttributes,
+        startTime: "13:10:00",
+        endTime: "13:20:00",
+        TopicIds: [topics[0].id, -1],
+      };
+      const response = await request
+        .post(`${endpoint}/register`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[1].token);
+      expect(response.status).toBe(403);
     });
   });
 
@@ -1578,7 +1670,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(202);
-    }, 10000 );
+    }, 10000);
 
     it("Return 400 when endDate is now", async () => {
       const now = new Date(Date.now());
@@ -1622,7 +1714,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
       expect(response.status).toBe(202);
-    }, 10000 );
+    }, 10000);
 
     it("Return 400 when daysOfWeek is empty", async () => {
       const attributes = { ...baseAttributes, daysOfWeek: [] };
@@ -1650,7 +1742,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 10000 );
+    }, 10000);
 
     it("Return 202 or 400 when endDateOldOfficeHour is in the past", async () => {
       const attributes = {
@@ -1669,7 +1761,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 10000 );
+    }, 10000);
 
     it("Return 202 when editAfterDate is false", async () => {
       const attributes = { ...baseAttributes, editAfterDate: false };
@@ -1685,7 +1777,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       } else {
         expect(response.status).toBe(400);
       }
-    }, 10000 );
+    }, 10000);
   });
 
   describe(`Test POST: ${endpoint}/cancelRegistration/:registrationId`, async () => {
@@ -2016,6 +2108,15 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
     });
+
+    it("Return 403 when a TopicId is invalid", async () => {
+      const attributes = { ...baseAttributes, TopicIds: [topics[0].id, -1] };
+      const response = await request
+        .post(`${endpoint}/editRegistration/${registration.id}`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
   });
 
   /* The remaining tests are for the GET methods and thus we will not use equivalence partitioning */
@@ -2023,12 +2124,24 @@ describe(`Test endpoint ${endpoint}`, () => {
     let course = {};
     let officeHour = {};
     let students = [];
+    let studentNotInCourse = {};
 
     beforeAll(async () => {
       const params = await setup();
       course = params.course;
       officeHour = params.officeHour;
       students = params.students;
+      studentNotInCourse = await prisma.account.create({
+        data: {
+          userName: "Test Student Bad",
+          email: "student_bad@test.io",
+          role: Role.User,
+        },
+      });
+      studentNotInCourse = {
+        ...studentNotInCourse,
+        token: createToken({ user: studentNotInCourse }),
+      };
     });
 
     afterAll(async () => {
@@ -2044,6 +2157,16 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(202);
       expect(response.body.timeSlotsPerType).toBeDefined();
+    });
+
+    it("Return 403 when student is not in course", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/getRemainingTimeSlots/${date}`)
+        .set("Authorization", "Bearer " + studentNotInCourse.token);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 for invalid date", async () => {

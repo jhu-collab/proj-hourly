@@ -439,6 +439,30 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of paused course used", async () => {
+      const attributes = {
+        date: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
     it("Return 202 when course token successfully used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
@@ -530,6 +554,30 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
         .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of paused course removed", async () => {
+      const attributes = {
+        date: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
@@ -646,6 +694,30 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
         .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of paused test is created", async () => {
+      const attributes = {
+        overrideAmount: 15,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/addOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
@@ -928,6 +1000,26 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course successfully unarchived", async () => {
       const response = await request
         .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course successfully paused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when override limit of issue token deleted for paused course", async () => {
+      const response = await request
+        .delete(
+          `${endpoint}/${courses[0].id}/deleteOverrideAmount/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unpaused", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/pauseCourse`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
