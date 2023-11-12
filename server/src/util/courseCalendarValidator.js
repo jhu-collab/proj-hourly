@@ -40,11 +40,9 @@ export const doesEventExist = async (req, res, next) => {
   debug("got calendar event");
   if (calendarEvent === null || calendarEvent === undefined) {
     debug("calendar event does not exist");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: calendar event does not exist for given date and course",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: calendar event does not exist for given date and course",
+    });
   } else {
     debug("calendar event exists");
     next();
@@ -78,9 +76,9 @@ export const doesEventExistParams = async (req, res, next) => {
   debug("got calendar event");
   if (calendarEvent === null || calendarEvent === undefined) {
     debug("calendar event does not exist");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: calendar event does not exist for date and course" });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: calendar event does not exist for date and course",
+    });
   } else {
     debug("calendar event exists");
     next();
@@ -136,9 +134,9 @@ export const doesEventExistRecurring = async (req, res, next) => {
     next();
   } else {
     debug("calendar events exist on proposed days");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: there is already a course calendar event present on at least one of these dates" });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: there is already a course calendar event present on at least one of these dates",
+    });
   }
 };
 
