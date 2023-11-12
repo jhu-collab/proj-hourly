@@ -593,6 +593,62 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       expect(issueToken.datesUsed.length).toBe(1);
     });
+    it("Return 202 when course token successfully edited", async () => {
+      const attributes = {
+        title: "not a title",
+        description: "not a description",
+        tokenLimit: 1,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      const courseToken = await prisma.courseToken.findFirst({
+        where: {
+          id: courseTokens[0].id,
+        },
+      });
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token limit reached", async () => {
+      const attributes = {
+        date: new Date(Date.now()).toISOString(),
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      const issueToken = await prisma.issueToken.findFirst({
+        where: {
+          courseTokenId: courseTokens[0].id,
+          accountId: users[0].id,
+        },
+      });
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course token successfully edited", async () => {
+      const attributes = {
+        title: "not a title",
+        description: "not a description",
+        tokenLimit: 10,
+      };
+      const response = await request
+        .post(
+          `${endpoint}/${courses[0].id}/editCourseToken/${courseTokens[0].id}`
+        )
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      const courseToken = await prisma.courseToken.findFirst({
+        where: {
+          id: courseTokens[0].id,
+        },
+      });
+      expect(response.status).toBe(202);
+    });
   });
   describe("HTTP POST request - undo use token", () => {
     it("Return 202 when course successfully opted out", async () => {
