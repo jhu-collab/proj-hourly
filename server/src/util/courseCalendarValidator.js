@@ -323,16 +323,21 @@ export const areValidDOW = (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: days of the week not included in request" });
   }
+  let invalid = false;
   daysOfWeek.forEach((dow) => {
     if (!weekday.includes(dow)) {
-      debug("invalid days of week");
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "ERROR: invalid days of week in request" });
+      invalid = true;
     }
   });
-  debug("days of week are valid");
-  next();
+  if (invalid) {
+    debug("invalid days of week");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: invalid days of week in request" });
+  } else {
+    debug("days of week are valid");
+    next();
+  }
 };
 
 /**

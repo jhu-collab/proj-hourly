@@ -507,7 +507,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         endDate: new Date(secondCourseDate - tzoffset2)
           .toISOString()
           .split("T")[0],
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
         location: "zoom",
         isRemote: true,
       };
@@ -2489,7 +2489,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           .split("T")[0],
         location: "zoom",
         isRemote: true,
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
       };
       const response = await request
         .post(`${endpoint}/createRecurringEvent`)
