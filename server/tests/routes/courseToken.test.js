@@ -457,6 +457,14 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
       };
+      // await prisma.course.update({
+      //   where: {
+      //     id: courses[0].id,
+      //   },
+      //   data:{
+      //     usesTokens: false,
+      //   }
+      // })
       const response = await request
         .post(
           `${endpoint}/${courses[0].id}/usedToken/${courseTokens[0].id}/student/${users[0].id}`
