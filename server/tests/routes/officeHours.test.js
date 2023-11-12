@@ -5,6 +5,7 @@ import prisma from "../../prisma/client.js";
 import { weekday } from "../../src/util/officeHourValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
+import { editLocationSingleDay } from "../../src/controllers/officeHourController.js";
 
 const request = supertest(app);
 const endpoint = "/api/officeHour";
@@ -2119,6 +2120,12 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
+  describe(`Test POST: ${endpoint}/editLocationSingleDay`, async () => {});
+
+  describe(`Test POST: ${endpoint}/editLocationRecurringDay`, async () => {});
+
+  describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {});
+
   /* The remaining tests are for the GET methods and thus we will not use equivalence partitioning */
   describe(`Test GET: ${endpoint}/:officeHourId/getRemainingTimeSlots/:date`, async () => {
     let course = {};
@@ -2221,4 +2228,8 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
+
+  describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationStatus`, async () => {});
+
+  describe(`Test GET: ${endpoint}/:officeHourId/:date/registrationsOnDate`, async () => {});
 });
