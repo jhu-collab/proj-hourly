@@ -243,22 +243,22 @@ export const register = async (req, res) => {
   if (endTimeObj < startTimeObj) {
     endTimeObj.date(endTimeObj.date() + 1);
   }
-  if (
-    targetDate.goto("America/New_York").timezone().current.offset !=
-    officeHour.startDate.getTimezoneOffset() / 60
-  ) {
-    startTimeObj = startTimeObj.add(
-      spacetime(officeHour.startDate).timezone().current.offset -
-        targetDate.goto("America/New_York").timezone().current.offset,
+  // if (
+  //   targetDate.goto("America/New_York").timezone().current.offset !=
+  //   officeHour.startDate.getTimezoneOffset() / 60
+  // ) {
+  //   startTimeObj = startTimeObj.add(
+  //     spacetime(officeHour.startDate).timezone().current.offset -
+  //       targetDate.goto("America/New_York").timezone().current.offset,
 
-      "hour"
-    );
-    endTimeObj = endTimeObj.add(
-      spacetime(officeHour.startDate).timezone().current.offset -
-        targetDate.goto("America/New_York").timezone().current.offset,
-      "hour"
-    );
-  }
+  //     "hour"
+  //   );
+  //   endTimeObj = endTimeObj.add(
+  //     spacetime(officeHour.startDate).timezone().current.offset -
+  //       targetDate.goto("America/New_York").timezone().current.offset,
+  //     "hour"
+  //   );
+  // }
   // if (
   //   officeHour.startDate.getTimezoneOffset() !=
   //   targetDate.timezone().current.offset()
@@ -610,7 +610,6 @@ export const getTimeSlotsRemaining = async (req, res) => {
     return res;
   }
   let date = req.targetDate;
-  const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
   debug("finding office hour...");
@@ -660,14 +659,15 @@ export const getTimeSlotsRemaining = async (req, res) => {
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
     const rTime = new Date(registration.startTime);
-    if (
-      registration.date.getTimezoneOffset() !=
-      new Date(1970, 0, 1).getTimezoneOffset()
-    ) {
+    const rDate = new Date(registration.date);
+    if (registration.startTime.getUTCHours() > rDate.getTimezoneOffset() / 60) {
+      rDate.setUTCHours(rDate.getTimezoneOffset() / 60 + 3);
+    }
+    if (rDate.getTimezoneOffset() != new Date(1970, 0, 1).getTimezoneOffset()) {
       rTime.setUTCHours(
         rTime.getUTCHours() +
           (new Date(1970, 0, 1).getTimezoneOffset() -
-            registration.date.getTimezoneOffset()) /
+            rDate.getTimezoneOffset()) /
             60
       );
     }
@@ -690,16 +690,22 @@ export const getTimeSlotsRemaining = async (req, res) => {
   while (start.isBefore(end)) {
     if (registrationTimes.has(start.toNativeDate().getTime())) {
       let registration = registrationTimes.get(start.toNativeDate().getTime());
+      const rDate = new Date(registration.date);
+      if (
+        registration.startTime.getUTCHours() >
+        rDate.getTimezoneOffset() / 60
+      ) {
+        rDate.setUTCHours(rDate.getTimezoneOffset() / 60 + 3);
+      }
       let regEndTime = spacetime(registration.endTime).goto("America/New_York");
       if (
-        registration.date.getTimezoneOffset() !=
-        new Date(1970, 0, 1).getTimezoneOffset()
+        rDate.getTimezoneOffset() != new Date(1970, 0, 1).getTimezoneOffset()
       ) {
-        regEndTime = regEndTime.hour(
-          regEndTime.hour() +
-            (new Date(1970, 0, 1).getTimezoneOffset() -
-              registration.date.getTimezoneOffset()) /
-              60
+        regEndTime = regEndTime.add(
+          (new Date(1970, 0, 1).getTimezoneOffset() -
+            rDate.getTimezoneOffset()) /
+            60,
+          "hour"
         );
       }
       if (regEndTime.isBefore(startOrig)) {
@@ -1412,13 +1418,13 @@ export const cancelRegistration = async (req, res) => {
 
   const startTime = registration.startTime;
   const endTime = registration.endTime;
-  if (
-    registration.date.getTimezoneOffset() !=
-    registration.startTime.getTimezoneOffset()
-  ) {
-    startTime.setUTCHours(startTime.getUTCHours() + 1);
-    endTime.setUTCHours(endTime.getUTCHours() + 1);
-  }
+  // if (
+  //   registration.date.getTimezoneOffset() !=
+  //   registration.startTime.getTimezoneOffset()
+  // ) {
+  //   startTime.setUTCHours(startTime.getUTCHours() + 1);
+  //   endTime.setUTCHours(endTime.getUTCHours() + 1);
+  // }
   let endTimeStr = endTime.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",

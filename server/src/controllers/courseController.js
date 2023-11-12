@@ -348,9 +348,11 @@ export const removeStaff = async (req, res) => {
     },
   });
   const officeHourIds = [];
-  officeHours.forEach((officeHour) =>
-    officeHourIds.push({ id: officeHour.id })
-  );
+  const registrationOfficeHourIds = [];
+  officeHours.forEach((officeHour) => {
+    officeHourIds.push({ id: officeHour.id });
+    registrationOfficeHourIds.push(officeHour.id);
+  });
   debug("Updating account...");
   await prisma.account.update({
     where: {
@@ -359,6 +361,14 @@ export const removeStaff = async (req, res) => {
     data: {
       isHosting: {
         disconnect: officeHourIds,
+      },
+    },
+  });
+  debug("Deleting registrations...");
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: registrationOfficeHourIds,
       },
     },
   });
@@ -804,6 +814,16 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  debug("retrieving course tokens from db...");
+  const tokens = await prisma.courseToken.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let courseTokenIds = [];
+  tokens.forEach((token) => {
+    courseTokenIds.push(token.id);
+  });
   let officeHourIds = [];
   officeHour.forEach((oh) => {
     officeHourIds.push(oh.id);
@@ -814,6 +834,20 @@ export const deleteCourse = async (req, res) => {
       officeHourId: {
         in: officeHourIds,
       },
+    },
+  });
+  debug("delete issue tokens...");
+  await prisma.issueToken.deleteMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+  });
+  debug("deleting course tokens...");
+  await prisma.courseToken.deleteMany({
+    where: {
+      courseId: id,
     },
   });
   debug("deleting topics...");
@@ -830,6 +864,12 @@ export const deleteCourse = async (req, res) => {
   });
   debug("deleting time options...");
   await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  debug("deleting course calendar events...");
+  await prisma.CalendarEvent.deleteMany({
     where: {
       courseId: id,
     },
@@ -1023,6 +1063,53 @@ export const demote = async (req, res) => {
         },
       },
     });
+    debug("Getting office hours...");
+    const officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+    });
+    const officeHourIds = [];
+    const registrationOfficeHourIds = [];
+    officeHours.forEach((officeHour) => {
+      officeHourIds.push({ id: officeHour.id });
+      registrationOfficeHourIds.push(officeHour.id);
+    });
+    debug("Updating account...");
+    await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        isHosting: {
+          disconnect: officeHourIds,
+        },
+      },
+    });
+    debug("Deleting registrations...");
+    await prisma.registration.deleteMany({
+      where: {
+        officeHourId: {
+          in: registrationOfficeHourIds,
+        },
+      },
+    });
+    debug("Deleting office hours...");
+    await prisma.officeHour.deleteMany({
+      where: {
+        courseId,
+        hosts: {
+          none: {},
+        },
+      },
+    });
+    debug("updating calendar...");
+    await generateCalendar(courseId);
   }
   debug("demote is done!");
   delete account["token"];

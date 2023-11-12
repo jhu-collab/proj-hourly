@@ -33,7 +33,9 @@ export const emailExists = async (req, res, next) => {
   });
   if (query === null) {
     debug("invalid email!");
-    return res.status(StatusCodes.FORBIDDEN).json({ msg: "Invalid Email" });
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Email is not associated with an account" });
   } else {
     debug("email exists!");
     next();
@@ -52,7 +54,7 @@ export const isAccountIdValid = async (req, res, next) => {
     debug("account does not exist!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "Account does not exists" });
+      .json({ msg: "Account does not exists for the given Account Id" });
   } else {
     debug("account is valid!");
     next();
@@ -155,7 +157,7 @@ export const areAccountsIdsValid = async (req, res, next) => {
     debug("accounts do not exist!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "Account does not exists" });
+      .json({ msg: "At least one of the host accounts does not exist" });
   } else {
     debug("accounts are valid!");
     next();
@@ -363,7 +365,7 @@ export const isAccountValidParams = async (req, res, next) => {
     debug("account is not valid!");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: is not a valid account" });
+      .json({ msg: "ERROR: is not a valid account given the account id" });
   }
   /* c8 ignore end */
   debug("account is valid!");

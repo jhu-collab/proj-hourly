@@ -342,7 +342,15 @@ export const useTokenSchema = yup.object().shape({
     }),
 });
 
+
 export const createRegConstraint = yup.object().shape({
   start: yup.number().required("Start is required"),
   end: yup.number().required("End is required"),
+
+export const tokenEditLimitSchema = yup.object().shape({
+  quantity: yup
+    .number()
+    .required("Quantity is required for an override")
+    .min(1, "Must have positive override"),
+
 });

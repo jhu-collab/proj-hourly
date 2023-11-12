@@ -325,20 +325,23 @@ export const isTimeAvailable = async (req, res, next) => {
   const dateObj = new Date(date);
   debug("got registrations");
   let valid = true;
-  if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
-    startTimeObj.setUTCHours(
-      startTimeObj.getUTCHours() -
-        (officeHour.startDate.getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-    endTimeObj.setUTCHours(
-      endTimeObj.getUTCHours() -
-        (officeHour.startDate.getTimezoneOffset() -
-          dateObj.getTimezoneOffset()) /
-          60
-    );
-  }
+  // if (startTimeObj.getUTCHours() > dateObj.getTimezoneOffset() / 60) {
+  //   dateObj.setUTCHours(dateObj.getTimezoneOffset() / 60 + 3);
+  // }
+  // if (officeHour.startDate.getTimezoneOffset() != dateObj.getTimezoneOffset()) {
+  //   startTimeObj.setUTCHours(
+  //     startTimeObj.getUTCHours() -
+  //       (officeHour.startDate.getTimezoneOffset() -
+  //         dateObj.getTimezoneOffset()) /
+  //         60
+  //   );
+  //   endTimeObj.setUTCHours(
+  //     endTimeObj.getUTCHours() -
+  //       (officeHour.startDate.getTimezoneOffset() -
+  //         dateObj.getTimezoneOffset()) /
+  //         60
+  //   );
+  // }
   registrations.forEach((registration) => {
     if (registration.startTime.getTime() === startTimeObj.getTime()) {
       valid = false;
@@ -370,7 +373,7 @@ export const isTimeAvailable = async (req, res, next) => {
   if (!valid) {
     debug("time is not available");
     return res.status(StatusCodes.CONFLICT).json({
-      msg: "ERROR: time interval is already taken",
+      msg: "ERROR: time interval is already taken, please try another option",
     });
   } else {
     debug("time is available");
@@ -680,7 +683,7 @@ export const isRegisteredOrIsStaffBody = async (req, res, next) => {
     debug("student is not registered or is not staff");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: You are not allowed to cancel registration" });
+      .json({ msg: "ERROR: You are not allowed to cancel this registration" });
   } else {
     debug("student is registered or is staff");
     next();
@@ -722,7 +725,7 @@ export const areValidDOW = (req, res, next) => {
       debug("invalid days of week");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "ERROR: invalid days of week" });
+        .json({ msg: "ERROR: at least one day of the week is invalid" });
     }
   });
   debug("days of week are valid");
@@ -1107,7 +1110,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       debug("office hour is not available on this date");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "ERROR: not available on date!" });
+        .json({ msg: "ERROR: not available on this date!" });
     }
   } else {
     if (equalDates(new Date(officeHour.startDate), dateObj.toNativeDate())) {
@@ -1118,7 +1121,7 @@ export const getDatesForOfficeHour = async (req, res, next) => {
       debug("office hour is not available on this date");
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "ERROR: not available on date!" });
+        .json({ msg: "ERROR: not available on this date!" });
     }
   }
 };
@@ -1144,7 +1147,7 @@ export const isRegistrationInPast = async (req, res, next) => {
     debug("registration has not ended");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: registration has not ended" });
+      .json({ msg: "ERROR: registration has not passed yet" });
   } else {
     debug("registration has ended");
     next();
@@ -1232,4 +1235,10 @@ export const isRegistrationHostOrInstructor = async (req, res, next) => {
   } else {
     next();
   }
+};
+
+export const endDateOldPreStart = async(req, res, next) => {
+  const { startDate, endDateOldOfficeHour } =
+  req.body;
+
 };

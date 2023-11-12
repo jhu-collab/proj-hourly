@@ -36,6 +36,14 @@ describe("Roster Page", () => {
   const tokenTokenTitle = '[data-cy="tokenTitle"]';
   const tokenSubmit = '[data-cy="token-submit-button"]';
 
+  const tokenCard = '[data-cy="token-balance-list-student"]';
+  const tokenName = '[data-cy="token-name"]';
+  const tokenBalance = '[data-cy="token-balance-student"]';
+  const tokenLimit = '[data-cy="token-limit-student"]';
+  const tokenRemoveLimit = '[data-cy="remove-token-limit-button"]';
+  const tokenEditLimit = '[data-cy="edit-token-limit-button"]';
+  const tokenEditQuantity = '[data-cy="edit-token-quantity"]';
+
   const courseTitle = "Data Structures";
   const courseNumber = "601.226";
   const courseSemester = "Spring";
@@ -97,6 +105,8 @@ describe("Roster Page", () => {
         }
       );
     }
+
+    cy.task("optInIfNeeded", courseCode);
 
     cy.visit(BASE_URL + "login");
 
@@ -168,7 +178,7 @@ describe("Roster Page", () => {
               .first()
               .should("be.visible")
               .within(($cells) => {
-                cy.get(".MuiButtonBase-root").should("have.length", 3);
+                cy.get(".MuiButtonBase-root").should("have.length", 4);
               });
           });
       } else {
@@ -184,7 +194,7 @@ describe("Roster Page", () => {
           cy.get(".MuiDataGrid-actionsCell")
             .should("be.visible")
             .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
+              cy.get(".MuiButtonBase-root").eq(2).click();
             });
         });
       cy.get(roleForm).should("be.visible");
@@ -198,12 +208,12 @@ describe("Roster Page", () => {
       cy.get(studentRoleTitle).should("be.visible");
       cy.get(".MuiDataGrid-row").should("have.length", 2);
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-      .first()
-      .within(($element) => {
-        cy.get(".MuiBox-root").within(($element) => {
-          cy.get(".MuiButtonBase-root").should("exist");
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").should("exist");
+          });
         });
-      });
     });
 
     it("Successfully promoting student to staff", () => {
@@ -211,11 +221,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toStaffButton).click();
@@ -235,11 +243,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toStaffButton).click();
@@ -265,11 +271,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toInstructorButton).click();
@@ -289,11 +293,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toInstructorButton).click();
@@ -319,16 +321,14 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(confirmRoleChangeButton).click();
       cy.get(".Toastify")
-      .contains("div", "invalid promotion role")
-      .should("be.visible");
+        .contains("div", "invalid promotion role")
+        .should("be.visible");
       cy.wait(1000);
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
         ($element) => {
@@ -350,7 +350,7 @@ describe("Roster Page", () => {
           cy.get(".MuiDataGrid-actionsCell")
             .should("be.visible")
             .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
+              cy.get(".MuiButtonBase-root").eq(3).click();
             });
         });
       cy.contains("Confirm the action").should("exist");
@@ -366,12 +366,12 @@ describe("Roster Page", () => {
           });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-      .first()
-      .within(($element) => {
-        cy.get(".MuiBox-root").within(($element) => {
-          cy.get(".MuiButtonBase-root").should("exist");
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").should("exist");
+          });
         });
-      });
     });
 
     it("Successfully deleting student", () => {
@@ -379,11 +379,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -402,11 +400,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -425,11 +421,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -665,8 +659,236 @@ describe("Roster Page", () => {
       cy.get(tokenTokenTitle).click();
       cy.get(tokenSubmit).click();
       cy.get(".Toastify")
-      .contains("div", "Student has used all their tokens")
-      .should("be.visible");
+        .contains("div", "Student has used all their tokens")
+        .should("be.visible");
+    });
+    it("Course token usage pop-up has required elements", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.contains("Student Token Usage").should("exist");
+      cy.contains("Tokens").should("exist");
+      cy.get(tokenName).should("be.visible");
+      cy.get(tokenName).contains("h5", "tokenTitle");
+      cy.get(tokenBalance).should("be.visible");
+      cy.get(tokenBalance).contains("h5", "Balance: 2");
+      cy.get(tokenLimit).should("be.visible");
+      cy.get(tokenLimit).contains("h5", "Limit: 2");
+      cy.get("body").click();
+      cy.get(tokenRemoveLimit).should("be.visible");
+      cy.get(tokenEditLimit).should("be.visible");
+    });
+    it("Failure when removing a non-existant override limit", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenRemoveLimit).should("be.visible").click();
+      cy.get(confirmDeleteConfirmButton)
+        .last()
+        .should("be.visible")
+        .click({ force: true });
+      cy.wait(500);
+      cy.get(".Toastify")
+        .contains("div", `Override limit is null`)
+        .should("be.visible");
+    });
+    it("Cancel Remove override when no override", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenRemoveLimit).should("be.visible").click();
+      cy.get(cancelDeleteConfirmButton)
+        .last()
+        .should("be.visible")
+        .click({ force: true });
+    });
+    it("Edit override ammount to non-positive", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenEditLimit).should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(0);
+      cy.get(tokenCard).contains("button", "Submit").click();
+      cy.get(tokenEditQuantity).contains("p", "Must have positive override");
+      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+    });
+    it("Edit override ammount to be equal to the limit", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenEditLimit).should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(2);
+      cy.get(tokenCard).contains("button", "Submit").click();
+      cy.wait(500);
+      cy.get(".Toastify")
+        .contains("div", `Override limit is lte token limit`)
+        .should("be.visible");
+      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+    });
+    it("Edit override ammount to be 1 higher", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenEditLimit).should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(3);
+      cy.get(tokenCard).contains("button", "Submit").click();
+      cy.wait(500);
+      cy.get(".Toastify")
+        .contains(
+          "div",
+          `Successfully updated the token override for the student!`
+        )
+        .should("be.visible");
+      cy.get(tokenLimit).should("be.visible").contains("h5", 3);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 3);
+    });
+    it("Edit override ammount to be 1 higher and cancel", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenEditLimit).should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(3);
+      cy.get(tokenCard).contains("button", "Cancel").click();
+      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+    });
+    it("Use student token and check balance after", () => {
+      cy.task("useStudentsToken", {
+        userName: "thor",
+        tokenName: "tokenTitle",
+        courseCode: courseCode,
+      });
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 1);
+    });
+    it("Use student token and check balance after and set override", () => {
+      cy.task("useStudentsToken", {
+        userName: "thor",
+        tokenName: "tokenTitle",
+        courseCode: courseCode,
+      });
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 1);
+      cy.get(tokenEditLimit).should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(3);
+      cy.get(tokenCard).contains("button", "Submit").click();
+      cy.wait(500);
+      cy.get(".Toastify")
+        .contains(
+          "div",
+          `Successfully updated the token override for the student!`
+        )
+        .should("be.visible");
+      cy.get(tokenLimit).should("be.visible").contains("h5", 3);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+    });
+    it("Use student token and check balance after and set override, multiple tokens", () => {
+      cy.task("useStudentsToken", {
+        userName: "thor",
+        tokenName: "tokenTitle",
+        courseCode: courseCode,
+      });
+      cy.task("createCourseToken", {
+        courseCode: courseCode,
+        tokenQuantity: 5,
+        tokenTitle: "testSecondToken",
+      });
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenLimit).first().should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).first().should("be.visible").contains("h5", 1);
+      cy.get(tokenEditLimit).first().should("be.visible").click();
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(3);
+      cy.get(tokenCard).contains("button", "Submit").click();
+      cy.wait(500);
+      cy.get(".Toastify")
+        .contains(
+          "div",
+          `Successfully updated the token override for the student!`
+        )
+        .should("be.visible");
+      cy.get(tokenLimit).first().should("be.visible").contains("h5", 3);
+      cy.get(tokenBalance).first().should("be.visible").contains("h5", 2);
+      cy.get(tokenLimit).eq(1).should("be.visible").contains("h5", 5);
+      cy.get(tokenBalance).eq(1).should("be.visible").contains("h5", 5);
     });
   });
 
@@ -702,7 +924,7 @@ describe("Roster Page", () => {
               .first()
               .should("be.visible")
               .within(($cells) => {
-                cy.get(".MuiButtonBase-root").should("have.length", 3);
+                cy.get(".MuiButtonBase-root").should("have.length", 4);
               });
           });
       } else {
@@ -718,7 +940,7 @@ describe("Roster Page", () => {
           cy.get(".MuiDataGrid-actionsCell")
             .should("be.visible")
             .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
+              cy.get(".MuiButtonBase-root").eq(2).click();
             });
         });
       cy.get(roleForm).should("be.visible");
@@ -732,12 +954,12 @@ describe("Roster Page", () => {
       cy.get(staffRoleTitle).should("be.visible");
       cy.get(".MuiDataGrid-row").should("have.length", 1);
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
-      .first()
-      .within(($element) => {
-        cy.get(".MuiBox-root").within(($element) => {
-          cy.get(".MuiButtonBase-root").should("exist");
+        .first()
+        .within(($element) => {
+          cy.get(".MuiBox-root").within(($element) => {
+            cy.get(".MuiButtonBase-root").should("exist");
+          });
         });
-      });
     });
 
     it("Successfully demoting staff to student", () => {
@@ -745,11 +967,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toStudentButton).click();
@@ -769,11 +989,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toStudentButton).click();
@@ -799,11 +1017,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toInstructorButton).click();
@@ -823,11 +1039,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(roleChoicesGroup).within(($cells) => {
         cy.get(toInstructorButton).click();
@@ -853,16 +1067,14 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-    
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(1).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(2).click();
+          });
         });
       cy.get(confirmRoleChangeButton).click();
       cy.get(".Toastify")
-      .contains("div", "invalid promotion role")
-      .should("be.visible");
+        .contains("div", "invalid promotion role")
+        .should("be.visible");
       cy.wait(1000);
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper").within(
         ($element) => {
@@ -876,17 +1088,14 @@ describe("Roster Page", () => {
       }
     });
 
-
     it("Successfully deleting staff", () => {
       cy.get(rosterToolbarStaff).contains("Staff").click();
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -905,11 +1114,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -928,11 +1135,9 @@ describe("Roster Page", () => {
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root").eq(2).click();
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(3).click();
+          });
         });
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -946,18 +1151,24 @@ describe("Roster Page", () => {
       }
     });
 
-    it("Failure to click token icon for staff", () => {
+    it("Failure to click use token icon for staff", () => {
       cy.get(rosterToolbarStaff).contains("Staff").click();
       cy.get(".MuiDataGrid-row")
         .first()
         .within(($element) => {
-          cy.get(".MuiDataGrid-actionsCell")
-  
-            .within(($cells) => {
-              cy.get(".MuiButtonBase-root")
-                .eq(0)
-                .should("have.attr", "disabled");
-            });
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).should("have.attr", "disabled");
+          });
+        });
+    });
+    it("Failure to click token usage icon for staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(1).should("have.attr", "disabled");
+          });
         });
     });
   });

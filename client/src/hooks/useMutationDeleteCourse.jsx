@@ -6,36 +6,30 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../services/common";
 import { useNavigate } from "react-router-dom";
 import useStoreToken from "./useStoreToken";
-import Debug from "debug";
 
-const debug = new Debug(`hourly:hooks:useMutationLeaveCourse.jsx`);
-
-function useMutationLeaveCourse(courseId) {
+function useMutationDeleteCourse(courseId) {
   const { token } = useStoreToken();
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
-  const leaveCourse = async () => {
+  const deleteCourse = async () => {
     try {
-      debug("Sending course to leave to the backend...");
-      const endpoint = `${BASE_URL}/api/course/leave/${courseId}`;
+      const endpoint = `${BASE_URL}/api/course/${courseId}`;
       const res = await axios.delete(endpoint, getConfig(token));
-      debug("Successful! Returning result data...");
       return res.data;
     } catch (err) {
       throw err;
     }
   };
 
-  const mutation = useMutation(leaveCourse, {
+  const mutation = useMutation(deleteCourse, {
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
-      toast.success(`Successfully left course!`);
+      toast.success(`Successfully deleted course!`);
       navigate("/");
     },
     onError: (error) => {
-      debug( {error} );
       errorToast(error);
     },
   });
@@ -45,4 +39,4 @@ function useMutationLeaveCourse(courseId) {
   };
 }
 
-export default useMutationLeaveCourse;
+export default useMutationDeleteCourse;
