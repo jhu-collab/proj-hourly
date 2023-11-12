@@ -16,8 +16,8 @@ import { useState } from "react";
 
 
 /**
- * Component that represents the form that is used to create a lecture.
- * @returns A component representing the LectureEvent form.
+ * Component that represents the form that is used to change the registration window.
+ * @returns A component representing the CourseRegistrationConstraint form.
  */
 
 function CourseRegistrationConstraintForm() {
@@ -64,7 +64,7 @@ function CourseRegistrationConstraintForm() {
                     </Typography>
                     <Stack alignItems="center" direction="row" sx={{ width: "100%" }} spacing={3}>
                         <FormInputNumber
-                            // data-cy="create-start-reg-constraint"
+                            data-cy="create-start-reg-constraint"
                             name="start"
                             control={control}
                             label={"Start Reg"}
@@ -72,7 +72,7 @@ function CourseRegistrationConstraintForm() {
                             InputLabelProps={{ shrink: true }}
                         />
                         <FormInputNumber
-                            // data-cy="create-end-reg-constraint"
+                            data-cy="create-end-reg-constraint"
                             name="end"
                             control={control}
                             label={"End Reg"}
@@ -81,7 +81,7 @@ function CourseRegistrationConstraintForm() {
                         />
                     </Stack>
                     <Button
-                        // data-cy="create-reg-submit"
+                        data-cy="edit-reg-submit"
                         type="submit"
                         variant="contained"
                         // disabled={createIsLoading}

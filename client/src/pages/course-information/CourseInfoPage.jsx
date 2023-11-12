@@ -70,6 +70,7 @@ function CourseInfoPage() {
       )}
       {courseType === "Instructor" && ( // newly added
         <MainCard
+          data-cy="course-registration-constraint_form_title"
           title="Course Registration Constraints"
           sx={{ padding: 0 }}
           content={true}
