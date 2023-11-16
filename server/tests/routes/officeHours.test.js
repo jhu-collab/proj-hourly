@@ -2681,7 +2681,102 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
-  describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationStatus`, async () => {});
+  describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationStatus`, async () => {
+    let course = {};
+    let officeHour = {};
+    let students = [];
 
-  describe(`Test GET: ${endpoint}/:officeHourId/:date/registrationsOnDate`, async () => {});
+    beforeAll(async () => {
+      const params = await setup();
+      course = params.course;
+      officeHour = params.officeHour;
+      students = params.students;
+    });
+
+    afterAll(async () => {
+      await teardown();
+    });
+
+    it("Return 202 for valid date", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationStatus`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 400 for invalid date", async () => {
+      const date = new Date(officeHour.startDate);
+      date.setDate(date.getDate() + 1);
+      const dateString = date.toLocaleDateString("en-us").replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationStatus`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when officeHourId is invalid", async () => {
+      const date = new Date(officeHour.startDate);
+      date.setDate(date.getDate() + 1);
+      const dateString = date.toLocaleDateString("en-us").replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id * 2}/date/${date}/registrationStatus`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationsOnDate`, async () => {
+    let course = {};
+    let officeHour = {};
+    let students = [];
+
+    beforeAll(async () => {
+      const params = await setup();
+      course = params.course;
+      officeHour = params.officeHour;
+      students = params.students;
+    });
+
+    afterAll(async () => {
+      await teardown();
+    });
+
+    it("Return 202 for valid date", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
+        .set("Authorization", "Bearer " + students[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(202);
+    }, 10000);
+
+    it("Return 400 for invalid date", async () => {
+      const date = new Date(officeHour.startDate);
+      date.setDate(date.getDate() + 1);
+      const dateString = date.toLocaleDateString("en-us").replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
+        .set("Authorization", "Bearer " + students[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(400);
+    }, 10000);
+
+    it("Return 400 when officeHourId is invalid", async () => {
+      const date = new Date(officeHour.startDate);
+      date.setDate(date.getDate() + 1);
+      const dateString = date.toLocaleDateString("en-us").replaceAll("/", "-");
+      const response = await request
+        .get(
+          `${endpoint}/${officeHour.id * 2}/date/${date}/registrationsOnDate`
+        )
+        .set("Authorization", "Bearer " + students[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(400);
+    }, 10000);
+  });
 });
