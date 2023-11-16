@@ -2731,13 +2731,13 @@ describe(`Test endpoint ${endpoint}`, () => {
   describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationsOnDate`, async () => {
     let course = {};
     let officeHour = {};
-    let students = [];
+    let staff = [];
 
     beforeAll(async () => {
       const params = await setup();
       course = params.course;
       officeHour = params.officeHour;
-      students = params.students;
+      staff = params.staff;
     });
 
     afterAll(async () => {
@@ -2750,10 +2750,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         .replaceAll("/", "-");
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
-        .set("Authorization", "Bearer " + students[0].token);
+        .set("Authorization", "Bearer " + staff[0].token);
       console.log(response.text);
       expect(response.status).toBe(202);
-    }, 10000);
+    });
 
     it("Return 400 for invalid date", async () => {
       const date = new Date(officeHour.startDate);
@@ -2761,10 +2761,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       const dateString = date.toLocaleDateString("en-us").replaceAll("/", "-");
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
-        .set("Authorization", "Bearer " + students[0].token);
+        .set("Authorization", "Bearer " + staff[0].token);
       console.log(response.text);
       expect(response.status).toBe(400);
-    }, 10000);
+    });
 
     it("Return 400 when officeHourId is invalid", async () => {
       const date = new Date(officeHour.startDate);
@@ -2774,9 +2774,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(
           `${endpoint}/${officeHour.id * 2}/date/${date}/registrationsOnDate`
         )
-        .set("Authorization", "Bearer " + students[0].token);
+        .set("Authorization", "Bearer " + staff[0].token);
       console.log(response.text);
       expect(response.status).toBe(400);
-    }, 10000);
+    });
   });
 });
