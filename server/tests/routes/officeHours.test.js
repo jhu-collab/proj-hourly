@@ -2322,7 +2322,155 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
   });
 
-  describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {});
+  describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {
+    let course = {};
+    let officeHour = {};
+    let staff = [];
+    let students = [];
+    let baseAttributes = {};
+    let instructor = {};
+    let registration = {};
+    let oHID = {};
+
+    beforeAll(async () => {
+      const params = await setup();
+      instructor = params.instructor;
+      officeHour = params.officeHour;
+      registration = params.registration;
+      staff = params.staff;
+      students = params.students;
+      course = params.course;
+      baseAttributes = { registrationId: registration.id };
+      oHID = { officeHourId: officeHour.id };
+      let newDate = new Date(registration.date);
+      newDate.setFullYear(newDate.getFullYear() - 10);
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          date: newDate,
+        },
+      });
+    });
+
+    afterAll(async () => {
+      await teardown();
+    });
+
+    afterEach(async () => {
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          isNoShow: registration.isNoShow,
+          date: registration.date,
+        },
+      });
+    });
+
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = oHID.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 400 when all parameters are valid of archived course", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 202 when course successfully archived", async () => {
+      const officeHourId = oHID.officeHourId;
+      const officeHour = await prisma.officeHour.findUnique({
+        where: {
+          id: officeHourId,
+        },
+      });
+      const response = await request
+        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+        .set("Authorization", "bearer " + instructor.token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 403 when user is not host or instructor", async () => {
+      const attributes = { ...baseAttributes };
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 202 when all parameters are valid", async () => {
+      const attributes = { ...baseAttributes };
+      const firstReg = await prisma.registration.findFirst({
+        where: { id: registration.id },
+      });
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(202);
+      const secondReg = await prisma.registration.findFirst({
+        where: { id: registration.id },
+      });
+      expect(firstReg.isNoShow).toBe(!secondReg.isNoShow);
+    });
+
+    it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
+      const attributes = {
+        ...baseAttributes,
+        registrationId: registration.id * 2,
+      };
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when registrationId is 0", async () => {
+      const attributes = { ...baseAttributes, registrationId: 0 };
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when registrationId is less than 0", async () => {
+      const attributes = { ...baseAttributes, registrationId: -1 };
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when body is empty", async () => {
+      const attributes = {};
+      const response = await request
+        .post(`${endpoint}/editRegistrationNoShow`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+  });
 
   /* The remaining tests are for the GET methods and thus we will not use equivalence partitioning */
   describe(`Test GET: ${endpoint}/:officeHourId/getRemainingTimeSlots/:date`, async () => {
