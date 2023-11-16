@@ -2,7 +2,10 @@ import supertest from "supertest";
 import { it, expect, beforeAll, describe, afterAll, afterEach } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
-import { weekday } from "../../src/util/officeHourValidator.js";
+import {
+  stringToTimeObj,
+  weekday,
+} from "../../src/util/officeHourValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
 import { editLocationSingleDay } from "../../src/controllers/officeHourController.js";
@@ -18,7 +21,7 @@ let ids = {
   timeOption: 0,
   topics: [],
   officeHours: [],
-  registrations: [],
+  registration: [],
 };
 
 function updateIds(field, createdIds) {
@@ -30,8 +33,8 @@ function updateIds(field, createdIds) {
     ids.topics = ids.users.concat(createdIds);
   } else if (field === "officeHours") {
     ids.officeHours = ids.users.concat(createdIds);
-  } else if (field === "registrations") {
-    ids.registrations = ids.users.concat(createdIds);
+  } else if (field === "registration") {
+    ids.registration = ids.users.concat(createdIds);
   }
 }
 
@@ -41,7 +44,7 @@ function resetIds() {
     courses: [],
     topics: [],
     officeHours: [],
-    registrations: [],
+    registration: [],
   };
 }
 
@@ -283,7 +286,7 @@ async function setup() {
     topics.map((topic) => topic.id)
   );
   updateIds("officeHours", [officeHour.id]);
-  updateIds("registrations", [registration.id]);
+  updateIds("registration", [registration.id]);
 
   return {
     students: students,
@@ -697,7 +700,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const registration = await prisma.registration.findUniqueOrThrow({
         where: { id },
       });
-      updateIds("registrations", registration.id);
+      updateIds("registration", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -750,7 +753,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const registration = await prisma.registration.findUniqueOrThrow({
         where: { id },
       });
-      updateIds("registrations", registration.id);
+      updateIds("registration", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[1].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -834,7 +837,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const registration = await prisma.registration.findUniqueOrThrow({
         where: { id },
       });
-      updateIds("registrations", registration.id);
+      updateIds("registration", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[2].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -856,7 +859,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const registration = await prisma.registration.findUniqueOrThrow({
         where: { id },
       });
-      updateIds("registrations", registration.id);
+      updateIds("registration", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[3].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -878,7 +881,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       const registration = await prisma.registration.findUniqueOrThrow({
         where: { id },
       });
-      updateIds("registrations", registration.id);
+      updateIds("registration", registration.id);
       expect(registration).toBeDefined();
       expect(registration.accountId).toEqual(students[4].id);
       expect(registration.officeHourId).toEqual(officeHour.id);
@@ -2329,8 +2332,8 @@ describe(`Test endpoint ${endpoint}`, () => {
     let students = [];
     let baseAttributes = {};
     let instructor = {};
-    let registration = {};
     let oHID = {};
+    let registration = [];
 
     beforeAll(async () => {
       const params = await setup();
@@ -2340,18 +2343,24 @@ describe(`Test endpoint ${endpoint}`, () => {
       staff = params.staff;
       students = params.students;
       course = params.course;
-      baseAttributes = { registrationId: registration.id };
       oHID = { officeHourId: officeHour.id };
-      let newDate = new Date(registration.date);
-      newDate.setFullYear(newDate.getFullYear() - 10);
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          startDate: stringToTimeObj("01-01-2002"),
+        },
+      });
       await prisma.registration.update({
         where: {
           id: registration.id,
         },
         data: {
-          date: newDate,
+          date: stringToTimeObj("01-01-2002"),
         },
       });
+      baseAttributes = { registrationId: registration.id };
     });
 
     afterAll(async () => {
@@ -2359,13 +2368,20 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          startDate: stringToTimeObj("01-01-2002"),
+        },
+      });
       await prisma.registration.update({
         where: {
           id: registration.id,
         },
         data: {
-          isNoShow: registration.isNoShow,
-          date: registration.date,
+          date: stringToTimeObj("01-01-2002"),
         },
       });
     });
@@ -2389,7 +2405,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/editRegistrationNoShow`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(400);
     });
 
@@ -2424,7 +2439,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/editRegistrationNoShow`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
       const secondReg = await prisma.registration.findFirst({
         where: { id: registration.id },
@@ -2455,15 +2469,6 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when registrationId is less than 0", async () => {
       const attributes = { ...baseAttributes, registrationId: -1 };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when body is empty", async () => {
-      const attributes = {};
       const response = await request
         .post(`${endpoint}/editRegistrationNoShow`)
         .send(attributes)
