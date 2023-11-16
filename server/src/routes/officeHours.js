@@ -293,7 +293,7 @@ router.get(
 );
 
 router.get(
-  "/:officeHourId/:date/registrationsOnDate",
+  "/:officeHourId/date/:date/registrationsOnDate",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
