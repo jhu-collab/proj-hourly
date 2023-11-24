@@ -841,11 +841,9 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   if (start <= end) {
     debug("Start is less than or equal to end...");
     debug("Error in startIsGreaterThanEnd!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: start constraint must be greater than end constraint",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: start constraint must be greater than end constraint",
+    });
   } else {
     debug("Start is greater than end!");
     debug("startIsGreaterThanEnd is done!");
@@ -987,7 +985,7 @@ export const isValidFilterValue = async (req, res, next) => {
         courseId: courseId,
         hosts: {
           some: {
-            id,
+            id: parseInt(filterValue, 10),
           },
         },
       },
@@ -1143,11 +1141,9 @@ export const isCourseArchivedRegistrationId = async (req, res, next) => {
     },
   });
   if (course.isArchived === true) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: Course is archived, cannot manipulate registration",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: Course is archived, cannot manipulate registration",
+    });
   } else {
     debug("Course is not archived.");
     next();
