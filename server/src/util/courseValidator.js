@@ -985,7 +985,7 @@ export const isValidFilterValue = async (req, res, next) => {
         courseId: courseId,
         hosts: {
           some: {
-            id,
+            id: parseInt(filterValue, 10),
           },
         },
       },
