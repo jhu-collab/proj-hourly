@@ -980,6 +980,11 @@ export const isValidFilterValue = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
+    }
     const course = await prisma.officeHour.findMany({
       where: {
         courseId: courseId,
@@ -990,7 +995,7 @@ export const isValidFilterValue = async (req, res, next) => {
         },
       },
     });
-    if (course === null) {
+    if (course.length === 0) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "ERROR: filter value must be of type host" });

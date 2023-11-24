@@ -2789,6 +2789,32 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(400);
     });
+    it("Return 400 when filter value is not valid - account id invalid", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/accountId/value/a`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - account id dne", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/-1`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - hosts invalid", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/hosts/value/a`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - hosts dne", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/hosts/value/-1`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
     it("Return 400 when filter value is not valid - topics invalid", async () => {
       const response = await request
         .get(`${endpoint}/${courses[0].id}/getRegistration/topics/value/a`)
@@ -2818,92 +2844,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .get(`${endpoint}/${courses[0].id}/getRegistration/accountId/value/-1`)
         .set("Authorization", "bearer " + users[3].token);
       expect(response.status).toBe(400);
-    });
-    it("Return 202 when filter value is date - student none on date", async () => {
-      const course = await prisma.course.findUnique({
-        where: {
-          id: courses[0].id,
-        },
-        include: {
-          students: true,
-          courseStaff: true,
-          instructors: true,
-          topics: true,
-        },
-      });
-      const officehours = await prisma.officeHour.findMany({
-        where: {
-          courseId: courses[0].id,
-        },
-        include: {
-          hosts: true,
-        },
-      });
-      console.log(course);
-      officehours.forEach((oh) => console.log(oh));
-      const response = await request
-        .get(
-          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
-        )
-        .set("Authorization", "bearer " + users[0].token);
-      expect(response.status).toBe(202);
-      const { registrations } = JSON.parse(response.text);
-      expect(registrations.length).toBe(0);
-    });
-    it("Return 202 when filter value is date - student some on date", async () => {
-      const course = await prisma.course.findUnique({
-        where: {
-          id: courses[0].id,
-        },
-        include: {
-          students: true,
-          courseStaff: true,
-          instructors: true,
-          topics: true,
-          officeHours: true,
-          officeHourOptions: true,
-        },
-      });
-      const registration = await prisma.registration.create({
-        data: {
-          officeHour: {
-            connect: {
-              id: course.officeHours[0].id,
-            },
-          },
-          startTime: new Date(0),
-          endTime: new Date(10),
-          date: new Date("10-01-2023"),
-          account: {
-            connect: {
-              id: users[0].id,
-            },
-          },
-          topics: {
-            connect: {
-              id: course.topics[0].id,
-            },
-          },
-          officeHourTimeOptions: {
-            connect: {
-              id: course.officeHourOptions[0].id,
-            },
-          },
-        },
-      });
-      const response = await request
-        .get(
-          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
-        )
-        .set("Authorization", "bearer " + users[0].token);
-      expect(response.status).toBe(202);
-      const { registrations } = JSON.parse(response.text);
-      expect(registrations.length).toBe(1);
-      await prisma.registration.delete({
-        where: {
-          id: registration.id,
-        },
-      });
     });
     it("Return 202 when filter value is date - student none on date", async () => {
       const course = await prisma.course.findUnique({
@@ -3203,6 +3143,1430 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const { registrations } = JSON.parse(response.text);
       expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - student none for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[1].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - student some for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[0].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - instructor none for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[1].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - instructor some for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(2);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - staff none for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[1].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is office hour id - staff some for oh", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/${course.officeHours[1].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is account id - instructor none for account", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/accountId/value/${users[1].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is account id - instructor some for account", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/accountId/value/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is account id - instructor none for account", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/accountId/value/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is account id - staff some for account", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/accountId/value/${users[0].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - student none for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[1].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - student some for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[0].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(2);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - instructor none for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[1].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - instructor some for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[0].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(2);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - staff none for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[0].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is topics - staff some for topic", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/topics/value/${course.topics[0].id}`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is is no show - student none for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is isNoShow - student some for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is isNoShow - instructor none for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is isNoShow - instructor some for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is isNoShow - staff none for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is isNoShow - staff some for no show", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/true`)
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is hosts - student none for host", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/hosts/value/${users[3].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is hosts - student some for host", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/hosts/value/${users[2].id}`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(2);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is hosts - instructor none for no host", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/hosts/value/${users[3].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is hosts - instructor some for host", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[4].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+          isNoShow: true,
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/hosts/value/${users[2].id}`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(2);
       await prisma.registration.delete({
         where: {
           id: registration.id,
