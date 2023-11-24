@@ -308,12 +308,69 @@ describe(`Test endpoint ${endpoint}`, () => {
       const attributes = {
         code: courses[0].code,
       };
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+        },
+      });
       const response = await request
         .post(`${endpoint}/signup`)
         .send(attributes)
         .set("Authorization", "bearer " + users[0].token);
       expect(response.status).toBe(202);
       userInCourse.push(users[0]);
+    });
+    it("Return 202 when student is registered for course - multiple instructors", async () => {
+      const attributes = {
+        code: courses[0].code,
+      };
+      await prisma.account.update({
+        where: {
+          id: users[0].id,
+        },
+        data: {
+          studentCourses: {
+            disconnect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      await prisma.account.update({
+        where: {
+          id: users[1].id,
+        },
+        data: {
+          instructorCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .post(`${endpoint}/signup`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      userInCourse.push(users[0]);
+      await prisma.account.update({
+        where: {
+          id: users[1].id,
+        },
+        data: {
+          instructorCourses: {
+            disconnect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
     });
     it("Return 409 when student is already registered for course", async () => {
       const attributes = {
@@ -475,6 +532,21 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(403);
     });
     it("Return 202 when course is deleted", async () => {
+      const now = new Date();
+      const next = new Date();
+      next.setUTCHours(next.getUTCHours() + 2);
+      await prisma.officeHour.create({
+        data: {
+          hosts: {
+            connect: [{ id: users[2].id }],
+          },
+          courseId: courses[0].id,
+          location: "zoom",
+          isRecurring: false,
+          startDate: now,
+          endDate: next,
+        },
+      });
       let response = await request
         .delete(`${endpoint}/${courses[0].id}`)
         .set("Authorization", "bearer " + users[2].token);
@@ -1063,7 +1135,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/editTopic`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.text);
       expect(response.status).toBe(403);
     });
     it("Return 409 when duplicate topic", async () => {
@@ -2054,7 +2125,50 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(account.newRole).toBe("Staff");
       expect(account.oldRole).toBe("Student");
     });
-    it("Return 202 when student is promoted", async () => {
+    it("Return 202 when student is promoted Instructor", async () => {
+      await prisma.account.update({
+        where: {
+          id: users[3].id,
+        },
+        data: {
+          staffCourses: {
+            disconnect: {
+              id: courses[0].id,
+            },
+          },
+          studentCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
+      const attributes = {
+        studentId: users[3].id,
+        role: "Instructor",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const account = JSON.parse(response.text);
+      expect(account.newRole).toBe("Instructor");
+      expect(account.oldRole).toBe("Student");
+    });
+    it("Return 202 when staff is promoted Instructor", async () => {
+      await prisma.account.update({
+        where: {
+          id: users[3].id,
+        },
+        data: {
+          staffCourses: {
+            connect: {
+              id: courses[0].id,
+            },
+          },
+        },
+      });
       const attributes = {
         studentId: users[3].id,
         role: "Instructor",
@@ -2183,6 +2297,21 @@ describe(`Test endpoint ${endpoint}`, () => {
         studentId: users[0].id,
         role: "Student",
       };
+      const now = new Date();
+      const next = new Date();
+      next.setUTCHours(next.getUTCHours() + 2);
+      await prisma.officeHour.create({
+        data: {
+          hosts: {
+            connect: [{ id: users[0].id }],
+          },
+          courseId: courses[0].id,
+          location: "zoom",
+          isRecurring: false,
+          startDate: now,
+          endDate: next,
+        },
+      });
       const response = await request
         .post(`${endpoint}/${courses[0].id}/demote`)
         .send(attributes)
@@ -2572,6 +2701,526 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(course.isArchived).toBe(true);
     });
+  });
+
+  describe("HTTP Get request registrations by filter", () => {
+    it("Return 401 when no authorization toke is provided", async () => {
+      const response = await request.get(
+        `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when course id is invalid", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/getRegistration/date/value/10-01-2023`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when user is not in course", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/getRegistration/date/value/10-01-2023`)
+        .set(
+          "Authorization",
+          "bearer " + users.find((u) => u.userName === "user2").token
+        );
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter type is invalid", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/test/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+      const courseWithRoles = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+        },
+      });
+    });
+    it("Return 400 when filter type is not allowed for the given role - student", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/accountId/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter type is not allowed for the given role - staff", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/hosts/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - date", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/date/value/a`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - office hour id invalid", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/a`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - office hour id dne", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/officeHourId/value/-1`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - topics invalid", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/topics/value/a`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - topic dne", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/topics/value/-1`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - isNoShow invalid", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/isNoShow/value/-1`)
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - topic dne", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/accountId/value/a`)
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when filter value is not valid - isNoShow dne", async () => {
+      const response = await request
+        .get(`${endpoint}/${courses[0].id}/getRegistration/accountId/value/-1`)
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when filter value is date - student none on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+        },
+      });
+      const officehours = await prisma.officeHour.findMany({
+        where: {
+          courseId: courses[0].id,
+        },
+        include: {
+          hosts: true,
+        },
+      });
+      console.log(course);
+      officehours.forEach((oh) => console.log(oh));
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+    });
+    it("Return 202 when filter value is date - student some on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is date - student none on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+        },
+      });
+      const officehours = await prisma.officeHour.findMany({
+        where: {
+          courseId: courses[0].id,
+        },
+        include: {
+          hosts: true,
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+    });
+    it("Return 202 when filter value is date - student some on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[0].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is date - instructor one on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is date - instructor some on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is date - staff none on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[0].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(0);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    it("Return 202 when filter value is date - staff some on date", async () => {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courses[0].id,
+        },
+        include: {
+          students: true,
+          courseStaff: true,
+          instructors: true,
+          topics: true,
+          officeHours: true,
+          officeHourOptions: true,
+        },
+      });
+      const registration = await prisma.registration.create({
+        data: {
+          officeHour: {
+            connect: {
+              id: course.officeHours[1].id,
+            },
+          },
+          startTime: new Date(0),
+          endTime: new Date(10),
+          date: new Date("10-01-2023"),
+          account: {
+            connect: {
+              id: users[0].id,
+            },
+          },
+          topics: {
+            connect: {
+              id: course.topics[0].id,
+            },
+          },
+          officeHourTimeOptions: {
+            connect: {
+              id: course.officeHourOptions[0].id,
+            },
+          },
+        },
+      });
+      const response = await request
+        .get(
+          `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+        )
+        .set("Authorization", "bearer " + users[3].token);
+      expect(response.status).toBe(202);
+      const { registrations } = JSON.parse(response.text);
+      expect(registrations.length).toBe(1);
+      await prisma.registration.delete({
+        where: {
+          id: registration.id,
+        },
+      });
+    });
+    // it("Return 200 when no body is included", async () => {
+    //   const response = await request
+    //     .get(
+    //       `${endpoint}/${courses[0].id}/getRegistration/date/value/10-01-2023`
+    //     )
+    //     .set("Authorization", "bearer " + users[0].token);
+    //   expect(response.status).toBe(202);
+    //   const { student, staff, instructor } = JSON.parse(response.text);
+    //   expect(student.length).toBe(1);
+    //   expect(staff.length).toBe(0);
+    //   expect(instructor.length).toBe(0);
+    // });
   });
 
   afterAll(async () => {

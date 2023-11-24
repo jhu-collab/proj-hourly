@@ -908,7 +908,7 @@ export const isValidFilterValue = async (req, res, next) => {
   const { filterType, filterValue } = req.params;
   const courseId = req.body;
   const id = req.id;
-  if (filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+  if (filterType === "date" && isNaN(Date.parse(filterValue))) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type Date" });
