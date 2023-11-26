@@ -1302,7 +1302,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      await prisma.officeHour.update({
+      const edits = await prisma.officeHour.update({
         where: {
           id: officeHour.id,
         },
@@ -1311,8 +1311,10 @@ describe(`Test endpoint ${endpoint}`, () => {
           endDate: officeHour.endDate,
           location: officeHour.location,
           isCancelledOn: [],
+          isRecurring: officeHour.isRecurring,
         },
       });
+      console.log(edits);
     });
 
     it("Return 202 when course successfully archived", async () => {
@@ -1369,6 +1371,38 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
       const editedOH = await prisma.officeHour.findFirst({
         where: { id: officeHour.id },
+      });
+      expect(editedOH).toBeDefined();
+      expect(editedOH);
+    });
+
+    it("Return 202 when all parameters are valid - non recurring office hour", async () => {
+      const newOH = await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          isRecurring: false,
+        },
+      });
+      const mdy = new Date(newOH.startDate)
+        .toLocaleString("en-US", { hour12: false })
+        .split(" ")[0]
+        .split("/");
+      const date = mdy[0] + "-" + mdy[1] + "-" + mdy[2].replace(",", "");
+      const attributes = {
+        ...baseAttributes,
+        officeHourId: newOH.id,
+        location: "non recurring test",
+      };
+      const response = await request
+        .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
+      expect(response.status).toBe(202);
+      const editedOH = await prisma.officeHour.findFirst({
+        where: { id: officeHour.id, location: "non recurring test" },
       });
       expect(editedOH).toBeDefined();
       expect(editedOH);
@@ -1474,6 +1508,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
+      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
