@@ -922,6 +922,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
         data: {
           isCancelledOn: [],
+          isDeleted: false,
         },
       });
     });
@@ -1062,6 +1063,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       await prisma.officeHour.updateMany({
         data: {
           isCancelledOn: [],
+          isDeleted: false,
         },
       });
     });
@@ -1219,6 +1221,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           endDate: officeHour.endDate,
           location: officeHour.location,
           isCancelledOn: [],
+          isDeleted: false,
           isRecurring: officeHour.isRecurring,
         },
       });
@@ -1749,6 +1752,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
         data: {
           isCancelled: false,
+          isCancelledStaff: false,
         },
       });
     });
@@ -1851,6 +1855,8 @@ describe(`Test endpoint ${endpoint}`, () => {
           endTime: registration.endTime,
           date: registration.date,
           TopicIds: registration.TopicIds,
+          isCancelled: false,
+          isCancelledStaff: false,
         },
       });
     });
@@ -2594,15 +2600,44 @@ describe(`Test endpoint ${endpoint}`, () => {
     let course = {};
     let officeHour = {};
     let students = [];
+    let instructor = {};
+    let staff = [];
 
     beforeAll(async () => {
       const params = await setup();
       course = params.course;
       officeHour = params.officeHour;
       students = params.students;
+      instructor = params.instructor;
+      staff = params.staff;
+    });
+
+    afterEach(async () => {
+      await prisma.registration.updateMany({
+        data: {
+          isCancelled: false,
+          isCancelledStaff: false,
+        },
+      });
+      await prisma.officeHour.updateMany({
+        data: {
+          isCancelledOn: [],
+        },
+      });
     });
 
     afterAll(async () => {
+      await prisma.registration.updateMany({
+        data: {
+          isCancelled: false,
+          isCancelledStaff: false,
+        },
+      });
+      await prisma.officeHour.updateMany({
+        data: {
+          isCancelledOn: [],
+        },
+      });
       await teardown();
     });
 
@@ -2635,21 +2670,80 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "Bearer " + students[0].token);
       expect(response.status).toBe(400);
     });
+
+    it("Return 202 with all valid parameters - cancel office hour", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const attributes = { date: date, officeHourId: officeHour.id };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 for cancelled office hour", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationStatus`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 for student without office hours", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationStatus`)
+        .set("Authorization", "Bearer " + students[2].token);
+      expect(response.status).toBe(202);
+    });
   });
 
   describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationsOnDate`, async () => {
     let course = {};
     let officeHour = {};
     let staff = [];
+    let instructor = {};
 
     beforeAll(async () => {
       const params = await setup();
       course = params.course;
       officeHour = params.officeHour;
       staff = params.staff;
+      instructor = params.instructor;
+    });
+
+    afterEach(async () => {
+      await prisma.registration.updateMany({
+        data: {
+          isCancelled: false,
+          isCancelledStaff: false,
+        },
+      });
+      await prisma.officeHour.updateMany({
+        data: {
+          isCancelledOn: [],
+        },
+      });
     });
 
     afterAll(async () => {
+      await prisma.registration.updateMany({
+        data: {
+          isCancelled: false,
+          isCancelledStaff: false,
+        },
+      });
+      await prisma.officeHour.updateMany({
+        data: {
+          isCancelledOn: [],
+        },
+      });
       await teardown();
     });
 
@@ -2660,6 +2754,38 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
         .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 with all valid parameters - cancel office hour", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const attributes = { date: date, officeHourId: officeHour.id };
+      const response = await request
+        .post(`${endpoint}/cancelOnDate`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 for cancelled registration", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 for instructor without office hours", async () => {
+      const date = new Date(officeHour.startDate)
+        .toLocaleDateString("en-us")
+        .replaceAll("/", "-");
+      const response = await request
+        .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
+        .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(202);
     });
 
