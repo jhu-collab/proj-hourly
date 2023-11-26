@@ -1210,7 +1210,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      const edits = await prisma.officeHour.update({
+      await prisma.officeHour.update({
         where: {
           id: officeHour.id,
         },
@@ -1222,7 +1222,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           isRecurring: officeHour.isRecurring,
         },
       });
-      console.log(edits);
     });
 
     it("Return 202 when course successfully archived", async () => {
@@ -1307,7 +1306,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
       const editedOH = await prisma.officeHour.findFirst({
         where: { id: officeHour.id, location: "non recurring test" },
@@ -1416,7 +1414,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
@@ -2663,7 +2660,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
@@ -2674,7 +2670,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationsOnDate`)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(400);
     });
 
@@ -2687,7 +2682,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           `${endpoint}/${officeHour.id * 2}/date/${date}/registrationsOnDate`
         )
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(400);
     });
   });
