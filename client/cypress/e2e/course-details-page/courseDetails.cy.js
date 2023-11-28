@@ -133,6 +133,29 @@ describe("Course Details Page: Instructor", () => {
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    while (
+      daysOfWeek[beginDate.getDay()] != "Tuesday" &&
+      daysOfWeek[beginDate.getDay()] != "Thursday" &&
+      daysOfWeek[beginDate.getDay()] != "Sunday"
+    ) {
+      beginDate.setDate(beginDate.getDate() + 1);
+    }
+    while (
+      daysOfWeek[endDate.getDay()] != "Tuesday" &&
+      daysOfWeek[endDate.getDay()] != "Thursday" &&
+      daysOfWeek[endDate.getDay()] != "Sunday"
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
     cy.get('[data-cy="create-start-date-text"]')
       .clear()
       .type(formatCypressDate(beginDate));
@@ -205,12 +228,36 @@ describe("Course Details Page: Instructor", () => {
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    while (
+      daysOfWeek[beginDate.getDay()] != "Tuesday" &&
+      daysOfWeek[beginDate.getDay()] != "Thursday" &&
+      daysOfWeek[beginDate.getDay()] != "Sunday"
+    ) {
+      beginDate.setDate(beginDate.getDate() + 1);
+    }
+
     cy.get('[data-cy="create-start-date-text"]')
       .clear()
       .type(formatCypressDate(beginDate));
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    while (
+      daysOfWeek[endDate.getDay()] != "Tuesday" &&
+      daysOfWeek[endDate.getDay()] != "Thursday" &&
+      daysOfWeek[endDate.getDay()] != "Sunday"
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
     cy.get('[data-cy="create-end-date-text"]')
       .clear()
       .type(formatCypressDate(endDate));
@@ -341,7 +388,7 @@ describe("Course Details Page: Student", () => {
 
     cy.url().should("be.equal", BASE_URL);
     cy.get(".Toastify")
-      .contains("div", "Successfully removed course!")
+      .contains("div", "Successfully left course!")
       .should("be.visible");
     cy.get(studentCourseList)
       .should("be.visible")
