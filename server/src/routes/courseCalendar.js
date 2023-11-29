@@ -199,7 +199,7 @@ router.get(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   validator.isInCourse,
-  controller.getAllEventsForCourse
+  controller.getAllNotCancelledEventsForCourse
 );
 
 /**

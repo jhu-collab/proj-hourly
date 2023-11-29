@@ -297,7 +297,6 @@ router.get(
   param("officeHourId", "Please enter a valid officehour id").isInt(),
   param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
-  accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
