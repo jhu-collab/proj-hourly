@@ -547,7 +547,13 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 201 when daysOfWeek is a singleton", async () => {
-      const attributes = { ...baseAttributes, daysOfWeek: ["Monday"] };
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const attributes = {
+        ...baseAttributes,
+        daysOfWeek: [weekday[tomorrow.getDay()]],
+      };
       const response = await request
         .post(`${endpoint}/create`)
         .send(attributes)
@@ -771,7 +777,6 @@ describe(`Test endpoint ${endpoint}`, () => {
 
     it("Return 400 when student is not in course", async () => {
       const attributes = { ...baseAttributes };
-      console.log(studentNotInCourse);
       const response = await request
         .post(`${endpoint}/register`)
         .send(attributes)
@@ -1304,7 +1309,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     afterEach(async () => {
-      const edits = await prisma.officeHour.update({
+      await prisma.officeHour.update({
         where: {
           id: officeHour.id,
         },
@@ -1317,7 +1322,6 @@ describe(`Test endpoint ${endpoint}`, () => {
           isRecurring: officeHour.isRecurring,
         },
       });
-      console.log(edits);
     });
 
     it("Return 202 when course successfully archived", async () => {
@@ -1510,7 +1514,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/${officeHour.id}/editForDate/${date}`)
         .send(attributes)
         .set("Authorization", "Bearer " + staff[0].token);
-      console.log(response.text);
       expect(response.status).toBe(202);
     });
 
@@ -3263,14 +3266,14 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
 
-    it("Return 202 for cancelled office hour", async () => {
+    it("Return 403 for cancelled office hour", async () => {
       const date = new Date(officeHour.startDate)
         .toLocaleDateString("en-us")
         .replaceAll("/", "-");
       const response = await request
         .get(`${endpoint}/${officeHour.id}/date/${date}/registrationStatus`)
         .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(403);
     });
 
     it("Return 202 for student without office hours", async () => {

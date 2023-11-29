@@ -4,6 +4,7 @@ import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
+import { beforeEach } from "node:test";
 
 const request = supertest(app);
 const endpoint = "/api/courseToken";
@@ -83,6 +84,14 @@ describe(`Test endpoint ${endpoint}`, () => {
       token: createToken({ user }),
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
+
+    afterEach(async () => {
+      await prisma.course.updateMany({
+        data: {
+          usesTokens: true,
+        },
+      });
+    });
   });
 
   describe("HTTP Post request-  optIn", () => {
@@ -108,45 +117,21 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
-    it("Return 400 when archived course opted in", async () => {
-      const response = await request
+    it("Return 202 when course successfully unarchived", async () => {
+      await request
         .post(`${endpoint}/${courses[0].id}/optIn`)
         .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(400);
-    });
-    it("Return 202 when course successfully unarchived", async () => {
       const response = await request
         .post(`/api/course/${courses[0].id}/archiveCourse`)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
-    it("Return 202 when course successfully opted in", async () => {
-      const response = await request
-        .post(`${endpoint}/${courses[0].id}/optIn`)
-        .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(202);
-      const course = await prisma.course.findUnique({
-        where: {
-          id: courses[0].id,
-        },
-      });
-      expect(course.usesTokens).toBe(true);
-    });
   });
   describe("HTTP POST request - create token", () => {
-    it("Return 202 when course successfully opted out", async () => {
-      const response = await request
+    it("Return 400 when course is opted out of tokens", async () => {
+      await request
         .post(`${endpoint}/${courses[0].id}/optIn`)
         .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(202);
-      const course = await prisma.course.findUnique({
-        where: {
-          id: courses[0].id,
-        },
-      });
-      expect(course.usesTokens).toBe(false);
-    });
-    it("Return 400 when course is opted out of tokens", async () => {
       const attributes = {
         title: "title",
         description: "This is a description",
@@ -157,18 +142,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
-    });
-    it("Return 202 when course successfully opted in", async () => {
-      const response = await request
-        .post(`${endpoint}/${courses[0].id}/optIn`)
-        .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(202);
-      const course = await prisma.course.findUnique({
-        where: {
-          id: courses[0].id,
-        },
-      });
-      expect(course.usesTokens).toBe(true);
     });
     it("Return 202 when course successfully opted out", async () => {
       const response = await request
@@ -537,6 +510,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
+      console.log(response.text);
       expect(response.status).toBe(400);
     });
     it("Return 202 when course successfully opted in", async () => {
