@@ -319,7 +319,7 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHour!");
     return res
@@ -357,7 +357,7 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHourParam!");
     return res
@@ -908,7 +908,7 @@ export const isValidFilterValue = async (req, res, next) => {
   const { filterType, filterValue } = req.params;
   const courseId = req.body;
   const id = req.id;
-  if (filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+  if (filterType === "date" && isNaN(Date.parse(filterValue))) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type Date" });
@@ -980,6 +980,11 @@ export const isValidFilterValue = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
+    }
     const course = await prisma.officeHour.findMany({
       where: {
         courseId: courseId,
@@ -990,7 +995,7 @@ export const isValidFilterValue = async (req, res, next) => {
         },
       },
     });
-    if (course === null) {
+    if (course.length === 0) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "ERROR: filter value must be of type host" });
