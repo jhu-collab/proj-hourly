@@ -1201,7 +1201,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
 
-    it("Return 202 when all parameters are valid", async () => {
+    it("Return 202 when all parameters are valid - date after start date", async () => {
       const attributes = { ...baseAttributes };
       const response = await request
         .post(`${endpoint}/cancelAll`)

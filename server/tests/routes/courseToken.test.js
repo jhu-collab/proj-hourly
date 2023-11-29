@@ -411,7 +411,6 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      console.log(response.text);
       expect(response.status).toBe(400);
     });
     it("Return 401 when no authorization token is provided", async () => {
