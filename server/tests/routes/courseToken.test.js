@@ -84,13 +84,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       token: createToken({ user }),
       expiredToken: createToken({ user, expiresIn: "0" }),
     }));
+  });
 
-    afterEach(async () => {
-      await prisma.course.updateMany({
-        data: {
-          usesTokens: true,
-        },
-      });
+  afterEach(async () => {
+    await prisma.course.updateMany({
+      data: {
+        usesTokens: true,
+      },
     });
   });
 
