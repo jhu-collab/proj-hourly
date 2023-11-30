@@ -51,8 +51,8 @@ router.post(
   courseValidator.areCourseStaffOrInstructor,
   dateValidator.officeHourDateCheck,
   validator.durationIsMultipleof5,
-  //timeValidator.isTime,
-  //validator.areValidDOW,
+  // timeValidator.isTime,
+  // validator.areValidDOW,
   // validator.noConflictsWithHosts,
   courseValidator.isCourseArchived,
   controller.create
