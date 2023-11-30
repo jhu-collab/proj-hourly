@@ -195,6 +195,41 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 when deleting an admin account", async () => {
+      const course = await prisma.course.create({
+        data: {
+          title: "delete course",
+          courseNumber: "123.987",
+          semester: "Fall",
+          calendarYear: 2023,
+          code: "CHRISW",
+          instructors: {
+            connect: {
+              id: deleteAdmin.id,
+            },
+          },
+        },
+      });
+      const start = new Date("10-01-2023");
+      const end = new Date("10-01-2023");
+      end.setUTCHours(end.getUTCHours() + 4);
+      await prisma.officeHour.create({
+        data: {
+          startDate: start,
+          endDate: end,
+          course: {
+            connect: {
+              id: course.id,
+            },
+          },
+          hosts: {
+            connect: {
+              id: deleteAdmin.id,
+            },
+          },
+          location: "home",
+          isRecurring: false,
+        },
+      });
       const response = await request
         .delete(`${endpoint}/${deleteAdmin.id}`)
         .set("Authorization", "Bearer " + deleteAdmin.token);

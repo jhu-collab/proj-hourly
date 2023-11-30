@@ -108,6 +108,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no authorization token is provided", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -132,6 +137,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -157,6 +167,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 403 when invalid user", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -182,6 +197,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is invalid and nonzero", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -207,6 +227,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -232,6 +257,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when Course ID < 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -257,6 +287,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date now", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -282,6 +315,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date in the past", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //    courseDate.setMonth(courseDate.getMonth() + 1);
+    //   }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   let pastDate = new Date();
@@ -309,6 +345,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when endDate is a date now", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -332,6 +373,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when endDate is a date in the past", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       let pastDate = new Date();
@@ -357,6 +403,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when title is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -382,6 +433,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when location is empty", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -407,6 +461,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -432,6 +491,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is invalid", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -443,7 +507,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         endDate: new Date(secondCourseDate - tzoffset2)
           .toISOString()
           .split("T")[0],
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
         location: "zoom",
         isRemote: true,
       };
@@ -457,6 +521,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when beginning date is not on day in daysOfWeek", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -482,6 +551,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 201 when event is created", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 1 || courseDate.getMonth() == 9) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -1178,6 +1252,30 @@ describe(`Test endpoint ${endpoint}`, () => {
     //     .set("Authorization", "Bearer " + instructor.token);
     //   expect(response.status).toBe(400);
     // });
+
+    it("Return 400 with all valid parameters: diff date, course already on date", async () => {
+      const date = new Date(calendarEvents[1].start);
+      const newDate = new Date(calendarEvents[2].start);
+      let attributes = {
+        title: "title",
+        additionalInfo: "this is the new edited description",
+        isCancelled: false,
+        isRemote: true,
+        location: "zoom",
+        newDate: newDate.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0],
+        courseId: course.id,
+      };
+
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
+      const response = await request
+        .post(`${endpoint}/edit`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
 
     it("Return 202 with all valid parameters: new date", async () => {
       const date = new Date(calendarEvents[1].start);
@@ -1973,6 +2071,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no authorization token is provided", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -1998,6 +2101,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2025,6 +2133,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 403 when invalid user", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2052,6 +2165,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is invalid and nonzero", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2079,6 +2197,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2106,6 +2229,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when Course ID < 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2157,6 +2285,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date now", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2183,6 +2314,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date in the past", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2212,6 +2346,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when endDate is a date now", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
     //   var tzoffset3 = new Date().getTimezoneOffset() * 60000;
@@ -2235,6 +2372,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when endDate is a date in the past", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let pastDate = new Date();
     //   pastDate.setMonth(pastDate.getMonth() - 3);
@@ -2259,6 +2399,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when title is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2286,6 +2431,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when location is empty", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2313,6 +2461,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2340,6 +2493,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is invalid", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2355,7 +2513,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           .split("T")[0],
         location: "zoom",
         isRemote: true,
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
       };
       const response = await request
         .post(`${endpoint}/createRecurringEvent`)
@@ -2367,6 +2525,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when beginning date is not on day in daysOfWeek", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);

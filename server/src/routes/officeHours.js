@@ -51,8 +51,8 @@ router.post(
   courseValidator.areCourseStaffOrInstructor,
   dateValidator.officeHourDateCheck,
   validator.durationIsMultipleof5,
-  //timeValidator.isTime,
-  //validator.areValidDOW,
+  // timeValidator.isTime,
+  // validator.areValidDOW,
   // validator.noConflictsWithHosts,
   courseValidator.isCourseArchived,
   controller.create
@@ -102,7 +102,6 @@ router.post(
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
-  courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHostOrInstructor,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
@@ -121,7 +120,6 @@ router.post(
   body("date", "Date is required").optional(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
-  courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHostOrInstructor,
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
@@ -159,7 +157,6 @@ router.post(
   body("location", "location must be a string").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
@@ -239,7 +236,6 @@ router.post(
     .isBoolean(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
@@ -293,7 +289,7 @@ router.get(
 );
 
 router.get(
-  "/:officeHourId/:date/registrationsOnDate",
+  "/:officeHourId/date/:date/registrationsOnDate",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
@@ -301,9 +297,7 @@ router.get(
   param("officeHourId", "Please enter a valid officehour id").isInt(),
   param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
-  accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   controller.getAllRegistrationsOnDate
