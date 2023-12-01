@@ -157,13 +157,13 @@ describe("Course Details Page: Instructor", () => {
       endDate.setDate(endDate.getDate() + 1);
     }
     cy.get('[data-cy="create-start-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(beginDate));
     Cypress.on("uncaught:exception", () => {
       return false;
     });
     cy.get('[data-cy="create-end-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(endDate));
     // Course happens on which days
     cy.get('button[value="Tuesday"]').click();
