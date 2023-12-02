@@ -175,7 +175,7 @@ export const undoUsedToken = async (req, res) => {
   if (issueToken.datesUsed.length === 1) {
     updatedDatesUsed = [];
   } else if (indexToRemove !== -1) {
-    updatedDatesUsed = updatedDatesUsed.splice(indexToRemove, 1);
+    updatedDatesUsed.splice(indexToRemove, 1);
   }
   debug("Updating issueToken for student...");
   const updateIssueToken = await prisma.issueToken.update({
