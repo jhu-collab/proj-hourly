@@ -1624,7 +1624,7 @@ export const addRegistrationFeedback = async (req, res) => {
 export const getRegistrationFeedback = async (req, res) => {
   const id = req.id;
   debug("getting office hours");
-  const officeHour = await prisma.officeHour.findMany({
+  const officeHours = await prisma.officeHour.findMany({
     where: {
       hosts: {
         some: {
@@ -1637,7 +1637,9 @@ export const getRegistrationFeedback = async (req, res) => {
   debug("finding feedback for office hour");
   const feedbacks = await prisma.feedback.findMany({
     where: {
-      officeHourId: officeHour.id,
+      officeHourId: {
+        in: officeHours.map((officeHour) => officeHour.id),
+      },
     },
   });
   return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
