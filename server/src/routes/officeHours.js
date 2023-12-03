@@ -341,7 +341,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("registrationId", "Registration is required").isInt(),
+  body("registrationId", "Registration is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.isRegistrationId,
   validator.isRegistrationHostOrInstructor,
@@ -357,7 +357,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("registrationId", "Registration is required").isInt(),
+  body("registrationId", "Registration is required").notEmpty().isInt(),
   body(
     "feedbackRating",
     "Registration rating must be an integer between 1 and 10"
@@ -366,7 +366,7 @@ router.post(
     .isInt({
       min: 1,
       max: 10,
-    })(),
+    }),
   body("feedbackComment", "Registration comment must be an optional string")
     .isString()
     .optional(),
@@ -386,7 +386,7 @@ router.get(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  param("courseId", "Please enter a valid course id").isInt(),
+  param("courseId", "Please enter a valid course id").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   courseValidator.isCourseStaffOrInstructor,
@@ -405,7 +405,7 @@ router.get(
   courseValidator.isCourseIdParams,
   courseValidator.isCourseInstructor,
   courseValidator.isCourseStaffOrInstructorParam,
-  controller.getRegistrationFeedback
+  controller.getHostFeedback
 );
 
 export default router;
