@@ -1341,3 +1341,23 @@ export const registrationHasFeedback = async (req, res, next) => {
     next();
   }
 };
+
+export const isNotNoShow = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.isNoShow) {
+    debug("registration was a no show");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration was a no show!" });
+  } else {
+    debug("registration was not a no show!");
+    next();
+  }
+};

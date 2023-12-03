@@ -378,6 +378,7 @@ router.post(
   validator.isNotCancelled,
   courseValidator.isCourseArchivedRegistrationId,
   validator.isWithinTimeConstraint,
+  validator.isNotNoShow,
   controller.addRegistrationFeedback
 );
 
