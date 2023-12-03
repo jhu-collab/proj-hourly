@@ -1321,3 +1321,23 @@ export const isWithinTimeConstraint = async (req, res, next) => {
     next();
   }
 };
+
+export const registrationHasFeedback = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.hasFeedback) {
+    debug("feedback already added for this registration");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback already added for this registration!" });
+  } else {
+    debug("feedback does not exist for this registration");
+    next();
+  }
+};

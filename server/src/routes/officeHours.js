@@ -348,6 +348,7 @@ router.post(
   validator.isRegistrationInPast,
   validator.isNotCancelled,
   courseValidator.isCourseArchivedRegistrationId,
+  validator.registrationHasFeedback,
   controller.editRegistrationNoShow
 );
 
