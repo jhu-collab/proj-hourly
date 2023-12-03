@@ -110,8 +110,8 @@ model Registration {
   account                Account               @relation(fields: [accountId], references: [id])
   accountId              Int
   question               String?
-  feedback               String?
-  rating                 Int?
+  feedbackRating         String?
+  feedbackComment        Int?
   topics                 Topic[]               @relation("withTopics")
   isCancelledStaff       Boolean               @default(false)
   officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
@@ -119,8 +119,6 @@ model Registration {
   isNoShow               Boolean               @default(false)
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @default(now()) @updatedAt
-  feedbackRating         Int?
-  feedbackComment        String?
 }
 
 model Topic {
