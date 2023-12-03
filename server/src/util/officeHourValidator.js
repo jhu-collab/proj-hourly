@@ -1305,7 +1305,7 @@ export const isWithinTimeConstraint = async (req, res, next) => {
   const courseEndConstraint =
     spacetime(registrationEndTime).goto("America/New_York");
   courseEndConstraint = courseEndConstraint.add(
-    course.endRegConstraint,
+    course.startRegConstraint,
     "hour"
   );
   if (
