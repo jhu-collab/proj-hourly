@@ -1622,18 +1622,15 @@ export const addRegistrationFeedback = async (req, res) => {
 };
 
 export const getRegistrationFeedback = async (req, res) => {
-  const { registrationId } = req.body;
-  debug("getting registration...");
-  const registration = await prisma.registration.findUnique({
+  const id = req.id;
+  debug("getting office hours");
+  const officeHour = await prisma.officeHour.findMany({
     where: {
-      id: registrationId,
-    },
-  });
-  debug("registration is found");
-  debug("getting office hour");
-  const officeHour = await prisma.officeHour.findUnique({
-    where: {
-      id: registration.officeHourId,
+      hosts: {
+        some: {
+          id,
+        },
+      },
     },
   });
   debug("office hour is found");

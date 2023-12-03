@@ -386,7 +386,6 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("registrationId", "Registration is required").isInt(),
   accountValidator.isAccountValidHeader,
   validator.isRegistrationId,
   validator.isRegistrationHostOrInstructor,
