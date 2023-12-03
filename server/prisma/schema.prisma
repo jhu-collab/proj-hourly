@@ -177,8 +177,8 @@ model Feedback {
   id              Int        @id @default(autoincrement())
   officeHour      OfficeHour @relation(fields: [officeHourId], references: [id])
   officeHourId    Int
-  feedbackRating  String
-  feedbackComment Int?
+  feedbackRating  Int
+  feedbackComment String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now()) @updatedAt
 }
