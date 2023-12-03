@@ -366,7 +366,7 @@ router.post(
     .isInt({
       min: 1,
       max: 10,
-    })(),
+    }),
   body("feedbackComment", "Registration comment must be an optional string")
     .isString()
     .optional(),
