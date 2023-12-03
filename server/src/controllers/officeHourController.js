@@ -1597,3 +1597,52 @@ export const editRegistrationNoShow = async (req, res) => {
   debug("registration is updated");
   return res.status(StatusCodes.ACCEPTED).json({ updatedRegistration });
 };
+
+export const addRegistrationFeedback = async (req, res) => {
+  const { registrationId, feedbackRating, feedbackComment } = req.body;
+  debug("updating registration...");
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      hasFeedback: true,
+    },
+  });
+  debug("registration is updated");
+  const feedback = await prisma.feedback.create({
+    data: {
+      officeHourId: registration.officeHourId,
+      feedbackRating: feedbackRating,
+      feedbackComment: feedbackComment || null,
+    },
+  });
+  debug("feedback is created");
+  return res.status(StatusCodes.ACCEPTED).json({ feedback });
+};
+
+export const getRegistrationFeedback = async (req, res) => {
+  const id = req.id;
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("getting office hours");
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  debug("office hour is found");
+  debug("finding feedback for office hour");
+  const feedbacks = await prisma.feedback.findMany({
+    where: {
+      officeHourId: {
+        in: officeHours.map((officeHour) => officeHour.id),
+      },
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
+};

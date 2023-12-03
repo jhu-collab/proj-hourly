@@ -91,6 +91,7 @@ model OfficeHour {
   isRemote      Boolean             @default(false)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @default(now()) @updatedAt
+  feedbacks     Feedback[]
 }
 
 model numberToDayOfWeek {
@@ -110,8 +111,6 @@ model Registration {
   account                Account               @relation(fields: [accountId], references: [id])
   accountId              Int
   question               String?
-  feedback               String?
-  rating                 Int?
   topics                 Topic[]               @relation("withTopics")
   isCancelledStaff       Boolean               @default(false)
   officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
@@ -119,6 +118,7 @@ model Registration {
   isNoShow               Boolean               @default(false)
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @default(now()) @updatedAt
+  hasFeedback            Boolean               @default(false)
 }
 
 model Topic {
@@ -171,4 +171,14 @@ model CalendarEvent {
   updatedAt      DateTime @default(now()) @updatedAt
 
   @@unique([courseId, date])
+}
+
+model Feedback {
+  id              Int        @id @default(autoincrement())
+  officeHour      OfficeHour @relation(fields: [officeHourId], references: [id])
+  officeHourId    Int
+  feedbackRating  Int
+  feedbackComment String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now()) @updatedAt
 }

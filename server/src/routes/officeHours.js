@@ -351,4 +351,46 @@ router.post(
   controller.editRegistrationNoShow
 );
 
+router.post(
+  "/addRegistrationFeedback",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("registrationId", "Registration is required").isInt(),
+  body(
+    "feedbackRating",
+    "Registration rating must be an integer between 1 and 10"
+  )
+    .notEmpty()
+    .isInt({
+      min: 1,
+      max: 10,
+    })(),
+  body("feedbackComment", "Registration comment must be an optional string")
+    .isString()
+    .optional(),
+  accountValidator.isAccountValidHeader,
+  validator.isRegistrationId,
+  validator.isRegistrationStudent,
+  validator.isRegistrationInPast,
+  validator.isNotCancelled,
+  courseValidator.isCourseArchivedRegistrationId,
+  validator.isWithinTimeConstraint,
+  controller.addRegistrationFeedback
+);
+
+router.post(
+  "/:courseId/getRegistrationFeedback",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseStaffOrInstructor,
+  controller.getRegistrationFeedback
+);
+
 export default router;
