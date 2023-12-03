@@ -1607,6 +1607,16 @@ export const addRegistrationFeedback = async (req, res) => {
     },
   });
   debug("registration is found");
+  debug("updating registration");
+  const updatedRegistration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      hasFeedback: true,
+    },
+  });
+  debug("registration is updated");
   const feedback = await prisma.feedback.create({
     data: {
       officeHourId: registration.officeHourId,
