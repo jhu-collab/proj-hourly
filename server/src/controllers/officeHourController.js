@@ -13,7 +13,6 @@ import {
 } from "../util/notificationUtil.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
-import { param } from "express-validator";
 
 const debug = factory(import.meta.url);
 
