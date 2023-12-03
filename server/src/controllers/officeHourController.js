@@ -1597,3 +1597,23 @@ export const editRegistrationNoShow = async (req, res) => {
   debug("registration is updated");
   return res.status(StatusCodes.ACCEPTED).json({ updatedRegistration });
 };
+
+export const addRegistrationFeedback = async (req, res) => {
+  const { registrationId, feedbackRating, feedbackComment } = req.body;
+  debug("finding registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  const feedback = await prisma.feedback.create({
+    data: {
+      officeHourId: registration.officeHourId,
+      feedbackRating: feedbackRating,
+      feedbackComment: feedbackComment || null,
+    },
+  });
+  debug("feedback is created");
+  return res.status(StatusCodes.ACCEPTED).json({ feedback });
+};
