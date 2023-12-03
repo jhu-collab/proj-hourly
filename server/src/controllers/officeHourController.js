@@ -1620,3 +1620,28 @@ export const addRegistrationFeedback = async (req, res) => {
   debug("feedback is created");
   return res.status(StatusCodes.ACCEPTED).json({ feedback });
 };
+
+export const getRegistrationFeedback = async (req, res) => {
+  const { registrationId } = req.body;
+  debug("getting registration...");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  debug("getting office hour");
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: registration.officeHourId,
+    },
+  });
+  debug("office hour is found");
+  debug("finding feedback for office hour");
+  const feedbacks = await prisma.feedback.findMany({
+    where: {
+      officeHourId: officeHour.id,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
+};

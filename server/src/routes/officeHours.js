@@ -380,4 +380,20 @@ router.post(
   controller.addRegistrationFeedback
 );
 
+router.post(
+  "/getRegistrationFeedback",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("registrationId", "Registration is required").isInt(),
+  accountValidator.isAccountValidHeader,
+  validator.isRegistrationId,
+  validator.isRegistrationHostOrInstructor,
+  validator.isRegistrationInPast,
+  validator.isNotCancelled,
+  courseValidator.isCourseArchivedRegistrationId,
+  controller.getRegistrationFeedback
+);
+
 export default router;
