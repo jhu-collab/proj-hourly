@@ -380,7 +380,7 @@ router.post(
   controller.addRegistrationFeedback
 );
 
-router.post(
+router.get(
   "/:courseId/getRegistrationFeedback",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
@@ -390,6 +390,21 @@ router.post(
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   courseValidator.isCourseStaffOrInstructor,
+  controller.getRegistrationFeedback
+);
+
+router.get(
+  "/:courseId/getRegistrationFeedback/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("accountId", "Please enter a valid host account id").isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseInstructor,
+  courseValidator.isCourseStaffOrInstructorParam,
   controller.getRegistrationFeedback
 );
 
