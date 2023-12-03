@@ -1600,15 +1600,8 @@ export const editRegistrationNoShow = async (req, res) => {
 
 export const addRegistrationFeedback = async (req, res) => {
   const { registrationId, feedbackRating, feedbackComment } = req.body;
-  debug("finding registration...");
-  const registration = await prisma.registration.findUnique({
-    where: {
-      id: registrationId,
-    },
-  });
-  debug("registration is found");
-  debug("updating registration");
-  const updatedRegistration = await prisma.registration.update({
+  debug("updating registration...");
+  const registration = await prisma.registration.update({
     where: {
       id: registrationId,
     },
