@@ -44,6 +44,15 @@ function RegistrationTabs() {
       {(courseType === "Staff" || courseType === "Instructor") && (
         <Tab data-cy="registration-types-tab" label="Registration Types" />
       )}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <Divider
+          orientation="vertical"
+          sx={{ height: 30, alignSelf: "center", marginX: 3 }}
+        />
+      )}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <Tab data-cy="registration-feedback-tab" label="Feedback" />
+      )}
     </Tabs>
   );
 }

@@ -1302,7 +1302,7 @@ export const isWithinTimeConstraint = async (req, res, next) => {
       registrationEndTime.toNativeDate().getTimezoneOffset() / 60,
     "hour"
   );
-  const courseEndConstraint =
+  let courseEndConstraint =
     spacetime(registrationEndTime).goto("America/New_York");
   courseEndConstraint = courseEndConstraint.add(
     course.startRegConstraint,

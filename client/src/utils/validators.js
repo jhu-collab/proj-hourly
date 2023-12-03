@@ -348,3 +348,11 @@ export const tokenEditLimitSchema = yup.object().shape({
     .required("Quantity is required for an override")
     .min(1, "Must have positive override"),
 });
+
+export const feedbackTypeSchema = yup.object().shape({
+  feedbackRating: yup
+    .number()
+    .required("A feedback rating is required!")
+    .min(0, "Must have non-zero rating"),
+  feedbackComment: yup.string().nullable(),
+});
