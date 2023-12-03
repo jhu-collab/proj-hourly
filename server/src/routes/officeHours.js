@@ -381,17 +381,15 @@ router.post(
 );
 
 router.post(
-  "/getRegistrationFeedback",
+  "/:courseId/getRegistrationFeedback",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
+  param("courseId", "Please enter a valid course id").isInt(),
   accountValidator.isAccountValidHeader,
-  validator.isRegistrationId,
-  validator.isRegistrationHostOrInstructor,
-  validator.isRegistrationInPast,
-  validator.isNotCancelled,
-  courseValidator.isCourseArchivedRegistrationId,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseStaffOrInstructor,
   controller.getRegistrationFeedback
 );
 

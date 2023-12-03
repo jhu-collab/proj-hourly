@@ -13,6 +13,7 @@ import {
 } from "../util/notificationUtil.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
+import { param } from "express-validator";
 
 const debug = factory(import.meta.url);
 
@@ -1623,9 +1624,11 @@ export const addRegistrationFeedback = async (req, res) => {
 
 export const getRegistrationFeedback = async (req, res) => {
   const id = req.id;
+  const courseId = parseInt(req.params.courseId, 10);
   debug("getting office hours");
   const officeHours = await prisma.officeHour.findMany({
     where: {
+      courseId: courseId,
       hosts: {
         some: {
           id,
