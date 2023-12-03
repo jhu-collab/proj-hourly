@@ -76,7 +76,7 @@ function StudentTokenUsage({ token }) {
             </Typography>
             <Typography variant="h5" data-cy="token-balance-student">
               Balance:{" "}
-              {!token.overrideAmount
+              {token.overrideAmount === null
                 ? token.CourseToken.tokenLimit - token.datesUsed.length
                 : token.overrideAmount - token.datesUsed.length}{" "}
             </Typography>
@@ -90,7 +90,7 @@ function StudentTokenUsage({ token }) {
             ) : (
               <Typography variant="h5" data-cy="token-limit-student">
                 Limit:{" "}
-                {!token.overrideAmount
+                {token.overrideAmount === null
                   ? token.CourseToken.tokenLimit
                   : token.overrideAmount}
               </Typography>
