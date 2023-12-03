@@ -544,6 +544,13 @@ export const cancelAll = async (req, res) => {
       },
     });
     debug("registrations are cancelled");
+    debug("deleting feedback for course");
+    await prisma.feedback.deleteMany({
+      where: {
+        officeHourId: officeHourId,
+      },
+    });
+    debug("deleted feedback for course");
     debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
@@ -566,6 +573,13 @@ export const cancelAll = async (req, res) => {
       },
     });
     debug("registrations are cancelled");
+    debug("deleting feedback for course");
+    await prisma.feedback.deleteMany({
+      where: {
+        officeHourId: officeHourId,
+      },
+    });
+    debug("deleted feedback for course");
     debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.update({
       where: {
