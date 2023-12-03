@@ -1644,5 +1644,34 @@ export const getRegistrationFeedback = async (req, res) => {
       },
     },
   });
+  debug("found feedbacks for host");
+  return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
+};
+
+export const getHostFeedback = async (req, res) => {
+  const id = req.id;
+  const courseId = parseInt(req.params.courseId, 10);
+  const hostId = parseInt(req.params.accountId, 10);
+  debug("getting office hours");
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          hostId,
+        },
+      },
+    },
+  });
+  debug("office hour is found");
+  debug("finding feedback for office hour");
+  const feedbacks = await prisma.feedback.findMany({
+    where: {
+      officeHourId: {
+        in: officeHours.map((officeHour) => officeHour.id),
+      },
+    },
+  });
+  debug("found feedbacks for host");
   return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
 };

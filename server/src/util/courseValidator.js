@@ -186,6 +186,86 @@ export const isCourseStaffOrInstructor = async (req, res, next) => {
   }
 };
 
+export const isCourseInstructor = async (req, res, next) => {
+  debug("isCourseInstructor is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const id = req.id;
+  debug("Checking if account is an instructor for course...");
+  const instructorQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      instructors: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  if (instructorQuery === null) {
+    debug("Account is not an instructor for course...");
+    debug("Error in isCourseInstructor!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a instructor" });
+  } else {
+    debug("Account is an instructor for course!");
+    debug("isCourseInstructor is done!");
+    next();
+  }
+};
+
+export const isCourseStaffOrInstructorParam = async (req, res, next) => {
+  debug("isCourseStaffOrInstructorParam is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId, accountId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  if (accountId === undefined || accountId === null) {
+    accountId = parseInt(req.params.accountId, 10);
+  }
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            accountId,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            accountId,
+          },
+        },
+      },
+    ],
+  };
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    debug("Account is not an instructor or staff for course...");
+    debug("Error in isCourseStaffOrInstructorParam!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff or instructor" });
+  } else {
+    debug("Account is an instructor or staff for course!");
+    debug("isCourseStaffOrInstructorParam is done!");
+    next();
+  }
+};
+
 export const areCourseStaffOrInstructor = async (req, res, next) => {
   debug("areCourseStaffOrInstructor is called!");
   debug("Retrieving course id and hosts id array from body...");
