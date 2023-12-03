@@ -3143,6 +3143,8 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
         data: {
           hasFeedback: false,
+          isCancelled: false,
+          isCancelledStaff: false,
         },
       });
       await prisma.feedback.deleteMany({});
@@ -3195,10 +3197,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(400);
     });
 
-    it("Return 400 when registration is cancelled", async () => {
+    it("Return 409 when registration is cancelled", async () => {
       await prisma.registration.update({
         where: {
           id: registration.id,
@@ -3213,7 +3215,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
     });
 
     it("Return 202 when all parameters are valid", async () => {
@@ -3258,22 +3260,22 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when feedbackRating < 1", async () => {
+    it("Return 409 when feedbackRating < 1", async () => {
       const attributes = { ...baseAttributes, feedbackRating: 0 };
       const response = await request
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
     });
 
-    it("Return 400 when feedbackRating > 10", async () => {
+    it("Return 409 when feedbackRating > 10", async () => {
       const attributes = { ...baseAttributes, feedbackRating: 11 };
       const response = await request
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
     });
 
     it("Return 202 when no feedback comment", async () => {
@@ -3282,7 +3284,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(202);
     });
 
     it("Return 400 when feedback already exists", async () => {
