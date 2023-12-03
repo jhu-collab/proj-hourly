@@ -118,6 +118,7 @@ model Registration {
   isNoShow               Boolean               @default(false)
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @default(now()) @updatedAt
+  hasFeedback Boolean @default(false)
 }
 
 model Topic {
@@ -178,4 +179,6 @@ model Feedback {
   officeHourId    Int
   feedbackRating  String
   feedbackComment Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 }
