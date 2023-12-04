@@ -1,12 +1,12 @@
 import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
-import useStoreLayout from "../../hooks/useStoreLayout";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper"; // Import Paper component
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-
+import Grid from "@mui/material/Grid";
+import MainCard from "../../components/MainCard";
+import useStoreLayout from "../../hooks/useStoreLayout";
 import useQueryGetRegistrationFeedback from "../../hooks/useQueryGetRegistrationFeedback";
 
 function Feedback({ index }) {
@@ -51,8 +51,6 @@ function Feedback({ index }) {
     rating = sum / (2 * 5);
   }
 
-  console.log(dataFeedback, rating);
-
   return (
     <>
       {registrationTab === index &&
@@ -60,42 +58,61 @@ function Feedback({ index }) {
           noRegistrations()
         ) : (
           <>
-            <Stack
-              sx={{ flexGrow: 1, pr: 2, mt: 2 }} // Adjust mt to provide space between the menu bar and the Stack
-              alignItems="center"
-              justifyContent="space-between"
+            <Grid
+              data-cy="registration-type-list"
+              container
               spacing={2}
+              marginTop={2}
             >
-              <Paper key={-1} sx={{ p: 2, borderRadius: 1, width: "50%" }}>
-                <Rating
-                  name="feedback"
-                  value={rating}
-                  precision={0.5}
-                  readOnly
-                  emptyIcon={
-                    <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-                  }
-                  size="large"
-                />
-              </Paper>
+              <Grid item xs={12}>
+                <MainCard sx={{ padding: 2 }} content={false}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
+                  >
+                    <Typography>Average Rating: </Typography>
+                    <Rating
+                      name="feedback"
+                      value={rating}
+                      precision={0.5}
+                      readOnly
+                      emptyIcon={
+                        <StarIcon
+                          style={{ opacity: 0.55 }}
+                          fontSize="inherit"
+                        />
+                      }
+                      size="large"
+                    />
+                  </Stack>
+                </MainCard>
+              </Grid>
 
               {dataFeedback.map((feedback, index) => {
                 if (feedback.feedbackComment) {
                   return (
-                    <Paper
-                      key={index}
-                      sx={{ p: 2, borderRadius: 1, width: "100%" }}
-                    >
-                      <Typography fontWeight={600}>
-                        {feedback.feedbackComment}
-                      </Typography>
-                    </Paper>
+                    <Grid item xs={12}>
+                      <MainCard sx={{ padding: 2 }} content={false}>
+                        <Stack
+                          direction={{ xs: "column", sm: "row" }}
+                          justifyContent="space-between"
+                          alignItems="center"
+                          spacing={2}
+                        >
+                          <Typography fontWeight={600}>
+                            {feedback.feedbackComment}
+                          </Typography>
+                        </Stack>
+                      </MainCard>
+                    </Grid>
                   );
                 } else {
                   return <div key={index}></div>;
                 }
               })}
-            </Stack>
+            </Grid>
           </>
         ))}
     </>
