@@ -399,6 +399,7 @@ export const addOverride = async (req, res) => {
   const issueToken = await prisma.issueToken.updateMany({
     where: {
       courseTokenId,
+      accountId: accountId,
     },
     data: {
       overrideAmount,
