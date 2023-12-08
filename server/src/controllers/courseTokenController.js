@@ -129,8 +129,9 @@ export const editCourseToken = async (req, res) => {
 export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date } = req.body;
+  const { date, reason } = req.body;
   const dateObj = spacetime(date);
+  const { id } = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
@@ -139,26 +140,24 @@ export const usedToken = async (req, res) => {
     },
   });
   debug("issueToken found for student...");
-  debug("Updating issueToken...");
-  const updateIssueToken = await prisma.issueToken.update({
-    where: {
-      id: issueToken.id,
-    },
+  debug("Creating used token...");
+  const usedToken = await prisma.usedToken.create({
     data: {
-      datesUsed: {
-        push: dateObj.toNativeDate(),
-      },
+      issueTokenId: issueToken.id,
+      appliedById: id,
+      reason: reason,
     },
   });
-  debug("Updated issueToken...");
-  return res.status(StatusCodes.ACCEPTED).json({ updateIssueToken });
+  debug("Used token created...");
+  return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };
 
 export const undoUsedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date } = req.body;
+  const { date, reason } = req.body;
   const dateObj = spacetime(date);
+  const { id } = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
@@ -167,27 +166,22 @@ export const undoUsedToken = async (req, res) => {
     },
   });
   debug("Found issueToken for student...");
-  const dateToFind = dateObj.format("iso").slice(0, 10);
-  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) => {
-    return new Date(dateTime).toISOString().startsWith(dateToFind);
-  });
-  let updatedDatesUsed = issueToken.datesUsed;
-  if (issueToken.datesUsed.length === 1) {
-    updatedDatesUsed = [];
-  } else if (indexToRemove !== -1) {
-    updatedDatesUsed.splice(indexToRemove, 1);
-  }
-  debug("Updating issueToken for student...");
-  const updateIssueToken = await prisma.issueToken.update({
+  debug("Finding used token");
+  const updatedUsedToken = await prisma.usedToken.update({
     where: {
-      id: issueToken.id,
+      issueTokenId: issueToken.id,
+      createdAt: {
+        gte: dateObj.toNativeDate(),
+        lt: dateObj.add(1, 'day').toNativeDate(),
+      },
     },
     data: {
-      datesUsed: updatedDatesUsed,
+      unDoneById: id,
+      reason: reason,
     },
   });
-  debug("Updated issueToken for student...");
-  return res.status(StatusCodes.ACCEPTED).json({ updateIssueToken });
+  debug("Updated used token");
+  return res.status(StatusCodes.ACCEPTED).json({ updatedUsedToken });
 };
 
 export const getRemainingTokens = async (req, res) => {
