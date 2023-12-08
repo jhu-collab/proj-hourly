@@ -1,3 +1,6 @@
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
 import Stack from "@mui/material/Stack";
@@ -6,16 +9,59 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Grid from "@mui/material/Grid";
 import MainCard from "../../components/MainCard";
+import FormInputDropdown from "../../components/form-ui/FormInputDropdown";
 import useStoreLayout from "../../hooks/useStoreLayout";
-import useQueryGetRegistrationFeedback from "../../hooks/useQueryGetRegistrationFeedback";
+import useQueryGetRegistrationFeedbackForAccount from "../../hooks/useQueryGetRegistrationFeedbackForAccount";
+import useQueryCourseUsers from "../../hooks/useQueryCourseUsers";
+import { accountIdSchema } from "../../utils/validators";
+
+const getStaffOptions = (staff) => {
+  const staffArr = [];
+  staff.forEach((user) => {
+    staffArr.push({
+      id: user.id,
+      value: user.id,
+      label: user.firstName + " " + user.lastName,
+      "data-cy": user.userName,
+    });
+  });
+  return staffArr;
+};
 
 function Feedback({ index }) {
+  const courseType = useStoreLayout((state) => state.courseType);
   const registrationTab = useStoreLayout((state) => state.registrationTab);
-  const {
+  const { control, handleSubmit, watch } = useForm({
+    defaultValues: {
+      accountId: "",
+    },
+    resolver: yupResolver(accountIdSchema),
+  });
+
+  const accountId = watch("accountId");
+  let {
     isLoading: isLoadingFeedback,
     error: errorFeedback,
     data: dataFeedback,
-  } = useQueryGetRegistrationFeedback();
+  } = useQueryGetRegistrationFeedbackForAccount(accountId);
+  const { isLoading, error, data: courseUsers } = useQueryCourseUsers();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { isLoading, error, data } =
+        await useQueryGetRegistrationFeedbackForAccount(accountId);
+      isLoadingFeedback = isLoading;
+      errorFeedback = error;
+      dataFeedback = data;
+    };
+
+    if (accountId) {
+      fetchData();
+    }
+  }, [accountId]);
+
+  const staff = getStaffOptions(courseUsers?.staff || []);
+
   let rating = -1;
 
   const noRegistrations = () => {
@@ -86,6 +132,16 @@ function Feedback({ index }) {
                       }
                       size="large"
                     />
+                    {courseType === "Instructor" && (
+                      <FormInputDropdown
+                        data-cy="token-dropdown-type"
+                        name="accountId"
+                        control={control}
+                        label="Course Staff"
+                        options={staff || []}
+                        defaultValues={[``]}
+                      />
+                    )}
                   </Stack>
                 </MainCard>
               </Grid>

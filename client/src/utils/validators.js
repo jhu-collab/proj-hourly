@@ -356,3 +356,7 @@ export const feedbackTypeSchema = yup.object().shape({
     .min(0, "Must have non-zero rating"),
   feedbackComment: yup.string().nullable(),
 });
+
+export const accountIdSchema = yup.object().shape({
+  accountId: yup.number().required("Account id is required!")
+});
