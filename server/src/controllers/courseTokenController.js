@@ -278,9 +278,9 @@ export const deleteSingle = async (req, res) => {
     },
   });
   let issueTokenIds = [];
-  issueTokens.forEach((token) => {
-    issueTokenIds.push(token.id);
-  });
+  for (let issueToken of issueTokens) {
+    issueTokenIds.push(issueToken.id);
+  }
   debug("deleting used tokens...");
   await prisma.usedToken.deleteMany({
     where: {
@@ -324,7 +324,28 @@ export const deleteAll = async (req, res) => {
     courseTokenId.push(courseToken.id);
   }
   debug("Deleting all issueTokens...");
-  const issueToken = await prisma.issueToken.deleteMany({
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenId,
+      },
+    },
+  });
+  let issueTokenIds = [];
+  for (let issueToken of issueTokens) {
+    issueTokenIds.push(issueToken.id);
+  }
+  debug("Deleting all usedTokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
+  debug("All usedTokens deleted...");
+  debug("Deleting all issueTokens...");
+  await prisma.issueToken.deleteMany({
     where: {
       courseTokenId: {
         in: courseTokenId,
