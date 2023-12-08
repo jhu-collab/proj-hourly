@@ -172,7 +172,7 @@ export const undoUsedToken = async (req, res) => {
       issueTokenId: issueToken.id,
       createdAt: {
         gte: dateObj.toNativeDate(),
-        lt: dateObj.add(1, 'day').toNativeDate(),
+        lt: dateObj.add(1, "day").toNativeDate(),
       },
     },
     data: {
@@ -207,7 +207,7 @@ export const getRemainingTokens = async (req, res) => {
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
   const overrideAmount = issueToken.overrideAmount;
-  const datesUsedLength = issueToken.datesUsed.length;
+  const datesUsedLength = issueToken.usedTokens.length;
   const remainingTokens =
     overrideAmount !== null
       ? overrideAmount - datesUsedLength
@@ -262,7 +262,7 @@ export const getUsedTokens = async (req, res) => {
     },
   });
   debug("Found issueToken for student...");
-  const datesUsedLength = issueToken.datesUsed.length;
+  const datesUsedLength = issueToken.usedTokens.length;
 
   return res.status(StatusCodes.ACCEPTED).json({ balance: datesUsedLength });
 };

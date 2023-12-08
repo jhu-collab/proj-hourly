@@ -161,6 +161,7 @@ model IssueToken {
 }
 
 model UsedToken {
+  // relation to the issue token
   id             Int         @id @default(autoincrement())
   issueTokenId   Int
   issueToken     IssueToken @relation(fields: [issueTokenId], references: [id])
