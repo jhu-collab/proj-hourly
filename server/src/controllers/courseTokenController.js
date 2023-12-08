@@ -272,8 +272,26 @@ export const deleteSingle = async (req, res) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId,
+    },
+  });
+  let issueTokenIds = [];
+  issueTokens.forEach((token) => {
+    issueTokenIds.push(token.id);
+  });
+  debug("deleting used tokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
+  debug("used tokens deleted");
   debug("Deleting issueTokens...");
-  const issueToken = await prisma.issueToken.deleteMany({
+  await prisma.issueToken.deleteMany({
     where: {
       courseTokenId,
     },
