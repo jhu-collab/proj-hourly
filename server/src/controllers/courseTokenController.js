@@ -246,19 +246,15 @@ export const getAllRemainingTokens = async (req, res) => {
   debug("Found issueToken...");
   debug("filtering issue tokens");
   for (const issueToken of issueTokens) {
-    const courseToken = await prisma.courseToken.findFirst({
-      where: {
-        id: issueToken.courseTokenId,
-      },
-    });
     const remainingTokens =
       issueToken.overrideAmount !== null
         ? issueToken.overrideAmount - issueToken.usedTokens.length
-        : courseToken.tokenLimit - issueToken.usedTokens.length;
+        : issueToken.CourseToken.tokenLimit - issueToken.usedTokens.length;
     if (remainingTokens > 0) {
       filteredIssueTokens.push(issueToken);
     }
   }
+  debug("issue tokens filtered");
   return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };
 
@@ -400,8 +396,20 @@ export const getTokensForStudent = async (req, res) => {
     },
   });
   debug("Found issue tokens for student...");
+  debug("filtering issue tokens");
+  for (const issueToken of issueTokens) {
+    const remainingTokens =
+      issueToken.overrideAmount !== null
+        ? issueToken.overrideAmount - issueToken.usedTokens.length
+        : issueToken.CourseToken.tokenLimit - issueToken.usedTokens.length;
+    if (remainingTokens > 0) {
+      filteredIssueTokens.push(issueToken);
+    }
+  }
+  debug("issue tokens filtered");
   return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
 };
+t;
 
 export const addOverride = async (req, res) => {
   if (validate(req, res)) {
