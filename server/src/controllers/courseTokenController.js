@@ -207,11 +207,11 @@ export const getRemainingTokens = async (req, res) => {
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
   const overrideAmount = issueToken.overrideAmount;
-  const datesUsedLength = issueToken.usedTokens.length;
+  const usedTokensLength = issueToken.usedTokens.length;
   const remainingTokens =
     overrideAmount !== null
-      ? overrideAmount - datesUsedLength
-      : numTokenLimit - datesUsedLength;
+      ? overrideAmount - usedTokensLength
+      : numTokenLimit - usedTokensLength;
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
@@ -274,9 +274,9 @@ export const getUsedTokens = async (req, res) => {
     },
   });
   debug("Found issueToken for student...");
-  const datesUsedLength = issueToken.usedTokens.length;
+  const usedTokensLength = issueToken.usedTokens.length;
 
-  return res.status(StatusCodes.ACCEPTED).json({ balance: datesUsedLength });
+  return res.status(StatusCodes.ACCEPTED).json({ balance: usedTokensLength });
 };
 
 export const deleteSingle = async (req, res) => {
