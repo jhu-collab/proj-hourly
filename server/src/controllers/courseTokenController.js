@@ -245,6 +245,7 @@ export const getAllRemainingTokens = async (req, res) => {
   });
   debug("Found issueToken...");
   debug("filtering issue tokens");
+  let filteredIssueTokens = [];
   for (const issueToken of issueTokens) {
     const remainingTokens =
       issueToken.overrideAmount !== null
@@ -397,6 +398,7 @@ export const getTokensForStudent = async (req, res) => {
   });
   debug("Found issue tokens for student...");
   debug("filtering issue tokens");
+  let filteredIssueTokens = [];
   for (const issueToken of issueTokens) {
     const remainingTokens =
       issueToken.overrideAmount !== null
@@ -407,7 +409,7 @@ export const getTokensForStudent = async (req, res) => {
     }
   }
   debug("issue tokens filtered");
-  return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+  return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };
 t;
 
