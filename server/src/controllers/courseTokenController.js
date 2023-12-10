@@ -1,10 +1,5 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import { stringToTimeObj } from "../util/officeHourValidator.js";
-import checkValidation from "../util/checkValidation.js";
-import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
-import { computeDiff, handleUTCDateChange } from "../util/helpers.js";
-import { weekday } from "../util/officeHourValidator.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
 import validate from "../util/checkValidation.js";
@@ -129,8 +124,7 @@ export const editCourseToken = async (req, res) => {
 export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date, reason } = req.body;
-  const dateObj = spacetime(date);
+  const { reason } = req.body;
   const { id } = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
@@ -138,16 +132,25 @@ export const usedToken = async (req, res) => {
       accountId: accountId,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
+  console.log("issueToken", issueToken);
   debug("issueToken found for student...");
   debug("Creating used token...");
   const usedToken = await prisma.usedToken.create({
     data: {
-      issueTokenId: issueToken.id,
+      issueToken: {
+        connect: {
+          id: issueToken.id,
+        },
+      },
       appliedById: id,
       reason: reason,
     },
   });
+  console.log("usedToken", usedToken);
   debug("Used token created...");
   return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };
@@ -163,6 +166,9 @@ export const undoUsedToken = async (req, res) => {
     where: {
       accountId: accountId,
       courseTokenId,
+    },
+    include: {
+      usedTokens: true,
     },
   });
   debug("Found issueToken for student...");
@@ -203,6 +209,9 @@ export const getRemainingTokens = async (req, res) => {
       accountId: id,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
@@ -238,6 +247,7 @@ export const getAllRemainingTokens = async (req, res) => {
     },
     include: {
       CourseToken: true,
+      usedTokens: true,
     },
     orderBy: {
       id: "asc",
@@ -272,6 +282,9 @@ export const getUsedTokens = async (req, res) => {
       accountId: id,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issueToken for student...");
   const usedTokensLength = issueToken.usedTokens.length;
@@ -287,6 +300,9 @@ export const deleteSingle = async (req, res) => {
   const issueTokens = await prisma.issueToken.findMany({
     where: {
       courseTokenId,
+    },
+    include: {
+      usedTokens: true,
     },
   });
   let issueTokenIds = [];
@@ -342,6 +358,9 @@ export const deleteAll = async (req, res) => {
         in: courseTokenId,
       },
     },
+    include: {
+      usedTokens: true,
+    },
   });
   let issueTokenIds = [];
   for (let issueToken of issueTokens) {
@@ -391,6 +410,7 @@ export const getTokensForStudent = async (req, res) => {
     },
     include: {
       CourseToken: true,
+      usedTokens: true,
     },
     orderBy: {
       id: "asc",
@@ -411,7 +431,6 @@ export const getTokensForStudent = async (req, res) => {
   debug("issue tokens filtered");
   return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };
-t;
 
 export const addOverride = async (req, res) => {
   if (validate(req, res)) {

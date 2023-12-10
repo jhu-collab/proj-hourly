@@ -440,6 +440,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course id is invalid", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -452,6 +453,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when student token id is invalid", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -470,6 +472,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token of archived course used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -494,6 +497,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token of paused course used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -512,6 +516,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course token successfully used", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -526,8 +531,9 @@ describe(`Test endpoint ${endpoint}`, () => {
         },
       });
       const date = new Date(Date.now()).toISOString();
+      console.log(response.text);
       expect(response.status).toBe(202);
-      expect(issueToken.datesUsed.length).toBe(1);
+      expect(issueToken.usedTokens.length).toBe(1);
     });
     it("Return 202 when course token successfully edited", async () => {
       const attributes = {
@@ -551,6 +557,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token limit reached", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "using token",
       };
       const response = await request
         .post(
@@ -595,6 +602,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(courses[0].usesTokens).toBe(false);
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -631,6 +639,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course id is invalid", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -643,6 +652,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token id is invalid", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -661,6 +671,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token of archived course removed", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -685,6 +696,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course token of paused course removed", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -703,6 +715,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 202 when course token successfully removed", async () => {
       const attributes = {
         date: new Date(Date.now()).toISOString(),
+        reason: "undoing used token",
       };
       const response = await request
         .post(
@@ -716,8 +729,9 @@ describe(`Test endpoint ${endpoint}`, () => {
           accountId: users[0].id,
         },
       });
+      console.log(response.text);
       expect(response.status).toBe(202);
-      expect(issueToken.datesUsed.length).toBe(0);
+      expect(issueToken.usedTokens.length).toBe(0);
     });
   });
   describe("HTTP POST request - add override amount", () => {

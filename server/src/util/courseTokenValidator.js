@@ -72,6 +72,9 @@ export const tokenLimitReached = async (req, res, next) => {
       accountId: accountId,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issue token...");
   const dates = issueToken.usedTokens;
