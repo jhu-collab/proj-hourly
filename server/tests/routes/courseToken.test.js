@@ -910,6 +910,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(issueToken.overrideAmount).toBe(15);
     });
   });
+  describe("HTTP POST request - edit used token", () => {});
   describe("HTTP GET request - course tokens for course", () => {
     it("Return 400 when course is opted out of tokens", async () => {
       const optResponse = await request
