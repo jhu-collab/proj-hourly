@@ -210,7 +210,10 @@ export const getRemainingTokens = async (req, res) => {
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
   const overrideAmount = issueToken.overrideAmount;
-  const usedTokensLength = issueToken.usedTokens.length;
+  const usedTokensLength = issueToken.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  ).length;
   const remainingTokens =
     overrideAmount !== null
       ? overrideAmount - usedTokensLength
@@ -253,8 +256,18 @@ export const getAllRemainingTokens = async (req, res) => {
   for (const issueToken of issueTokens) {
     const remainingTokens =
       issueToken.overrideAmount !== null
-        ? issueToken.overrideAmount - issueToken.usedTokens.length
-        : issueToken.CourseToken.tokenLimit - issueToken.usedTokens.length;
+        ? issueToken.overrideAmount -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length
+        : issueToken.CourseToken.tokenLimit -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length;
     if (remainingTokens > 0) {
       filteredIssueTokens.push(issueToken);
     }
@@ -281,7 +294,10 @@ export const getUsedTokens = async (req, res) => {
     },
   });
   debug("Found issueToken for student...");
-  const usedTokensLength = issueToken.usedTokens.length;
+  const usedTokensLength = issueToken.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  ).length;
 
   return res.status(StatusCodes.ACCEPTED).json({ balance: usedTokensLength });
 };
@@ -416,8 +432,18 @@ export const getTokensForStudent = async (req, res) => {
   for (const issueToken of issueTokens) {
     const remainingTokens =
       issueToken.overrideAmount !== null
-        ? issueToken.overrideAmount - issueToken.usedTokens.length
-        : issueToken.CourseToken.tokenLimit - issueToken.usedTokens.length;
+        ? issueToken.overrideAmount -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length
+        : issueToken.CourseToken.tokenLimit -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length;
     if (remainingTokens > 0) {
       filteredIssueTokens.push(issueToken);
     }
@@ -465,4 +491,30 @@ export const deleteOverride = async (req, res) => {
   });
   debug("Removed override amount for student...");
   return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
+export const editUsedToken = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const { reason, appliedById, unDoneById, issueTokenId } = req.body;
+  debug("Updating used token for student...");
+  const usedToken = await prisma.usedToken.update({
+    where: {
+      id: usedTokenId,
+      IssueToken: {
+        courseId: courseId,
+      },
+    },
+    data: {
+      reason: reason,
+      appliedById: appliedById,
+      unDoneById: unDoneById,
+      issueTokenId: issueTokenId,
+    },
+  });
+  debug("Edited used token for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };

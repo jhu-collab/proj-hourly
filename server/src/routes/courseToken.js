@@ -223,6 +223,7 @@ router.delete(
   param("courseTokenId", "Please enter a valid course token id").isInt(),
   courseValidator.isCourseIdParams,
   accountValidator.isAccountInstructor,
+  accountValidator.isAccountValidHeader,
   validator.isCourseToken,
   courseValidator.isCourseArchived,
   validator.isCourseUsingTokens,
@@ -238,6 +239,7 @@ router.delete(
   },
   param("courseId", "Please enter a valid course id").isInt(),
   courseValidator.isCourseIdParams,
+  accountValidator.isAccountValidHeader,
   accountValidator.isAccountInstructor,
   courseValidator.isCourseArchived,
   validator.isCourseUsingTokens,
@@ -287,5 +289,30 @@ router.delete(
   courseValidator.isCoursePaused,
   validator.overrideNotNull,
   controller.deleteOverride
+);
+
+// edit used token
+router.post(
+  "/:courseId/editUsedToken/:usedTokenId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("usedTokenId", "Please enter a valid used token id").isInt(),
+  body("reason", "Please indicate what reason should be changed to")
+    .notEmpty()
+    .isString(),
+  body("appliedById", "Please enter a valid applied by id").isInt(),
+  body("unDoneById", "Please enter a valid undone by id").isInt().optional(),
+  body("issueTokenId", "Please enter a valid issue token id").isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  accountValidator.isAccountStaffOrInstructor,
+  courseValidator.isCourseArchived,
+  validator.isCourseUsingTokens,
+  courseValidator.isCoursePaused,
+  validator.isUsedToken,
+  controller.editUsedToken
 );
 export default router;
