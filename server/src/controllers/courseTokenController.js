@@ -125,7 +125,7 @@ export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
   const { reason } = req.body;
-  const { id } = req.id;
+  const id = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
@@ -136,21 +136,15 @@ export const usedToken = async (req, res) => {
       usedTokens: true,
     },
   });
-  console.log("issueToken", issueToken);
   debug("issueToken found for student...");
   debug("Creating used token...");
   const usedToken = await prisma.usedToken.create({
     data: {
-      issueToken: {
-        connect: {
-          id: issueToken.id,
-        },
-      },
+      issueTokenId: issueToken.id,
       appliedById: id,
       reason: reason,
     },
   });
-  console.log("usedToken", usedToken);
   debug("Used token created...");
   return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };
@@ -159,8 +153,8 @@ export const undoUsedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
   const { date, reason } = req.body;
-  const dateObj = spacetime(date);
-  const { id } = req.id;
+  const dateObj = spacetime(date).startOf("day");
+  const id = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
@@ -173,7 +167,7 @@ export const undoUsedToken = async (req, res) => {
   });
   debug("Found issueToken for student...");
   debug("Finding used token");
-  const updatedUsedToken = await prisma.usedToken.update({
+  const updatedUsedToken = await prisma.usedToken.updateMany({
     where: {
       issueTokenId: issueToken.id,
       createdAt: {

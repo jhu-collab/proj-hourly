@@ -524,16 +524,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      const issueToken = await prisma.issueToken.findFirst({
+      const newIssueToken = await prisma.issueToken.findFirst({
         where: {
           courseTokenId: courseTokens[0].id,
           accountId: users[0].id,
         },
+        include: {
+          usedTokens: true,
+        },
       });
-      const date = new Date(Date.now()).toISOString();
-      console.log(response.text);
       expect(response.status).toBe(202);
-      expect(issueToken.usedTokens.length).toBe(1);
+      expect(newIssueToken.usedTokens.length).toBe(1);
     });
     it("Return 202 when course token successfully edited", async () => {
       const attributes = {
@@ -723,15 +724,17 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      const issueToken = await prisma.issueToken.findFirst({
+      const newIssueToken = await prisma.issueToken.findFirst({
         where: {
           courseTokenId: courseTokens[0].id,
           accountId: users[0].id,
         },
+        include: {
+          usedTokens: true,
+        },
       });
-      console.log(response.text);
       expect(response.status).toBe(202);
-      expect(issueToken.usedTokens.length).toBe(0);
+      expect(newIssueToken.usedTokens.length).toBe(1);
     });
   });
   describe("HTTP POST request - add override amount", () => {
