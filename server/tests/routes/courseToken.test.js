@@ -12,6 +12,7 @@ describe(`Test endpoint ${endpoint}`, () => {
   let courseTokens = [];
   let courses = [];
   let users = [];
+  let usedTokens = [];
 
   beforeAll(async () => {
     // create the users
@@ -535,6 +536,9 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(202);
       expect(newIssueToken.usedTokens.length).toBe(1);
+      for (const usedToken of newIssueToken.usedTokens) {
+        usedTokens.push(usedToken);
+      }
     });
     it("Return 202 when course token successfully edited", async () => {
       const attributes = {
@@ -735,6 +739,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       });
       expect(response.status).toBe(202);
       expect(newIssueToken.usedTokens.length).toBe(1);
+      usedTokens.length = 0;
+      for (const usedToken of newIssueToken.usedTokens) {
+        usedTokens.push(usedToken);
+      }
     });
   });
   describe("HTTP POST request - add override amount", () => {
@@ -910,7 +918,131 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(issueToken.overrideAmount).toBe(15);
     });
   });
-  describe("HTTP POST request - edit used token", () => {});
+  describe("HTTP POST request - edit used token", () => {
+    it("Return 400 when course is opted out of tokens", async () => {
+      const optResponse = await request
+        .post(`${endpoint}/${courses[0].id}/optIn`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(optResponse.status).toBe(202);
+      expect(courses[0].usesTokens).toBe(false);
+      const attributes = {
+        reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 401 when no authorization token is provided", async () => {
+      const response = await request.post(
+        `${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`
+      );
+      expect(response.status).toBe(401);
+    });
+    it("Return 401 when authorization token is expired", async () => {
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .set("Authorization", "bearer " + users[2].expiredToken);
+      expect(response.status).toBe(401);
+    });
+    it("Return 400 when reason is not included", async () => {
+      const attributes = {
+        // reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when applied by id is not included", async () => {
+      const attributes = {
+        reason: "edited reason",
+        // appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when issue token id is not included", async () => {
+      const attributes = {
+        reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        // issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 400 when unDoneById is not integer", async () => {
+      const attributes = {
+        reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+        unDoneById: "hello",
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully archived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 400 when course token of archived course edited", async () => {
+      const attributes = {
+        reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(400);
+    });
+    it("Return 202 when course successfully unarchived", async () => {
+      const response = await request
+        .post(`/api/course/${courses[0].id}/archiveCourse`)
+        .set("Authorization", "bearer " + users[2].token);
+      expect(response.status).toBe(202);
+    });
+    it("Return 202 when course token successfully edited", async () => {
+      const attributes = {
+        reason: "edited reason",
+        appliedById: usedTokens[0].appliedById,
+        issueTokenId: usedTokens[0].issueTokenId,
+      };
+      const response = await request
+        .post(`${endpoint}/${courses[0].id}/editUsedToken/${usedTokens[0].id}`)
+        .send(attributes)
+        .set("Authorization", "bearer " + users[2].token);
+      const usedToken = await prisma.usedToken.findFirst({
+        where: {
+          id: usedTokens[0].id,
+        },
+      });
+      expect(response.status).toBe(202);
+      expect(usedToken.reason).toBe("edited reason");
+      expect(usedToken.appliedById).toBe(usedTokens[0].appliedById);
+      expect(usedToken.issueTokenId).toBe(usedTokens[0].issueTokenId);
+      expect(usedToken.unDoneById).toBe(usedTokens[0].unDoneById);
+    });
+  });
   describe("HTTP GET request - course tokens for course", () => {
     it("Return 400 when course is opted out of tokens", async () => {
       const optResponse = await request

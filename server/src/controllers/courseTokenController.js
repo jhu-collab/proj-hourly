@@ -504,9 +504,6 @@ export const editUsedToken = async (req, res) => {
   const usedToken = await prisma.usedToken.update({
     where: {
       id: usedTokenId,
-      IssueToken: {
-        courseId: courseId,
-      },
     },
     data: {
       reason: reason,
