@@ -57,11 +57,13 @@ function StudentTokenUsage({ token }) {
   };
 
   const handleOnClickCancelBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(false);
   };
 
   const handleOnClickEditBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(true);
   };
@@ -139,7 +141,8 @@ function StudentTokenUsage({ token }) {
                       variant="contained"
                       data-cy="remove-token-limit-button"
                       color="error"
-                      onClick={() => {
+                      onClick={(event) => {
+                        event.stopPropagation();
                         confirmDialog(
                           `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
                           () => {
@@ -164,15 +167,33 @@ function StudentTokenUsage({ token }) {
                   Reason: <strong>{usedToken.reason}</strong>
                 </Typography>
                 {!usedToken.unDoneById ? (
-                  <Typography>
-                    Used On:{" "}
-                    <strong>{usedToken.createdAt.split("T")[0]}</strong>
-                  </Typography>
+                  <>
+                    <Typography>
+                      Used By:{" "}
+                      <strong>
+                        {usedToken.appliedBy.firstName}{" "}
+                        {usedToken.appliedBy.lastName}
+                      </strong>
+                    </Typography>
+                    <Typography>
+                      Used On:{" "}
+                      <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                    </Typography>
+                  </>
                 ) : (
-                  <Typography>
-                    UnDone On:{" "}
-                    <strong>{usedToken.updatedAt.split("T")[0]}</strong>
-                  </Typography>
+                  <>
+                    <Typography>
+                      UnDone By:{" "}
+                      <strong>
+                        {usedToken.unDoneBy.firstName}{" "}
+                        {usedToken.unDoneBy.lastName}
+                      </strong>
+                    </Typography>
+                    <Typography>
+                      UnDone On:{" "}
+                      <strong>{usedToken.updatedAt.split("T")[0]}</strong>
+                    </Typography>
+                  </>
                 )}
               </Stack>
             ))}
