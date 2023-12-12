@@ -150,30 +150,14 @@ export const usedToken = async (req, res) => {
 };
 
 export const undoUsedToken = async (req, res) => {
-  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date, reason } = req.body;
-  const dateObj = spacetime(date).startOf("day");
+  const { reason } = req.body;
   const id = req.id;
-  debug("Finding issueToken for student...");
-  const issueToken = await prisma.issueToken.findFirst({
-    where: {
-      accountId: accountId,
-      courseTokenId,
-    },
-    include: {
-      usedTokens: true,
-    },
-  });
-  debug("Found issueToken for student...");
   debug("Finding used token");
-  const updatedUsedToken = await prisma.usedToken.updateMany({
+  const updatedUsedToken = await prisma.usedToken.update({
     where: {
-      issueTokenId: issueToken.id,
-      createdAt: {
-        gte: dateObj.toNativeDate(),
-        lt: dateObj.add(1, "day").toNativeDate(),
-      },
+      id: usedTokenId,
     },
     data: {
       unDoneById: id,

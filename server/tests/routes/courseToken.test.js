@@ -606,63 +606,50 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(optResponse.status).toBe(202);
       expect(courses[0].usesTokens).toBe(false);
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 401 when no authorization token is provided", async () => {
       const response = await request.post(
-        `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
+        `${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`
       );
       expect(response.status).toBe(401);
     });
     it("Return 401 when authorization token is expired", async () => {
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .set("Authorization", "bearer " + users[2].expiredToken);
       expect(response.status).toBe(401);
     });
     it("Return 400 when date is not included", async () => {
       const attributes = {};
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course id is invalid", async () => {
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/-1/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/-1/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
     });
     it("Return 400 when course token id is invalid", async () => {
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/-1/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/-1`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
@@ -675,13 +662,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
     it("Return 400 when course token of archived course removed", async () => {
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
@@ -700,13 +684,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
     it("Return 400 when course token of paused course removed", async () => {
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(400);
@@ -719,13 +700,10 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
     it("Return 202 when course token successfully removed", async () => {
       const attributes = {
-        date: new Date(Date.now()).toISOString(),
         reason: "undoing used token",
       };
       const response = await request
-        .post(
-          `${endpoint}/${courses[0].id}/undoUsedToken/${courseTokens[0].id}/student/${users[0].id}`
-        )
+        .post(`${endpoint}/${courses[0].id}/undoUsedToken/${usedTokens[0].id}`)
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
       const newIssueToken = await prisma.issueToken.findFirst({
