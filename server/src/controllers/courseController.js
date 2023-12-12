@@ -856,6 +856,17 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  debug("deleting feedback...")
+  debug("deleting feedback for course");
+  await prisma.feedback.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
+  debug("deleted feedback for course");
+
   debug("deleting office hours...");
   await prisma.officeHour.deleteMany({
     where: {

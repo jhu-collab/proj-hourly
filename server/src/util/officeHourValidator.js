@@ -1321,3 +1321,56 @@ export const isWithinTimeConstraint = async (req, res, next) => {
     next();
   }
 };
+
+export const registrationHasFeedback = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.hasFeedback) {
+    debug("feedback already added for this registration");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback already added for this registration!" });
+  } else {
+    debug("feedback does not exist for this registration");
+    next();
+  }
+};
+
+export const isNotNoShow = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.isNoShow) {
+    debug("registration was a no show");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration was a no show!" });
+  } else {
+    debug("registration was not a no show!");
+    next();
+  }
+};
+
+export const isFeedbackRatingGood = async (req, res, next) => {
+  const { feedbackRating } = req.body;
+  if (feedbackRating < 1 || feedbackRating > 10) {
+    debug("feedback rating not between 1 and 10");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback rating not between 1 and 10!" });
+  } else {
+    debug("feedback between 1 and 10!");
+    next();
+  }
+};

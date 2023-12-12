@@ -363,10 +363,7 @@ router.post(
     "Registration rating must be an integer between 1 and 10"
   )
     .notEmpty()
-    .isInt({
-      min: 1,
-      max: 10,
-    }),
+    .isInt(),
   body("feedbackComment", "Registration comment must be an optional string")
     .isString()
     .optional(),
@@ -377,6 +374,9 @@ router.post(
   validator.isNotCancelled,
   courseValidator.isCourseArchivedRegistrationId,
   validator.isWithinTimeConstraint,
+  validator.isNotNoShow,
+  validator.isFeedbackRatingGood,
+  validator.registrationHasFeedback,
   controller.addRegistrationFeedback
 );
 
@@ -402,6 +402,7 @@ router.get(
   param("courseId", "Please enter a valid course id").isInt(),
   param("accountId", "Please enter a valid host account id").isInt(),
   accountValidator.isAccountValidHeader,
+  accountValidator.isAccountIdValidParam,
   courseValidator.isCourseIdParams,
   courseValidator.isCourseInstructor,
   courseValidator.isCourseStaffOrInstructorParam,

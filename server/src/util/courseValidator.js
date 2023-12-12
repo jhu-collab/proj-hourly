@@ -233,14 +233,14 @@ export const isCourseStaffOrInstructorParam = async (req, res, next) => {
       {
         instructors: {
           some: {
-            accountId,
+            id: accountId,
           },
         },
       },
       {
         courseStaff: {
           some: {
-            accountId,
+            id: accountId,
           },
         },
       },
