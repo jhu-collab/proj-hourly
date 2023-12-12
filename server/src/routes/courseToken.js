@@ -154,20 +154,18 @@ router.post(
 
 //allows instructor to undo the action of removing token from student
 router.post(
-  "/:courseId/undoUsedToken/:courseTokenId/student/:accountId",
+  "/:courseId/undoUsedToken/:usedTokenId",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
   param("courseId", "Please enter a valid course id").isInt(),
-  param("courseTokenId", "Please enter a valid course token id").isInt(),
-  param("accountId", "Please enter a valid account id").isInt(),
-  body("date", "Please specify when this token was used").notEmpty(),
+  param("usedTokenId", "Please enter a valid used token id").isInt(),
   body("reason", "Please enter a valid reason").notEmpty().isString(),
   accountValidator.isAccountValidHeader,
   courseValidator.isCourseIdParams,
   courseValidator.isCourseStaffOrInstructor,
-  validator.isCourseToken,
+  validator.isUsedToken,
   courseValidator.isCoursePaused,
   courseValidator.isCourseArchived,
   validator.isCourseUsingTokens,
