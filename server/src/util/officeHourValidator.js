@@ -1361,3 +1361,16 @@ export const isNotNoShow = async (req, res, next) => {
     next();
   }
 };
+
+export const isFeedbackRatingGood = async (req, res, next) => {
+  const { feedbackRating } = req.body;
+  if (feedbackRating < 1 || feedbackRating > 10) {
+    debug("feedback rating not between 1 and 10");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback rating not between 1 and 10!" });
+  } else {
+    debug("feedback between 1 and 10!");
+    next();
+  }
+};

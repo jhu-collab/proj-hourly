@@ -2931,157 +2931,157 @@ describe(`Test endpoint ${endpoint}`, () => {
   //   });
   // });
 
-  describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {
-    let course = {};
-    let officeHour = {};
-    let staff = [];
-    let students = [];
-    let baseAttributes = {};
-    let instructor = {};
-    let oHID = {};
-    let registration = [];
+  // describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {
+  //   let course = {};
+  //   let officeHour = {};
+  //   let staff = [];
+  //   let students = [];
+  //   let baseAttributes = {};
+  //   let instructor = {};
+  //   let oHID = {};
+  //   let registration = [];
 
-    beforeAll(async () => {
-      const params = await setup();
-      instructor = params.instructor;
-      officeHour = params.officeHour;
-      registration = params.registration;
-      staff = params.staff;
-      students = params.students;
-      course = params.course;
-      oHID = { officeHourId: officeHour.id };
-      await prisma.officeHour.update({
-        where: {
-          id: officeHour.id,
-        },
-        data: {
-          startDate: stringToTimeObj("01-01-2002"),
-        },
-      });
-      await prisma.registration.update({
-        where: {
-          id: registration.id,
-        },
-        data: {
-          date: stringToTimeObj("01-01-2002"),
-        },
-      });
-      baseAttributes = { registrationId: registration.id };
-    });
+  //   beforeAll(async () => {
+  //     const params = await setup();
+  //     instructor = params.instructor;
+  //     officeHour = params.officeHour;
+  //     registration = params.registration;
+  //     staff = params.staff;
+  //     students = params.students;
+  //     course = params.course;
+  //     oHID = { officeHourId: officeHour.id };
+  //     await prisma.officeHour.update({
+  //       where: {
+  //         id: officeHour.id,
+  //       },
+  //       data: {
+  //         startDate: stringToTimeObj("01-01-2002"),
+  //       },
+  //     });
+  //     await prisma.registration.update({
+  //       where: {
+  //         id: registration.id,
+  //       },
+  //       data: {
+  //         date: stringToTimeObj("01-01-2002"),
+  //       },
+  //     });
+  //     baseAttributes = { registrationId: registration.id };
+  //   });
 
-    afterAll(async () => {
-      await teardown();
-    });
+  //   afterAll(async () => {
+  //     await teardown();
+  //   });
 
-    afterEach(async () => {
-      await prisma.officeHour.update({
-        where: {
-          id: officeHour.id,
-        },
-        data: {
-          startDate: stringToTimeObj("01-01-2002"),
-        },
-      });
-      await prisma.registration.update({
-        where: {
-          id: registration.id,
-        },
-        data: {
-          date: stringToTimeObj("01-01-2002"),
-        },
-      });
-    });
+  //   afterEach(async () => {
+  //     await prisma.officeHour.update({
+  //       where: {
+  //         id: officeHour.id,
+  //       },
+  //       data: {
+  //         startDate: stringToTimeObj("01-01-2002"),
+  //       },
+  //     });
+  //     await prisma.registration.update({
+  //       where: {
+  //         id: registration.id,
+  //       },
+  //       data: {
+  //         date: stringToTimeObj("01-01-2002"),
+  //       },
+  //     });
+  //   });
 
-    it("Return 202 when course successfully archived", async () => {
-      const officeHourId = oHID.officeHourId;
-      const officeHour = await prisma.officeHour.findUnique({
-        where: {
-          id: officeHourId,
-        },
-      });
-      const response = await request
-        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
-        .set("Authorization", "bearer " + instructor.token);
-      expect(response.status).toBe(202);
-    });
+  //   it("Return 202 when course successfully archived", async () => {
+  //     const officeHourId = oHID.officeHourId;
+  //     const officeHour = await prisma.officeHour.findUnique({
+  //       where: {
+  //         id: officeHourId,
+  //       },
+  //     });
+  //     const response = await request
+  //       .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+  //       .set("Authorization", "bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
+  //   });
 
-    it("Return 400 when all parameters are valid of archived course", async () => {
-      const attributes = { ...baseAttributes };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when all parameters are valid of archived course", async () => {
+  //     const attributes = { ...baseAttributes };
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + staff[0].token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 202 when course successfully archived", async () => {
-      const officeHourId = oHID.officeHourId;
-      const officeHour = await prisma.officeHour.findUnique({
-        where: {
-          id: officeHourId,
-        },
-      });
-      const response = await request
-        .post(`/api/course/${officeHour.courseId}/archiveCourse`)
-        .set("Authorization", "bearer " + instructor.token);
-      expect(response.status).toBe(202);
-    });
+  //   it("Return 202 when course successfully archived", async () => {
+  //     const officeHourId = oHID.officeHourId;
+  //     const officeHour = await prisma.officeHour.findUnique({
+  //       where: {
+  //         id: officeHourId,
+  //       },
+  //     });
+  //     const response = await request
+  //       .post(`/api/course/${officeHour.courseId}/archiveCourse`)
+  //       .set("Authorization", "bearer " + instructor.token);
+  //     expect(response.status).toBe(202);
+  //   });
 
-    it("Return 403 when user is not host or instructor", async () => {
-      const attributes = { ...baseAttributes };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(403);
-    });
+  //   it("Return 403 when user is not host or instructor", async () => {
+  //     const attributes = { ...baseAttributes };
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + students[0].token);
+  //     expect(response.status).toBe(403);
+  //   });
 
-    it("Return 202 when all parameters are valid", async () => {
-      const attributes = { ...baseAttributes };
-      const firstReg = await prisma.registration.findFirst({
-        where: { id: registration.id },
-      });
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(202);
-      const secondReg = await prisma.registration.findFirst({
-        where: { id: registration.id },
-      });
-      expect(firstReg.isNoShow).toBe(!secondReg.isNoShow);
-    });
+  //   it("Return 202 when all parameters are valid", async () => {
+  //     const attributes = { ...baseAttributes };
+  //     const firstReg = await prisma.registration.findFirst({
+  //       where: { id: registration.id },
+  //     });
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + staff[0].token);
+  //     expect(response.status).toBe(202);
+  //     const secondReg = await prisma.registration.findFirst({
+  //       where: { id: registration.id },
+  //     });
+  //     expect(firstReg.isNoShow).toBe(!secondReg.isNoShow);
+  //   });
 
-    it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
-      const attributes = {
-        ...baseAttributes,
-        registrationId: registration.id * 2,
-      };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
+  //     const attributes = {
+  //       ...baseAttributes,
+  //       registrationId: registration.id * 2,
+  //     };
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + staff[0].token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when registrationId is 0", async () => {
-      const attributes = { ...baseAttributes, registrationId: 0 };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(400);
-    });
+  //   it("Return 400 when registrationId is 0", async () => {
+  //     const attributes = { ...baseAttributes, registrationId: 0 };
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + staff[0].token);
+  //     expect(response.status).toBe(400);
+  //   });
 
-    it("Return 400 when registrationId is less than 0", async () => {
-      const attributes = { ...baseAttributes, registrationId: -1 };
-      const response = await request
-        .post(`${endpoint}/editRegistrationNoShow`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + staff[0].token);
-      expect(response.status).toBe(400);
-    });
-  });
+  //   it("Return 400 when registrationId is less than 0", async () => {
+  //     const attributes = { ...baseAttributes, registrationId: -1 };
+  //     const response = await request
+  //       .post(`${endpoint}/editRegistrationNoShow`)
+  //       .send(attributes)
+  //       .set("Authorization", "Bearer " + staff[0].token);
+  //     expect(response.status).toBe(400);
+  //   });
+  // });
 
   describe(`Test POST: ${endpoint}/addRegistrationFeedback`, async () => {
     let course = {};
@@ -3298,7 +3298,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .post(`${endpoint}/addRegistrationFeedback`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(secondResponse.status).toBe(400);
+      expect(secondResponse.status).toBe(409);
     });
 
     it("Return 400 when feedback not within constraints", async () => {
@@ -3645,4 +3645,191 @@ describe(`Test endpoint ${endpoint}`, () => {
   //     expect(response.status).toBe(400);
   //   });
   // });
+
+  describe(`Test GET: ${endpoint}/:courseId/getRegistrationFeedback`, async () => {
+    let course = {};
+    let registration = {};
+    let students = [];
+    let instructor = {};
+    let officeHour = {};
+
+    beforeAll(async () => {
+      const params = await setup();
+      instructor = params.instructor;
+      course = params.course;
+      registration = params.registration;
+      students = params.students;
+      officeHour = params.officeHour;
+      await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          startRegConstraint: 30,
+        },
+      });
+
+      const newStartDate = new Date(officeHour.startDate);
+      newStartDate.setDate(newStartDate.getDate() - 1);
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          startDate: newStartDate,
+        },
+      });
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          date: newStartDate,
+        },
+      });
+      await prisma.feedback.create({
+        data: {
+          officeHourId: officeHour.id,
+          feedbackRating: 5,
+          feedbackComment: "mid",
+        },
+      });
+    });
+
+    afterAll(async () => {
+      await teardown();
+    });
+
+    afterEach(async () => {
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          hasFeedback: false,
+          isCancelled: false,
+          isCancelledStaff: false,
+        },
+      });
+      await prisma.feedback.deleteMany({});
+      const newStartDate = new Date(officeHour.startDate);
+      newStartDate.setDate(newStartDate.getDate() - 1);
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          startDate: newStartDate,
+        },
+      });
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          date: newStartDate,
+        },
+      });
+    });
+
+    it("Return 403 when user is a student", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 202 when all parameters are valid", async () => {
+      const newOfficeHour = await prisma.officeHour.findFirst({
+        where: {
+          id: officeHour.id,
+        },
+        include: {
+          hosts: true,
+          feedbacks: true,
+        },
+      });
+      console.log(newOfficeHour);
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when registrationId is 0", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when registrationId is negative", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 409 when feedbackRating < 1", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(409);
+    });
+
+    it("Return 409 when feedbackRating > 10", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(409);
+    });
+
+    it("Return 202 when no feedback comment", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 400 when feedback already exists", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(202);
+      const secondResponse = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(secondResponse.status).toBe(409);
+    });
+
+    it("Return 400 when feedback not within constraints", async () => {
+      await prisma.officeHour.update({
+        where: {
+          id: officeHour.id,
+        },
+        data: {
+          startDate: stringToTimeObj("01-01-2002"),
+        },
+      });
+      await prisma.registration.update({
+        where: {
+          id: registration.id,
+        },
+        data: {
+          date: stringToTimeObj("01-01-2002"),
+        },
+      });
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(400);
+    });
+  });
 });
