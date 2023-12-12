@@ -46,6 +46,7 @@ function UseTokenForm(props) {
       token: "",
       undoToken: false,
       date: "",
+      reason: "",
     },
     resolver: yupResolver(useTokenSchema),
   });
