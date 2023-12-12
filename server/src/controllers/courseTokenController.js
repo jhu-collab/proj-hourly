@@ -260,7 +260,24 @@ export const getAllRemainingTokens = async (req, res) => {
     },
     include: {
       CourseToken: true,
-      usedTokens: true,
+      usedTokens: {
+        include: {
+          unDoneBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          appliedBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       id: "asc",
@@ -436,7 +453,24 @@ export const getTokensForStudent = async (req, res) => {
     },
     include: {
       CourseToken: true,
-      usedTokens: true,
+      usedTokens: {
+        include: {
+          unDoneBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          appliedBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       id: "asc",
