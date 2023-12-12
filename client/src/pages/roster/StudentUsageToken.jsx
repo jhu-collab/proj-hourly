@@ -165,30 +165,30 @@ function StudentTokenUsage({ token }) {
               <Stack key={index} direction="row" justifyContent="space-between">
                 {!usedToken.unDoneById ? (
                   <>
-                    <Typography>Reason: {usedToken.reason}</Typography>
-                    <Typography>
-                      Used By: {usedToken.appliedBy.firstName}{" "}
-                      {usedToken.appliedBy.lastName}
-                    </Typography>
-                    <Typography>
-                      Used On: {usedToken.createdAt.split("T")[0]}
-                    </Typography>
-                  </>
-                ) : (
-                  <>
                     <Typography>
                       Reason: <strong>{usedToken.reason}</strong>
                     </Typography>
                     <Typography>
-                      UnDone By:{" "}
+                      Used By:{" "}
                       <strong>
-                        {usedToken.unDoneBy.firstName}{" "}
-                        {usedToken.unDoneBy.lastName}
+                        {usedToken.appliedBy.firstName}{" "}
+                        {usedToken.appliedBy.lastName}
                       </strong>
                     </Typography>
                     <Typography>
-                      UnDone On:{" "}
-                      <strong>{usedToken.updatedAt.split("T")[0]}</strong>
+                      Used On:{" "}
+                      <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Typography>Reason: {usedToken.reason}</Typography>
+                    <Typography>
+                      UnDone By: {usedToken.unDoneBy.firstName}{" "}
+                      {usedToken.unDoneBy.lastName}
+                    </Typography>
+                    <Typography>
+                      UnDone On: {usedToken.updatedAt.split("T")[0]}
                     </Typography>
                   </>
                 )}
