@@ -6,20 +6,37 @@ import Debug from "debug";
 import useStoreCourse from "./useStoreCourse";
 import useStoreToken from "./useStoreToken";
 
-const debug = new Debug(`hourly:hooks:useQueryGetRegistrationFeedback.js`);
+const debug = new Debug(
+  `hourly:hooks:useQueryGetRegistrationFeedbackForAccount.js`
+);
 
-function useQueryGetRegistrationFeedback() {
+function useQueryGetRegistrationFeedbackForAccount(accountId) {
   const queryKey = ["allFeedback"];
   const token = useStoreToken((state) => state.token);
   const course = useStoreCourse((state) => state.course);
 
   const getAllRegistrations = async () => {
+    if (accountId == "") {
+      try {
+        debug("Getting all feedback from backend.");
+        const res = await axios.get(
+          `${BASE_URL}/api/officeHour/${course.id}/getRegistrationFeedback`,
+          getConfig(token)
+        );
+        console.log(res.data);
+        return res.data.feedbacks;
+      } catch (err) {
+        debug({ err });
+        throw err;
+      }
+    }
     try {
       debug("Getting all feedback from backend.");
       const res = await axios.get(
-        `${BASE_URL}/api/officeHour/${course.id}/getRegistrationFeedback`,
+        `${BASE_URL}/api/officeHour/${course.id}/getRegistrationFeedback/${accountId}`,
         getConfig(token)
       );
+      console.log(res.data);
       return res.data.feedbacks;
     } catch (err) {
       debug({ err });
@@ -32,4 +49,4 @@ function useQueryGetRegistrationFeedback() {
   };
 }
 
-export default useQueryGetRegistrationFeedback;
+export default useQueryGetRegistrationFeedbackForAccount;

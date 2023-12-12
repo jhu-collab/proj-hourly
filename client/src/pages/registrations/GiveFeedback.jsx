@@ -11,6 +11,7 @@ import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
 import Box from "@mui/material/Box";
 
+
 function GiveFeedback({ registrationId }) {
   const { mutate } = useMutationGiveFeedback();
   const { control, handleSubmit } = useForm({
@@ -24,7 +25,6 @@ function GiveFeedback({ registrationId }) {
   function getLabelText(value) {
     return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
   }
-  console.log(registrationId);
   const onSubmit = (data) => {
     mutate({
       feedbackRating: data.feedbackRating * 2,
