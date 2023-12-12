@@ -62,7 +62,8 @@ function UseTokenForm(props) {
       }
     });
     if (!e.undoToken) {
-      mutate(selectedToken);
+      console.log({ tokenId: selectedToken, reason: e.reason });
+      mutate({ tokenId: selectedToken, reason: e.reason });
     } else {
       undoMutate({ token: selectedToken, date: e.date });
     }
@@ -130,6 +131,12 @@ function UseTokenForm(props) {
             options={usedDates}
           />
         )}
+        <FormInputText
+          data-cy="token-reason-label"
+          name="reason"
+          control={control}
+          label="reason"
+        />
         <Button
           data-cy="token-submit-button"
           color="secondary"

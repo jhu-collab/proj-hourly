@@ -77,8 +77,8 @@ function StudentTokenUsage({ token }) {
             <Typography variant="h5" data-cy="token-balance-student">
               Balance:{" "}
               {!token.overrideAmount
-                ? token.CourseToken.tokenLimit - token.datesUsed.length
-                : token.overrideAmount - token.datesUsed.length}{" "}
+                ? token.CourseToken.tokenLimit - token.usedTokens.length
+                : token.overrideAmount - token.usedTokens.length}{" "}
             </Typography>
             {edit && courseType === "Instructor" ? (
               <FormInputNumber
@@ -130,7 +130,6 @@ function StudentTokenUsage({ token }) {
                     data-cy="remove-token-limit-button"
                     color="error"
                     onClick={() => {
-                      console.log("clicked");
                       confirmDialog(
                         `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
                         () => {
