@@ -144,6 +144,22 @@ export const usedToken = async (req, res) => {
       appliedById: id,
       reason: reason,
     },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
   });
   debug("Used token created...");
   return res.status(StatusCodes.ACCEPTED).json({ usedToken });
@@ -162,6 +178,22 @@ export const undoUsedToken = async (req, res) => {
     data: {
       unDoneById: id,
       reason: reason,
+    },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
   debug("Updated used token");
@@ -494,6 +526,22 @@ export const editUsedToken = async (req, res) => {
       appliedById: appliedById,
       unDoneById: unDoneById,
       issueTokenId: issueTokenId,
+    },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
   debug("Edited used token for student...");
