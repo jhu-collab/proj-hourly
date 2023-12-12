@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import Button from "@mui/material/Button";
+import DownOutlined from "@ant-design/icons/DownOutlined";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -61,91 +65,120 @@ function StudentTokenUsage({ token }) {
     e.preventDefault();
     setEdit(true);
   };
+
+  const usedTokensActive = token.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  );
   return (
     <>
-      <MainCard sx={{ padding: 2 }} content={false}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={3}
-          >
-            <Typography data-cy="token-name" variant="h5">
-              {token.CourseToken.title}
-            </Typography>
-            <Typography variant="h5" data-cy="token-balance-student">
-              Balance:{" "}
-              {!token.overrideAmount
-                ? token.CourseToken.tokenLimit - token.usedTokens.length
-                : token.overrideAmount - token.usedTokens.length}{" "}
-            </Typography>
-            {edit && courseType === "Instructor" ? (
-              <FormInputNumber
-                data-cy="edit-token-quantity"
-                name="quantity"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Typography variant="h5" data-cy="token-limit-student">
-                Limit:{" "}
-                {!token.overrideAmount
-                  ? token.CourseToken.tokenLimit
-                  : token.overrideAmount}
+      <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
+        <AccordionSummary expandIcon={<DownOutlined />}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={3}
+            >
+              <Typography data-cy="token-name" variant="h5">
+                {token.CourseToken.title}
               </Typography>
-            )}
-            {edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button variant="contained" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
+              <Typography variant="h5" data-cy="token-balance-student">
+                Balance:{" "}
+                {!token.overrideAmount
+                  ? token.CourseToken.tokenLimit - usedTokensActive.length
+                  : token.overrideAmount - usedTokensActive.length}{" "}
+              </Typography>
+              {edit && courseType === "Instructor" ? (
+                <FormInputNumber
+                  data-cy="edit-token-quantity"
+                  name="quantity"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : (
+                <Typography variant="h5" data-cy="token-limit-student">
+                  Limit:{" "}
+                  {!token.overrideAmount
+                    ? token.CourseToken.tokenLimit
+                    : token.overrideAmount}
+                </Typography>
+              )}
+              {edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+              {!edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button
+                      data-cy="edit-token-limit-button"
+                      variant="contained"
+                      onClick={handleOnClickEditBtn}
+                    >
+                      Edit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      data-cy="remove-token-limit-button"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
+                          () => {
+                            mutateDelete();
+                          }
+                        );
+                      }}
+                    >
+                      Remove Override
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Stack>
+          </Form>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pr: 5 }}>
+          <>
+            {token.usedTokens.map((usedToken, index) => (
+              <Stack key={index} direction="row" justifyContent="space-between">
+                <Typography>
+                  Reason: <strong>{usedToken.reason}</strong>
+                </Typography>
+                {!usedToken.unDoneById ? (
+                  <Typography>
+                    Used On:{" "}
+                    <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                  </Typography>
+                ) : (
+                  <Typography>
+                    UnDone On:{" "}
+                    <strong>{usedToken.updatedAt.split("T")[0]}</strong>
+                  </Typography>
+                )}
               </Stack>
-            )}
-            {!edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    data-cy="edit-token-limit-button"
-                    variant="contained"
-                    onClick={handleOnClickEditBtn}
-                  >
-                    Edit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    data-cy="remove-token-limit-button"
-                    color="error"
-                    onClick={() => {
-                      confirmDialog(
-                        `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
-                        () => {
-                          mutateDelete();
-                        }
-                      );
-                    }}
-                  >
-                    Remove Override
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-          </Stack>
-        </Form>
-      </MainCard>
+            ))}
+          </>
+        </AccordionDetails>
+      </Accordion>
       <ConfirmPopup />
     </>
   );
