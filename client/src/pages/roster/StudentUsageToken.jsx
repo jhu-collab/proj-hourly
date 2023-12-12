@@ -163,25 +163,22 @@ function StudentTokenUsage({ token }) {
           <>
             {token.usedTokens.map((usedToken, index) => (
               <Stack key={index} direction="row" justifyContent="space-between">
-                <Typography>
-                  Reason: <strong>{usedToken.reason}</strong>
-                </Typography>
                 {!usedToken.unDoneById ? (
                   <>
+                    <Typography>Reason: {usedToken.reason}</Typography>
                     <Typography>
-                      Used By:{" "}
-                      <strong>
-                        {usedToken.appliedBy.firstName}{" "}
-                        {usedToken.appliedBy.lastName}
-                      </strong>
+                      Used By: {usedToken.appliedBy.firstName}{" "}
+                      {usedToken.appliedBy.lastName}
                     </Typography>
                     <Typography>
-                      Used On:{" "}
-                      <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                      Used On: {usedToken.createdAt.split("T")[0]}
                     </Typography>
                   </>
                 ) : (
                   <>
+                    <Typography>
+                      Reason: <strong>{usedToken.reason}</strong>
+                    </Typography>
                     <Typography>
                       UnDone By:{" "}
                       <strong>
