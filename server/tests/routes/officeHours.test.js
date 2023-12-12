@@ -2,7 +2,10 @@ import supertest from "supertest";
 import { it, expect, beforeAll, describe, afterAll, afterEach } from "vitest";
 import app from "../../src/index.js";
 import prisma from "../../prisma/client.js";
-import { stringToTimeObj } from "../../src/util/officeHourValidator.js";
+import {
+  stringToTimeObj,
+  weekday,
+} from "../../src/util/officeHourValidator.js";
 import { Role } from "@prisma/client";
 import { createToken } from "../../src/util/helpers.js";
 
@@ -297,6 +300,7 @@ async function setup() {
 
 async function teardown() {
   // Delete all objects generated for testing
+  await prisma.feedback.deleteMany({});
   await prisma.registration.deleteMany({});
   await prisma.topic.deleteMany({});
   await prisma.officeHour.deleteMany({});
@@ -586,7 +590,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/register`, async () => {
     let students = [];
     let instructor = {};
@@ -987,7 +990,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(403);
     });
   });
-
   describe(`Test POST: ${endpoint}/cancelOnDate`, async () => {
     let officeHour = {};
     let staff = [];
@@ -1129,7 +1131,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/cancelAll`, async () => {
     let course = {};
     let instructor = {};
@@ -1272,7 +1273,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/:officeHourId/editForDate/:date`, async () => {
     let course = {};
     let officeHour = {};
@@ -1565,7 +1565,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/:officeHourId/editAll`, async () => {
     let course = {};
     let officeHour = {};
@@ -1826,7 +1825,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       }
     }, 10000);
   });
-
   describe(`Test POST: ${endpoint}/cancelRegistration/:registrationId`, async () => {
     let course = {};
     let registration = {};
@@ -1907,7 +1905,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editRegistration/:registrationId`, async () => {
     let registration = {};
     let officeHour = {};
@@ -2168,7 +2165,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(403);
     });
   });
-
   describe(`Test POST: ${endpoint}/editLocationSingleDay`, async () => {
     let course = {};
     let officeHour = {};
@@ -2316,7 +2312,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editLocationRecurringDay`, async () => {
     let course = {};
     let officeHour = {};
@@ -2471,7 +2466,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {
     let course = {};
     let officeHour = {};
@@ -2623,7 +2617,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editLocationSingleDay`, async () => {
     let course = {};
     let officeHour = {};
@@ -2771,7 +2764,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editLocationRecurringDay`, async () => {
     let course = {};
     let officeHour = {};
@@ -2926,7 +2918,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/editRegistrationNoShow`, async () => {
     let course = {};
     let officeHour = {};
@@ -3078,7 +3069,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test POST: ${endpoint}/addRegistrationFeedback`, async () => {
     let course = {};
     let registration = {};
@@ -3322,7 +3312,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   // /* The remaining tests are for the GET methods and thus we will not use equivalence partitioning */
   describe(`Test GET: ${endpoint}/:officeHourId/getRemainingTimeSlots/:date`, async () => {
     let course = {};
@@ -3395,7 +3384,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test GET: ${endpoint}/:officeHourId`, async () => {
     let officeHour = {};
     let students = [];
@@ -3425,7 +3413,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationStatus`, async () => {
     let course = {};
     let officeHour = {};
@@ -3533,7 +3520,6 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(202);
     });
   });
-
   describe(`Test GET: ${endpoint}/:officeHourId/date/:date/registrationsOnDate`, async () => {
     let course = {};
     let officeHour = {};
@@ -3641,21 +3627,20 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
   });
-
   describe(`Test GET: ${endpoint}/:courseId/getRegistrationFeedback`, async () => {
     let course = {};
     let registration = {};
     let students = [];
-    let instructor = {};
     let officeHour = {};
+    let staff = [];
 
     beforeAll(async () => {
       const params = await setup();
-      instructor = params.instructor;
       course = params.course;
       registration = params.registration;
       students = params.students;
       officeHour = params.officeHour;
+      staff = params.staff;
       await prisma.feedback.create({
         data: {
           officeHourId: officeHour.id,
@@ -3699,96 +3684,171 @@ describe(`Test endpoint ${endpoint}`, () => {
     });
 
     it("Return 202 when all parameters are valid", async () => {
-      const newOfficeHour = await prisma.officeHour.findFirst({
-        where: {
-          id: officeHour.id,
-        },
-        include: {
-          hosts: true,
-          feedbacks: true,
-        },
-      });
-      console.log(newOfficeHour);
       const response = await request
         .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
+        .set("Authorization", "Bearer " + staff[0].token);
+      var responseObj = JSON.parse(response.text);
+      expect(responseObj.feedbacks.length).toBe(1);
       expect(response.status).toBe(202);
     });
 
-    it("Return 400 when registrationId is a positive integer but the registration does not exist", async () => {
+    it("Return 202 when all parameters are valid - no feedbacks", async () => {
       const response = await request
         .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when registrationId is 0", async () => {
-      const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 400 when registrationId is negative", async () => {
-      const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
-    });
-
-    it("Return 409 when feedbackRating < 1", async () => {
-      const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(409);
-    });
-
-    it("Return 409 when feedbackRating > 10", async () => {
-      const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(409);
-    });
-
-    it("Return 202 when no feedback comment", async () => {
-      const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
+        .set("Authorization", "Bearer " + staff[2].token);
+      var responseObj = JSON.parse(response.text);
+      expect(responseObj.feedbacks.length).toBe(0);
       expect(response.status).toBe(202);
     });
 
-    it("Return 400 when feedback already exists", async () => {
+    it("Return 400 when courseId is a positive integer but the registration does not exist", async () => {
       const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(202);
-      const secondResponse = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(secondResponse.status).toBe(409);
+        .get(`${endpoint}/${course.id * 2}/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
     });
 
-    it("Return 400 when feedback not within constraints", async () => {
-      await prisma.officeHour.update({
-        where: {
-          id: officeHour.id,
-        },
+    it("Return 400 when courseId is 0", async () => {
+      const response = await request
+        .get(`${endpoint}/0/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when courseId is negative", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/getRegistrationFeedback`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(400);
+    });
+  });
+  describe(`Test GET: ${endpoint}/:courseId/getRegistrationFeedback/:accountId`, async () => {
+    let course = {};
+    let registration = {};
+    let students = [];
+    let officeHour = {};
+    let staff = [];
+    let instructor = {};
+
+    beforeAll(async () => {
+      const params = await setup();
+      course = params.course;
+      registration = params.registration;
+      students = params.students;
+      officeHour = params.officeHour;
+      staff = params.staff;
+      instructor = params.instructor;
+      await prisma.feedback.create({
         data: {
-          startDate: stringToTimeObj("01-01-2002"),
+          officeHourId: officeHour.id,
+          feedbackRating: 5,
+          feedbackComment: "mid",
         },
       });
+    });
+
+    afterAll(async () => {
+      await teardown();
+    });
+
+    afterEach(async () => {
       await prisma.registration.update({
         where: {
           id: registration.id,
         },
         data: {
-          date: stringToTimeObj("01-01-2002"),
+          hasFeedback: true,
+          isCancelled: false,
+          isCancelledStaff: false,
         },
       });
+      await prisma.feedback.updateMany({
+        where: {
+          officeHourId: officeHour.id,
+        },
+        data: {
+          feedbackRating: 5,
+          feedbackComment: "mid",
+        },
+      });
+    });
+
+    it("Return 403 when user is a student", async () => {
       const response = await request
-        .get(`${endpoint}/${course.id}/getRegistrationFeedback`)
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/${staff[0].id}`)
         .set("Authorization", "Bearer " + students[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 403 when user is staff", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/${staff[0].id}`)
+        .set("Authorization", "Bearer " + staff[0].token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 202 when all parameters are valid", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/${staff[0].id}`)
+        .set("Authorization", "Bearer " + instructor.token);
+      var responseObj = JSON.parse(response.text);
+      expect(responseObj.feedbacks.length).toBe(1);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 202 when all parameters are valid - no feedbacks", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/${staff[2].id}`)
+        .set("Authorization", "Bearer " + instructor.token);
+      var responseObj = JSON.parse(response.text);
+      expect(responseObj.feedbacks.length).toBe(0);
+      expect(response.status).toBe(202);
+    });
+
+    it("Return 400 when courseId is a positive integer but the registration does not exist", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${course.id * 2}/getRegistrationFeedback/${staff[0].id}`
+        )
+        .set("Authorization", "Bearer " + instructor.token);
       expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when courseId is 0", async () => {
+      const response = await request
+        .get(`${endpoint}/0/getRegistrationFeedback/${staff[0].id}`)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when courseId is negative", async () => {
+      const response = await request
+        .get(`${endpoint}/-1/getRegistrationFeedback/${staff[0].id}`)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
+    it("Return 400 when accountId is a positive integer but the registration does not exist", async () => {
+      const response = await request
+        .get(
+          `${endpoint}/${course.id}/getRegistrationFeedback/${staff[0].id * 2}`
+        )
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 400 when accountId is 0", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/0`)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(403);
+    });
+
+    it("Return 400 when accountId is negative", async () => {
+      const response = await request
+        .get(`${endpoint}/${course.id}/getRegistrationFeedback/-1`)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(403);
     });
   });
 });

@@ -402,6 +402,7 @@ router.get(
   param("courseId", "Please enter a valid course id").isInt(),
   param("accountId", "Please enter a valid host account id").isInt(),
   accountValidator.isAccountValidHeader,
+  accountValidator.isAccountIdValidParam,
   courseValidator.isCourseIdParams,
   courseValidator.isCourseInstructor,
   courseValidator.isCourseStaffOrInstructorParam,
