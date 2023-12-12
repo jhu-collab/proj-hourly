@@ -45,7 +45,7 @@ function UseTokenForm(props) {
     defaultValues: {
       token: "",
       undoToken: false,
-      date: "",
+      date_reason: "",
       reason: "",
     },
     resolver: yupResolver(useTokenSchema),
@@ -65,7 +65,22 @@ function UseTokenForm(props) {
       console.log({ tokenId: selectedToken, reason: e.reason });
       mutate({ tokenId: selectedToken, reason: e.reason });
     } else {
-      undoMutate({ token: selectedToken, date: e.date });
+      selectedToken = undefined;
+      queriedTokens.forEach((token) => {
+        if (token.CourseToken.title === e.token) {
+          selectedToken = token;
+        }
+      });
+      let selectedUndoTokenId = undefined;
+      selectedToken.usedTokens.forEach((used) => {
+        if (
+          used.createdAt.split("T")[0] + " for " + used.reason ==
+          e.date_reason
+        ) {
+          selectedUndoTokenId = used.id;
+        }
+      });
+      undoMutate({ usedTokenId: selectedUndoTokenId, reason: e.reason });
     }
   };
 
@@ -74,22 +89,22 @@ function UseTokenForm(props) {
   const undoToken = watch("undoToken");
 
   function onTokenChange() {
-    let usedDatesSelected = [];
+    let targetToken = {};
     queriedTokens.forEach((queriedToken) => {
       if (queriedToken.CourseToken.title === token) {
-        usedDatesSelected = queriedToken.datesUsed;
+        targetToken = queriedToken;
       }
     });
     let useDatesWithId = [];
-    let i = 0;
-    usedDatesSelected.forEach((date) => {
-      useDatesWithId.push({
-        id: i,
-        value: date.split("T")[0],
-        label: date.split("T")[0],
-        "data-cy": date.split("T")[0],
-      });
-      i += 1;
+    targetToken.usedTokens.forEach((used) => {
+      if (used.unDoneById === null || used.unDoneById === undefined) {
+        useDatesWithId.push({
+          id: used.id,
+          value: used.createdAt.split("T")[0] + " for " + used.reason,
+          label: used.createdAt.split("T")[0] + " for " + used.reason,
+          "data-cy": used.createdAt.split("T")[0],
+        });
+      }
     });
     setUsedDates(useDatesWithId);
   }
@@ -125,9 +140,9 @@ function UseTokenForm(props) {
         {undoToken && token && (
           <FormInputDropdown
             data-cy="token-date-dropdown"
-            name="date"
+            name="date_reason"
             control={control}
-            label="Date"
+            label="Date and Previous Reason"
             options={usedDates}
           />
         )}
@@ -135,7 +150,7 @@ function UseTokenForm(props) {
           data-cy="token-reason-label"
           name="reason"
           control={control}
-          label="reason"
+          label="Reason"
         />
         <Button
           data-cy="token-submit-button"
