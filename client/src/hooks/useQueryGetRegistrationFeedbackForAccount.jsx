@@ -16,20 +16,6 @@ function useQueryGetRegistrationFeedbackForAccount(accountId) {
   const course = useStoreCourse((state) => state.course);
 
   const getAllRegistrations = async () => {
-    if (accountId == "") {
-      try {
-        debug("Getting all feedback from backend.");
-        const res = await axios.get(
-          `${BASE_URL}/api/officeHour/${course.id}/getRegistrationFeedback`,
-          getConfig(token)
-        );
-        console.log(res.data);
-        return res.data.feedbacks;
-      } catch (err) {
-        debug({ err });
-        throw err;
-      }
-    }
     try {
       debug("Getting all feedback from backend.");
       const res = await axios.get(
