@@ -139,17 +139,24 @@ function Feedback({ index }) {
                 alignItems="center"
                 spacing={2}
               >
-                {/* <Typography>Average Rating: </Typography>
-                <Rating
-                  name="feedback"
-                  value={rating}
-                  precision={0.5}
-                  readOnly
-                  emptyIcon={
-                    <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-                  }
-                  size="large"
-                /> */}
+                {accountId == "" && (
+                  <>
+                    <Typography>Average Rating: </Typography>
+                    <Rating
+                      name="feedback"
+                      value={rating}
+                      precision={0.5}
+                      readOnly
+                      emptyIcon={
+                        <StarIcon
+                          style={{ opacity: 0.55 }}
+                          fontSize="inherit"
+                        />
+                      }
+                      size="large"
+                    />{" "}
+                  </>
+                )}
                 {courseType === "Instructor" && (
                   <FormInputDropdown
                     data-cy="token-dropdown-type"
