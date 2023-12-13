@@ -92,10 +92,14 @@ function Feedback({ index }) {
     dataFeedback.forEach((feedback) => {
       sum += feedback.feedbackRating;
     });
-    rating = sum / (2 * dataFeedback.length);
+    if (dataFeedback.length !== 0) {
+      rating = sum / (2 * dataFeedback.length);
+    } else {
+      rating = 0;
+    }
   }
 
-  let myFeedback = dataFeedback.map((feedback, index) => {
+  let myFeedback = (dataFeedback || []).map((feedback, index) => {
     if (feedback.feedbackComment) {
       return (
         <Grid item xs={12} key={index}>
