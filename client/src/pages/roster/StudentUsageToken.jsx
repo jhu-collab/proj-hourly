@@ -16,6 +16,7 @@ import { tokenEditLimitSchema, tokenSchema } from "../../utils/validators";
 import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
 import useMutationDeleteTokenOverride from "../../hooks/useMutationDeleteTokenOverride";
+import Grid from "@mui/material/Grid";
 
 /**
  * Represents a single Topic card.
@@ -65,88 +66,102 @@ function StudentTokenUsage({ token }) {
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
+          <Grid
+            container
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             alignItems="center"
             spacing={3}
           >
-            <Typography data-cy="token-name" variant="h5">
-              {token.CourseToken.title}
-            </Typography>
-            <Typography variant="h5" data-cy="token-balance-student">
-              Balance:{" "}
-              {!token.overrideAmount
-                ? token.CourseToken.tokenLimit - token.datesUsed.length
-                : token.overrideAmount - token.datesUsed.length}{" "}
-            </Typography>
-            {edit && courseType === "Instructor" ? (
-              <FormInputNumber
-                data-cy="edit-token-quantity"
-                name="quantity"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Typography variant="h5" data-cy="token-limit-student">
-                Limit:{" "}
-                {!token.overrideAmount
-                  ? token.CourseToken.tokenLimit
-                  : token.overrideAmount}
+            <Grid item xs={0} sm={2}>
+              {/* Token Name */}
+              <Typography data-cy="token-name" variant="h5">
+                {token.CourseToken.title}
               </Typography>
-            )}
-            {edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button variant="contained" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-            {!edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    data-cy="edit-token-limit-button"
-                    variant="contained"
-                    onClick={handleOnClickEditBtn}
-                  >
-                    Edit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    data-cy="remove-token-limit-button"
-                    color="error"
-                    onClick={() => {
-                      console.log("clicked");
-                      confirmDialog(
-                        `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
-                        () => {
-                          mutateDelete();
-                        }
-                      );
-                    }}
-                  >
-                    Remove Override
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-          </Stack>
+            </Grid>
+            {/* Token Balance */}
+            <Grid item xs={2} sm={2}>
+              <Typography variant="h5" data-cy="token-balance-student">
+                Balance:{" "}
+                {!token.overrideAmount
+                  ? token.CourseToken.tokenLimit - token.datesUsed.length
+                  : token.overrideAmount - token.datesUsed.length}{" "}
+              </Typography>
+            </Grid>
+            <Grid item xs={2} sm={2}>
+              {/* Token Limit */}
+              {edit && courseType === "Instructor" ? (
+                <FormInputNumber
+                  data-cy="edit-token-quantity"
+                  name="quantity"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : (
+                <Typography variant="h5" data-cy="token-limit-student">
+                  Limit:{" "}
+                  {!token.overrideAmount
+                    ? token.CourseToken.tokenLimit
+                    : token.overrideAmount}
+                </Typography>
+              )}
+            </Grid>
+            <Grid item xs={1} sm={1}>
+              {edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Grid>
+            <Grid item xs={4.5} sm={4.5}>
+              {!edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button
+                      data-cy="edit-token-limit-button"
+                      variant="contained"
+                      onClick={handleOnClickEditBtn}
+                    >
+                      Edit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      data-cy="remove-token-limit-button"
+                      color="error"
+                      onClick={() => {
+                        console.log("clicked");
+                        confirmDialog(
+                          `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
+                          () => {
+                            mutateDelete();
+                          }
+                        );
+                      }}
+                    >
+                      Remove Override
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Grid>
+          </Grid>
         </Form>
-      </MainCard>
+      </MainCard >
       <ConfirmPopup />
     </>
   );
