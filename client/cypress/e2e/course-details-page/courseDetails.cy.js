@@ -37,8 +37,8 @@ describe("Course Details Page: Instructor", () => {
 
   const courseTitle = "Machine Learning";
   const courseNumber = "601.475";
-  const courseSemester = "Fall";
-  const courseYear = "2023";
+  const courseSemester = "Spring";
+  const courseYear = "2024";
 
   const deleteCourseButton = '[data-cy="delete-course-button"]';
 
@@ -117,6 +117,10 @@ describe("Course Details Page: Instructor", () => {
     cy.task("getCourseByNumber", courseNumber).then((course) => {
       cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
     });
+
+    cy.get('[data-cy="coursetype-course-pause-or-archive-title"]').contains("Pause or Archive Course")
+
+
   });
 
   it("create course calendar event successful", () => {
