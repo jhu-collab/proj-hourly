@@ -17,6 +17,7 @@ import useQueryTopics from "../../../hooks/useQueryTopics";
 import useQueryRegistrationTypes from "../../../hooks/useQueryRegistrationTypes";
 import { useEffect, useState } from "react";
 import FormInputText from "../../../components/form-ui/FormInputText";
+import useStoreCourse from "../../../hooks/useStoreCourse";
 
 const getTimeSlotOptions = (timeSlotsPerType, type) => {
   const found = timeSlotsPerType.find((element) => element.type === type);
@@ -85,6 +86,11 @@ function RegisterForm() {
 
   const { mutate, isLoading: isLoadingRegister } = useMutationRegister();
   const [timeSlots, setTimeSlots] = useState([]);
+
+  // retrive either the course is paused or archived
+  const course = useStoreCourse((state) => state.course);
+  const isPaused = course.isPaused;
+  const isArchived = course.isArchived;
 
   const title = useStoreEvent((state) => state.title);
   const start = useStoreEvent((state) => state.start);
@@ -200,16 +206,38 @@ function RegisterForm() {
                 label="Additional Notes (optional)"
                 multiline
                 rows={4}
+
               />
-              <Button
-                data-cy="student-submit-register"
-                type="submit"
-                variant="contained"
-                fullWidth
-                disabled={isLoadingRegister}
-              >
-                Submit
-              </Button>
+              {isPaused && (
+                <Typography
+                  data-cy="course-is-paused-warning"
+                  variant="h5"
+                  fontWeight={400}
+                >
+                  The course is paused
+                </Typography>
+              )}
+              {isArchived && (
+                <Typography
+                  variant="h5"
+                  fontWeight={400}
+                >
+                  The course is archived
+                </Typography>
+              )}
+              {!isArchived && !isPaused && (
+                // if the course is either paused or archived, not show submit button at all
+                <Button
+                  data-cy="student-submit-register"
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  disabled={isLoadingRegister}
+                >
+                  Submit
+                </Button>
+              )}
+
             </>
           )}
         </Stack>
