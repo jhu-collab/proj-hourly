@@ -858,7 +858,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         .set("Authorization", "bearer " + users[2].token);
       expect(response.status).toBe(202);
     });
-    it("Return 400 when override less than token limit", async () => {
+    it("Return 202 when override less than token limit", async () => {
       const attributes = {
         overrideAmount: 0,
       };
@@ -868,7 +868,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         )
         .send(attributes)
         .set("Authorization", "bearer " + users[2].token);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(202);
     });
     it("Return 202 when override amount is created", async () => {
       const attributes = {

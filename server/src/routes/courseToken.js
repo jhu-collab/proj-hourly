@@ -252,7 +252,7 @@ router.post(
   param("courseId", "Please enter a valid course id").isInt(),
   param("courseTokenId", "Please enter a valid course token id").isInt(),
   param("accountId", "Please enter a valid account id").isInt(),
-  body("overrideAmount", "Please enter valid overrideAmount").isInt(),
+  body("overrideAmount", "Please enter valid overrideAmount").isInt({ min: 0 }),
   courseValidator.isCourseIdParams,
   accountValidator.isAccountValidHeader,
   accountValidator.isAccountInstructor,
@@ -261,7 +261,7 @@ router.post(
   validator.isCourseUsingTokens,
   validator.isCourseToken,
   courseValidator.isCoursePaused,
-  validator.tokenLessThanOverride,
+  // validator.tokenLessThanOverride,
   controller.addOverride
 );
 

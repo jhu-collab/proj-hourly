@@ -346,5 +346,5 @@ export const tokenEditLimitSchema = yup.object().shape({
   quantity: yup
     .number()
     .required("Quantity is required for an override")
-    .min(1, "Must have positive override"),
+    .min(0, "Must have non-negative override"),
 });
