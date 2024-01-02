@@ -478,26 +478,26 @@ export const getTokensForStudent = async (req, res) => {
   });
   debug("Found issue tokens for student...");
   debug("filtering issue tokens");
-  let filteredIssueTokens = [];
-  for (const issueToken of issueTokens) {
-    const remainingTokens =
-      issueToken.overrideAmount !== null
-        ? issueToken.overrideAmount -
-          issueToken.usedTokens.filter(
-            (usedToken) =>
-              usedToken.unDoneById === null ||
-              usedToken.unDoneById === undefined
-          ).length
-        : issueToken.CourseToken.tokenLimit -
-          issueToken.usedTokens.filter(
-            (usedToken) =>
-              usedToken.unDoneById === null ||
-              usedToken.unDoneById === undefined
-          ).length;
-    if (remainingTokens > 0) {
-      filteredIssueTokens.push(issueToken);
-    }
-  }
+  let filteredIssueTokens = issueTokens;
+  // for (const issueToken of issueTokens) {
+  //   const remainingTokens =
+  //     issueToken.overrideAmount !== null
+  //       ? issueToken.overrideAmount -
+  //         issueToken.usedTokens.filter(
+  //           (usedToken) =>
+  //             usedToken.unDoneById === null ||
+  //             usedToken.unDoneById === undefined
+  //         ).length
+  //       : issueToken.CourseToken.tokenLimit -
+  //         issueToken.usedTokens.filter(
+  //           (usedToken) =>
+  //             usedToken.unDoneById === null ||
+  //             usedToken.unDoneById === undefined
+  //         ).length;
+  //   if (remainingTokens > 0) {
+  //     filteredIssueTokens.push(issueToken);
+  //   }
+  // }
   debug("issue tokens filtered");
   return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };

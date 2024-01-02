@@ -20,6 +20,7 @@ import { tokenEditLimitSchema, tokenSchema } from "../../utils/validators";
 import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
 import useMutationDeleteTokenOverride from "../../hooks/useMutationDeleteTokenOverride";
+import Grid from "@mui/material/Grid";
 
 /**
  * Represents a single Topic card.
@@ -162,37 +163,56 @@ function StudentTokenUsage({ token }) {
         <AccordionDetails sx={{ pr: 5 }}>
           <>
             {token.usedTokens.map((usedToken, index) => (
-              <Stack key={index} direction="row" justifyContent="space-between">
+              <Grid
+                container
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+                key={index}
+              >
                 {!usedToken.unDoneById ? (
                   <>
-                    <Typography>
-                      Reason: <strong>{usedToken.reason}</strong>
-                    </Typography>
-                    <Typography>
-                      Used By:{" "}
-                      <strong>
-                        {usedToken.appliedBy.firstName}{" "}
-                        {usedToken.appliedBy.lastName}
-                      </strong>
-                    </Typography>
-                    <Typography>
-                      Used On:{" "}
-                      <strong>{usedToken.createdAt.split("T")[0]}</strong>
-                    </Typography>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Reason: <strong>{usedToken.reason}</strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used By:{" "}
+                        <strong>
+                          {usedToken.appliedBy.firstName}{" "}
+                          {usedToken.appliedBy.lastName}
+                        </strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used On:{" "}
+                        <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                      </Typography>
+                    </Grid>
                   </>
                 ) : (
                   <>
-                    <Typography>Reason: {usedToken.reason}</Typography>
-                    <Typography>
-                      UnDone By: {usedToken.unDoneBy.firstName}{" "}
-                      {usedToken.unDoneBy.lastName}
-                    </Typography>
-                    <Typography>
-                      UnDone On: {usedToken.updatedAt.split("T")[0]}
-                    </Typography>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>Reason: {usedToken.reason}</Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone By: {usedToken.unDoneBy.firstName}{" "}
+                        {usedToken.unDoneBy.lastName}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone On: {usedToken.updatedAt.split("T")[0]}
+                      </Typography>
+                    </Grid>
                   </>
                 )}
-              </Stack>
+              </Grid>
             ))}
           </>
         </AccordionDetails>

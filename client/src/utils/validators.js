@@ -337,7 +337,7 @@ export const useTokenSchema = yup.object().shape({
       is: true,
       then: yup.string(),
     }),
-  reason: yup.string(),
+  reason: yup.string().required("Reason is required"),
 });
 
 export const tokenEditLimitSchema = yup.object().shape({
