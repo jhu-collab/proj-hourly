@@ -11,7 +11,7 @@ describe("Student Roster Page", () => {
   const courseTitle = "Data Structures";
   const courseNumber = "601.226";
   const courseSemester = "Spring";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
   const courseCode = "ABCDEF";
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
