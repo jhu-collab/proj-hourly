@@ -37,8 +37,8 @@ describe("Course Details Page: Instructor", () => {
 
   const courseTitle = "Machine Learning";
   const courseNumber = "601.475";
-  const courseSemester = "Spring";
-  const courseYear = "2024";
+  const courseSemester = "Fall";
+  const courseYear = new Date().getFullYear().toString();
 
   const deleteCourseButton = '[data-cy="delete-course-button"]';
 
@@ -118,9 +118,9 @@ describe("Course Details Page: Instructor", () => {
       cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
     });
 
-    cy.get('[data-cy="coursetype-course-pause-or-archive-title"]').contains("Pause or Archive Course")
-
-
+    cy.get('[data-cy="coursetype-course-pause-or-archive-title"]').contains(
+      "Pause or Archive Course"
+    );
   });
 
   it("create course calendar event successful", () => {
@@ -250,7 +250,7 @@ describe("Course Details Page: Instructor", () => {
     }
 
     cy.get('[data-cy="create-start-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(beginDate));
     Cypress.on("uncaught:exception", () => {
       return false;
@@ -263,7 +263,7 @@ describe("Course Details Page: Instructor", () => {
       endDate.setDate(endDate.getDate() + 1);
     }
     cy.get('[data-cy="create-end-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(endDate));
     // Course happens on which days
     cy.get('button[value="Tuesday"]').click();

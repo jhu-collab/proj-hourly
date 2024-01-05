@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import Button from "@mui/material/Button";
+import DownOutlined from "@ant-design/icons/DownOutlined";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -54,42 +58,41 @@ function StudentTokenUsage({ token }) {
   };
 
   const handleOnClickCancelBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(false);
   };
 
   const handleOnClickEditBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(true);
   };
+
+  const usedTokensActive = token.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  );
   return (
     <>
-      <MainCard sx={{ padding: 2 }} content={false}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={3}
-          >
-            <Grid item xs={0} sm={2}>
-              {/* Token Name */}
+      <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
+        <AccordionSummary expandIcon={<DownOutlined />}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={3}
+            >
               <Typography data-cy="token-name" variant="h5">
                 {token.CourseToken.title}
               </Typography>
-            </Grid>
-            {/* Token Balance */}
-            <Grid item xs={2} sm={2}>
               <Typography variant="h5" data-cy="token-balance-student">
                 Balance:{" "}
-                {token.overrideAmount === null
-                  ? token.CourseToken.tokenLimit - token.datesUsed.length
-                  : token.overrideAmount - token.datesUsed.length}{" "}
+                {!token.overrideAmount
+                  ? token.CourseToken.tokenLimit - usedTokensActive.length
+                  : token.overrideAmount - usedTokensActive.length}{" "}
               </Typography>
-            </Grid>
-            <Grid item xs={2} sm={2}>
-              {/* Token Limit */}
               {edit && courseType === "Instructor" ? (
                 <FormInputNumber
                   data-cy="edit-token-quantity"
@@ -100,13 +103,11 @@ function StudentTokenUsage({ token }) {
               ) : (
                 <Typography variant="h5" data-cy="token-limit-student">
                   Limit:{" "}
-                  {token.overrideAmount === null
+                  {!token.overrideAmount
                     ? token.CourseToken.tokenLimit
                     : token.overrideAmount}
                 </Typography>
               )}
-            </Grid>
-            <Grid item xs={1} sm={1}>
               {edit && courseType === "Instructor" && (
                 <Stack direction="row" spacing={1}>
                   <AnimateButton>
@@ -125,8 +126,6 @@ function StudentTokenUsage({ token }) {
                   </AnimateButton>
                 </Stack>
               )}
-            </Grid>
-            <Grid item xs={4.5} sm={4.5}>
               {!edit && courseType === "Instructor" && (
                 <Stack direction="row" spacing={1}>
                   <AnimateButton>
@@ -143,8 +142,8 @@ function StudentTokenUsage({ token }) {
                       variant="contained"
                       data-cy="remove-token-limit-button"
                       color="error"
-                      onClick={() => {
-                        console.log("clicked");
+                      onClick={(event) => {
+                        event.stopPropagation();
                         confirmDialog(
                           `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
                           () => {
@@ -158,10 +157,66 @@ function StudentTokenUsage({ token }) {
                   </AnimateButton>
                 </Stack>
               )}
-            </Grid>
-          </Grid>
-        </Form>
-      </MainCard>
+            </Stack>
+          </Form>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pr: 5 }}>
+          <>
+            {token.usedTokens.map((usedToken, index) => (
+              <Grid
+                container
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+                key={index}
+              >
+                {!usedToken.unDoneById ? (
+                  <>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Reason: <strong>{usedToken.reason}</strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used By:{" "}
+                        <strong>
+                          {usedToken.appliedBy.firstName}{" "}
+                          {usedToken.appliedBy.lastName}
+                        </strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used On:{" "}
+                        <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                      </Typography>
+                    </Grid>
+                  </>
+                ) : (
+                  <>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>Reason: {usedToken.reason}</Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone By: {usedToken.unDoneBy.firstName}{" "}
+                        {usedToken.unDoneBy.lastName}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone On: {usedToken.updatedAt.split("T")[0]}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            ))}
+          </>
+        </AccordionDetails>
+      </Accordion>
       <ConfirmPopup />
     </>
   );
