@@ -657,6 +657,74 @@ export default defineConfig({
           });
           return null;
         },
+        // added update course registration constraint
+        async updateRegConstraint(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                startRegConstraint: 1000,
+              },
+            });
+            return null;
+          }
+          return null;
+        },
+
+        // setIsArchivedFalse
+        async setIsArchivedFalse(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                isArchived: false,
+              },
+            });
+            return null;
+          }
+          return null;
+        },
+        // setIsPausedFalse
+        async setIsPausedFalse(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                isPaused: false,
+              },
+            });
+            return null;
+          }
+          return null;
+        },
+
       });
       return config;
     },

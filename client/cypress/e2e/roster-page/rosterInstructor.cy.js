@@ -789,9 +789,15 @@ describe("Roster Page", () => {
             });
         });
       cy.get(tokenEditLimit).should("be.visible").click();
-      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(0);
+      cy.get(tokenEditQuantity)
+        .type("{selectAll}")
+        .type("{backspace}")
+        .type(-1);
       cy.get(tokenCard).contains("button", "Submit").click();
-      cy.get(tokenEditQuantity).contains("p", "Must have positive override");
+      cy.get(tokenEditQuantity).contains(
+        "p",
+        "Must have non-negative override"
+      );
       cy.get(tokenBalance).should("be.visible").contains("h5", 2);
     });
     it("Edit override ammount to be equal to the limit", () => {
@@ -806,14 +812,11 @@ describe("Roster Page", () => {
             });
         });
       cy.get(tokenEditLimit).should("be.visible").click();
-      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(2);
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(0);
       cy.get(tokenCard).contains("button", "Submit").click();
       cy.wait(500);
-      cy.get(".Toastify")
-        .contains("div", `Override limit is lte token limit`)
-        .should("be.visible");
-      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
-      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+      cy.get(tokenLimit).should("be.visible").contains("h5", 0);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 0);
     });
     it("Edit override ammount to be 1 higher", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();

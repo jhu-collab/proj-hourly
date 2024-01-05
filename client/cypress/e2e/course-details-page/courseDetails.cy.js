@@ -117,6 +117,10 @@ describe("Course Details Page: Instructor", () => {
     cy.task("getCourseByNumber", courseNumber).then((course) => {
       cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
     });
+
+    cy.get('[data-cy="coursetype-course-pause-or-archive-title"]').contains(
+      "Pause or Archive Course"
+    );
   });
 
   it("create course calendar event successful", () => {
