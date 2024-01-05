@@ -177,7 +177,7 @@ describe("My Courses Page", () => {
     const courseTitle = "Test Course";
     const courseNumber = "-1";
     const courseSemester = "Fall";
-    const courseYear = "2023";
+    const courseYear = new Date().getFullYear().toString();
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
@@ -209,7 +209,7 @@ describe("My Courses Page", () => {
     const courseTitle = "Test Course";
     const courseNumber = "601.000";
     const courseSemester = "Winter";
-    const courseYear = "2023";
+    const courseYear = 2023;
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
@@ -277,7 +277,7 @@ describe("My Courses Page", () => {
     const courseTitle = "Test Course";
     const courseNumber = "601.000";
     const courseSemester = "Fall";
-    const courseYear = "2023";
+    const courseYear = new Date().getFullYear().toString();
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
@@ -306,7 +306,7 @@ describe("My Courses Page", () => {
     const courseTitle = "Test Course";
     const courseNumber = "601.001";
     const courseSemester = "Fall";
-    const courseYear = "2023";
+    const courseYear = new Date().getFullYear().toString();
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
@@ -344,7 +344,7 @@ describe("My Courses Page", () => {
     const courseTitle2 = "Test Course 2";
     const courseNumber = "601.002";
     const courseSemester = "Fall";
-    const courseYear = "2023";
+    const courseYear = new Date().getFullYear().toString();
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 
@@ -395,7 +395,7 @@ describe("My Courses Page", () => {
     const courseTitle = "Software Testing and Debugging";
     const courseNumber = "601.422";
     const courseSemester = "Fall";
-    const courseYear = "2023";
+    const courseYear = new Date().getFullYear().toString();
 
     const createCourseSemester = `[data-cy="${courseSemester}"]`;
 

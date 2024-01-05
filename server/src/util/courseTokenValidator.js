@@ -52,6 +52,30 @@ export const isCourseToken = async (req, res, next) => {
   }
 };
 
+//checking if it's the correct used token
+export const isUsedToken = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
+  debug("Finding Used token...");
+  const usedToken = await prisma.usedToken.findUnique({
+    where: {
+      id: usedTokenId,
+    },
+  });
+  debug("Found Used token...");
+  if (usedToken === null) {
+    debug("Used token doesn't exist...");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Used token does not exist for this courseTokenId" });
+  } else {
+    debug("Used token exists!");
+    next();
+  }
+};
+
 //validates whether the student has reached the token limit
 export const tokenLimitReached = async (req, res, next) => {
   if (validate(req, res)) {
@@ -72,9 +96,12 @@ export const tokenLimitReached = async (req, res, next) => {
       accountId: accountId,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issue token...");
-  const dates = issueToken.datesUsed;
+  const dates = issueToken.usedTokens;
 
   let tokenLimit = courseToken.tokenLimit;
 

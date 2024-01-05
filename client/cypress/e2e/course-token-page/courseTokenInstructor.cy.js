@@ -38,7 +38,7 @@ describe("Course Tokens Page", () => {
   const courseTitle = "Computer System Fundamentals";
   const courseNumber = "601.229";
   const courseSemester = "Fall";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
   const courseCard = `[data-cy="${courseNumber}"]`;

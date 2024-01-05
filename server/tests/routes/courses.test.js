@@ -17,6 +17,7 @@ describe(`Test endpoint ${endpoint}`, () => {
   let archivedTopics = [];
   let tokens = [];
   let officeHoursArray = [];
+  let calendarYear = new Date().getFullYear();
   beforeAll(async () => {
     // create the users
     await prisma.account.createMany({
@@ -77,7 +78,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       data: {
         title: "hello",
         semester: "Fall",
-        calendarYear: 2023,
+        calendarYear: calendarYear,
         courseNumber: "235.631",
         code: "PALWEL",
         isArchived: true,
@@ -135,7 +136,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         //title: "title",
         number: "601.421",
         semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -148,7 +149,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "title",
         //number: "601.421",
         semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -161,7 +162,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "title",
         number: "601.421",
         //semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -187,7 +188,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "title",
         number: "601.421",
         semester: "not-spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -200,7 +201,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "OOSE",
         number: "601.421",
         semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -229,7 +230,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(course.title).toBe("OOSE");
       expect(course.courseNumber).toBe("601.421");
       expect(course.semester).toBe("Spring");
-      expect(course.calendarYear).toBe(2023);
+      expect(course.calendarYear).toBe(calendarYear);
       expect(response.status).toBe(201);
       userInCourse.push(users[2]);
     });
@@ -238,7 +239,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "OOSE",
         number: "601.421",
         semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       const response = await request
         .post(`${endpoint}`)
@@ -555,7 +556,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         title: "OOSE",
         number: "601.421",
         semester: "Spring",
-        year: 2023,
+        year: calendarYear,
       };
       response = await request
         .post(`${endpoint}`)
@@ -566,7 +567,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(course.title).toBe("OOSE");
       expect(course.courseNumber).toBe("601.421");
       expect(course.semester).toBe("Spring");
-      expect(course.calendarYear).toBe(2023);
+      expect(course.calendarYear).toBe(calendarYear);
       courses[0] = course;
       await prisma.account.update({
         where: {
@@ -4608,6 +4609,21 @@ describe(`Test endpoint ${endpoint}`, () => {
       where: {
         id: {
           in: officeHourIds,
+        },
+      },
+    });
+    const issueTokensToDelete = await prisma.issueToken.findMany({
+      where: {
+        courseTokenId: {
+          in: tokenIds,
+        },
+      },
+    });
+    const issueTokenIds = issueTokensToDelete.map((issue) => issue.id);
+    await prisma.usedToken.deleteMany({
+      where: {
+        issueTokenId: {
+          in: issueTokenIds,
         },
       },
     });

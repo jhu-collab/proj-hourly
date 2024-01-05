@@ -21,7 +21,7 @@ function useQueryRemainingTokens() {
         getConfig(token)
       );
       debug("Getting all tokens.");
-      return res.data.issueTokens;
+      return res.data.filteredIssueTokens;
     } catch (err) {
       errorToast(err);
       throw err;

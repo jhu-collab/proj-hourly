@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import Button from "@mui/material/Button";
+import DownOutlined from "@ant-design/icons/DownOutlined";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -16,6 +20,7 @@ import { tokenEditLimitSchema, tokenSchema } from "../../utils/validators";
 import useMutationAddTokenOverride from "../../hooks/useMutationAddTokenOverride";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
 import useMutationDeleteTokenOverride from "../../hooks/useMutationDeleteTokenOverride";
+import Grid from "@mui/material/Grid";
 
 /**
  * Represents a single Topic card.
@@ -53,100 +58,165 @@ function StudentTokenUsage({ token }) {
   };
 
   const handleOnClickCancelBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(false);
   };
 
   const handleOnClickEditBtn = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setEdit(true);
   };
+
+  const usedTokensActive = token.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  );
   return (
     <>
-      <MainCard sx={{ padding: 2 }} content={false}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={3}
-          >
-            <Typography data-cy="token-name" variant="h5">
-              {token.CourseToken.title}
-            </Typography>
-            <Typography variant="h5" data-cy="token-balance-student">
-              Balance:{" "}
-              {!token.overrideAmount
-                ? token.CourseToken.tokenLimit - token.datesUsed.length
-                : token.overrideAmount - token.datesUsed.length}{" "}
-            </Typography>
-            {edit && courseType === "Instructor" ? (
-              <FormInputNumber
-                data-cy="edit-token-quantity"
-                name="quantity"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Typography variant="h5" data-cy="token-limit-student">
-                Limit:{" "}
-                {!token.overrideAmount
-                  ? token.CourseToken.tokenLimit
-                  : token.overrideAmount}
+      <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
+        <AccordionSummary expandIcon={<DownOutlined />}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={3}
+            >
+              <Typography data-cy="token-name" variant="h5">
+                {token.CourseToken.title}
               </Typography>
-            )}
-            {edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button variant="contained" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-            {!edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    data-cy="edit-token-limit-button"
-                    variant="contained"
-                    onClick={handleOnClickEditBtn}
-                  >
-                    Edit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    data-cy="remove-token-limit-button"
-                    color="error"
-                    onClick={() => {
-                      console.log("clicked");
-                      confirmDialog(
-                        `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
-                        () => {
-                          mutateDelete();
-                        }
-                      );
-                    }}
-                  >
-                    Remove Override
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-          </Stack>
-        </Form>
-      </MainCard>
+              <Typography variant="h5" data-cy="token-balance-student">
+                Balance:{" "}
+                {!token.overrideAmount
+                  ? token.CourseToken.tokenLimit - usedTokensActive.length
+                  : token.overrideAmount - usedTokensActive.length}{" "}
+              </Typography>
+              {edit && courseType === "Instructor" ? (
+                <FormInputNumber
+                  data-cy="edit-token-quantity"
+                  name="quantity"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : (
+                <Typography variant="h5" data-cy="token-limit-student">
+                  Limit:{" "}
+                  {!token.overrideAmount
+                    ? token.CourseToken.tokenLimit
+                    : token.overrideAmount}
+                </Typography>
+              )}
+              {edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+              {!edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button
+                      data-cy="edit-token-limit-button"
+                      variant="contained"
+                      onClick={handleOnClickEditBtn}
+                    >
+                      Edit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      data-cy="remove-token-limit-button"
+                      color="error"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        confirmDialog(
+                          `Do you really want to remove the override for "${token.CourseToken.title}" token?`,
+                          () => {
+                            mutateDelete();
+                          }
+                        );
+                      }}
+                    >
+                      Remove Override
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Stack>
+          </Form>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pr: 5 }}>
+          <>
+            {token.usedTokens.map((usedToken, index) => (
+              <Grid
+                container
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+                key={index}
+              >
+                {!usedToken.unDoneById ? (
+                  <>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Reason: <strong>{usedToken.reason}</strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used By:{" "}
+                        <strong>
+                          {usedToken.appliedBy.firstName}{" "}
+                          {usedToken.appliedBy.lastName}
+                        </strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        Used On:{" "}
+                        <strong>{usedToken.createdAt.split("T")[0]}</strong>
+                      </Typography>
+                    </Grid>
+                  </>
+                ) : (
+                  <>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>Reason: {usedToken.reason}</Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone By: {usedToken.unDoneBy.firstName}{" "}
+                        {usedToken.unDoneBy.lastName}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={0} sm={2}>
+                      <Typography>
+                        UnDone On: {usedToken.updatedAt.split("T")[0]}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            ))}
+          </>
+        </AccordionDetails>
+      </Accordion>
       <ConfirmPopup />
     </>
   );

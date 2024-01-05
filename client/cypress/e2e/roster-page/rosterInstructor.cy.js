@@ -35,6 +35,7 @@ describe("Roster Page", () => {
   const tokenNone = '[data-cy="token-none"]';
   const tokenTokenTitle = '[data-cy="tokenTitle"]';
   const tokenSubmit = '[data-cy="token-submit-button"]';
+  const tokenReason = '[data-cy="token-reason-label"]';
 
   const tokenCard = '[data-cy="token-balance-list-student"]';
   const tokenName = '[data-cy="token-name"]';
@@ -47,7 +48,7 @@ describe("Roster Page", () => {
   const courseTitle = "Data Structures";
   const courseNumber = "601.226";
   const courseSemester = "Spring";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
   const courseCode = "ABCDEF";
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
@@ -123,7 +124,7 @@ describe("Roster Page", () => {
     cy.wait(1000);
     cy.get(navbarButton).click();
     cy.wait(1000);
-    cy.get(navbar).contains("a", "roster").click();
+    cy.get(navbar).contains("a", "roster").click({ force: true });
     cy.wait(1000);
     body.click();
     cy.wait(1000);
@@ -466,6 +467,21 @@ describe("Roster Page", () => {
         });
     });
 
+    it("Failure to use student course token without reason", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(tokenReason).contains("p", "Reason is required");
+    });
+
     it("Successfully using student course token", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
@@ -477,6 +493,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -532,7 +549,7 @@ describe("Roster Page", () => {
         });
     });
 
-    it("Successfully undoing student course token usage", () => {
+    it("Failure to undo student course token usage, missing reason", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -543,6 +560,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       const currentDate = new Date().toISOString().split("T")[0];
       cy.get(".MuiDataGrid-row")
@@ -557,7 +575,39 @@ describe("Roster Page", () => {
       cy.get(tokenUndo).click();
       cy.get(tokenUndoDate).click();
       cy.log(currentDate);
-      cy.get(`[data-cy="${currentDate}"]`).click();
+      cy.get(`[data-cy="${currentDate} for Test 123"]`).click();
+      cy.get(tokenSubmit).click();
+      cy.get(tokenReason).contains("p", "Reason is required");
+    });
+
+    it("Successfully undoing student course token usage", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
+      cy.get(tokenSubmit).click();
+      const currentDate = new Date().toISOString().split("T")[0];
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenUndo).click();
+      cy.get(tokenUndoDate).click();
+      cy.log(currentDate);
+      cy.get(`[data-cy="${currentDate} for Test 123"]`).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.wait(1000);
       cy.get(".MuiDataGrid-row")
@@ -589,6 +639,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -637,6 +688,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -647,6 +699,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 456");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -657,6 +710,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 789");
       cy.get(tokenSubmit).click();
       cy.get(".Toastify")
         .contains("div", "Student has used all their tokens")
@@ -735,9 +789,15 @@ describe("Roster Page", () => {
             });
         });
       cy.get(tokenEditLimit).should("be.visible").click();
-      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(0);
+      cy.get(tokenEditQuantity)
+        .type("{selectAll}")
+        .type("{backspace}")
+        .type(-1);
       cy.get(tokenCard).contains("button", "Submit").click();
-      cy.get(tokenEditQuantity).contains("p", "Must have positive override");
+      cy.get(tokenEditQuantity).contains(
+        "p",
+        "Must have non-negative override"
+      );
       cy.get(tokenBalance).should("be.visible").contains("h5", 2);
     });
     it("Edit override ammount to be equal to the limit", () => {
@@ -752,14 +812,11 @@ describe("Roster Page", () => {
             });
         });
       cy.get(tokenEditLimit).should("be.visible").click();
-      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(2);
+      cy.get(tokenEditQuantity).type("{selectAll}").type("{backspace}").type(0);
       cy.get(tokenCard).contains("button", "Submit").click();
       cy.wait(500);
-      cy.get(".Toastify")
-        .contains("div", `Override limit is lte token limit`)
-        .should("be.visible");
-      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
-      cy.get(tokenBalance).should("be.visible").contains("h5", 2);
+      cy.get(tokenLimit).should("be.visible").contains("h5", 0);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 0);
     });
     it("Edit override ammount to be 1 higher", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
@@ -804,7 +861,7 @@ describe("Roster Page", () => {
     });
     it("Use student token and check balance after", () => {
       cy.task("useStudentsToken", {
-        userName: "thor",
+        userName: "ali-the-student",
         tokenName: "tokenTitle",
         courseCode: courseCode,
       });
@@ -823,7 +880,7 @@ describe("Roster Page", () => {
     });
     it("Use student token and check balance after and set override", () => {
       cy.task("useStudentsToken", {
-        userName: "thor",
+        userName: "ali-the-student",
         tokenName: "tokenTitle",
         courseCode: courseCode,
       });
@@ -854,7 +911,7 @@ describe("Roster Page", () => {
     });
     it("Use student token and check balance after and set override, multiple tokens", () => {
       cy.task("useStudentsToken", {
-        userName: "thor",
+        userName: "ali-the-student",
         tokenName: "tokenTitle",
         courseCode: courseCode,
       });
