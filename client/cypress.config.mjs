@@ -57,13 +57,11 @@ export default defineConfig({
               code: "ABCDEF",
             },
           });
-
           const aliTheTA = await prisma.Account.findUnique({
             where: {
               userName: "ali-the-ta",
             },
           });
-
           const minTomill = 60000; //1 minute is 60000 milliseconds
           let start = new Date();
           start.setDate(start.getDate() + 1);
@@ -96,7 +94,7 @@ export default defineConfig({
               },
               isOnDayOfWeek: {
                 connect: {
-                  dayNumber: start.getDay() % 7,
+                  dayNumber: start.getDay() == 0 ? 7 : start.getDay(),
                 },
               },
             },
@@ -724,7 +722,6 @@ export default defineConfig({
           }
           return null;
         },
-
       });
       return config;
     },
