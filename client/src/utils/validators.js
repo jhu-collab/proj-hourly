@@ -329,19 +329,16 @@ export const tokenSchema = yup.object({
 export const useTokenSchema = yup.object().shape({
   token: yup.string().required("Token name is required"),
   undoToken: yup.boolean(),
-  date: yup
+  date_reason: yup
     .string()
     .nullable()
-    .typeError("Date is required")
+    .typeError("Reason is required")
     .when("undoToken", {
       is: true,
-      then: yup
-        .string()
-        .required("Date is required")
-        .matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid. Must be yyyy-mm-dd"),
+      then: yup.string(),
     }),
+  reason: yup.string().required("Reason is required"),
 });
-
 
 export const createRegConstraint = yup.object().shape({
   start: yup.number().required("Start is required"),
@@ -352,6 +349,17 @@ export const tokenEditLimitSchema = yup.object().shape({
   quantity: yup
     .number()
     .required("Quantity is required for an override")
-    .min(1, "Must have positive override"),
+    .min(0, "Must have non-negative override"),
+});
 
+export const feedbackTypeSchema = yup.object().shape({
+  feedbackRating: yup
+    .number()
+    .required("A feedback rating is required!")
+    .min(0, "Must have non-zero rating"),
+  feedbackComment: yup.string().nullable(),
+});
+
+export const accountIdSchema = yup.object().shape({
+  accountId: yup.number().required("Account id is required!"),
 });

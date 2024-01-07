@@ -186,6 +186,86 @@ export const isCourseStaffOrInstructor = async (req, res, next) => {
   }
 };
 
+export const isCourseInstructor = async (req, res, next) => {
+  debug("isCourseInstructor is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const id = req.id;
+  debug("Checking if account is an instructor for course...");
+  const instructorQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      instructors: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  if (instructorQuery === null) {
+    debug("Account is not an instructor for course...");
+    debug("Error in isCourseInstructor!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a instructor" });
+  } else {
+    debug("Account is an instructor for course!");
+    debug("isCourseInstructor is done!");
+    next();
+  }
+};
+
+export const isCourseStaffOrInstructorParam = async (req, res, next) => {
+  debug("isCourseStaffOrInstructorParam is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId, accountId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  if (accountId === undefined || accountId === null) {
+    accountId = parseInt(req.params.accountId, 10);
+  }
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id: accountId,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id: accountId,
+          },
+        },
+      },
+    ],
+  };
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    debug("Account is not an instructor or staff for course...");
+    debug("Error in isCourseStaffOrInstructorParam!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff or instructor" });
+  } else {
+    debug("Account is an instructor or staff for course!");
+    debug("isCourseStaffOrInstructorParam is done!");
+    next();
+  }
+};
+
 export const areCourseStaffOrInstructor = async (req, res, next) => {
   debug("areCourseStaffOrInstructor is called!");
   debug("Retrieving course id and hosts id array from body...");
@@ -319,7 +399,7 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHour!");
     return res
@@ -357,7 +437,7 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHourParam!");
     return res
@@ -841,11 +921,9 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   if (start <= end) {
     debug("Start is less than or equal to end...");
     debug("Error in startIsGreaterThanEnd!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: start constraint must be greater than end constraint",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: start constraint must be greater than end constraint",
+    });
   } else {
     debug("Start is greater than end!");
     debug("startIsGreaterThanEnd is done!");
@@ -910,7 +988,7 @@ export const isValidFilterValue = async (req, res, next) => {
   const { filterType, filterValue } = req.params;
   const courseId = req.body;
   const id = req.id;
-  if (filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+  if (filterType === "date" && isNaN(Date.parse(filterValue))) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type Date" });
@@ -982,17 +1060,22 @@ export const isValidFilterValue = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
+    }
     const course = await prisma.officeHour.findMany({
       where: {
         courseId: courseId,
         hosts: {
           some: {
-            id,
+            id: parseInt(filterValue, 10),
           },
         },
       },
     });
-    if (course === null) {
+    if (course.length === 0) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "ERROR: filter value must be of type host" });
@@ -1143,11 +1226,9 @@ export const isCourseArchivedRegistrationId = async (req, res, next) => {
     },
   });
   if (course.isArchived === true) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        msg: "ERROR: Course is archived, cannot manipulate registration",
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: Course is archived, cannot manipulate registration",
+    });
   } else {
     debug("Course is not archived.");
     next();

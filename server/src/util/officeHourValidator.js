@@ -690,6 +690,31 @@ export const isRegisteredOrIsStaffBody = async (req, res, next) => {
   }
 };
 
+export const isRegistrationStudent = async (req, res, next) => {
+  debug("checking if student is registered");
+  const { registrationId } = req.body;
+  const id = req.id;
+  debug("getting registration...");
+  const registration = await prisma.registration.findFirst({
+    where: {
+      id: registrationId,
+    },
+    include: {
+      officeHour: true,
+    },
+  });
+  debug("got registration");
+  if (registration.accountId !== id) {
+    debug("student is not registered");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: You are not registered for this registration" });
+  } else {
+    debug("student is registered");
+    next();
+  }
+};
+
 export const doesRegistrationExistParams = async (req, res, next) => {
   debug("checking if registration exists");
   const registrationId = parseInt(req.params.registrationId, 10);
@@ -1237,8 +1262,115 @@ export const isRegistrationHostOrInstructor = async (req, res, next) => {
   }
 };
 
-export const endDateOldPreStart = async(req, res, next) => {
-  const { startDate, endDateOldOfficeHour } =
-  req.body;
+export const endDateOldPreStart = async (req, res, next) => {
+  const { startDate, endDateOldOfficeHour } = req.body;
+};
 
+export const isWithinTimeConstraint = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  debug("finding office hour");
+  const officeHour = await prisma.officeHour.findUnique({
+    where: {
+      id: registration.officeHourId,
+    },
+  });
+  debug("office hour is found");
+  debug("finding course");
+  const course = await prisma.course.findUnique({
+    where: {
+      id: officeHour.courseId,
+    },
+  });
+  debug("course is found");
+  const current = spacetime.now().goto("America/New_York");
+  const endTimeObj = spacetime(registration.endTime);
+  let registrationEndTime = spacetime(registration.date);
+  registrationEndTime = registrationEndTime.add(
+    endTimeObj.hour() + endTimeObj.toNativeDate().getTimezoneOffset() / 60,
+    "hour"
+  );
+  registrationEndTime = registrationEndTime.add(endTimeObj.minute(), "minute");
+  registrationEndTime = registrationEndTime.add(
+    endTimeObj.toNativeDate().getTimezoneOffset() / 60 -
+      registrationEndTime.toNativeDate().getTimezoneOffset() / 60,
+    "hour"
+  );
+  let courseEndConstraint =
+    spacetime(registrationEndTime).goto("America/New_York");
+  courseEndConstraint = courseEndConstraint.add(
+    course.startRegConstraint,
+    "hour"
+  );
+  if (
+    current.isBefore(registrationEndTime) ||
+    current.isAfter(courseEndConstraint)
+  ) {
+    debug("feedback cannot be added");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "ERROR: cannot add feedback at this time!" });
+  } else {
+    debug("feedback can be added");
+    next();
+  }
+};
+
+export const registrationHasFeedback = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.hasFeedback) {
+    debug("feedback already added for this registration");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback already added for this registration!" });
+  } else {
+    debug("feedback does not exist for this registration");
+    next();
+  }
+};
+
+export const isNotNoShow = async (req, res, next) => {
+  const { registrationId } = req.body;
+  debug("finding registration");
+  const registration = await prisma.registration.findUnique({
+    where: {
+      id: registrationId,
+    },
+  });
+  debug("registration is found");
+  if (registration.isNoShow) {
+    debug("registration was a no show");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: registration was a no show!" });
+  } else {
+    debug("registration was not a no show!");
+    next();
+  }
+};
+
+export const isFeedbackRatingGood = async (req, res, next) => {
+  const { feedbackRating } = req.body;
+  if (feedbackRating < 1 || feedbackRating > 10) {
+    debug("feedback rating not between 1 and 10");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "ERROR: feedback rating not between 1 and 10!" });
+  } else {
+    debug("feedback between 1 and 10!");
+    next();
+  }
 };

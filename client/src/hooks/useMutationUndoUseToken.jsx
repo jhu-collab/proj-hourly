@@ -20,10 +20,10 @@ function useMutationUndoUseToken(studentId, courseId) {
   const undoUseToken = async (obj) => {
     try {
       debug("Sending token to be undone to the backend...");
-      const endpoint = `${BASE_URL}/api/courseToken/${courseId}/undoUsedToken/${obj.token}/student/${studentId}`;
+      const endpoint = `${BASE_URL}/api/courseToken/${courseId}/undoUsedToken/${obj.usedTokenId}`;
       const res = await axios.post(
         endpoint,
-        { date: new Date(obj.date).toISOString() },
+        { reason: obj.reason },
         getConfig(token)
       );
       debug("Successful! Returning result data...");

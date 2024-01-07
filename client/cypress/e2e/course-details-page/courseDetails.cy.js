@@ -7,7 +7,7 @@ const formatCypressDate = (date) => {
   return year + "-" + month + "-" + day;
 };
 
-describe("Course Details Page: Staff", () => {
+describe("Course Details Page: Instructor", () => {
   const BASE_URL = "http://localhost:3000/proj-hourly";
 
   const userNameInputText = '[data-cy="username-input-text"]';
@@ -38,10 +38,18 @@ describe("Course Details Page: Staff", () => {
   const courseTitle = "Machine Learning";
   const courseNumber = "601.475";
   const courseSemester = "Fall";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
+
+  const deleteCourseButton = '[data-cy="delete-course-button"]';
+
+  const deleteCourseConfirmButton = '[data-cy="confirm-delete-button"]';
+  const deleteCourseCancelButton = '[data-cy="cancel-delete-button"]';
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
   const courseCard = `[data-cy="${courseNumber}"]`;
+
+  const staffCoursesLabel = '[data-cy="staff-courses-label"]';
+  const staffCourseList = '[data-cy="staff-course-list"]';
 
   beforeEach(() => {
     cy.task("deleteStudentCourses", "user-1");
@@ -102,12 +110,17 @@ describe("Course Details Page: Staff", () => {
     cy.get(courseDetailsNumber).contains(`Course Number: ${courseNumber}`);
     cy.get(courseDetailsSemester).contains(`Semester: ${courseSemester}`);
     cy.get(courseDetailsYear).contains(`Year: ${courseYear}`);
+    cy.get(deleteCourseButton).should("be.visible").should("be.enabled");
     Cypress.on("uncaught:exception", () => {
       return false;
     });
     cy.task("getCourseByNumber", courseNumber).then((course) => {
       cy.get(courseDetailsCode).contains(`Code: ${course.code}`);
     });
+
+    cy.get('[data-cy="coursetype-course-pause-or-archive-title"]').contains(
+      "Pause or Archive Course"
+    );
   });
 
   it("create course calendar event successful", () => {
@@ -124,14 +137,37 @@ describe("Course Details Page: Staff", () => {
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    while (
+      daysOfWeek[beginDate.getDay()] != "Tuesday" &&
+      daysOfWeek[beginDate.getDay()] != "Thursday" &&
+      daysOfWeek[beginDate.getDay()] != "Sunday"
+    ) {
+      beginDate.setDate(beginDate.getDate() + 1);
+    }
+    while (
+      daysOfWeek[endDate.getDay()] != "Tuesday" &&
+      daysOfWeek[endDate.getDay()] != "Thursday" &&
+      daysOfWeek[endDate.getDay()] != "Sunday"
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
     cy.get('[data-cy="create-start-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(beginDate));
     Cypress.on("uncaught:exception", () => {
       return false;
     });
     cy.get('[data-cy="create-end-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(endDate));
     // Course happens on which days
     cy.get('button[value="Tuesday"]').click();
@@ -167,44 +203,6 @@ describe("Course Details Page: Staff", () => {
   });
 
   it("opt out of token successful", () => {
-    cy.get(courseCalendarEventInfoTitle).contains(
-      `Course Calendar Event Information`
-    );
-    // Activate recurring
-    cy.get('input[name="recurringEvent"]').check();
-    // Hardcode date
-    const now = new Date();
-    const beginDate = new Date(now);
-    const endDate = new Date(now.setMonth(now.getMonth() + 1));
-    // Enter start and end date
-    Cypress.on("uncaught:exception", () => {
-      return false;
-    });
-    cy.get('[data-cy="create-start-date-text"]')
-      .clear()
-      .type(formatCypressDate(beginDate));
-    Cypress.on("uncaught:exception", () => {
-      return false;
-    });
-    cy.get('[data-cy="create-end-date-text"]')
-      .clear()
-      .type(formatCypressDate(endDate));
-    // Course happens on which days
-    cy.get('button[value="Tuesday"]').click();
-    cy.get('button[value="Thursday"]').click();
-    cy.get('button[value="Sunday"]').click();
-
-    // location
-    const locationName = "Malone";
-    cy.get('[data-cy="create-location-input"]').type(locationName);
-
-    // submit
-    cy.get('[data-cy="create-event-submit"]').click();
-
-    // check if token appears to the left
-    cy.wait(1000);
-    // cy.get(courseCard).click();
-
     // test opt out of use tokens
     cy.get(navbarButton).click();
     cy.get(navbar).contains("a", "course details").click();
@@ -234,14 +232,38 @@ describe("Course Details Page: Staff", () => {
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    while (
+      daysOfWeek[beginDate.getDay()] != "Tuesday" &&
+      daysOfWeek[beginDate.getDay()] != "Thursday" &&
+      daysOfWeek[beginDate.getDay()] != "Sunday"
+    ) {
+      beginDate.setDate(beginDate.getDate() + 1);
+    }
+
     cy.get('[data-cy="create-start-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(beginDate));
     Cypress.on("uncaught:exception", () => {
       return false;
     });
+    while (
+      daysOfWeek[endDate.getDay()] != "Tuesday" &&
+      daysOfWeek[endDate.getDay()] != "Thursday" &&
+      daysOfWeek[endDate.getDay()] != "Sunday"
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
     cy.get('[data-cy="create-end-date-text"]')
-      .clear()
+      // .clear()
       .type(formatCypressDate(endDate));
     // Course happens on which days
     cy.get('button[value="Tuesday"]').click();
@@ -267,6 +289,29 @@ describe("Course Details Page: Staff", () => {
     cy.get('button[title="Next week"]').should("be.visible").click();
     cy.get('div[class="fc-daygrid-event-harness"]').should("not.exist");
   });
+  it("cancel delete course successful", () => {
+    cy.get(courseCalendarEventInfoTitle).contains(
+      `Course Calendar Event Information`
+    );
+    cy.get(deleteCourseButton).click();
+    cy.get(deleteCourseCancelButton).click();
+  });
+  it("delete course successful", () => {
+    cy.get(courseCalendarEventInfoTitle).contains(
+      `Course Calendar Event Information`
+    );
+    cy.get(deleteCourseButton).click();
+    cy.get(deleteCourseConfirmButton).click();
+    cy.visit(BASE_URL + "/login");
+    cy.get(staffCoursesLabel).should("be.visible");
+    cy.get(staffCourseList)
+      .children()
+      .should("be.visible")
+      .should("have.length", 1)
+      .contains(
+        "You are not enrolled in any courses in which you are a staff member."
+      );
+  });
 });
 
 describe("Course Details Page: Student", () => {
@@ -288,6 +333,7 @@ describe("Course Details Page: Student", () => {
   const courseDetailsSemester = '[data-cy="course-details-semester"]';
   const courseDetailsYear = '[data-cy="course-details-year"]';
   const leaveCourseButton = '[data-cy="leave-course-button"]';
+  const deleteCourseButton = '[data-cy="delete-course-button"]';
 
   const leaveCourseConfirmButton = '[data-cy="confirm-delete-button"]';
   const leaveCourseCancelButton = '[data-cy="cancel-delete-button"]';
@@ -346,7 +392,7 @@ describe("Course Details Page: Student", () => {
 
     cy.url().should("be.equal", BASE_URL);
     cy.get(".Toastify")
-      .contains("div", "Successfully removed course!")
+      .contains("div", "Successfully left course!")
       .should("be.visible");
     cy.get(studentCourseList)
       .should("be.visible")

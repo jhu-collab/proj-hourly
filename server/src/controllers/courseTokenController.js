@@ -1,10 +1,5 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
-import { stringToTimeObj } from "../util/officeHourValidator.js";
-import checkValidation from "../util/checkValidation.js";
-import { combineTimeAndDate, generateCalendar } from "../util/icalHelpers.js";
-import { computeDiff, handleUTCDateChange } from "../util/helpers.js";
-import { weekday } from "../util/officeHourValidator.js";
 import spacetime from "spacetime";
 import { factory } from "../util/debug.js";
 import validate from "../util/checkValidation.js";
@@ -129,65 +124,80 @@ export const editCourseToken = async (req, res) => {
 export const usedToken = async (req, res) => {
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date } = req.body;
-  const dateObj = spacetime(date);
+  const { reason } = req.body;
+  const id = req.id;
   debug("Finding issueToken for student...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
       accountId: accountId,
       courseTokenId,
+    },
+    include: {
+      usedTokens: true,
     },
   });
   debug("issueToken found for student...");
-  debug("Updating issueToken...");
-  const updateIssueToken = await prisma.issueToken.update({
-    where: {
-      id: issueToken.id,
-    },
+  debug("Creating used token...");
+  const usedToken = await prisma.usedToken.create({
     data: {
-      datesUsed: {
-        push: dateObj.toNativeDate(),
+      issueTokenId: issueToken.id,
+      appliedById: id,
+      reason: reason,
+    },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
       },
     },
   });
-  debug("Updated issueToken...");
-  return res.status(StatusCodes.ACCEPTED).json({ updateIssueToken });
+  debug("Used token created...");
+  return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };
 
 export const undoUsedToken = async (req, res) => {
-  const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
   const accountId = parseInt(req.params.accountId, 10);
-  const { date } = req.body;
-  const dateObj = spacetime(date);
-  debug("Finding issueToken for student...");
-  const issueToken = await prisma.issueToken.findFirst({
+  const { reason } = req.body;
+  const id = req.id;
+  debug("Finding used token");
+  const updatedUsedToken = await prisma.usedToken.update({
     where: {
-      accountId: accountId,
-      courseTokenId,
-    },
-  });
-  debug("Found issueToken for student...");
-  const dateToFind = dateObj.format("iso").slice(0, 10);
-  const indexToRemove = issueToken.datesUsed.findIndex((dateTime) => {
-    return new Date(dateTime).toISOString().startsWith(dateToFind);
-  });
-  let updatedDatesUsed = issueToken.datesUsed;
-  if (issueToken.datesUsed.length === 1) {
-    updatedDatesUsed = [];
-  } else if (indexToRemove !== -1) {
-    updatedDatesUsed = updatedDatesUsed.splice(indexToRemove, 1);
-  }
-  debug("Updating issueToken for student...");
-  const updateIssueToken = await prisma.issueToken.update({
-    where: {
-      id: issueToken.id,
+      id: usedTokenId,
     },
     data: {
-      datesUsed: updatedDatesUsed,
+      unDoneById: id,
+      reason: reason,
+    },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
-  debug("Updated issueToken for student...");
-  return res.status(StatusCodes.ACCEPTED).json({ updateIssueToken });
+  debug("Updated used token");
+  return res.status(StatusCodes.ACCEPTED).json({ updatedUsedToken });
 };
 
 export const getRemainingTokens = async (req, res) => {
@@ -209,15 +219,21 @@ export const getRemainingTokens = async (req, res) => {
       accountId: id,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issueToken...");
   const numTokenLimit = courseToken.tokenLimit;
   const overrideAmount = issueToken.overrideAmount;
-  const datesUsedLength = issueToken.datesUsed.length;
+  const usedTokensLength = issueToken.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  ).length;
   const remainingTokens =
     overrideAmount !== null
-      ? overrideAmount - datesUsedLength
-      : numTokenLimit - datesUsedLength;
+      ? overrideAmount - usedTokensLength
+      : numTokenLimit - usedTokensLength;
   return res.status(StatusCodes.ACCEPTED).json({ remainingTokens });
 };
 
@@ -244,13 +260,53 @@ export const getAllRemainingTokens = async (req, res) => {
     },
     include: {
       CourseToken: true,
+      usedTokens: {
+        include: {
+          unDoneBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          appliedBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       id: "asc",
     },
   });
   debug("Found issueToken...");
-  return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+  debug("filtering issue tokens");
+  let filteredIssueTokens = [];
+  for (const issueToken of issueTokens) {
+    const remainingTokens =
+      issueToken.overrideAmount !== null
+        ? issueToken.overrideAmount -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length
+        : issueToken.CourseToken.tokenLimit -
+          issueToken.usedTokens.filter(
+            (usedToken) =>
+              usedToken.unDoneById === null ||
+              usedToken.unDoneById === undefined
+          ).length;
+    if (remainingTokens > 0) {
+      filteredIssueTokens.push(issueToken);
+    }
+  }
+  debug("issue tokens filtered");
+  return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };
 
 export const getUsedTokens = async (req, res) => {
@@ -266,11 +322,17 @@ export const getUsedTokens = async (req, res) => {
       accountId: id,
       courseTokenId,
     },
+    include: {
+      usedTokens: true,
+    },
   });
   debug("Found issueToken for student...");
-  const datesUsedLength = issueToken.datesUsed.length;
+  const usedTokensLength = issueToken.usedTokens.filter(
+    (usedToken) =>
+      usedToken.unDoneById === null || usedToken.unDoneById === undefined
+  ).length;
 
-  return res.status(StatusCodes.ACCEPTED).json({ balance: datesUsedLength });
+  return res.status(StatusCodes.ACCEPTED).json({ balance: usedTokensLength });
 };
 
 export const deleteSingle = async (req, res) => {
@@ -278,8 +340,29 @@ export const deleteSingle = async (req, res) => {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId,
+    },
+    include: {
+      usedTokens: true,
+    },
+  });
+  let issueTokenIds = [];
+  for (let issueToken of issueTokens) {
+    issueTokenIds.push(issueToken.id);
+  }
+  debug("deleting used tokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
+  debug("used tokens deleted");
   debug("Deleting issueTokens...");
-  const issueToken = await prisma.issueToken.deleteMany({
+  await prisma.issueToken.deleteMany({
     where: {
       courseTokenId,
     },
@@ -312,7 +395,31 @@ export const deleteAll = async (req, res) => {
     courseTokenId.push(courseToken.id);
   }
   debug("Deleting all issueTokens...");
-  const issueToken = await prisma.issueToken.deleteMany({
+  const issueTokens = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenId,
+      },
+    },
+    include: {
+      usedTokens: true,
+    },
+  });
+  let issueTokenIds = [];
+  for (let issueToken of issueTokens) {
+    issueTokenIds.push(issueToken.id);
+  }
+  debug("Deleting all usedTokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
+  debug("All usedTokens deleted...");
+  debug("Deleting all issueTokens...");
+  await prisma.issueToken.deleteMany({
     where: {
       courseTokenId: {
         in: courseTokenId,
@@ -346,13 +453,53 @@ export const getTokensForStudent = async (req, res) => {
     },
     include: {
       CourseToken: true,
+      usedTokens: {
+        include: {
+          unDoneBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          appliedBy: {
+            select: {
+              userName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       id: "asc",
     },
   });
   debug("Found issue tokens for student...");
-  return res.status(StatusCodes.ACCEPTED).json({ issueTokens });
+  debug("filtering issue tokens");
+  let filteredIssueTokens = issueTokens;
+  // for (const issueToken of issueTokens) {
+  //   const remainingTokens =
+  //     issueToken.overrideAmount !== null
+  //       ? issueToken.overrideAmount -
+  //         issueToken.usedTokens.filter(
+  //           (usedToken) =>
+  //             usedToken.unDoneById === null ||
+  //             usedToken.unDoneById === undefined
+  //         ).length
+  //       : issueToken.CourseToken.tokenLimit -
+  //         issueToken.usedTokens.filter(
+  //           (usedToken) =>
+  //             usedToken.unDoneById === null ||
+  //             usedToken.unDoneById === undefined
+  //         ).length;
+  //   if (remainingTokens > 0) {
+  //     filteredIssueTokens.push(issueToken);
+  //   }
+  // }
+  debug("issue tokens filtered");
+  return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });
 };
 
 export const addOverride = async (req, res) => {
@@ -366,6 +513,7 @@ export const addOverride = async (req, res) => {
   const issueToken = await prisma.issueToken.updateMany({
     where: {
       courseTokenId,
+      accountId: accountId,
     },
     data: {
       overrideAmount,
@@ -393,4 +541,43 @@ export const deleteOverride = async (req, res) => {
   });
   debug("Removed override amount for student...");
   return res.status(StatusCodes.ACCEPTED).json({ issueToken });
+};
+
+export const editUsedToken = async (req, res) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
+  const courseId = parseInt(req.params.courseId, 10);
+  const { reason, appliedById, unDoneById, issueTokenId } = req.body;
+  debug("Updating used token for student...");
+  const usedToken = await prisma.usedToken.update({
+    where: {
+      id: usedTokenId,
+    },
+    data: {
+      reason: reason,
+      appliedById: appliedById,
+      unDoneById: unDoneById,
+      issueTokenId: issueTokenId,
+    },
+    include: {
+      unDoneBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      appliedBy: {
+        select: {
+          userName: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+  debug("Edited used token for student...");
+  return res.status(StatusCodes.ACCEPTED).json({ usedToken });
 };

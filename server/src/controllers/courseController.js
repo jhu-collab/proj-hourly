@@ -767,40 +767,40 @@ export const getAllRegistrations = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 
-export const addInstructor = async (req, res) => {
-  if (validate(req, res)) {
-    return res;
-  }
-  debug("addInstructor is called!");
-  const courseId = parseInt(req.params.courseId, 10);
-  const id = parseInt(req.get("id"), 10);
-  debug("Looking up course...");
-  const prevCourse = await prisma.course.findFirst({
-    where: {
-      id: courseId,
-    },
-    select: {
-      instructors: true,
-    },
-  });
-  const instructorIds = prevCourse.instructors.map((instructor) => ({
-    id: instructor.id,
-  }));
-  const allInstructors = [...instructorIds, { id: id }];
-  debug("Updating course...");
-  const course = await prisma.course.update({
-    where: {
-      id: courseId,
-    },
-    data: {
-      instructors: {
-        set: allInstructors,
-      },
-    },
-  });
-  debug("addInstructor is done!");
-  return res.status(StatusCodes.ACCEPTED).json({ course });
-};
+// export const addInstructor = async (req, res) => {
+//   if (validate(req, res)) {
+//     return res;
+//   }
+//   debug("addInstructor is called!");
+//   const courseId = parseInt(req.params.courseId, 10);
+//   const id = parseInt(req.get("id"), 10);
+//   debug("Looking up course...");
+//   const prevCourse = await prisma.course.findFirst({
+//     where: {
+//       id: courseId,
+//     },
+//     select: {
+//       instructors: true,
+//     },
+//   });
+//   const instructorIds = prevCourse.instructors.map((instructor) => ({
+//     id: instructor.id,
+//   }));
+//   const allInstructors = [...instructorIds, { id: id }];
+//   debug("Updating course...");
+//   const course = await prisma.course.update({
+//     where: {
+//       id: courseId,
+//     },
+//     data: {
+//       instructors: {
+//         set: allInstructors,
+//       },
+//     },
+//   });
+//   debug("addInstructor is done!");
+//   return res.status(StatusCodes.ACCEPTED).json({ course });
+// };
 
 export const deleteCourse = async (req, res) => {
   if (validate(req, res)) {
@@ -836,8 +836,25 @@ export const deleteCourse = async (req, res) => {
       },
     },
   });
+  debug("finding issue tokens...");
+  const issueTokensToDelete = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+  });
+  let issueTokenIds = issueTokensToDelete.map((issue) => issue.id);
+  debug("deleting used tokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
   debug("delete issue tokens...");
-  await prisma.issueToken.deleteMany({
+  const issueTokens = await prisma.issueToken.deleteMany({
     where: {
       courseTokenId: {
         in: courseTokenIds,
@@ -856,6 +873,17 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  debug("deleting feedback...")
+  debug("deleting feedback for course");
+  await prisma.feedback.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
+  debug("deleted feedback for course");
+
   debug("deleting office hours...");
   await prisma.officeHour.deleteMany({
     where: {

@@ -15,6 +15,7 @@ function DeleteCourseAction({ courseId }) {
       <Button
         color="error"
         variant="contained"
+        data-cy="delete-course-button"
         fullWidth
         sx={{ borderRadius: 0 }}
         onClick={() => {

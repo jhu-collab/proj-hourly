@@ -15,6 +15,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
 import useMutationChangeNoShowStatus from "../../hooks/useMutationChangeNoShowStatus";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import useStoreRegistration from "../../hooks/useStoreRegistration";
 
 /**
  * Represents a single Registration card.
@@ -190,6 +192,22 @@ function Registration({ registration, type }) {
                 <ConfirmPopup />
               </>
             )}
+          {type === 2 && courseType === "Student" && !registration.hasFeedback && (
+            <>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={() =>
+                  NiceModal.show("create-feedback", {
+                    registrationId: registration.id,
+                  })
+                }
+              >
+                Give Feedback
+              </Button>
+            </>
+          )}
         </>
       </AccordionDetails>
     </Accordion>

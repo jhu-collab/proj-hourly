@@ -52,13 +52,37 @@ export const isCourseToken = async (req, res, next) => {
   }
 };
 
+//checking if it's the correct used token
+export const isUsedToken = async (req, res, next) => {
+  if (validate(req, res)) {
+    return res;
+  }
+  const usedTokenId = parseInt(req.params.usedTokenId, 10);
+  debug("Finding Used token...");
+  const usedToken = await prisma.usedToken.findUnique({
+    where: {
+      id: usedTokenId,
+    },
+  });
+  debug("Found Used token...");
+  if (usedToken === null) {
+    debug("Used token doesn't exist...");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Used token does not exist for this courseTokenId" });
+  } else {
+    debug("Used token exists!");
+    next();
+  }
+};
+
 //validates whether the student has reached the token limit
 export const tokenLimitReached = async (req, res, next) => {
   if (validate(req, res)) {
     return res;
   }
   const courseTokenId = parseInt(req.params.courseTokenId, 10);
-  const studentId = parseInt(req.params.accountId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
   debug("Finding course token...");
   const courseToken = await prisma.courseToken.findUnique({
     where: {
@@ -69,24 +93,26 @@ export const tokenLimitReached = async (req, res, next) => {
   debug("Finding issue token...");
   const issueToken = await prisma.issueToken.findFirst({
     where: {
-      accountId: studentId,
+      accountId: accountId,
       courseTokenId,
+    },
+    include: {
+      usedTokens: true,
     },
   });
   debug("Found issue token...");
-  const dates = issueToken.datesUsed;
-  if (dates === null) {
-    debug("Student has used no tokens yet!");
-    next();
-  }
+  const dates = issueToken.usedTokens;
+
+  let tokenLimit = courseToken.tokenLimit;
+
   if (
-    (issueToken.overrideAmount !== undefined &&
-      issueToken.overrideAmount !== null &&
-      dates.length >= issueToken.overrideAmount) ||
-    ((issueToken.overrideAmount === null ||
-      issueToken.overrideAmount === undefined) &&
-      dates.length >= courseToken.tokenLimit)
+    issueToken.overrideAmount !== undefined &&
+    issueToken.overrideAmount !== null
   ) {
+    tokenLimit = issueToken.overrideAmount;
+  }
+
+  if (dates.length >= tokenLimit) {
     debug("Course token limit reached!");
     return res
       .status(StatusCodes.BAD_REQUEST)
