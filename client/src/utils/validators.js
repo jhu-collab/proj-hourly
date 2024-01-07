@@ -340,6 +340,11 @@ export const useTokenSchema = yup.object().shape({
   reason: yup.string().required("Reason is required"),
 });
 
+export const createRegConstraint = yup.object().shape({
+  start: yup.number().required("Start is required"),
+  end: yup.number().required("End is required"),
+});
+
 export const tokenEditLimitSchema = yup.object().shape({
   quantity: yup
     .number()
@@ -356,5 +361,5 @@ export const feedbackTypeSchema = yup.object().shape({
 });
 
 export const accountIdSchema = yup.object().shape({
-  accountId: yup.number().required("Account id is required!")
+  accountId: yup.number().required("Account id is required!"),
 });

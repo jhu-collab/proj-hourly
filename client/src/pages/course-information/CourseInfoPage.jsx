@@ -7,6 +7,7 @@ import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import CourseCalendarEventForm from "./CourseCalendarEventForm";
 import CourseTokenOptInForm from "./CourseTokenOptInForm";
+import CourseRegistrationConstraintForm from "./CourseRegistrationConstraintForm";
 import CoursePauseForm from "./CoursePauseForm";
 import CourseArchiveForm from "./CourseArchiveForm";
 
@@ -73,6 +74,16 @@ function CourseInfoPage() {
           <CourseCalendarEventForm data-cy="form" />
         </MainCard>
       )}
+      {courseType === "Instructor" && ( // newly added
+        <MainCard
+          data-cy="course-registration-constraint_form_title"
+          title="Course Registration Constraints"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CourseRegistrationConstraintForm data-cy="form" />
+        </MainCard>
+      )}
       {courseType === "Instructor" && (
         <MainCard
           data-cy="coursetype-course-token-title"
@@ -96,11 +107,8 @@ function CourseInfoPage() {
             <CoursePauseForm />
             <CourseArchiveForm />
           </Stack> */}
-
-
         </MainCard>
       )}
-
     </>
   );
 }
