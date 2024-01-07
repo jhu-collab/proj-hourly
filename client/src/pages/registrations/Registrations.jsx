@@ -7,6 +7,7 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
+import Feedback from "./Feedback";
 
 function latestEventsFirst(a, b) {
   const endObjectA = new Date(a.date);
@@ -153,6 +154,14 @@ function Registrations() {
           types={dataTypes?.times || []}
           isLoading={isLoadingTypes}
           error={errorTypes}
+        />
+      )}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <Feedback
+          index={6}
+          // types={dataTypes?.times || []}
+          // isLoading={isLoadingTypes}
+          // error={errorTypes}
         />
       )}
     </>

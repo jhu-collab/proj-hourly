@@ -346,3 +346,15 @@ export const tokenEditLimitSchema = yup.object().shape({
     .required("Quantity is required for an override")
     .min(0, "Must have non-negative override"),
 });
+
+export const feedbackTypeSchema = yup.object().shape({
+  feedbackRating: yup
+    .number()
+    .required("A feedback rating is required!")
+    .min(0, "Must have non-zero rating"),
+  feedbackComment: yup.string().nullable(),
+});
+
+export const accountIdSchema = yup.object().shape({
+  accountId: yup.number().required("Account id is required!")
+});

@@ -61,6 +61,25 @@ export const isAccountIdValid = async (req, res, next) => {
   }
 };
 
+export const isAccountIdValidParam = async (req, res, next) => {
+  debug("checking if account is valid...");
+  const id = parseInt(req.params.accountId, 10);
+  const query = await prisma.Account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (query === null) {
+    debug("account does not exist!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Account does not exists for the given Account Id" });
+  } else {
+    debug("account is valid!");
+    next();
+  }
+};
+
 export const isAccountStudent = async (req, res, next) => {
   debug("checking if account is student...");
   const id = req.id;

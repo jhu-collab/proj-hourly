@@ -109,7 +109,7 @@ export const tokenLimitReached = async (req, res, next) => {
     issueToken.overrideAmount !== undefined &&
     issueToken.overrideAmount !== null
   ) {
-    tokenLimit = Math.max(issueToken.overrideAmount, tokenLimit);
+    tokenLimit = issueToken.overrideAmount;
   }
 
   if (dates.length >= tokenLimit) {
