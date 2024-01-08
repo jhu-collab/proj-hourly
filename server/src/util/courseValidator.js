@@ -29,9 +29,9 @@ export const isUniqueCourse = async (req, res, next) => {
   if (query !== null) {
     debug("Course with values already exists!");
     debug("Error in isUniquecourse");
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({ msg: "course already exists" });
+    return res.status(StatusCodes.CONFLICT).json({
+      msg: "course already exists matching title, course number, calendar year, and semester",
+    });
   } else {
     debug("Course is unique!");
     debug("isUniqueCourse is done!");
@@ -82,7 +82,7 @@ export const isCourseIdUrlValid = async (req, res, next) => {
     debug("Error is isCourseIdUrlValid");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Course does not exist" });
+      .json({ msg: "Course does not exist with this id" });
   } else {
     debug("Course exists!");
     debug("isCourseIdUrlValid is done!");
@@ -178,10 +178,90 @@ export const isCourseStaffOrInstructor = async (req, res, next) => {
     debug("Error in isCourseStaffOrInstructor!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "User is not a member of course staff" });
+      .json({ msg: "User is not a member of course staff or instructor" });
   } else {
     debug("Account is an instructor or staff for course!");
     debug("isCourseStaffOrInstructor is done!");
+    next();
+  }
+};
+
+export const isCourseInstructor = async (req, res, next) => {
+  debug("isCourseInstructor is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  const id = req.id;
+  debug("Checking if account is an instructor for course...");
+  const instructorQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      instructors: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  if (instructorQuery === null) {
+    debug("Account is not an instructor for course...");
+    debug("Error in isCourseInstructor!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a instructor" });
+  } else {
+    debug("Account is an instructor for course!");
+    debug("isCourseInstructor is done!");
+    next();
+  }
+};
+
+export const isCourseStaffOrInstructorParam = async (req, res, next) => {
+  debug("isCourseStaffOrInstructorParam is called!");
+  debug("Retrieving course id from body and account id");
+  let { courseId, accountId } = req.body;
+  if (courseId === undefined || courseId === null) {
+    courseId = parseInt(req.params.courseId, 10);
+  }
+  if (accountId === undefined || accountId === null) {
+    accountId = parseInt(req.params.accountId, 10);
+  }
+  let roleQuery = {
+    OR: [
+      {
+        instructors: {
+          some: {
+            id: accountId,
+          },
+        },
+      },
+      {
+        courseStaff: {
+          some: {
+            id: accountId,
+          },
+        },
+      },
+    ],
+  };
+  debug("Checking if account is an instructor or staff for course...");
+  const staffQuery = await prisma.course.findFirst({
+    where: {
+      id: courseId,
+      AND: roleQuery,
+    },
+  });
+  if (staffQuery === null) {
+    debug("Account is not an instructor or staff for course...");
+    debug("Error in isCourseStaffOrInstructorParam!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "User is not a member of course staff or instructor" });
+  } else {
+    debug("Account is an instructor or staff for course!");
+    debug("isCourseStaffOrInstructorParam is done!");
     next();
   }
 };
@@ -221,9 +301,9 @@ export const areCourseStaffOrInstructor = async (req, res, next) => {
   if (staffQuery === null) {
     debug("At least one host was not a member of course staff...");
     debug("Error in areCourseStaffOrInstructor!");
-    return res
-      .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "User is not a member of course staff" });
+    return res.status(StatusCodes.FORBIDDEN).json({
+      msg: "at least one host member is not a course staff or instructor",
+    });
   } else {
     debug("All hosts are members of course staff!");
     debug("areCourseStaffOrInstructor is done!");
@@ -284,7 +364,7 @@ export const isInCourseFromHeader = async (req, res, next) => {
     debug("Error in isInCourseFromHeader!");
     return res
       .status(StatusCodes.FORBIDDEN)
-      .json({ msg: "User is not in course" });
+      .json({ msg: "User is not in course for any role" });
   } else {
     debug("Account is a course member!");
     debug("isInCourseFromHeader is done!");
@@ -319,7 +399,7 @@ export const isInCourseForOfficeHour = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHour!");
     return res
@@ -357,7 +437,7 @@ export const isInCourseForOfficeHourParam = async (req, res, next) => {
       },
     },
   });
-  if (studentQuery === null) {
+  if (studentQuery.students.length === 0) {
     debug("Account is not a student for course...");
     debug("Error in isInCourseForOfficeHourParam!");
     return res
@@ -402,7 +482,7 @@ export const areTopicsForCourse = async (req, res, next) => {
       debug("Error in areTopicsForCourse!");
       return res
         .status(StatusCodes.FORBIDDEN)
-        .json({ msg: "ERROR: topic is not for course" });
+        .json({ msg: "ERROR: at least one topic is not for this course" });
     } else {
       debug("All topics found!");
       debug("areTopicsForCourse is done!");
@@ -431,7 +511,7 @@ export const isNotDuplicateTopic = async (req, res, next) => {
     debug("Error in isNotDuplicateTopic!");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: topic already exists" });
+      .json({ msg: "ERROR: topic already exists for this course" });
   } else {
     debug("New topic is unique!");
     debug("isNotDuplicateTopic is done!");
@@ -464,7 +544,7 @@ export const isNotInCourse = async (req, res, next) => {
     debug("Error in isNotInCourse!");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "User is already in course" });
+      .json({ msg: "User is already in course for some role" });
   } else {
     debug("Account is not in the roster!");
     debug("isNotInCourse is done!");
@@ -582,7 +662,7 @@ export const isInCourseBelowRoleForPromotionTo = async (req, res, next) => {
     debug("Error in isInCourseBelowRoleForPromotionTo!");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: account can not be promoted further" });
+      .json({ msg: "ERROR: account cannot be promoted further" });
   }
 };
 
@@ -626,7 +706,7 @@ export const isInCourseBelowRoleForDemotionTo = async (req, res, next) => {
     debug("Error in isInCourseBelowRoleForDemotionTo!");
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ msg: "ERROR: account can not be demoted further" });
+      .json({ msg: "ERROR: account cannot be demoted further" });
   }
 };
 
@@ -660,7 +740,7 @@ export const checkDemoteRoles = (req, res, next) => {
     debug("Error in checkDemoteRoles!");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: invalid promotion role" });
+      .json({ msg: "ERROR: invalid demotion role" });
   }
 };
 
@@ -741,9 +821,9 @@ export const isAccountInstructorForTopic = async (req, res, next) => {
       if (query.instructors.length === 0) {
         debug("User is not an instructor for course...");
         debug("Error in isAccountInstructorForTopic!");
-        return res
-          .status(StatusCodes.FORBIDDEN)
-          .json({ msg: "Account is not an instructor in the course" });
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: "Account is not an instructor in the course for the given topic",
+        });
       } else {
         debug("User is an instructor for course!");
         debug("isAccountInstructorForTopic is done!");
@@ -771,7 +851,7 @@ export const isNotOnlyTimeLengthForCourse = async (req, res, next) => {
     debug("Is last time option for course...");
     debug("Error in isNotOnlyTimeLengthForCourse!");
     return res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "ERROR: cannot delete the only time offering for the course",
+      msg: "ERROR: cannot delete the only remaining time offering for the course",
     });
   }
 };
@@ -812,7 +892,7 @@ export const isWithinRegisterConstraint = async (req, res, next) => {
     debug("Registration not is within registration constraints...");
     debug("Error in isWithinRegisterConstraint!");
     return res.status(StatusCodes.FORBIDDEN).json({
-      msg: "ERROR: you must register within your courses office hour contraints",
+      msg: "ERROR: you must register within your course's office hour registration window",
     });
   }
 };
@@ -826,7 +906,7 @@ export const startAndEndArePositive = (req, res, next) => {
     debug("Error in startAndEndArePositive!");
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: start and end must be positive" });
+      .json({ msg: "ERROR: start and end constraints must be positive" });
   } else {
     debug("Both are positive!");
     debug("startAndEndArePositive is done!");
@@ -841,9 +921,9 @@ export const startIsGreaterThanEnd = (req, res, next) => {
   if (start <= end) {
     debug("Start is less than or equal to end...");
     debug("Error in startIsGreaterThanEnd!");
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: start must be greater than end" });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: start constraint must be greater than end constraint",
+    });
   } else {
     debug("Start is greater than end!");
     debug("startIsGreaterThanEnd is done!");
@@ -891,11 +971,11 @@ export const isValidFilterForRole = async (req, res, next) => {
   if (filterType === "hosts" && req.role === "Staff") {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: user does not have access to filter" });
+      .json({ msg: "ERROR: user does not have access to this filter" });
   } else if (filterType === "accountId" && req.role === "Student") {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: user does not have access to filter" });
+      .json({ msg: "ERROR: user does not have access to this filter" });
   } else {
     debug("isValidFilterForRole is complete!");
     next();
@@ -908,7 +988,7 @@ export const isValidFilterValue = async (req, res, next) => {
   const { filterType, filterValue } = req.params;
   const courseId = req.body;
   const id = req.id;
-  if (filterType === "date" && new Date(filterValue).valueOf() === NaN) {
+  if (filterType === "date" && isNaN(Date.parse(filterValue))) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type Date" });
@@ -980,17 +1060,22 @@ export const isValidFilterValue = async (req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "ERROR: filter value must be of type boolean" });
   } else if (filterType === "hosts") {
+    if (isNaN(parseInt(filterValue))) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "ERROR: filter value must be of type account" });
+    }
     const course = await prisma.officeHour.findMany({
       where: {
         courseId: courseId,
         hosts: {
           some: {
-            id,
+            id: parseInt(filterValue, 10),
           },
         },
       },
     });
-    if (course === null) {
+    if (course.length === 0) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "ERROR: filter value must be of type host" });
@@ -1070,7 +1155,7 @@ export const isCoursePausedOfficeHourId = async (req, res, next) => {
   if (course.isPaused === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course is paused" });
+      .json({ msg: "ERROR: Course is paused, cannot use office hours" });
   } else {
     debug("Course is not paused.");
     next();
@@ -1115,7 +1200,7 @@ export const isCourseArchivedOfficeHourId = async (req, res, next) => {
   if (course.isArchived === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course is archived" });
+      .json({ msg: "ERROR: Course is archived, cannot use office hours" });
   } else {
     debug("Course is not archived.");
     next();
@@ -1141,9 +1226,9 @@ export const isCourseArchivedRegistrationId = async (req, res, next) => {
     },
   });
   if (course.isArchived === true) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course is archived" });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      msg: "ERROR: Course is archived, cannot manipulate registration",
+    });
   } else {
     debug("Course is not archived.");
     next();
@@ -1168,7 +1253,7 @@ export const isCourseArchivedTopicId = async (req, res, next) => {
   if (course.isArchived === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course is archived" });
+      .json({ msg: "ERROR: Course is archived, cannot change topics" });
   } else {
     debug("Course is not archived.");
     next();
@@ -1182,10 +1267,10 @@ export const isCourseArchivedCourseCode = async (req, res, next) => {
       code: code,
     },
   });
-  if (course.isArchived === true) {
+  if (course && course.isArchived === true) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "ERROR: Course is archived" });
+      .json({ msg: "ERROR: Course is archived, cannot join course" });
   } else {
     debug("Course is not archived.");
     next();

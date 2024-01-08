@@ -15,6 +15,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import { decodeToken } from "react-jwt";
 import useStoreToken from "../../hooks/useStoreToken";
 import useMutationChangeNoShowStatus from "../../hooks/useMutationChangeNoShowStatus";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import useStoreRegistration from "../../hooks/useStoreRegistration";
 
 /**
  * Represents a single Registration card.
@@ -54,7 +56,14 @@ function Registration({ registration, type }) {
       () => mutate()
     );
   };
-
+  const getDate = () => {
+    const startObj = new Date(registration.date);
+    const startTimeObj = new Date(registration.startTime);
+    if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
+      startObj.setUTCDate(startObj.getUTCDate() + 1);
+    }
+    return startObj;
+  };
   return (
     <Accordion sx={{ paddingX: 2, paddingY: 1 }}>
       <AccordionSummary expandIcon={<DownOutlined />}>
@@ -72,7 +81,7 @@ function Registration({ registration, type }) {
               color={isNoShow ? "error.main" : "text.primary"}
             >
               {DateTime.fromISO(
-                registration.date.substring(0, 10) +
+                getDate().toISOString().substring(0, 10) +
                   registration.startTime.substring(10)
               ).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
             </Typography>
@@ -81,12 +90,12 @@ function Registration({ registration, type }) {
               color={isNoShow ? "error.main" : "text.primary"}
             >
               {DateTime.fromISO(
-                registration.date.substring(0, 10) +
+                getDate().toISOString().substring(0, 10) +
                   registration.startTime.substring(10)
               ).toLocaleString(DateTime.TIME_SIMPLE)}{" "}
               -{" "}
               {DateTime.fromISO(
-                registration.date.substring(0, 10) +
+                getDate().toISOString().substring(0, 10) +
                   registration.endTime.substring(10)
               ).toLocaleString(DateTime.TIME_SIMPLE)}
             </Typography>
@@ -183,6 +192,22 @@ function Registration({ registration, type }) {
                 <ConfirmPopup />
               </>
             )}
+          {type === 2 && courseType === "Student" && !registration.hasFeedback && (
+            <>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={() =>
+                  NiceModal.show("create-feedback", {
+                    registrationId: registration.id,
+                  })
+                }
+              >
+                Give Feedback
+              </Button>
+            </>
+          )}
         </>
       </AccordionDetails>
     </Accordion>

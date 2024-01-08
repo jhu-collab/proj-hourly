@@ -22,11 +22,20 @@ describe("Roster Page", () => {
   const tokenNone = '[data-cy="token-none"]';
   const tokenTokenTitle = '[data-cy="tokenTitle"]';
   const tokenSubmit = '[data-cy="token-submit-button"]';
+  const tokenReason = '[data-cy="token-reason-label"]';
+
+  const tokenCard = '[data-cy="token-balance-list-student"]';
+  const tokenName = '[data-cy="token-name"]';
+  const tokenBalance = '[data-cy="token-balance-student"]';
+  const tokenLimit = '[data-cy="token-limit-student"]';
+  const tokenRemoveLimit = '[data-cy="remove-token-limit-button"]';
+  const tokenEditLimit = '[data-cy="edit-token-limit-button"]';
+  const tokenEditQuantity = '[data-cy="edit-token-quantity"]';
 
   const courseTitle = "Data Structures";
   const courseNumber = "601.226";
   const courseSemester = "Spring";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
   const courseCode = "ABCDEF";
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
@@ -85,6 +94,8 @@ describe("Roster Page", () => {
       );
     }
 
+    cy.task("optInIfNeeded", courseCode);
+
     cy.visit(BASE_URL + "login");
 
     cy.get(userNameInputText).type("ali-the-ta");
@@ -100,7 +111,7 @@ describe("Roster Page", () => {
     cy.wait(1000);
     cy.get(navbarButton).click();
     cy.wait(1000);
-    cy.get(navbar).contains("a", "roster").click();
+    cy.get(navbar).contains("a", "roster").click({ force: true });
     cy.wait(1000);
     body.click();
     cy.wait(1000);
@@ -155,7 +166,7 @@ describe("Roster Page", () => {
               .first()
               .should("be.visible")
               .within(($cells) => {
-                cy.get(".MuiButtonBase-root").should("have.length", 3);
+                cy.get(".MuiButtonBase-root").should("have.length", 4);
               });
           });
       } else {
@@ -172,7 +183,7 @@ describe("Roster Page", () => {
             .should("be.visible")
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
-                .eq(1)
+                .eq(2)
                 .should("be.visible")
                 .should("have.attr", "disabled");
             });
@@ -188,7 +199,7 @@ describe("Roster Page", () => {
             .should("be.visible")
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
-                .eq(2)
+                .eq(3)
                 .should("be.visible")
                 .should("have.attr", "disabled");
             });
@@ -214,6 +225,7 @@ describe("Roster Page", () => {
       cy.get(tokenUndo).should("be.visible").click();
       cy.get(tokenUndoDate).should("be.visible").click();
       cy.get("body").click();
+      cy.get(tokenReason).should("be.visible");
       cy.get(tokenSubmit).should("be.visible");
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
         .first()
@@ -222,6 +234,21 @@ describe("Roster Page", () => {
             cy.get(".MuiButtonBase-root").should("exist");
           });
         });
+    });
+
+    it("Failure using student course token w/o reason", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenSubmit).click();
+      cy.get(tokenReason).contains("p", "Reason is required");
     });
 
     it("Successfully using student course token", () => {
@@ -235,6 +262,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -290,7 +318,7 @@ describe("Roster Page", () => {
         });
     });
 
-    it("Successfully undoing student course token usage", () => {
+    it("Failure undoing student course token usage w/o reason", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -301,6 +329,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       const currentDate = new Date().toISOString().split("T")[0];
       cy.get(".MuiDataGrid-row")
@@ -315,7 +344,39 @@ describe("Roster Page", () => {
       cy.get(tokenUndo).click();
       cy.get(tokenUndoDate).click();
       cy.log(currentDate);
-      cy.get(`[data-cy="${currentDate}"]`).click();
+      cy.get(`[data-cy="${currentDate} for Test 123"]`).click();
+      cy.get(tokenSubmit).click();
+      cy.get(tokenReason).contains("p", "Reason is required");
+    });
+
+    it("Successfully undoing student course token usage", () => {
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
+      cy.get(tokenSubmit).click();
+      const currentDate = new Date().toISOString().split("T")[0];
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell").within(($cells) => {
+            cy.get(".MuiButtonBase-root").eq(0).click();
+          });
+        });
+      cy.get(tokenDropdown).click();
+      cy.get(tokenTokenTitle).click();
+      cy.get(tokenUndo).click();
+      cy.get(tokenUndoDate).click();
+      cy.log(currentDate);
+      cy.get(`[data-cy="${currentDate} for Test 123"]`).click();
+      cy.get(tokenReason).type("Test 123 undo");
       cy.get(tokenSubmit).click();
       cy.wait(1000);
       cy.get(".MuiDataGrid-row")
@@ -347,6 +408,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -357,6 +419,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123 undo");
       cy.get(tokenUndo).click();
       cy.get(tokenUndoDate).click();
       cy.get(".css-17oqyao-MuiPaper-root-MuiDialog-paper")
@@ -383,7 +446,7 @@ describe("Roster Page", () => {
           });
         });
     });
-    
+
     it("Failure to use more course tokens than allowed", () => {
       cy.get(rosterToolbarStudent).contains("Students").click();
       cy.get(".MuiDataGrid-row")
@@ -395,6 +458,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 123");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -405,6 +469,7 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 456");
       cy.get(tokenSubmit).click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -415,10 +480,31 @@ describe("Roster Page", () => {
         });
       cy.get(tokenDropdown).click();
       cy.get(tokenTokenTitle).click();
+      cy.get(tokenReason).type("Test 789");
       cy.get(tokenSubmit).click();
       cy.get(".Toastify")
-      .contains("div", "Student has used all their tokens")
-      .should("be.visible");
+        .contains("div", "Student has used all their tokens")
+        .should("be.visible");
+    });
+
+    it("Use student token and check balance after", () => {
+      cy.task("useStudentsToken", {
+        userName: "ali-the-student",
+        tokenName: "tokenTitle",
+        courseCode: courseCode,
+      });
+      cy.get(rosterToolbarStudent).contains("Students").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root").eq(1).click();
+            });
+        });
+      cy.get(tokenLimit).should("be.visible").contains("h5", 2);
+      cy.get(tokenBalance).should("be.visible").contains("h5", 1);
     });
   });
 
@@ -454,7 +540,7 @@ describe("Roster Page", () => {
               .first()
               .should("be.visible")
               .within(($cells) => {
-                cy.get(".MuiButtonBase-root").should("have.length", 3);
+                cy.get(".MuiButtonBase-root").should("have.length", 4);
               });
           });
       } else {
@@ -471,7 +557,7 @@ describe("Roster Page", () => {
             .should("be.visible")
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
-                .eq(2)
+                .eq(3)
                 .should("be.visible")
                 .should("have.attr", "disabled");
             });
@@ -487,14 +573,14 @@ describe("Roster Page", () => {
             .should("be.visible")
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
-                .eq(1)
+                .eq(2)
                 .should("be.visible")
                 .should("have.attr", "disabled");
             });
         });
     });
 
-    it("Failure to click token icon for staff", () => {
+    it("Failure to click use token icon for staff", () => {
       cy.get(rosterToolbarStaff).contains("Staff").click();
       cy.get(".MuiDataGrid-row")
         .first()
@@ -504,6 +590,22 @@ describe("Roster Page", () => {
             .within(($cells) => {
               cy.get(".MuiButtonBase-root")
                 .eq(0)
+                .should("be.visible")
+                .should("have.attr", "disabled");
+            });
+        });
+    });
+
+    it("Failure to click token usage icon for staff", () => {
+      cy.get(rosterToolbarStaff).contains("Staff").click();
+      cy.get(".MuiDataGrid-row")
+        .first()
+        .within(($element) => {
+          cy.get(".MuiDataGrid-actionsCell")
+            .should("be.visible")
+            .within(($cells) => {
+              cy.get(".MuiButtonBase-root")
+                .eq(1)
                 .should("be.visible")
                 .should("have.attr", "disabled");
             });

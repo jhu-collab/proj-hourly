@@ -57,13 +57,11 @@ export default defineConfig({
               code: "ABCDEF",
             },
           });
-
           const aliTheTA = await prisma.Account.findUnique({
             where: {
               userName: "ali-the-ta",
             },
           });
-
           const minTomill = 60000; //1 minute is 60000 milliseconds
           let start = new Date();
           start.setDate(start.getDate() + 1);
@@ -96,7 +94,7 @@ export default defineConfig({
               },
               isOnDayOfWeek: {
                 connect: {
-                  dayNumber: start.getDay() % 7,
+                  dayNumber: start.getDay() == 0 ? 7 : start.getDay(),
                 },
               },
             },
@@ -207,6 +205,21 @@ export default defineConfig({
               },
             });
             const tokenIds = tokens.map((token) => token.id);
+            const issueTokens = await prisma.issueToken.findMany({
+              where: {
+                courseTokenId: {
+                  in: tokenIds,
+                },
+              },
+            });
+            const issueTokenIds = issueTokens.map((issue) => issue.id);
+            await prisma.usedToken.deleteMany({
+              where: {
+                issueTokenId: {
+                  in: issueTokenIds,
+                },
+              },
+            });
             await prisma.issueToken.deleteMany({
               where: {
                 courseTokenId: {
@@ -259,6 +272,26 @@ export default defineConfig({
               },
               data: {
                 usesTokens: false,
+              },
+            });
+            return null;
+          }
+        },
+        async optInIfNeeded(courseCode) {
+          const course = await prisma.course.findFirst({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                usesTokens: true,
               },
             });
             return null;
@@ -424,6 +457,21 @@ export default defineConfig({
               code: courseCode,
             },
           });
+          const issueTokens = await prisma.issueToken.findMany({
+            where: {
+              CourseToken: {
+                courseId: course.id,
+              },
+            },
+          });
+          const issueTokenIds = issueTokens.map((issue) => issue.id);
+          await prisma.usedToken.deleteMany({
+            where: {
+              issueTokenId: {
+                in: issueTokenIds,
+              },
+            },
+          });
           await prisma.issueToken.deleteMany({
             where: {
               CourseToken: {
@@ -459,9 +507,15 @@ export default defineConfig({
               accountId: student.id,
               courseTokenId: courseToken.id,
             },
+            include: {
+              usedTokens: true,
+            },
           });
+          const usedTokensNotUndone = issueToken.usedTokens.filter(
+            (used) => used.unDoneById == null
+          );
           const numTokenLimit = courseToken.tokenLimit;
-          const datesUsedLength = issueToken.datesUsed.length;
+          const datesUsedLength = usedTokensNotUndone.length;
           const remainingTokens = numTokenLimit - datesUsedLength;
           return remainingTokens;
         },
@@ -525,6 +579,21 @@ export default defineConfig({
               students: true,
             },
           });
+          const issueTokens = await prisma.issueToken.findMany({
+            where: {
+              CourseToken: {
+                courseId: course.id,
+              },
+            },
+          });
+          const issueTokenIds = issueTokens.map((issue) => issue.id);
+          await prisma.usedToken.deleteMany({
+            where: {
+              issueTokenId: {
+                in: issueTokenIds,
+              },
+            },
+          });
           await prisma.issueToken.deleteMany({
             where: {
               CourseToken: {
@@ -545,6 +614,9 @@ export default defineConfig({
             where: {
               code: courseCode,
             },
+            include: {
+              instructors: true,
+            },
           });
           const acc = await prisma.account.findUnique({
             where: {
@@ -557,7 +629,7 @@ export default defineConfig({
               courseId: course.id,
             },
           });
-          const issueToken = await prisma.issueToken.updateMany({
+          let issueToken = await prisma.issueToken.updateMany({
             where: {
               courseTokenId: token.id,
               accountId: acc.id,
@@ -568,6 +640,86 @@ export default defineConfig({
               },
             },
           });
+          issueToken = await prisma.issueToken.findMany({
+            where: {
+              courseTokenId: token.id,
+              accountId: acc.id,
+            },
+          });
+          const usedToken = await prisma.usedToken.create({
+            data: {
+              issueTokenId: issueToken[0].id,
+              appliedById: course.instructors[0].id,
+              reason: "Instructor Applying Token Test",
+            },
+          });
+          return null;
+        },
+        // added update course registration constraint
+        async updateRegConstraint(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                startRegConstraint: 1000,
+              },
+            });
+            return null;
+          }
+          return null;
+        },
+
+        // setIsArchivedFalse
+        async setIsArchivedFalse(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                isArchived: false,
+              },
+            });
+            return null;
+          }
+          return null;
+        },
+        // setIsPausedFalse
+        async setIsPausedFalse(courseCode) {
+          const course = await prisma.course.findUnique({
+            where: {
+              code: courseCode,
+            },
+          });
+          if (!course) {
+            return null;
+          } else {
+            await prisma.course.updateMany({
+              where: {
+                code: courseCode,
+              },
+              data: {
+                isPaused: false,
+              },
+            });
+            return null;
+          }
           return null;
         },
       });

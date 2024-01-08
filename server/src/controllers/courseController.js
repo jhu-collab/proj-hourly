@@ -348,9 +348,11 @@ export const removeStaff = async (req, res) => {
     },
   });
   const officeHourIds = [];
-  officeHours.forEach((officeHour) =>
-    officeHourIds.push({ id: officeHour.id })
-  );
+  const registrationOfficeHourIds = [];
+  officeHours.forEach((officeHour) => {
+    officeHourIds.push({ id: officeHour.id });
+    registrationOfficeHourIds.push(officeHour.id);
+  });
   debug("Updating account...");
   await prisma.account.update({
     where: {
@@ -359,6 +361,14 @@ export const removeStaff = async (req, res) => {
     data: {
       isHosting: {
         disconnect: officeHourIds,
+      },
+    },
+  });
+  debug("Deleting registrations...");
+  await prisma.registration.deleteMany({
+    where: {
+      officeHourId: {
+        in: registrationOfficeHourIds,
       },
     },
   });
@@ -757,40 +767,40 @@ export const getAllRegistrations = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ registrations });
 };
 
-export const addInstructor = async (req, res) => {
-  if (validate(req, res)) {
-    return res;
-  }
-  debug("addInstructor is called!");
-  const courseId = parseInt(req.params.courseId, 10);
-  const id = parseInt(req.get("id"), 10);
-  debug("Looking up course...");
-  const prevCourse = await prisma.course.findFirst({
-    where: {
-      id: courseId,
-    },
-    select: {
-      instructors: true,
-    },
-  });
-  const instructorIds = prevCourse.instructors.map((instructor) => ({
-    id: instructor.id,
-  }));
-  const allInstructors = [...instructorIds, { id: id }];
-  debug("Updating course...");
-  const course = await prisma.course.update({
-    where: {
-      id: courseId,
-    },
-    data: {
-      instructors: {
-        set: allInstructors,
-      },
-    },
-  });
-  debug("addInstructor is done!");
-  return res.status(StatusCodes.ACCEPTED).json({ course });
-};
+// export const addInstructor = async (req, res) => {
+//   if (validate(req, res)) {
+//     return res;
+//   }
+//   debug("addInstructor is called!");
+//   const courseId = parseInt(req.params.courseId, 10);
+//   const id = parseInt(req.get("id"), 10);
+//   debug("Looking up course...");
+//   const prevCourse = await prisma.course.findFirst({
+//     where: {
+//       id: courseId,
+//     },
+//     select: {
+//       instructors: true,
+//     },
+//   });
+//   const instructorIds = prevCourse.instructors.map((instructor) => ({
+//     id: instructor.id,
+//   }));
+//   const allInstructors = [...instructorIds, { id: id }];
+//   debug("Updating course...");
+//   const course = await prisma.course.update({
+//     where: {
+//       id: courseId,
+//     },
+//     data: {
+//       instructors: {
+//         set: allInstructors,
+//       },
+//     },
+//   });
+//   debug("addInstructor is done!");
+//   return res.status(StatusCodes.ACCEPTED).json({ course });
+// };
 
 export const deleteCourse = async (req, res) => {
   if (validate(req, res)) {
@@ -804,6 +814,16 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
+  debug("retrieving course tokens from db...");
+  const tokens = await prisma.courseToken.findMany({
+    where: {
+      courseId: id,
+    },
+  });
+  let courseTokenIds = [];
+  tokens.forEach((token) => {
+    courseTokenIds.push(token.id);
+  });
   let officeHourIds = [];
   officeHour.forEach((oh) => {
     officeHourIds.push(oh.id);
@@ -816,12 +836,54 @@ export const deleteCourse = async (req, res) => {
       },
     },
   });
+  debug("finding issue tokens...");
+  const issueTokensToDelete = await prisma.issueToken.findMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+  });
+  let issueTokenIds = issueTokensToDelete.map((issue) => issue.id);
+  debug("deleting used tokens...");
+  await prisma.usedToken.deleteMany({
+    where: {
+      issueTokenId: {
+        in: issueTokenIds,
+      },
+    },
+  });
+  debug("delete issue tokens...");
+  const issueTokens = await prisma.issueToken.deleteMany({
+    where: {
+      courseTokenId: {
+        in: courseTokenIds,
+      },
+    },
+  });
+  debug("deleting course tokens...");
+  await prisma.courseToken.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
   debug("deleting topics...");
   await prisma.topic.deleteMany({
     where: {
       courseId: id,
     },
   });
+  debug("deleting feedback...")
+  debug("deleting feedback for course");
+  await prisma.feedback.deleteMany({
+    where: {
+      officeHourId: {
+        in: officeHourIds,
+      },
+    },
+  });
+  debug("deleted feedback for course");
+
   debug("deleting office hours...");
   await prisma.officeHour.deleteMany({
     where: {
@@ -830,6 +892,12 @@ export const deleteCourse = async (req, res) => {
   });
   debug("deleting time options...");
   await prisma.officeHourTimeOptions.deleteMany({
+    where: {
+      courseId: id,
+    },
+  });
+  debug("deleting course calendar events...");
+  await prisma.CalendarEvent.deleteMany({
     where: {
       courseId: id,
     },
@@ -1023,6 +1091,53 @@ export const demote = async (req, res) => {
         },
       },
     });
+    debug("Getting office hours...");
+    const officeHours = await prisma.officeHour.findMany({
+      where: {
+        courseId,
+        hosts: {
+          some: {
+            id,
+          },
+        },
+      },
+    });
+    const officeHourIds = [];
+    const registrationOfficeHourIds = [];
+    officeHours.forEach((officeHour) => {
+      officeHourIds.push({ id: officeHour.id });
+      registrationOfficeHourIds.push(officeHour.id);
+    });
+    debug("Updating account...");
+    await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        isHosting: {
+          disconnect: officeHourIds,
+        },
+      },
+    });
+    debug("Deleting registrations...");
+    await prisma.registration.deleteMany({
+      where: {
+        officeHourId: {
+          in: registrationOfficeHourIds,
+        },
+      },
+    });
+    debug("Deleting office hours...");
+    await prisma.officeHour.deleteMany({
+      where: {
+        courseId,
+        hosts: {
+          none: {},
+        },
+      },
+    });
+    debug("updating calendar...");
+    await generateCalendar(courseId);
   }
   debug("demote is done!");
   delete account["token"];

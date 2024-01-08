@@ -39,18 +39,23 @@ function useMutationRegister() {
   const mutation = useMutation(register, {
     onSuccess: (data) => {
       const registration = data.registration;
+      const startObj = new Date(registration.date);
+      const startTimeObj = new Date(registration.startTime);
+      // if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
+      //   startObj.setUTCDate(startObj.getUTCDate() + 1);
+      // }
       const date = DateTime.fromISO(
-        registration.date.substring(0, 10) +
+        startObj.toISOString().substring(0, 10) +
           registration.startTime.substring(10)
       ).toLocaleString();
       const startTime = DateTime.fromISO(
-        registration.date.substring(0, 10) +
+        startObj.toISOString().substring(0, 10) +
           registration.startTime.substring(10)
       ).toLocaleString(DateTime.TIME_SIMPLE);
       const endTime = DateTime.fromISO(
-        registration.date.substring(0, 10) + registration.endTime.substring(10)
+        startObj.toISOString().substring(0, 10) +
+          registration.endTime.substring(10)
       ).toLocaleString(DateTime.TIME_SIMPLE);
-
       queryClient.invalidateQueries(["studentRegistrationCounts"]);
       queryClient.invalidateQueries(["topicCounts"]);
 

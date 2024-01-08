@@ -7,6 +7,7 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import RegistrationsBar from "./RegistrationsBar";
 import RegistrationsPanel from "./RegistrationsPanel";
 import RegistrationTypes from "./RegistrationTypes";
+import Feedback from "./Feedback";
 
 function latestEventsFirst(a, b) {
   const endObjectA = new Date(a.date);
@@ -46,16 +47,18 @@ const filterByTime = (array, registrationTab) => {
     const endObj = new Date(item.date);
     const startTimeObj = new Date(item.startTime);
     const endTimeObj = new Date(item.endTime);
-    if (startObj.getUTCHours() < new Date().getHours()) {
+    if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
+      startObj.setUTCHours(startObj.getTimezoneOffset() / 60 + 3);
+      endObj.setUTCHours(endObj.getTimezoneOffset() / 60 + 3);
+    }
+    if (startTimeObj.getUTCHours() < startObj.getTimezoneOffset() / 60) {
       startObj.setUTCDate(startObj.getUTCDate() + 1);
       endObj.setUTCDate(endObj.getUTCDate() + 1);
     }
-
     startObj.setUTCHours(startTimeObj.getUTCHours());
     startObj.setUTCMinutes(startTimeObj.getUTCMinutes());
     endObj.setUTCHours(endTimeObj.getUTCHours());
     endObj.setUTCMinutes(endTimeObj.getUTCMinutes());
-
     switch (registrationTab) {
       case 0:
         return DateTime.fromJSDate(startObj) > DateTime.fromJSDate(today);
@@ -151,6 +154,14 @@ function Registrations() {
           types={dataTypes?.times || []}
           isLoading={isLoadingTypes}
           error={errorTypes}
+        />
+      )}
+      {(courseType === "Staff" || courseType === "Instructor") && (
+        <Feedback
+          index={6}
+          // types={dataTypes?.times || []}
+          // isLoading={isLoadingTypes}
+          // error={errorTypes}
         />
       )}
     </>

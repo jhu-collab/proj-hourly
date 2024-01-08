@@ -18,6 +18,7 @@ export async function setup() {
 
 export async function teardown() {
   debug.enable();
+  await prisma.usedToken.deleteMany();
   await prisma.issueToken.deleteMany();
   await prisma.courseToken.deleteMany();
   await prisma.calendarEvent.deleteMany();

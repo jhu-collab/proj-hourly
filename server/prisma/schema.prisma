@@ -26,6 +26,8 @@ model Account {
   role              Role           @default(User)
   token             String?
   IssueToken        IssueToken[]
+  appliedTokens     UsedToken[]    @relation("applied")
+  undoneTokens      UsedToken[]    @relation("undone")
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @default(now()) @updatedAt
 }
@@ -91,6 +93,7 @@ model OfficeHour {
   isRemote      Boolean             @default(false)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @default(now()) @updatedAt
+  feedbacks     Feedback[]
 }
 
 model numberToDayOfWeek {
@@ -110,8 +113,6 @@ model Registration {
   account                Account               @relation(fields: [accountId], references: [id])
   accountId              Int
   question               String?
-  feedback               String?
-  rating                 Int?
   topics                 Topic[]               @relation("withTopics")
   isCancelledStaff       Boolean               @default(false)
   officeHourTimeOptions  OfficeHourTimeOptions @relation(fields: [officeHourTimeOptionId], references: [id])
@@ -119,6 +120,7 @@ model Registration {
   isNoShow               Boolean               @default(false)
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @default(now()) @updatedAt
+  hasFeedback            Boolean               @default(false)
 }
 
 model Topic {
@@ -147,7 +149,7 @@ model CourseToken {
 model IssueToken {
   //relation to student
   id             Int         @id @default(autoincrement())
-  datesUsed      DateTime[]
+  datesUsed      DateTime[]  // leave for now to keep db consistent
   account        Account     @relation(fields: [accountId], references: [id])
   accountId      Int
   CourseToken    CourseToken @relation(fields: [courseTokenId], references: [id])
@@ -155,6 +157,21 @@ model IssueToken {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @default(now()) @updatedAt
   overrideAmount Int?
+  usedTokens     UsedToken[]
+}
+
+model UsedToken {
+  // relation to the issue token
+  id             Int         @id @default(autoincrement())
+  issueTokenId   Int
+  issueToken     IssueToken @relation(fields: [issueTokenId], references: [id])
+  appliedById    Int
+  appliedBy      Account     @relation(fields: [appliedById], references: [id], "applied")
+  unDoneById     Int?
+  unDoneBy       Account?    @relation(fields: [unDoneById], references: [id], "undone")
+  reason         String      @default("")
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now()) @updatedAt
 }
 
 model CalendarEvent {
@@ -171,4 +188,14 @@ model CalendarEvent {
   updatedAt      DateTime @default(now()) @updatedAt
 
   @@unique([courseId, date])
+}
+
+model Feedback {
+  id              Int        @id @default(autoincrement())
+  officeHour      OfficeHour @relation(fields: [officeHourId], references: [id])
+  officeHourId    Int
+  feedbackRating  Int
+  feedbackComment String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now()) @updatedAt
 }

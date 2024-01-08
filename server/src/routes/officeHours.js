@@ -51,8 +51,8 @@ router.post(
   courseValidator.areCourseStaffOrInstructor,
   dateValidator.officeHourDateCheck,
   validator.durationIsMultipleof5,
-  //timeValidator.isTime,
-  //validator.areValidDOW,
+  // timeValidator.isTime,
+  // validator.areValidDOW,
   // validator.noConflictsWithHosts,
   courseValidator.isCourseArchived,
   controller.create
@@ -102,7 +102,6 @@ router.post(
   body("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
-  courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHostOrInstructor,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDay,
@@ -121,7 +120,6 @@ router.post(
   body("date", "Date is required").optional(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExist,
-  courseValidator.isInCourseForOfficeHour,
   validator.isOfficeHourHostOrInstructor,
   validator.checkOptionalDateBody,
   //validator.isOfficeHourOnDay,
@@ -159,7 +157,6 @@ router.post(
   body("location", "location must be a string").notEmpty(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
@@ -239,7 +236,6 @@ router.post(
     .isBoolean(),
   accountValidator.isAccountValidHeader,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.isOfficeHourHostParams,
   dateValidator.endIsAfterStart,
   validator.startDateIsValidDOW,
@@ -293,7 +289,7 @@ router.get(
 );
 
 router.get(
-  "/:officeHourId/:date/registrationsOnDate",
+  "/:officeHourId/date/:date/registrationsOnDate",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
@@ -301,9 +297,7 @@ router.get(
   param("officeHourId", "Please enter a valid officehour id").isInt(),
   param("date", "Date is required").notEmpty(),
   accountValidator.isAccountValidHeader,
-  accountValidator.isAccountStaffOrInstructor,
   validator.doesOfficeHourExistParams,
-  courseValidator.isInCourseForOfficeHourParam,
   validator.getDatesForOfficeHour,
   validator.isOfficeHourOnDayParam,
   controller.getAllRegistrationsOnDate
@@ -347,7 +341,7 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("registrationId", "Registration is required").isInt(),
+  body("registrationId", "Registration is required").notEmpty().isInt(),
   accountValidator.isAccountValidHeader,
   validator.isRegistrationId,
   validator.isRegistrationHostOrInstructor,
@@ -355,6 +349,64 @@ router.post(
   validator.isNotCancelled,
   courseValidator.isCourseArchivedRegistrationId,
   controller.editRegistrationNoShow
+);
+
+router.post(
+  "/addRegistrationFeedback",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("registrationId", "Registration is required").notEmpty().isInt(),
+  body(
+    "feedbackRating",
+    "Registration rating must be an integer between 1 and 10"
+  )
+    .notEmpty()
+    .isInt(),
+  body("feedbackComment", "Registration comment must be an optional string")
+    .isString()
+    .optional(),
+  accountValidator.isAccountValidHeader,
+  validator.isRegistrationId,
+  validator.isRegistrationStudent,
+  validator.isRegistrationInPast,
+  validator.isNotCancelled,
+  courseValidator.isCourseArchivedRegistrationId,
+  validator.isWithinTimeConstraint,
+  validator.isNotNoShow,
+  validator.isFeedbackRatingGood,
+  validator.registrationHasFeedback,
+  controller.addRegistrationFeedback
+);
+
+router.get(
+  "/:courseId/getRegistrationFeedback",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").notEmpty().isInt(),
+  accountValidator.isAccountValidHeader,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseStaffOrInstructor,
+  controller.getRegistrationFeedback
+);
+
+router.get(
+  "/:courseId/getRegistrationFeedback/:accountId",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  param("courseId", "Please enter a valid course id").isInt(),
+  param("accountId", "Please enter a valid host account id").isInt(),
+  accountValidator.isAccountValidHeader,
+  accountValidator.isAccountIdValidParam,
+  courseValidator.isCourseIdParams,
+  courseValidator.isCourseInstructor,
+  courseValidator.isCourseStaffOrInstructorParam,
+  controller.getHostFeedback
 );
 
 export default router;

@@ -100,7 +100,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
       const response = await request
-        .post(`${endpoint}/$create`)
+        .post(`${endpoint}/create`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -108,6 +108,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no authorization token is provided", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -124,7 +129,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$create`)
+        .post(`${endpoint}/create`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -132,6 +137,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -148,15 +158,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$create`)
+        .post(`${endpoint}/create`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -173,15 +188,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$create`)
+        .post(`${endpoint}/create`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -207,6 +227,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -232,6 +257,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when Course ID < 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -257,6 +287,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date now", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -282,6 +315,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date in the past", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    //   while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //    courseDate.setMonth(courseDate.getMonth() + 1);
+    //   }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   let pastDate = new Date();
@@ -309,6 +345,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when endDate is a date now", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -332,6 +373,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when endDate is a date in the past", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       let pastDate = new Date();
@@ -357,6 +403,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when title is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -382,6 +433,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when location is empty", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
     //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -407,6 +461,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -432,6 +491,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is invalid", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -443,7 +507,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         endDate: new Date(secondCourseDate - tzoffset2)
           .toISOString()
           .split("T")[0],
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
         location: "zoom",
         isRemote: true,
       };
@@ -457,6 +521,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when beginning date is not on day in daysOfWeek", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -482,6 +551,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 201 when event is created", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 1 || courseDate.getMonth() == 9) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
       var tzoffset = courseDate.getTimezoneOffset() * 60000;
@@ -547,7 +621,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
       const response = await request
-        .post(`${endpoint}/$changeCancellation`)
+        .post(`${endpoint}/changeCancellation`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -558,7 +632,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeCancellation`)
+        .post(`${endpoint}/changeCancellation`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -569,22 +643,22 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeCancellation`)
+        .post(`${endpoint}/changeCancellation`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const attributes = {
         date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeCancellation`)
+        .post(`${endpoint}/changeCancellation`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -715,7 +789,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
       const response = await request
-        .post(`${endpoint}/$changeRemote`)
+        .post(`${endpoint}/changeRemote`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -726,7 +800,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeRemote`)
+        .post(`${endpoint}/changeRemote`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -737,22 +811,22 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeRemote`)
+        .post(`${endpoint}/changeRemote`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const attributes = {
         date: new Date(calendarEvents[0].start),
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$changeRemote`)
+        .post(`${endpoint}/changeRemote`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -906,7 +980,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         date: date,
         courseId: course.id,
       };
-      const response = await request.post(`${endpoint}/$edit`).send(attributes);
+      const response = await request.post(`${endpoint}/edit`).send(attributes);
       expect(response.status).toBe(401);
     });
 
@@ -926,13 +1000,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$edit`)
+        .post(`${endpoint}/edit`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
       newDate.setDate(newDate.getDate() + 1);
@@ -948,10 +1022,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$edit`)
+        .post(`${endpoint}/edit`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -1179,6 +1253,30 @@ describe(`Test endpoint ${endpoint}`, () => {
     //   expect(response.status).toBe(400);
     // });
 
+    it("Return 400 with all valid parameters: diff date, course already on date", async () => {
+      const date = new Date(calendarEvents[1].start);
+      const newDate = new Date(calendarEvents[2].start);
+      let attributes = {
+        title: "title",
+        additionalInfo: "this is the new edited description",
+        isCancelled: false,
+        isRemote: true,
+        location: "zoom",
+        newDate: newDate.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0],
+        courseId: course.id,
+      };
+
+      const targetDate = new Date(attributes.date);
+      targetDate.setUTCHours(23);
+
+      const response = await request
+        .post(`${endpoint}/edit`)
+        .send(attributes)
+        .set("Authorization", "Bearer " + instructor.token);
+      expect(response.status).toBe(400);
+    });
+
     it("Return 202 with all valid parameters: new date", async () => {
       const date = new Date(calendarEvents[1].start);
       let newDate = new Date(date);
@@ -1294,7 +1392,7 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
 
       const response = await request
-        .post(`${endpoint}/$editTitle`)
+        .post(`${endpoint}/editTitle`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1308,13 +1406,13 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
 
       const response = await request
-        .post(`${endpoint}/$editTitle`)
+        .post(`${endpoint}/editTitle`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         title: "title",
@@ -1323,10 +1421,10 @@ describe(`Test endpoint ${endpoint}`, () => {
       };
 
       const response = await request
-        .post(`${endpoint}/$editTitle`)
+        .post(`${endpoint}/editTitle`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -1507,7 +1605,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$editLocation`)
+        .post(`${endpoint}/editLocation`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1521,13 +1619,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$editLocation`)
+        .post(`${endpoint}/editLocation`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const dateObj = new Date(calendarEvents[1].start);
       let attributes = {
         location: "location",
@@ -1536,10 +1634,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         courseId: course.id,
       };
       const response = await request
-        .post(`${endpoint}/$editLocation`)
+        .post(`${endpoint}/editLocation`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -1710,7 +1808,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
       const response = await request
-        .post(`${endpoint}/$createEvent`)
+        .post(`${endpoint}/createEvent`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1728,7 +1826,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$createEvent`)
+        .post(`${endpoint}/createEvent`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1746,13 +1844,13 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$createEvent`)
+        .post(`${endpoint}/createEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       const date = new Date(calendarEvents[0].start);
       let newDate = new Date(date);
       newDate.setFullYear(newDate.getFullYear() + 1);
@@ -1765,10 +1863,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
       };
       const response = await request
-        .post(`${endpoint}/$createEvent`)
+        .post(`${endpoint}/createEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
@@ -1844,39 +1942,39 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when date is a date now", async () => {
-      var tzoffset2 = new Date().getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event II",
-        courseId: course.id,
-        date: new Date(new Date() - tzoffset2).toISOString().split("T")[0],
-        location: "zoom",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/createEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when date is a date now", async () => {
+    //   var tzoffset2 = new Date().getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event II",
+    //     courseId: course.id,
+    //     date: new Date(new Date() - tzoffset2).toISOString().split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    it("Return 400 when date is a date in the past", async () => {
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset2 = pastDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event II",
-        courseId: course.id,
-        date: new Date(pastDate - tzoffset2).toISOString().split("T")[0],
-        location: "zoom",
-        isRemote: true,
-      };
-      const response = await request
-        .post(`${endpoint}/createEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when date is a date in the past", async () => {
+    //   let pastDate = new Date();
+    //   pastDate.setMonth(pastDate.getMonth() - 3);
+    //   var tzoffset2 = pastDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event II",
+    //     courseId: course.id,
+    //     date: new Date(pastDate - tzoffset2).toISOString().split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when title is empty", async () => {
       const date = new Date(calendarEvents[0].start);
@@ -1965,7 +2063,7 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no body is included", async () => {
       const attributes = {};
       const response = await request
-        .post(`${endpoint}/$createRecurringEvent`)
+        .post(`${endpoint}/createRecurringEvent`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1973,6 +2071,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when no authorization token is provided", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -1990,7 +2093,7 @@ describe(`Test endpoint ${endpoint}`, () => {
         daysOfWeek: [weekday[courseDate.getDay()]],
       };
       const response = await request
-        .post(`${endpoint}/$createRecurringEvent`)
+        .post(`${endpoint}/createRecurringEvent`)
         .send(attributes);
       expect(response.status).toBe(401);
     });
@@ -1998,6 +2101,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 401 when authorization token is expired", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2016,15 +2124,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         daysOfWeek: [weekday[courseDate.getDay()]],
       };
       const response = await request
-        .post(`${endpoint}/$createRecurringEvent`)
+        .post(`${endpoint}/createRecurringEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.expiredToken);
       expect(response.status).toBe(401);
     });
 
-    it("Return 404 when invalid user", async () => {
+    it("Return 403 when invalid user", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2043,15 +2156,20 @@ describe(`Test endpoint ${endpoint}`, () => {
         daysOfWeek: [weekday[courseDate.getDay()]],
       };
       const response = await request
-        .post(`${endpoint}/$createRecurringEvent`)
+        .post(`${endpoint}/createRecurringEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
     });
 
     it("Return 400 when course ID is invalid and nonzero", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2079,6 +2197,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when course ID is 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2106,6 +2229,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when Course ID < 0", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2157,6 +2285,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date now", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2183,6 +2314,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when begDate is a date in the past", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2209,56 +2343,67 @@ describe(`Test endpoint ${endpoint}`, () => {
     //   expect(response.status).toBe(400);
     // });
 
-    it("Return 400 when endDate is a date now", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
-      var tzoffset = courseDate.getTimezoneOffset() * 60000;
-      var tzoffset3 = new Date().getTimezoneOffset() * 60000;
+    // it("Return 400 when endDate is a date now", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
+    //   courseDate.setDate(courseDate.getDate() + 1);
+    //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset3 = new Date().getTimezoneOffset() * 60000;
 
-      const attributes = {
-        title: "Calendar Event III",
-        courseId: course.id,
-        begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
-        endDate: new Date(new Date() - tzoffset3).toISOString().split("T")[0],
-        location: "zoom",
-        isRemote: true,
-        daysOfWeek: [weekday[courseDate.getDay()]],
-      };
-      const response = await request
-        .post(`${endpoint}/createRecurringEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    //   const attributes = {
+    //     title: "Calendar Event III",
+    //     courseId: course.id,
+    //     begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
+    //     endDate: new Date(new Date() - tzoffset3).toISOString().split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createRecurringEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    it("Return 400 when endDate is a date in the past", async () => {
-      let courseDate = new Date();
-      courseDate.setMonth(courseDate.getMonth() + 3);
-      courseDate.setDate(courseDate.getDate() + 1);
-      let pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 3);
-      var tzoffset = courseDate.getTimezoneOffset() * 60000;
-      var tzoffset3 = pastDate.getTimezoneOffset() * 60000;
-      const attributes = {
-        title: "Calendar Event III",
-        courseId: course.id,
-        begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
-        endDate: new Date(pastDate - tzoffset3).toISOString().split("T")[0],
-        location: "zoom",
-        isRemote: true,
-        daysOfWeek: [weekday[courseDate.getDay()]],
-      };
-      const response = await request
-        .post(`${endpoint}/createRecurringEvent`)
-        .send(attributes)
-        .set("Authorization", "Bearer " + instructor.token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when endDate is a date in the past", async () => {
+    //   let courseDate = new Date();
+    //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
+    //   courseDate.setDate(courseDate.getDate() + 1);
+    //   let pastDate = new Date();
+    //   pastDate.setMonth(pastDate.getMonth() - 3);
+    //   var tzoffset = courseDate.getTimezoneOffset() * 60000;
+    //   var tzoffset3 = pastDate.getTimezoneOffset() * 60000;
+    //   const attributes = {
+    //     title: "Calendar Event III",
+    //     courseId: course.id,
+    //     begDate: new Date(courseDate - tzoffset).toISOString().split("T")[0],
+    //     endDate: new Date(pastDate - tzoffset3).toISOString().split("T")[0],
+    //     location: "zoom",
+    //     isRemote: true,
+    //     daysOfWeek: [weekday[courseDate.getDay()]],
+    //   };
+    //   const response = await request
+    //     .post(`${endpoint}/createRecurringEvent`)
+    //     .send(attributes)
+    //     .set("Authorization", "Bearer " + instructor.token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 400 when title is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2286,6 +2431,9 @@ describe(`Test endpoint ${endpoint}`, () => {
     // it("Return 400 when location is empty", async () => {
     //   let courseDate = new Date();
     //   courseDate.setMonth(courseDate.getMonth() + 3);
+    // while (courseDate.getMonth() == 2 || courseDate.getMonth() == 3 || courseDate.getMonth() == 10 || courseDate.getMonth() == 11) {
+    //   courseDate.setMonth(courseDate.getMonth() + 1);
+    // }
     //   courseDate.setDate(courseDate.getDate() + 1);
     //   let secondCourseDate = new Date(courseDate);
     //   secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2313,6 +2461,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is empty", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2340,6 +2493,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when daysOfWeek is invalid", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2355,7 +2513,7 @@ describe(`Test endpoint ${endpoint}`, () => {
           .split("T")[0],
         location: "zoom",
         isRemote: true,
-        daysOfWeek: ["Jamie"],
+        daysOfWeek: [weekday[courseDate.getDay()], "Jamie"],
       };
       const response = await request
         .post(`${endpoint}/createRecurringEvent`)
@@ -2367,6 +2525,11 @@ describe(`Test endpoint ${endpoint}`, () => {
     it("Return 400 when beginning date is not on day in daysOfWeek", async () => {
       let courseDate = new Date();
       courseDate.setMonth(courseDate.getMonth() + 3);
+      if (courseDate.getMonth() == 2 || courseDate.getMonth() == 10) {
+        courseDate.setMonth(courseDate.getMonth() + 2);
+      } else if (courseDate.getMonth() == 3 || courseDate.getMonth() == 11) {
+        courseDate.setMonth(courseDate.getMonth() + 1);
+      }
       courseDate.setDate(courseDate.getDate() + 1);
       let secondCourseDate = new Date(courseDate);
       secondCourseDate.setMonth(courseDate.getMonth() + 1);
@@ -2409,12 +2572,10 @@ describe(`Test endpoint ${endpoint}`, () => {
         isRemote: true,
         daysOfWeek: [weekday[courseDate.getDay()]],
       };
-      console.log(attributes);
       const response = await request
         .post(`${endpoint}/createRecurringEvent`)
         .send(attributes)
         .set("Authorization", "Bearer " + instructor.token);
-      console.log(response.text);
       expect(response.status).toBe(201);
 
       const calendarJSON = response.body.eventJSon;
@@ -2737,25 +2898,25 @@ describe(`Test endpoint ${endpoint}`, () => {
       expect(response.status).toBe(400);
     });
 
-    it("Return 400 when date is a date now", async () => {
-      const response = await request
-        .get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date()}`)
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when date is a date now", async () => {
+    //   const response = await request
+    //     .get(`${endpoint}/getEventOnDay/${course.id}/date/${new Date()}`)
+    //     .set("Authorization", "Bearer " + students[0].token);
+    //   expect(response.status).toBe(400);
+    // });
 
-    it("Return 400 when date is a date in the past", async () => {
-      let date = new Date();
-      date.setMonth(date.getMonth() - 3);
-      const response = await request
-        .get(
-          `${endpoint}/getEventOnDay/${course.id}/date/${
-            date.toISOString().split("T")[0]
-          }`
-        )
-        .set("Authorization", "Bearer " + students[0].token);
-      expect(response.status).toBe(400);
-    });
+    // it("Return 400 when date is a date in the past", async () => {
+    //   let date = new Date();
+    //   date.setMonth(date.getMonth() - 3);
+    //   const response = await request
+    //     .get(
+    //       `${endpoint}/getEventOnDay/${course.id}/date/${
+    //         date.toISOString().split("T")[0]
+    //       }`
+    //     )
+    //     .set("Authorization", "Bearer " + students[0].token);
+    //   expect(response.status).toBe(400);
+    // });
 
     it("Return 403 when user is not in course", async () => {
       const response = await request

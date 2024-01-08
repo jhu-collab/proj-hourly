@@ -14,13 +14,13 @@ export const create = async (req, res) => {
     return res;
   }
   const { email, name } = req.body;
-  await prisma.Account.create({
+  await prisma.account.create({
     data: {
       email,
       userName: name,
     },
   });
-  const account = await prisma.Account.findUnique({
+  const account = await prisma.account.findUnique({
     where: {
       email,
     },
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
     return res;
   }
   const { email } = req.body;
-  const account = await prisma.Account.findUnique({
+  const account = await prisma.account.findUnique({
     where: {
       email,
     },

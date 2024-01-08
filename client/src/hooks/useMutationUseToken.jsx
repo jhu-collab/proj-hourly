@@ -17,13 +17,14 @@ function useMutationUseToken(studentId, courseId) {
 
   const course = useStoreCourse((state) => state.course);
 
-  const useToken = async (tokenId) => {
+  const useToken = async ({ tokenId, reason }) => {
     try {
+      console.log(tokenId, reason);
       debug("Sending token to be used to the backend...");
       const endpoint = `${BASE_URL}/api/courseToken/${courseId}/usedToken/${tokenId}/student/${studentId}`;
       const res = await axios.post(
         endpoint,
-        { date: new Date().toISOString() },
+        { date: new Date().toISOString(), reason },
         getConfig(token)
       );
       debug("Successful! Returning result data...");

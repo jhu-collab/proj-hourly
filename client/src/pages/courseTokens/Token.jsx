@@ -15,6 +15,8 @@ import useStoreLayout from "../../hooks/useStoreLayout";
 import { tokenSchema } from "../../utils/validators";
 import useMutationEditToken from "../../hooks/useMutationEditToken";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
+import Grid from "@mui/material/Grid";
+
 
 /**
  * Represents a single Topic card.
@@ -64,104 +66,127 @@ function Token({ token }) {
     <>
       <MainCard sx={{ padding: 2 }} content={false}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Stack
+          {/* <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+          > */}
+          <Grid
+            container
             direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             alignItems="center"
             spacing={2}
           >
-            {edit && courseType === "Instructor" ? (
-              <FormInputText
-                data-cy="edit-token-name"
-                name="name"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Typography data-cy="token-name" variant="h5">
-                {token.title}
-              </Typography>
-            )}
-            {edit && courseType === "Instructor" ? (
-              <FormInputText
-                data-cy="edit-token-description"
-                name="description"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : (
-              <Typography variant="h5" data-cy="token-description">
-                {token.description}
-              </Typography>
-            )}
-            {edit && courseType === "Instructor" ? (
-              <FormInputNumber
-                data-cy="edit-token-quantity"
-                name="quantity"
-                control={control}
-                sx={{ width: 230 }}
-              />
-            ) : courseType !== "Student" ? (
-              <Typography variant="h5" data-cy="token-quantity">
-                Token Limit: {token.tokenLimit}
-              </Typography>
-            ) : (
-              <Typography variant="h5" data-cy="token-quantity-student">
-                Token Balance: {token.tokenLimit - token.datesUsed.length}/
-                {token.tokenLimit}
-              </Typography>
-            )}
-            {edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button variant="contained" type="submit">
-                    Submit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleOnClickCancelBtn}
-                  >
-                    Cancel
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-            {!edit && courseType === "Instructor" && (
-              <Stack direction="row" spacing={1}>
-                <AnimateButton>
-                  <Button
-                    data-cy="edit-token-button"
-                    variant="contained"
-                    onClick={handleOnClickEditBtn}
-                  >
-                    Edit
-                  </Button>
-                </AnimateButton>
-                <AnimateButton>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      confirmDialog(
-                        `Do you really want to delete the "${token.title}" token?`,
-                        () => {
-                          mutateDelete({
-                            courseId: course.id,
-                            courseTokenId: token.id,
-                          });
-                        }
-                      );
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </AnimateButton>
-              </Stack>
-            )}
-          </Stack>
+            {/* Token Title */}
+            <Grid item xs={0} sm={2}>
+              {edit && courseType === "Instructor" ? (
+                <FormInputText
+                  data-cy="edit-token-name"
+                  name="name"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : (
+                <Typography data-cy="token-name" variant="h5">
+                  {token.title}
+                </Typography>
+              )}
+            </Grid>
+            {/* Token Description */}
+            <Grid item xs={0} sm={2}>
+              {edit && courseType === "Instructor" ? (
+                <FormInputText
+                  data-cy="edit-token-description"
+                  name="description"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : (
+                <Typography variant="h5" data-cy="token-description">
+                  {token.description}
+                </Typography>
+              )}
+            </Grid>
+            {/* Token Quantity */}
+            <Grid item xs={0} sm={2}>
+              {edit && courseType === "Instructor" ? (
+                <FormInputNumber
+                  data-cy="edit-token-quantity"
+                  name="quantity"
+                  control={control}
+                  sx={{ width: 230 }}
+                />
+              ) : courseType !== "Student" ? (
+                <Typography variant="h5" data-cy="token-quantity">
+                  Token Limit: {token.tokenLimit}
+                </Typography>
+              ) : (
+                <Typography variant="h5" data-cy="token-quantity-student">
+                  Token Balance: {token.tokenLimit - token.datesUsed.length}/
+                  {token.tokenLimit}
+                </Typography>
+              )}
+            </Grid>
+            {/* Edit -> Submit Button + Cancel Button */}
+            <Grid item xs={0} sm={2}>
+              {edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button variant="contained" type="submit">
+                      Submit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleOnClickCancelBtn}
+                    >
+                      Cancel
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Grid>
+            {/* Not Edit -> Edit + Delete Button */}
+            <Grid item xs={0} sm={2}>
+              {!edit && courseType === "Instructor" && (
+                <Stack direction="row" spacing={1}>
+                  <AnimateButton>
+                    <Button
+                      data-cy="edit-token-button"
+                      variant="contained"
+                      onClick={handleOnClickEditBtn}
+                    >
+                      Edit
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        confirmDialog(
+                          `Do you really want to delete the "${token.title}" token?`,
+                          () => {
+                            mutateDelete({
+                              courseId: course.id,
+                              courseTokenId: token.id,
+                            });
+                          }
+                        );
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </AnimateButton>
+                </Stack>
+              )}
+            </Grid>
+            {/* </Stack> */}
+          </Grid>
         </Form>
       </MainCard>
       <ConfirmPopup />

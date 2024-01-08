@@ -1,11 +1,15 @@
 import MainCard from "../../components/MainCard";
 import Typography from "@mui/material/Typography";
 import RemoveCourseAction from "./RemoveCourseAction";
+import DeleteCourseAction from "./DeleteCourseAction";
 import Stack from "@mui/material/Stack";
 import useStoreCourse from "../../hooks/useStoreCourse";
 import useStoreLayout from "../../hooks/useStoreLayout";
 import CourseCalendarEventForm from "./CourseCalendarEventForm";
 import CourseTokenOptInForm from "./CourseTokenOptInForm";
+import CourseRegistrationConstraintForm from "./CourseRegistrationConstraintForm";
+import CoursePauseForm from "./CoursePauseForm";
+import CourseArchiveForm from "./CourseArchiveForm";
 
 function CourseInfoPage() {
   const course = useStoreCourse((state) => state.course);
@@ -55,6 +59,9 @@ function CourseInfoPage() {
         {courseType === "Student" && (
           <RemoveCourseAction courseId={course.id} />
         )}
+        {courseType === "Instructor" && (
+          <DeleteCourseAction courseId={course.id} />
+        )}
       </MainCard>
 
       {courseType === "Instructor" && (
@@ -64,17 +71,42 @@ function CourseInfoPage() {
           sx={{ padding: 0 }}
           content={true}
         >
-          <CourseCalendarEventForm data-cy="form"/>
+          <CourseCalendarEventForm data-cy="form" />
+        </MainCard>
+      )}
+      {courseType === "Instructor" && ( // newly added
+        <MainCard
+          data-cy="course-registration-constraint_form_title"
+          title="Course Registration Constraints"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CourseRegistrationConstraintForm data-cy="form" />
         </MainCard>
       )}
       {courseType === "Instructor" && (
         <MainCard
-        data-cy="coursetype-course-token-title"
+          data-cy="coursetype-course-token-title"
           title="Course Token Option"
           sx={{ padding: 0 }}
           content={true}
         >
           <CourseTokenOptInForm />
+        </MainCard>
+      )}
+      {courseType === "Instructor" && (
+        <MainCard
+          data-cy="coursetype-course-pause-or-archive-title"
+          title="Pause or Archive Course"
+          sx={{ padding: 0 }}
+          content={true}
+        >
+          <CoursePauseForm />
+          <CourseArchiveForm />
+          {/* <Stack direction="column" spacing={3} alignItems="center">
+            <CoursePauseForm />
+            <CourseArchiveForm />
+          </Stack> */}
         </MainCard>
       )}
     </>

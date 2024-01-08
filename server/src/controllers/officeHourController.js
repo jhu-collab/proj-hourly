@@ -243,22 +243,22 @@ export const register = async (req, res) => {
   if (endTimeObj < startTimeObj) {
     endTimeObj.date(endTimeObj.date() + 1);
   }
-  if (
-    targetDate.goto("America/New_York").timezone().current.offset !=
-    officeHour.startDate.getTimezoneOffset() / 60
-  ) {
-    startTimeObj = startTimeObj.add(
-      spacetime(officeHour.startDate).timezone().current.offset -
-        targetDate.goto("America/New_York").timezone().current.offset,
+  // if (
+  //   targetDate.goto("America/New_York").timezone().current.offset !=
+  //   officeHour.startDate.getTimezoneOffset() / 60
+  // ) {
+  //   startTimeObj = startTimeObj.add(
+  //     spacetime(officeHour.startDate).timezone().current.offset -
+  //       targetDate.goto("America/New_York").timezone().current.offset,
 
-      "hour"
-    );
-    endTimeObj = endTimeObj.add(
-      spacetime(officeHour.startDate).timezone().current.offset -
-        targetDate.goto("America/New_York").timezone().current.offset,
-      "hour"
-    );
-  }
+  //     "hour"
+  //   );
+  //   endTimeObj = endTimeObj.add(
+  //     spacetime(officeHour.startDate).timezone().current.offset -
+  //       targetDate.goto("America/New_York").timezone().current.offset,
+  //     "hour"
+  //   );
+  // }
   // if (
   //   officeHour.startDate.getTimezoneOffset() !=
   //   targetDate.timezone().current.offset()
@@ -544,6 +544,13 @@ export const cancelAll = async (req, res) => {
       },
     });
     debug("registrations are cancelled");
+    debug("deleting feedback for course");
+    await prisma.feedback.deleteMany({
+      where: {
+        officeHourId: officeHourId,
+      },
+    });
+    debug("deleted feedback for course");
     debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.delete({
       where: {
@@ -566,6 +573,13 @@ export const cancelAll = async (req, res) => {
       },
     });
     debug("registrations are cancelled");
+    debug("deleting feedback for course");
+    await prisma.feedback.deleteMany({
+      where: {
+        officeHourId: officeHourId,
+      },
+    });
+    debug("deleted feedback for course");
     debug("updating office hour...");
     officeHourUpdate = await prisma.officeHour.update({
       where: {
@@ -591,9 +605,9 @@ export const cancelAll = async (req, res) => {
   return res.status(StatusCodes.ACCEPTED).json({ officeHourUpdate });
 };
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 /**
  * This function computes the remaining time slots for a specific
@@ -610,7 +624,6 @@ export const getTimeSlotsRemaining = async (req, res) => {
     return res;
   }
   let date = req.targetDate;
-  const offset = date.getTimezoneOffset();
   const officeHourId = parseInt(req.params.officeHourId, 10);
   //gets the office hour
   debug("finding office hour...");
@@ -660,14 +673,15 @@ export const getTimeSlotsRemaining = async (req, res) => {
   const registrationTimes = new Map();
   registrations.forEach((registration) => {
     const rTime = new Date(registration.startTime);
-    if (
-      registration.date.getTimezoneOffset() !=
-      new Date(1970, 0, 1).getTimezoneOffset()
-    ) {
+    const rDate = new Date(registration.date);
+    if (registration.startTime.getUTCHours() > rDate.getTimezoneOffset() / 60) {
+      rDate.setUTCHours(rDate.getTimezoneOffset() / 60 + 3);
+    }
+    if (rDate.getTimezoneOffset() != new Date(1970, 0, 1).getTimezoneOffset()) {
       rTime.setUTCHours(
         rTime.getUTCHours() +
           (new Date(1970, 0, 1).getTimezoneOffset() -
-            registration.date.getTimezoneOffset()) /
+            rDate.getTimezoneOffset()) /
             60
       );
     }
@@ -690,16 +704,22 @@ export const getTimeSlotsRemaining = async (req, res) => {
   while (start.isBefore(end)) {
     if (registrationTimes.has(start.toNativeDate().getTime())) {
       let registration = registrationTimes.get(start.toNativeDate().getTime());
+      const rDate = new Date(registration.date);
+      if (
+        registration.startTime.getUTCHours() >
+        rDate.getTimezoneOffset() / 60
+      ) {
+        rDate.setUTCHours(rDate.getTimezoneOffset() / 60 + 3);
+      }
       let regEndTime = spacetime(registration.endTime).goto("America/New_York");
       if (
-        registration.date.getTimezoneOffset() !=
-        new Date(1970, 0, 1).getTimezoneOffset()
+        rDate.getTimezoneOffset() != new Date(1970, 0, 1).getTimezoneOffset()
       ) {
-        regEndTime = regEndTime.hour(
-          regEndTime.hour() +
-            (new Date(1970, 0, 1).getTimezoneOffset() -
-              registration.date.getTimezoneOffset()) /
-              60
+        regEndTime = regEndTime.add(
+          (new Date(1970, 0, 1).getTimezoneOffset() -
+            rDate.getTimezoneOffset()) /
+            60,
+          "hour"
         );
       }
       if (regEndTime.isBefore(startOrig)) {
@@ -1412,13 +1432,13 @@ export const cancelRegistration = async (req, res) => {
 
   const startTime = registration.startTime;
   const endTime = registration.endTime;
-  if (
-    registration.date.getTimezoneOffset() !=
-    registration.startTime.getTimezoneOffset()
-  ) {
-    startTime.setUTCHours(startTime.getUTCHours() + 1);
-    endTime.setUTCHours(endTime.getUTCHours() + 1);
-  }
+  // if (
+  //   registration.date.getTimezoneOffset() !=
+  //   registration.startTime.getTimezoneOffset()
+  // ) {
+  //   startTime.setUTCHours(startTime.getUTCHours() + 1);
+  //   endTime.setUTCHours(endTime.getUTCHours() + 1);
+  // }
   let endTimeStr = endTime.toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
@@ -1590,4 +1610,81 @@ export const editRegistrationNoShow = async (req, res) => {
   });
   debug("registration is updated");
   return res.status(StatusCodes.ACCEPTED).json({ updatedRegistration });
+};
+
+export const addRegistrationFeedback = async (req, res) => {
+  const { registrationId, feedbackRating, feedbackComment } = req.body;
+  debug("updating registration...");
+  const registration = await prisma.registration.update({
+    where: {
+      id: registrationId,
+    },
+    data: {
+      hasFeedback: true,
+    },
+  });
+  debug("registration is updated");
+  const feedback = await prisma.feedback.create({
+    data: {
+      officeHourId: registration.officeHourId,
+      feedbackRating: feedbackRating,
+      feedbackComment: feedbackComment || null,
+    },
+  });
+  debug("feedback is created");
+  return res.status(StatusCodes.ACCEPTED).json({ feedback });
+};
+
+export const getRegistrationFeedback = async (req, res) => {
+  const id = req.id;
+  const courseId = parseInt(req.params.courseId, 10);
+  debug("getting office hours");
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id,
+        },
+      },
+    },
+  });
+  debug("office hour is found");
+  debug("finding feedback for office hour");
+  const feedbacks = await prisma.feedback.findMany({
+    where: {
+      officeHourId: {
+        in: officeHours.map((officeHour) => officeHour.id),
+      },
+    },
+  });
+  debug("found feedbacks for host");
+  return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
+};
+
+export const getHostFeedback = async (req, res) => {
+  const courseId = parseInt(req.params.courseId, 10);
+  const accountId = parseInt(req.params.accountId, 10);
+  debug("getting office hours");
+  const officeHours = await prisma.officeHour.findMany({
+    where: {
+      courseId: courseId,
+      hosts: {
+        some: {
+          id: accountId,
+        },
+      },
+    },
+  });
+  debug("office hour is found");
+  debug("finding feedback for office hour");
+  const feedbacks = await prisma.feedback.findMany({
+    where: {
+      officeHourId: {
+        in: officeHours.map((officeHour) => officeHour.id),
+      },
+    },
+  });
+  debug("found feedbacks for host");
+  return res.status(StatusCodes.ACCEPTED).json({ feedbacks });
 };

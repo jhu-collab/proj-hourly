@@ -19,7 +19,7 @@ describe("Registrations Page: Staff", () => {
   const courseTitle = "Machine Learning";
   const courseNumber = "601.475";
   const courseSemester = "Fall";
-  const courseYear = "2023";
+  const courseYear = new Date().getFullYear().toString();
 
   const createCourseSemester = `[data-cy="${courseSemester}"]`;
   const courseCard = `[data-cy="${courseNumber}"]`;
@@ -431,7 +431,7 @@ describe("Registrations Page: Staff", () => {
     cy.get(".Toastify")
       .contains(
         "div",
-        "ERROR: cannot delete the only time offering for the course"
+        "ERROR: cannot delete the only remaining time offering for the course"
       )
       .should("be.visible");
     cy.get(registrationTypeList).children("div").should("have.length", 1);
