@@ -32,6 +32,20 @@ DB_PORT=5432
 DISABLE_EMAIL_SENDING=true
 ```
 
+[[Client](./client/)] Environment Variables:
+
+```
+VITE_LOC_BASE_URL=http://localhost:5000
+VITE_DEV_BASE_URL=https://proj-hourly-dev.herokuapp.com
+VITE_PROD_BASE_URL=https://proj-hourly-prod.herokuapp.com
+VITE_ROSTER_SSO_JHU_URL=https://glacial-plateau-47269.herokuapp.com/jhu/login
+VITE_USER_USERNAME=user-1
+VITE_USER_PASSWORD=user-1
+VITE_ADMIN_USERNAME=admin-1
+VITE_ADMIN_PASSWORD=admin-1
+VITE_RUN_MODE=local
+```
+
 ## Run Locally
 
 ## Contributors
