@@ -1,3 +1,5 @@
+![GitHub contributors](https://img.shields.io/github/contributors/jhu-collab/proj-hourly)
+
 # Hourly
 
 Hourly is Calendly for instructors, students, and TAs. The app helps schedule,
