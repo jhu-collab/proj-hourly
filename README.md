@@ -8,8 +8,8 @@ to be productive and utilize their time more effectively.
 
 **Production**
 
-- [Client](https://hourly.caprover.madooei.com/)
-- [Server](https://hourly-api.caprover.madooei.com/)
+- [Client](https://jhu-collab.github.io/proj-hourly)
+- [Server](https://hourly-prod-62db14654e8d.herokuapp.com/api/)
 
 **Development**
 
