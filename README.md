@@ -20,9 +20,7 @@ to be productive and utilize their time more effectively.
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/jhu-collab/proj-hourly/graphs/contributors">
-<img src="https://contrib.rocks/preview?repo=jhu-collab/proj-hourly" />
-</a>
+[![Contributors](https://contrib.rocks/preview?repo=jhu-collab/proj-hourly)](https://github.com/jhu-collab/proj-hourly/graphs/contributors)
 
 ## Links
 
