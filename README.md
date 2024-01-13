@@ -10,6 +10,12 @@ to be productive and utilize their time more effectively.
 
 ## Features
 
+## Installation
+
+## Environment Variables
+
+## Run Locally
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
