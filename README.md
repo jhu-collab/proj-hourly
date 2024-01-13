@@ -15,6 +15,23 @@ to be productive and utilize their time more effectively.
 
 ## Environment Variables
 
+For all environment variables, put them in a .env file in their respective directories
+
+[[Server](./server/)] Environment Variables:
+
+```
+DATABASE_URL=postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+JWT_SECRET="abcdef12345"
+EMAIL_HOST="sandbox.smtp.mailtrap.io"
+EMAIL="email-address@example.com"
+EMAIL_PASSWORD="example_password"
+NODE_ENV=local
+HOURLY_API_KEY="api-key"
+DB_PORT=5432
+# DEBUG=hourly:*
+DISABLE_EMAIL_SENDING=true
+```
+
 ## Run Locally
 
 ## Contributors
