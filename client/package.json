@@ -62,7 +62,7 @@
     "cypress-xpath": "^2.0.1",
     "prettier": "2.7.1",
     "typescript": "^5.0.4",
-    "vite": "^2.9.16",
+    "vite": "^2.9.17",
     "vite-plugin-istanbul": "^4.0.1",
     "vite-plugin-pwa": "^0.12.3"
   }
