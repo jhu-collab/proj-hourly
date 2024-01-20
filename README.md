@@ -13,6 +13,34 @@ to be productive and utilize their time more effectively.
 
 ## Installation
 
+Install Node.js onto your system. The LTS distribution can be found [here](https://nodejs.org/en)
+
+Install yarn onto your system using this command:
+
+```
+npm install --global yarn
+```
+
+Navigate to the [server](./server/) folder and run:
+
+```
+yarn install
+```
+
+This may take several minutes
+
+Navigate to the [client](./client/) folder and run:
+
+```
+yarn install
+```
+
+This may take several minutes
+
+For running this locally, you will need to install Docker Desktop, this can be found [here](https://www.docker.com/products/docker-desktop/)
+
+If on windows, ensure you have WSL2 enabled
+
 ## Environment Variables
 
 For all environment variables, put them in a .env file in their respective directories
