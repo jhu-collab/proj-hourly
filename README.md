@@ -17,7 +17,7 @@ to be productive and utilize their time more effectively.
 
 For all environment variables, put them in a .env file in their respective directories
 
-[[Server](./server/)] Environment Variables:
+[Server](./server/) Environment Variables:
 
 ```
 DATABASE_URL=postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
@@ -32,7 +32,7 @@ DB_PORT=5432
 DISABLE_EMAIL_SENDING=true
 ```
 
-[[Client](./client/)] Environment Variables:
+[Client](./client/) Environment Variables:
 
 ```
 VITE_LOC_BASE_URL=http://localhost:5000
