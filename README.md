@@ -94,6 +94,14 @@ yarn run dev
 
 Once finished, you will be able to access both the API and Client on localhost.
 
+To investigate the Database entries, when in the server folder, run
+
+```
+yarn prisma studio
+```
+
+which wil create a locally hosted view of the database schema and entries.
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
