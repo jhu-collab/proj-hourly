@@ -76,6 +76,24 @@ VITE_RUN_MODE=local
 
 ## Run Locally
 
+Before running locally, ensure you have successfully installed all applications required.
+
+First, navigate to the [server](./server/) directory. Here you will run the following command:
+
+```
+yarn run dev
+```
+
+Sometimes this will fail initially as it can take some time to create the Docker Container. If this happens, wait a minute and try the command again
+
+Next, navigate to the [client](./client/) directory. Here you will run the following command:
+
+```
+yarn run dev
+```
+
+Once finished, you will be able to access both the API and Client on localhost.
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
