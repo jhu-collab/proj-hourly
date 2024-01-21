@@ -21,6 +21,8 @@ to be productive and utilize their time more effectively.
 
 ### Course Calendar/Events
 
+## Demo
+
 ## Installation
 
 Install Node.js onto your system. The LTS distribution can be found [here](https://nodejs.org/en)
