@@ -11,6 +11,16 @@ to be productive and utilize their time more effectively.
 
 ## Features
 
+### Office Hours
+
+### Registrations
+
+### Topics
+
+### Tokens
+
+### Course Calendar/Events
+
 ## Installation
 
 Install Node.js onto your system. The LTS distribution can be found [here](https://nodejs.org/en)
