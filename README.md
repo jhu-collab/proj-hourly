@@ -115,6 +115,10 @@ which wil create a locally hosted view of the database schema and entries.
 
 To test routes without the frontend, you can import the files in [postman_files](./postman_files/) into your local postman
 
+## Deployment
+
+- attempt to create deployment link/script?
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
