@@ -121,6 +121,8 @@ To test routes without the frontend, you can import the files in [postman_files]
 
 ## Running Tests
 
+## FAQ
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
