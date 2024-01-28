@@ -19,7 +19,14 @@ in more detail below.
 Hourly allows for Instructors and Course Staff to schedule their office hours using the calendar.
 It has a click to drag feature to creating events, or can be created using a add button. Here is
 an example of the create event menu:
+
 ![Office Hours Create Event Menu](./screenshots/create_event.png "Create Event")
+
+Here you have the option for start time and end time as well as the date of the event. Three additional fields
+are the recurring event, remote, and location. Recurring events repeat on a weekly basis, so when you opt to make
+an event recurring, you must select the days of the week that you want it to recur on. The remote field is to flag
+the event as being online, and the location is to give a location (or a meeting link if remote). Once created, the
+event will populate the calendar and be viewable by students.
 
 ### Registrations
 
