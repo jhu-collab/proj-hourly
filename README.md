@@ -8,6 +8,8 @@
 Hourly is Calendly for instructors, students, and TAs. The app helps schedule,
 book, and manage office hours. It allows students and teaching staff
 to be productive and utilize their time more effectively.
+The application includes features for scheduling office hours, managing registrations,
+creating course topics and tokens, and creating a course agenda.
 
 ## Features
 
