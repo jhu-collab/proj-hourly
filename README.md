@@ -45,6 +45,21 @@ you to mass edit your event calendar if necessary.
 
 ### Registrations
 
+As a student, on the calendar page, you can select a given event. If they are not already registered, they are
+prompted to select the register button. From here the registration form is displayed:
+
+![Registration Form](./screenshots/registration_form.png "Registration Form")
+
+Here the student is asked to select a time option. Time options are configured by the Professors for what the
+duration of registrations should be. For example, two registration types could be "Quick Question" and "Problem
+Walkthrough" where their respective time intervals may be 5 minutes and 15 minutes. The Professors have the option
+of making whatever time intervals they want, with the requirements being there must be at least 1 time interval,
+in this case the defaul of 10 minutes, and that the durations must be multiples of 5.
+
+The student can then select a time interval of the given length that starts and ends within the time window.
+These time windows are exclusive to that student and will not be offered to another student. A student can also
+select topics (which will be discussed later) and add any additional comments or questions they may have.
+
 ### Topics
 
 ### Tokens
