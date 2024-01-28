@@ -9,11 +9,17 @@ Hourly is Calendly for instructors, students, and TAs. The app helps schedule,
 book, and manage office hours. It allows students and teaching staff
 to be productive and utilize their time more effectively.
 The application includes features for scheduling office hours, managing registrations,
-creating course topics and tokens, and creating a course agenda.
+creating course topics and tokens, and creating a course agenda. The features are described
+in more detail below.
 
 ## Features
 
 ### Office Hours
+
+Hourly allows for Instructors and Course Staff to schedule their office hours using the calendar.
+It has a click to drag feature to creating events, or can be created using a add button. Here is
+an example of the create event menu:
+![Office Hours Create Event Menu](./screenshots/create_event.png "Create Event")
 
 ### Registrations
 
