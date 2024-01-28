@@ -36,7 +36,7 @@ Here students and staff can select their office hours in order to interact. Regi
 When a staff member clicks on their office hours, they will be able to view their details and have several options
 for manipulation:
 
-![Office Hour Details Staff](./screenshots/office_hour_details_staff "Office Hour Details Staff View")
+![Office Hour Details Staff](./screenshots/office_hour_details_staff.png "Office Hour Details Staff View")
 
 Going from left to right, the interaction buttons are, edit, edit location, cancel, and exit. Most of these functionalities
 do not need a description. However, when editing a recurrning event, its location, or cancelling, you will be
