@@ -28,6 +28,21 @@ an event recurring, you must select the days of the week that you want it to rec
 the event as being online, and the location is to give a location (or a meeting link if remote). Once created, the
 event will populate the calendar and be viewable by students.
 
+Once an event is created, it will appear on the calendar like this:
+
+![Calendar with Office Hour](./screenshots/calendar_view.png "Calendar View")
+
+Here students and staff can select their office hours in order to interact. Registrations will be covered later.
+When a staff member clicks on their office hours, they will be able to view their details and have several options
+for manipulation:
+
+![Office Hour Details Staff](./screenshots/office_hour_details_staff "Office Hour Details Staff View")
+
+Going from left to right, the interaction buttons are, edit, edit location, cancel, and exit. Most of these functionalities
+do not need a description. However, when editing a recurrning event, its location, or cancelling, you will be
+asked if you want to just edit the specific date, or all remaining recurring events in the series. This allows
+you to mass edit your event calendar if necessary.
+
 ### Registrations
 
 ### Topics
