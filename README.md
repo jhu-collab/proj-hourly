@@ -56,9 +56,26 @@ Walkthrough" where their respective time intervals may be 5 minutes and 15 minut
 of making whatever time intervals they want, with the requirements being there must be at least 1 time interval,
 in this case the defaul of 10 minutes, and that the durations must be multiples of 5.
 
+In addition to these time intervals, there is a registration window implemented. This defines the number of hours
+before the start of an Office Hour that you can register, and the number before when you cannot register. The
+default values of these are 48 hours and 2 hours, saying you can register up to 48 hours before, but no later than
+2 hours before. This ensures that registrations are recent and limited to students who need help now. These values
+are all customizable in the course details section.
+
 The student can then select a time interval of the given length that starts and ends within the time window.
 These time windows are exclusive to that student and will not be offered to another student. A student can also
 select topics (which will be discussed later) and add any additional comments or questions they may have.
+
+Once registered, the registration can be viewed by both Staff and Students under the registration tab:
+
+![Registration Tab](/screenshots/registrations_tab_student.png "Registration Tab")
+
+Here a student is able to view their upcoming, ongoing, and past registrations. A student can click on a registration
+to exapnd its details, and if it is upcoming, can cancel the registration. The instructors/staff view looks very similar
+with the differences being that the instructors can add registration types here. Instructors and Staff can both cancel
+students office hours and can mark past ones as No Shows.
+
+### Feedback
 
 ### Topics
 
