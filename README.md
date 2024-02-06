@@ -77,6 +77,20 @@ students office hours and can mark past ones as No Shows.
 
 ### Feedback
 
+After a student has attented an office hour booking, they have the option to leave feedback for the course staff. This comes in the form of giving
+a rating on a scale from 0-5 and a description of how it went and what might be able to be improved.
+Feedback must occur within the registration constraint of finishing the session.
+For example, if the registration constraints are 48 hours and 2 hours, for opening and closing registrations for an office hour, then the student will
+have up to 48 hours after their registration to leave feedback.
+All student feedback is anonymous and cannot be edited by the student once
+submitted and cannot be associated with that student.
+
+Course Staff can view the feedback on the registrations tab under the feedback section. Here they can see their overall star rating and specific
+feedback given to them.
+
+Course Instructors can likewise view their personal feedback as well as the feedback given to any of their course staff, ensuring that office hours
+are productive, running smoothly, and improving.
+
 ### Topics
 
 ### Tokens
