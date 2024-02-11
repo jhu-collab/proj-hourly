@@ -99,6 +99,14 @@ Course staff can view the topics under the registrations page.
 
 ### Tokens
 
+Some college courses offer the idea of late days or late hours. Essentially, these allow students to turn in assignments after the deadline without penalty in exchange for some of their unused late days or hours. This is where the idea for tokens originates from. In courses there may be privilidges temporarily granted to students until they are used and they need some sort of tracking for them. This is where tokens come in.
+
+Within the course details page, an instructor can opt into allowing tokens for their course.
+
+Once enabled, a new element on the side bar will appear for tokens. Here instructors can manipulate their tokens, giving them titles, descriptions, and quantities.
+
+// TODO talk about roster page
+
 ### Course Calendar/Events
 
 ## Demo
