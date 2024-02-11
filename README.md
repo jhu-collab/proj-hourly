@@ -93,6 +93,10 @@ are productive, running smoothly, and improving.
 
 ### Topics
 
+A feature implemented in Hourly is topics. This serves as a tagging mechanism for office hour registrations. Students can select a tag for what they have questions or need help with. For example, these tags could be assignments such as HW1, HW2, final project etc. or they could be more course specific such as Binary Search Trees or Proof by Induction. The goal of this is to provide course staff with an idea of the types of questions beind asked and to allow for future analytics on which topics in the course need the most help.
+
+Course staff can view the topics under the registrations page.
+
 ### Tokens
 
 ### Course Calendar/Events
