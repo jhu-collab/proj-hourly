@@ -105,7 +105,17 @@ Within the course details page, an instructor can opt into allowing tokens for t
 
 Once enabled, a new element on the side bar will appear for tokens. Here instructors can manipulate their tokens, giving them titles, descriptions, and quantities.
 
-// TODO talk about roster page
+Students can view their usage on the tokens tab.
+
+Staff can use tokens on the roster page. Once the student has been found, there are two icons, a coin icon and a gear icon.
+
+The coin icon is the place for using and unusing tokens. Here course staff will have the option to select the course token type they would like to use and add in a description of the reason for using them. Additionally this form
+allows tokens to be unused, if they are mistakenly used or decided an instance was not deserving of one. To do this, staff will check the box and then select the instance they would like to do undo.
+
+The gear icon allows for viewing token usage for a specific student. The cumulative usage can be seen per student and if
+a specific token is clicked on, they can see a detailed view.
+
+The course instructors have a special use case under the gear icon, they can provide token overrides for students. If one student needs more of a specific token for special circumstances or if one student lost tokens for not following course rules, token amounts can be overriden here. The override can be applied to any token, and just must be at least 0. The overrides can also be removed at the same spot.
 
 ### Course Calendar/Events
 
