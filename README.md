@@ -228,7 +228,7 @@ To test routes without the frontend, you can import the files in [postman_files]
 
 ## Deployment
 
-- attempt to create deployment link/script?
+For Deploying, there are Dockerfiles and Github Actions defined to deploy to Heroku and GitHub pages.
 
 ## Running Tests
 
