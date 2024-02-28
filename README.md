@@ -171,6 +171,8 @@ HOURLY_API_KEY="api-key"
 DISABLE_EMAIL_SENDING=true
 ```
 
+You can enable debugging by uncommenting the DEBUG flag.
+
 [Client](./client/) Environment Variables:
 
 ```
@@ -220,6 +222,20 @@ To test routes without the frontend, you can import the files in [postman_files]
 - attempt to create deployment link/script?
 
 ## Running Tests
+
+To run the server tests, navigate to the server directory and run
+
+```
+yarn run test
+```
+
+To run client tests, start the server and client. Then in the client directory run
+
+```
+yarn run test
+```
+
+When prompted select the desired browser and then select end to end testing.
 
 ## FAQ
 
