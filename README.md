@@ -119,6 +119,15 @@ The course instructors have a special use case under the gear icon, they can pro
 
 ### Course Calendar/Events
 
+Course Calendar or Course Events are additional Calendar items that students, staff, and instructors can view. The intent
+of these is to serve as a course agenda/schedule for lectures/sections. These can contain information about the location
+of class and what contents will be covered. These are all located at the top of the calendar and are saved as all day events.
+These allow students to get a quick view of the topics being covered or additional review sessions being held.
+
+![Course Events](/screenshots/course_event_calendar.png "Course Events")
+
+These events can also be viewed in a more condensed form under the agenda tab.
+
 ## Demo
 
 ## Installation
