@@ -19,6 +19,10 @@ export const signupSchema = yup.object().shape({
   lastName: yup.string().min(1, "Last name must be 1 or more characters"),
 });
 
+export const forgotPasswordSchema = yup.object().shape({
+  username: yup.string().min(1, "Username must be 1 or more characters"),
+});
+
 /**
  * Returns a Date object that represents the last day
  * of a specified semester and year. Currently, we are using fixed
