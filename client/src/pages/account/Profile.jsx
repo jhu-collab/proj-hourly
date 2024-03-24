@@ -17,7 +17,6 @@ function Profile() {
   const token = useStoreToken((state) => state.token);
   const { id, userName, firstName, preferredName, lastName, email, role } =
     decodeToken(token);
-
   const selectSidebarItem = useStoreLayout((state) => state.selectSidebarItem);
 
   // TODO: We need backend routes that can retrieve information about
@@ -33,7 +32,7 @@ function Profile() {
       id: id,
       username: userName,
       firstName: firstName,
-      preferredName: preferredName,
+      preferredName: preferredName || "",
       lastName: lastName,
       email: email,
       role: role,

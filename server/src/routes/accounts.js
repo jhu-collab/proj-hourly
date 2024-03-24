@@ -84,4 +84,15 @@ router.post(
   controller.promoteToAdmin
 );
 
+router.post(
+  "/changePassword",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("newPassword", "newPassword in required").notEmpty(),
+  validator.isAccountValidParams,
+  controller.changePassword
+);
+
 export default router;

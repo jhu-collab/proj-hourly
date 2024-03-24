@@ -328,3 +328,24 @@ export const resetPassword = async (req, res) => {
   const token = createToken({ user: { ...userInfo } });
   return res.status(StatusCodes.ACCEPTED).json({ token });
 };
+
+export const changePassword = async (req, res) => {
+  const id = req.id;
+  const { newPassword } = req.body;
+  const hashedPassword = hashPassword(newPassword);
+  const account = await prisma.account.update({
+    where: {
+      id,
+      hashedPassword,
+    },
+  });
+  const {
+    hashedPassword: hashedPassword2,
+    createdAt,
+    updatedAt,
+    token: storedToken,
+    ...userInfo
+  } = account;
+  const token = createToken({ user: { ...userInfo } });
+  return res.status(StatusCodes.ACCEPTED).json({ token });
+};
