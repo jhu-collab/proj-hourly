@@ -38,14 +38,14 @@ router.post(
 );
 
 router.post(
-  "/forgotPAssword",
+  "/forgotPassword",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
   body("username", "username is required").isEmail(),
   validator.usernameExists,
-  controller.forgotPAssword
+  controller.forgotPassword
 );
 
 router.use(checkToken);
