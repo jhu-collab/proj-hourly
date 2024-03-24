@@ -23,6 +23,25 @@ export const isUniqueEmail = async (req, res, next) => {
   }
 };
 
+export const isUniqueUsername = async (req, res, next) => {
+  debug("checking if email is unique...");
+  const { username } = req.body;
+  const query = await prisma.Account.findFirst({
+    where: {
+      userName: username,
+    },
+  });
+  if (query !== null) {
+    debug("username already in use!");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "username already in use" });
+  } else {
+    debug("username is unique!");
+    next();
+  }
+};
+
 export const emailExists = async (req, res, next) => {
   debug("checking if email exists...");
   const { email } = req.body;

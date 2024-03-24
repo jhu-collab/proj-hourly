@@ -22,6 +22,7 @@ router.post(
   body("firstName", "firstName is required").notEmpty(),
   body("lastName", "lastName is required").notEmpty(),
   validator.isUniqueEmail,
+  validator.isUniqueUsername,
   controller.create
 );
 
