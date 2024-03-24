@@ -24,7 +24,7 @@ export const isUniqueEmail = async (req, res, next) => {
 };
 
 export const isUniqueUsername = async (req, res, next) => {
-  debug("checking if email is unique...");
+  debug("checking if username is unique...");
   const { username } = req.body;
   const query = await prisma.Account.findFirst({
     where: {
@@ -57,6 +57,25 @@ export const emailExists = async (req, res, next) => {
       .json({ msg: "Email is not associated with an account" });
   } else {
     debug("email exists!");
+    next();
+  }
+};
+
+export const usernameExists = async (req, res, next) => {
+  debug("checking if username exists...");
+  const { username } = req.body;
+  const query = await prisma.Account.findFirst({
+    where: {
+      userName: username,
+    },
+  });
+  if (query === null) {
+    debug("invalid username!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "username is not associated with an account" });
+  } else {
+    debug("username exists!");
     next();
   }
 };
