@@ -9,11 +9,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { forgotPasswordSchema } from "../../utils/validators";
 import FormInputText from "../../components/form-ui/FormInputText";
 import { Link } from "react-router-dom";
-import useAuthSignUp from "../../hooks/useAuthSignUp";
+import useAuthForgotPassword from "../../hooks/useAuthForgotPassword";
 import { Navigate } from "react-router-dom";
 
 function ForgotPassword() {
-  const { isAuthenticated } = useAuthSignUp();
+  const { isAuthenticated, forgotPassword } = useAuthForgotPassword();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       username: "",
@@ -22,7 +22,7 @@ function ForgotPassword() {
   });
 
   const onSubmit = (data) => {
-    forgotPasswordSubmit(data);
+    forgotPassword(data);
   };
 
   if (isAuthenticated()) {
