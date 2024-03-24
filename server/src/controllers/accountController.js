@@ -5,6 +5,8 @@ import sendEmail from "../util/notificationUtil.js";
 import { Role } from "@prisma/client";
 import { generateCalendar } from "../util/icalHelpers.js";
 import { factory } from "../util/debug.js";
+import { hashPassword } from "../util/password.js";
+import { createToken } from "../util/token.js";
 
 const debug = factory(import.meta.url);
 
@@ -13,11 +15,15 @@ export const create = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
-  const { email, name } = req.body;
+  const { email, username, password, firstName, lastName } = req.body;
+  const hashedPassword = hashPassword(password);
   await prisma.account.create({
     data: {
       email,
-      userName: name,
+      userName: username,
+      hashedPassword,
+      firstName: firstName,
+      lastName: lastName,
     },
   });
   const account = await prisma.account.findUnique({
@@ -52,7 +58,15 @@ export const create = async (req, res) => {
     html: "<p> " + emailBody + " </p>",
   });
   debug("account creation email sent...");
-  return res.status(StatusCodes.CREATED).json({ account });
+  const {
+    hashedPassword: hashedPassword2,
+    createdAt,
+    updatedAt,
+    token: storedToken,
+    ...userInfo
+  } = account;
+  const token = createToken({ user: { ...userInfo } });
+  return res.status(StatusCodes.CREATED).json({ token, account });
 };
 
 export const login = async (req, res) => {

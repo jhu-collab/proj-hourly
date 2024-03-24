@@ -15,6 +15,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useNavigate } from "react-router-dom";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
@@ -29,6 +30,8 @@ function AuthLogin() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
   if (isAuthenticated()) {
     return <Navigate to="/" replace={true} />;
   }
@@ -42,6 +45,10 @@ function AuthLogin() {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+
+  const onSignUpClick = () => {
+    navigate("/signup");
   };
 
   return (
@@ -119,6 +126,30 @@ function AuthLogin() {
           </AnimateButton>
         </Stack>
       </Form>
+      <Divider
+        data-cy="login-divider-or"
+        sx={{
+          fontSize: "17px",
+          "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+          "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+        }}
+      >
+        OR
+      </Divider>
+      <Stack spacing={2} marginTop={-0.5} alignItems="center">
+        <AnimateButton>
+          <Button
+            data-cy="signup-button"
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{ fontSize: "17px", width: "120px" }}
+            onClick={onSignUpClick}
+          >
+            Sign Up
+          </Button>
+        </AnimateButton>
+      </Stack>
     </Stack>
   );
 }

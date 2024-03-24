@@ -16,8 +16,11 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("email", "Email is required").isEmail(),
-  body("name", "Name is required").notEmpty(),
+  body("email", "Email is required").notEmpty().isEmail(),
+  body("password", "Password is required").notEmpty(),
+  body("username", "username is required").notEmpty(),
+  body("firstName", "firstName is required").notEmpty(),
+  body("lastName", "lastName is required").notEmpty(),
   validator.isUniqueEmail,
   controller.create
 );

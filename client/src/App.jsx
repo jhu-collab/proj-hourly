@@ -19,6 +19,7 @@ const CourseInfoPage = Loadable(
 );
 const Agenda = Loadable(lazy(() => import("./pages/agenda/Agenda")));
 const AuthLogin = Loadable(lazy(() => import("./pages/authentication/Login")));
+const SignUp = Loadable(lazy(() => import("./pages/authentication/SignUp")));
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))
 );
@@ -67,6 +68,7 @@ function App() {
           <Route path="/" element={<MinimalLayout />}>
             <Route path="/login" element={<AuthLogin />} />
             <Route path="login/callback" element={<Callback />} />
+            <Route path="/signup" element={<SignUp />} />
           </Route>
         </Routes>
       </ScrollTop>

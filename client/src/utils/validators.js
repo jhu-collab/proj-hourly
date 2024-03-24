@@ -6,6 +6,19 @@ export const loginSchema = yup.object().shape({
   password: yup.string().min(1, "Password must be 1 or more characters"),
 });
 
+export const signupSchema = yup.object().shape({
+  username: yup.string().min(1, "Username must be 1 or more characters"),
+  password: yup.string().min(8, "Password must be 8 or more characters"),
+  confirmPassword: yup.string().min(8, "Password must be 8 or more characters"),
+  email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
+  firstName: yup.string().min(1, "First name must be 1 or more characters"),
+  lastName: yup.string().min(1, "Last name must be 1 or more characters"),
+});
+
 /**
  * Returns a Date object that represents the last day
  * of a specified semester and year. Currently, we are using fixed
