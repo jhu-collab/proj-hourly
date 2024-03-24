@@ -296,11 +296,35 @@ export const promoteToAdmin = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
+  const { username } = req.body;
+  const account = await prisma.account.findUnique({
+    where: {
+      userName: username,
+    },
+  });
+  // TODO create hash that contains the timestamp of the request
+  // valid for 1 hour?
   // TODO
-  return res.status(StatusCodes.ACCEPTED);
+  return res.status(StatusCodes.ACCEPTED).json({ id: account.userName });
 };
 
 export const resetPassword = async (req, res) => {
-  // TODO
-  return res.status(StatusCodes.ACCEPTED);
+  const { newPassword, resetHash } = req.body;
+  // TODO unhash
+  const hashedPassword = hashPassword(newPassword);
+  const account = await prisma.account.update({
+    where: {
+      userName: resetHash,
+      hashedPassword,
+    },
+  });
+  const {
+    hashedPassword: hashedPassword2,
+    createdAt,
+    updatedAt,
+    token: storedToken,
+    ...userInfo
+  } = account;
+  const token = createToken({ user: { ...userInfo } });
+  return res.status(StatusCodes.ACCEPTED).json({ token });
 };

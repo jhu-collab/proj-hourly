@@ -48,6 +48,8 @@ router.post(
   controller.forgotPassword
 );
 
+router.post("/resetPassword", controller.resetPassword); // todo 1 hour validator
+
 router.use(checkToken);
 
 router.delete(
