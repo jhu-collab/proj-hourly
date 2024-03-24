@@ -294,3 +294,13 @@ export const promoteToAdmin = async (req, res) => {
   debug("promoted to admin...");
   return res.status(StatusCodes.ACCEPTED).json(account);
 };
+
+export const forgotPassword = async (req, res) => {
+  // TODO
+  return res.status(StatusCodes.ACCEPTED);
+};
+
+export const resetPassword = async (req, res) => {
+  // TODO
+  return res.status(StatusCodes.ACCEPTED);
+};
