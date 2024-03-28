@@ -319,15 +319,34 @@ export const forgotPassword = async (req, res) => {
       tokenCreatedAt: new Date(),
     },
   });
-  // TODO create hash that contains the timestamp of the request
-  // valid for 1 hour?
-  // TODO
-  console.log(
-    "localhost:3000/proj-hourly/resetPassword?id=" +
-      token +
-      "&email=" +
-      account.email
-  );
+  const resetLink = `${process.env.FRONTEND_BASE_URL}/proj-hourly/resetPassword?id=${token}&email=${account.email}`;
+  const donotreply = "--- Do not reply to this email ---";
+  const text = "Here is your password reset link: <br>" + resetLink;
+  const emailBody = `${donotreply}
+
+Dear ${account.firstName} ${account.lastName},
+
+${text}
+
+Thanks,
+The Hourly Team
+
+${donotreply}`;
+
+  const htmlBody = `
+    <p>${donotreply}</p>
+    <p>Dear ${account.firstName} ${account.lastName},</p>
+    <p><br>${text}<br></p>
+    <p>Thanks,<br>The Hourly Team</p>
+    <p>${donotreply}</p>
+  `;
+
+  await sendEmail({
+    email: account.email,
+    subject: "Hourly Password Reset",
+    text: emailBody,
+    html: htmlBody,
+  });
   return res
     .status(StatusCodes.ACCEPTED)
     .json({ msg: "A reset link has been sent to your email" });
