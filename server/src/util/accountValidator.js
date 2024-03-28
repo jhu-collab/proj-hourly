@@ -465,8 +465,10 @@ export const doesResetPasswordCodeMatch = async (req, res, next) => {
 };
 
 export const codeNotExpired = async (req, res, next) => {
+  debug("checking if reset token is not expired...");
   const { email } = req.body;
   const date = new Date();
+  debug("getting account by email...");
   const account = await prisma.account.findUnique({
     where: {
       email,
@@ -475,8 +477,10 @@ export const codeNotExpired = async (req, res, next) => {
   const createDate = account.tokenCreatedAt;
   createDate.setUTCHours(createDate.getUTCHours() + 1);
   if (createDate < date) {
+    debug("token is expired!");
     return res.status(StatusCodes.CONFLICT).json({ msg: "Link has expired" });
   } else {
+    debug("token is not expired!");
     next();
   }
 };
