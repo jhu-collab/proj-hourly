@@ -2,6 +2,7 @@ import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
 import { hashPassword } from "../util/password.js";
+import { verifyPassword } from "../util/password.js";
 
 const debug = factory(import.meta.url);
 
@@ -523,13 +524,14 @@ export const doesNotHaveExistingActiveLink = async (req, res, next) => {
 export const isOldPasswordAccurate = async (req, res, next) => {
   const id = req.id;
   const { oldPassword } = req.body;
-  const oldPasswordHashed = hashPassword(oldPassword);
   const account = await prisma.account.findUnique({
     where: {
       id,
     },
   });
-  if (account.hashedPassword == oldPasswordHashed) {
+
+  const passwordValid = verifyPassword(oldPassword, account.hashedPassword);
+  if (passwordValid) {
     next();
   } else {
     return res

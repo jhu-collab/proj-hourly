@@ -62,7 +62,7 @@ router.post(
   validator.doesResetPasswordCodeMatch,
   validator.codeNotExpired,
   controller.resetPassword
-); // todo 1 hour validator
+);
 
 router.use(checkToken);
 
@@ -87,6 +87,20 @@ router.get(
 );
 
 router.post(
+  "/changePassword",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("oldPassword", "oldPassword is required").notEmpty(),
+  body("newPassword", "newPassword is required").notEmpty(),
+  validator.isAccountValidHeader,
+  validator.isOldPasswordAccurate,
+  validator.isNewPasswordNew,
+  controller.changePassword
+);
+
+router.post(
   "/:id",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
@@ -96,20 +110,6 @@ router.post(
   validator.isAdmin,
   validator.isAccountValidParams,
   controller.promoteToAdmin
-);
-
-router.post(
-  "/changePassword",
-  async (req, res, next) => {
-    debug(`${req.method} ${req.path} called...`);
-    next();
-  },
-  body("oldPassword", "oldPassword is required").notEmpty(),
-  body("newPassword", "newPassword is required").notEmpty(),
-  validator.isAccountValidParams,
-  validator.isOldPasswordAccurate,
-  validator.isNewPasswordNew,
-  controller.changePassword
 );
 
 export default router;
