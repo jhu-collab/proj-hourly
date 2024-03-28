@@ -390,7 +390,11 @@ export const changePassword = async (req, res) => {
   const account = await prisma.account.update({
     where: {
       id,
+    },
+    data: {
       hashedPassword,
+      resetToken: null,
+      tokenCreatedAt: null,
     },
   });
   const {

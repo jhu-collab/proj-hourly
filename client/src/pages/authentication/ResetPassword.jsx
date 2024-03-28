@@ -34,7 +34,6 @@ function ResetPassword() {
   let email = searchParams.get("email");
 
   const onSubmit = (data) => {
-    // forgotPassword(data);
     resetPassword({ password: data.password, id, email });
     setRedirectToLogin(true);
   };
