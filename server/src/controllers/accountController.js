@@ -297,7 +297,9 @@ export const promoteToAdmin = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
+  debug("forgot password called...");
   const { username } = req.body;
+  debug("retrieving account...");
   const account = await prisma.account.findUnique({
     where: {
       userName: username,
@@ -310,6 +312,8 @@ export const forgotPassword = async (req, res) => {
     .replace(/\//g, "_")
     .replace(/=/g, "")
     .replace(/\s/g, "");
+  debug("adding token to account...");
+
   await prisma.account.update({
     where: {
       id: account.id,
@@ -340,7 +344,7 @@ ${donotreply}`;
     <p>Thanks,<br>The Hourly Team</p>
     <p>${donotreply}</p>
   `;
-
+  debug("sending reset link...");
   await sendEmail({
     email: account.email,
     subject: "Hourly Password Reset",
@@ -353,9 +357,10 @@ ${donotreply}`;
 };
 
 export const resetPassword = async (req, res) => {
+  debug("resetting password...");
   const { newPassword, email, id } = req.body;
-  // TODO unhash
   const hashedPassword = hashPassword(newPassword);
+  debug("updating password and removing tokens...");
   const account = await prisma.account.update({
     where: {
       email: email,
