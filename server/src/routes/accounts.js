@@ -104,8 +104,11 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("newPassword", "newPassword in required").notEmpty(),
+  body("oldPassword", "oldPassword is required").notEmpty(),
+  body("newPassword", "newPassword is required").notEmpty(),
   validator.isAccountValidParams,
+  validator.isOldPasswordAccurate,
+  validator.isNewPasswordNew,
   controller.changePassword
 );
 

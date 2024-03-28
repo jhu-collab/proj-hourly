@@ -1,6 +1,7 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
+import { hashPassword } from "../util/password.js";
 
 const debug = factory(import.meta.url);
 
@@ -516,5 +517,34 @@ export const doesNotHaveExistingActiveLink = async (req, res, next) => {
       debug("account does not have active link!");
       next();
     }
+  }
+};
+
+export const isOldPasswordAccurate = async (req, res, next) => {
+  const id = req.id;
+  const { oldPassword } = req.body;
+  const oldPasswordHashed = hashPassword(oldPassword);
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (account.hashedPassword == oldPasswordHashed) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Old Password was incorrect!" });
+  }
+};
+
+export const isNewPasswordNew = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  if (oldPassword != newPassword) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "New Password is not new!" });
   }
 };
