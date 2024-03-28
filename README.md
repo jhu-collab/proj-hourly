@@ -178,6 +178,7 @@ NODE_ENV=local
 HOURLY_API_KEY="api-key"
 # DEBUG=hourly:*
 DISABLE_EMAIL_SENDING=true
+FRONTEND_BASE_URL=localhost:3000
 ```
 
 You can enable debugging by uncommenting the DEBUG flag.
