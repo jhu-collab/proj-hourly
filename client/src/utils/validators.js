@@ -22,6 +22,17 @@ export const signupSchema = yup.object().shape({
   lastName: yup.string().min(1, "Last name must be 1 or more characters"),
 });
 
+export const changePasswordSchema = yup.object().shape({
+  originalPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters"),
+  newPassword: yup.string().min(8, "Password must be 8 or more characters"),
+  confirmNewPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .oneOf([yup.ref("newPassword"), null], "passwords must match"),
+});
+
 export const forgotPasswordSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
 });
