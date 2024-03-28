@@ -328,6 +328,7 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
   debug("checking if account is staff or instructor...");
   const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
+  debug("getting course staff...");
   const staff = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -340,6 +341,7 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
       },
     },
   });
+  debug("getting course instructors...");
   const instructor = await prisma.course.findUnique({
     where: {
       id: courseId,
