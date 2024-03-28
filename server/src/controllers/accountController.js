@@ -372,15 +372,7 @@ export const resetPassword = async (req, res) => {
       token: null,
     },
   });
-  const {
-    hashedPassword: hashedPassword2,
-    createdAt,
-    updatedAt,
-    token: storedToken,
-    ...userInfo
-  } = account;
-  const token = createToken({ user: { ...userInfo } });
-  return res.status(StatusCodes.ACCEPTED).json({ token });
+  return res.status(StatusCodes.ACCEPTED).json({ msg: "Password reset!" });
 };
 
 export const changePassword = async (req, res) => {
