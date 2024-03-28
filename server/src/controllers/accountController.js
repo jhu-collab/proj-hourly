@@ -7,6 +7,7 @@ import { generateCalendar } from "../util/icalHelpers.js";
 import { factory } from "../util/debug.js";
 import { hashPassword } from "../util/password.js";
 import { createToken } from "../util/token.js";
+import crypto from "crypto";
 
 const debug = factory(import.meta.url);
 
@@ -302,20 +303,49 @@ export const forgotPassword = async (req, res) => {
       userName: username,
     },
   });
+  const token = crypto
+    .randomBytes(32)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "")
+    .replace(/\s/g, "");
+  await prisma.account.update({
+    where: {
+      id: account.id,
+    },
+    data: {
+      resetToken: token,
+      tokenCreatedAt: new Date(),
+    },
+  });
   // TODO create hash that contains the timestamp of the request
   // valid for 1 hour?
   // TODO
-  return res.status(StatusCodes.ACCEPTED).json({ id: account.userName });
+  console.log(
+    "localhost:3000/proj-hourly/resetPassword?id=" +
+      token +
+      "&email=" +
+      account.email
+  );
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ msg: "A reset link has been sent to your email" });
 };
 
 export const resetPassword = async (req, res) => {
-  const { newPassword, resetHash } = req.body;
+  const { newPassword, email, id } = req.body;
   // TODO unhash
   const hashedPassword = hashPassword(newPassword);
   const account = await prisma.account.update({
     where: {
-      userName: resetHash,
+      email: email,
+    },
+    data: {
       hashedPassword,
+      resetToken: null,
+      tokenCreatedAt: null,
+      token: null,
     },
   });
   const {

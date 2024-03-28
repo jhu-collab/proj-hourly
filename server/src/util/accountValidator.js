@@ -447,3 +447,59 @@ export const isAccountUserParams = async (req, res, next) => {
     next();
   }
 };
+
+export const doesResetPasswordCodeMatch = async (req, res, next) => {
+  const { email, id } = req.body;
+  const account = await prisma.account.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (account.resetToken == id) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Reset token did not match" });
+  }
+};
+
+export const codeNotExpired = async (req, res, next) => {
+  const { email } = req.body;
+  const date = new Date();
+  const account = await prisma.account.findUnique({
+    where: {
+      email,
+    },
+  });
+  const createDate = account.tokenCreatedAt;
+  createDate.setUTCHours(createDate.getUTCHours() + 1);
+  if (createDate < date) {
+    return res.status(StatusCodes.CONFLICT).json({ msg: "Link has expired" });
+  } else {
+    next();
+  }
+};
+
+export const doesNotHaveExistingActiveLink = async (req, res, next) => {
+  const { username } = req.body;
+  const account = await prisma.account.findUnique({
+    where: {
+      userName: username,
+    },
+  });
+  if (account.resetToken == null) {
+    next();
+  } else {
+    const date = new Date();
+    const createDate = account.tokenCreatedAt;
+    createDate.setUTCHours(createDate.getUTCHours() + 1);
+    if (createDate > date) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Account has an existing reset link available" });
+    } else {
+      next();
+    }
+  }
+};

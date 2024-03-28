@@ -23,6 +23,9 @@ const SignUp = Loadable(lazy(() => import("./pages/authentication/SignUp")));
 const ForgotPassword = Loadable(
   lazy(() => import("./pages/authentication/ForgotPassword"))
 );
+const ResetPassword = Loadable(
+  lazy(() => import("./pages/authentication/ResetPassword"))
+);
 
 const Callback = Loadable(
   lazy(() => import("./pages/authentication/Callback"))
@@ -74,6 +77,7 @@ function App() {
             <Route path="login/callback" element={<Callback />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/resetPassword" element={<ResetPassword />} />
           </Route>
         </Routes>
       </ScrollTop>

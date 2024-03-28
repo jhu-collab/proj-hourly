@@ -15,7 +15,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Typography from "@mui/material/Typography";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
@@ -150,6 +151,9 @@ function AuthLogin() {
           </Button>
         </AnimateButton>
       </Stack>
+      <Typography variant="body1" align="center">
+        Forgot Your Password? <Link to="/forgotPassword">Forgot Password</Link>
+      </Typography>
     </Stack>
   );
 }

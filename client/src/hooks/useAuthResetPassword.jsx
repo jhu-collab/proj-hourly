@@ -4,11 +4,10 @@ import { errorToast } from "../utils/toasts";
 import Debug from "debug";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
-import { toast } from "react-toastify";
 
 const debug = new Debug(`hourly:hooks:useAuth.jsx`);
 
-function useAuthForgotPassword() {
+function useAuthResetPassword() {
   const { token } = useStoreToken();
 
   const isAuthenticated = () => {
@@ -20,14 +19,15 @@ function useAuthForgotPassword() {
     return true;
   };
 
-  const forgotPassword = async ({ username }) => {
+  const resetPassword = async ({ password, id, email }) => {
     try {
       debug("Sending username and password to the backend!");
-      const endpoint = `${BASE_URL}/api/account/forgotPassword`;
+      const endpoint = `${BASE_URL}/api/account/resetPassword`;
       const res = await axios.post(endpoint, {
-        username,
+        newPassword: password,
+        id,
+        email,
       });
-      toast.success(res.data.msg);
     } catch (err) {
       debug({ err });
       errorToast(err);
@@ -36,8 +36,8 @@ function useAuthForgotPassword() {
 
   return {
     isAuthenticated,
-    forgotPassword,
+    resetPassword,
   };
 }
 
-export default useAuthForgotPassword;
+export default useAuthResetPassword;

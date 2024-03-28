@@ -26,16 +26,16 @@ router.post(
   controller.create
 );
 
-router.post(
-  "/login",
-  async (req, res, next) => {
-    debug(`${req.method} ${req.path} called...`);
-    next();
-  },
-  body("email", "Email is required").isEmail(),
-  validator.emailExists,
-  controller.login
-);
+// router.post(
+//   "/login",
+//   async (req, res, next) => {
+//     debug(`${req.method} ${req.path} called...`);
+//     next();
+//   },
+//   body("email", "Email is required").isEmail(),
+//   validator.emailExists,
+//   controller.login
+// );
 
 router.post(
   "/forgotPassword",
@@ -43,12 +43,26 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("username", "username is required").isEmail(),
+  body("username", "username is required").notEmpty(),
   validator.usernameExists,
+  validator.doesNotHaveExistingActiveLink,
   controller.forgotPassword
 );
 
-router.post("/resetPassword", controller.resetPassword); // todo 1 hour validator
+router.post(
+  "/resetPassword",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("id", "id is required").notEmpty(),
+  body("email", "email is required").notEmpty(),
+  body("newPassword", "new password is required").notEmpty(),
+  validator.emailExists,
+  validator.doesResetPasswordCodeMatch,
+  validator.codeNotExpired,
+  controller.resetPassword
+); // todo 1 hour validator
 
 router.use(checkToken);
 
