@@ -4,6 +4,7 @@ import Debug from "debug";
 import { BASE_URL } from "../services/common";
 import useStoreToken from "./useStoreToken";
 import { getConfig } from "./helper";
+import { toast } from "react-toastify";
 
 const debug = new Debug(`hourly:hooks:useAuth.jsx`);
 
@@ -27,6 +28,7 @@ function useAuthChangePassword() {
       const { token: newToken } = res.data;
       debug("Going to update the token...");
       updateToken(newToken);
+      toast.success("Password Changed!");
     } catch (err) {
       debug({ err });
       errorToast(err);
