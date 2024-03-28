@@ -449,15 +449,19 @@ export const isAccountUserParams = async (req, res, next) => {
 };
 
 export const doesResetPasswordCodeMatch = async (req, res, next) => {
+  debug("checking if reset code matches the one on the account...");
   const { email, id } = req.body;
+  debug("getting account by email...");
   const account = await prisma.account.findUnique({
     where: {
       email,
     },
   });
   if (account.resetToken == id) {
+    debug("reset code matches!");
     next();
   } else {
+    debug("reset code does not match!");
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Reset token did not match" });
