@@ -486,23 +486,28 @@ export const codeNotExpired = async (req, res, next) => {
 };
 
 export const doesNotHaveExistingActiveLink = async (req, res, next) => {
+  debug("checking if account has active expiration link...");
   const { username } = req.body;
+  debug("getting account by username...");
   const account = await prisma.account.findUnique({
     where: {
       userName: username,
     },
   });
   if (account.resetToken == null) {
+    debug("account does not have link!");
     next();
   } else {
     const date = new Date();
     const createDate = account.tokenCreatedAt;
     createDate.setUTCHours(createDate.getUTCHours() + 1);
     if (createDate > date) {
+      debug("account has active link!");
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "Account has an existing reset link available" });
     } else {
+      debug("account does not have active link!");
       next();
     }
   }
