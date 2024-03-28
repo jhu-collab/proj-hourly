@@ -33,8 +33,6 @@ function ResetPassword() {
   let id = searchParams.get("id");
   let email = searchParams.get("email");
 
-  console.log(id, email);
-
   const onSubmit = (data) => {
     // forgotPassword(data);
     resetPassword({ password: data.password, id, email });
