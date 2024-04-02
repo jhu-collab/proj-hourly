@@ -49,6 +49,9 @@ export default defineConfig({
     host: true,
     port: 3000,
   },
+  preview: {
+    port: 3000,
+  },
   test: {
     coverage: {
       reporter: ["text", "json", "html"],

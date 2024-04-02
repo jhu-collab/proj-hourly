@@ -14,6 +14,7 @@
     "prisma:test": "yarn docker:up && dotenv -e .env.test yarn prisma migrate dev",
     "start": "node .",
     "dev": "yarn prisma:dev && nodemon .",
+    "start:deploy": "yarn prisma migrate deploy && node .",
     "prettier": "prettier --write \"{prisma,src,tests}/**/*.js\" --config \".prettierrc\"",
     "test": "yarn prisma:test && cross-env NODE_OPTIONS=--experimental-vm-modules vitest --ui",
     "coverage": "yarn prisma:test && vitest run --coverage"

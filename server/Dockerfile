@@ -10,9 +10,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Read arguments passed to docker build command through --build-arg
 ARG DATABASE_URL
+ARG DIRECT_URL
 
 # Set environment variables
 ENV DATABASE_URL=$DATABASE_URL
+ENV DIRECT_URL=$DIRECT_URL
 # We set the ARG as ENV because the app needs it during runtime as well as build time
 
 WORKDIR /app
@@ -32,7 +34,7 @@ RUN yarn prisma generate --schema=./prisma/schema.prisma
 # ^ Generates assets like Prisma Client based on the generator and data model 
 
 # RUN if [ "$TARGET" = "production" ] ; then DATABASE_URL=$DATABASE_URL npx prisma migrate deploy ; else DATABASE_URL=$DATABASE_URL npx prisma migrate reset --force ; fi
-RUN DATABASE_URL=$DATABASE_URL && npx prisma migrate deploy
+RUN DATABASE_URL=$DATABASE_URL && DIRECT_URL=$DIRECT_URL
 
 # ^ Apply migrations 
 
@@ -41,5 +43,5 @@ EXPOSE 5050
 # EXPOSE does not actually publish the port. It functions as a type of documentation;
 # you must make sure the app listens on this port.
 
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:deploy" ]
 # ^ same as running "yarn start" in your terminal 

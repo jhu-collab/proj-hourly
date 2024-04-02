@@ -37,15 +37,20 @@ COPY . .
 RUN VITE_RUN_MODE=$VITE_RUN_MODE VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL yarn build
 # ^ build the app
 
-FROM socialengine/nginx-spa:latest
-# ^ socialengine/nginx-spa is a simple static ngninx server that handle 
-# pushState (every request is routed to /index.html so you can use frontend routing).
+EXPOSE 3000
 
-WORKDIR /app
-# ^ Working directory of the container
+# Command to run the app
+CMD ["yarn", "run", "preview"]
 
-COPY --from=build /app/dist .
-# ^ Copy the build artifact (dist folder) from the build image to the WORKDIR of this one
+# FROM socialengine/nginx-spa:latest
+# # ^ socialengine/nginx-spa is a simple static ngninx server that handle 
+# # pushState (every request is routed to /index.html so you can use frontend routing).
 
-RUN chmod -R 777 .
+# WORKDIR /app
+# # ^ Working directory of the container
+
+# COPY --from=build /app/dist .
+# # ^ Copy the build artifact (dist folder) from the build image to the WORKDIR of this one
+
+# RUN chmod -R 777 .
 # ^ Update access permissions on the WORKDIR of this image
