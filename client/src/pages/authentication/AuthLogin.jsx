@@ -3,7 +3,6 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
-import SingleSignOn from "./SingleSignOn";
 import Form from "../../components/form-ui/Form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -54,33 +53,34 @@ function AuthLogin() {
 
   return (
     <Stack spacing={2}>
-      {value === "local" ? (
-        <Stack spacing={1}>
-          <AnimateButton>
-            <Button
-              data-cy="sign-in-as-user-button"
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={() => signInAsUser()}
-            >
-              Sign in as User
-            </Button>
-          </AnimateButton>
-        </Stack>
-      ) : (
-        <SingleSignOn />
+      {value === "local" && (
+        <>
+          <Stack spacing={1}>
+            <AnimateButton>
+              <Button
+                data-cy="sign-in-as-user-button"
+                variant="contained"
+                fullWidth
+                size="large"
+                onClick={() => signInAsUser()}
+              >
+                Sign in as User
+              </Button>
+            </AnimateButton>
+          </Stack>
+          <Divider
+            data-cy="login-divider-or"
+            sx={{
+              fontSize: "17px",
+              "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+              "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+            }}
+          >
+            OR
+          </Divider>
+        </>
       )}
-      <Divider
-        data-cy="login-divider-or"
-        sx={{
-          fontSize: "17px",
-          "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
-          "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
-        }}
-      >
-        OR
-      </Divider>
+
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} marginTop={-0.5} alignItems="center">
           <FormInputText
