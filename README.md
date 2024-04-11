@@ -24,7 +24,9 @@ user profile.
 
 Once a user is authenticated, they will be displayed their courses. As a professor, you can create a course by selecting
 the plus in the bottom right and selecting create course. This will allow you to specificy a number of fields to make
-this course identifiable to your students. Once a course is created
+this course identifiable to your students. Once a course is created, the user will be given a course code, a 6 character
+code. This can be distributed to students. Students can then select the plus button and enter the course code to
+join the course.
 
 ### Office Hours
 
