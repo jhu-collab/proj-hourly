@@ -14,6 +14,18 @@ in more detail below.
 
 ## Features
 
+### Authentication
+
+Hourly provides authentication for our users. A user can create a new account or login with an existing one in order
+to access their courses. We provide a forgot password option and the option to reset a users password within their
+user profile.
+
+### Course Creation/Joining
+
+Once a user is authenticated, they will be displayed their courses. As a professor, you can create a course by selecting
+the plus in the bottom right and selecting create course. This will allow you to specificy a number of fields to make
+this course identifiable to your students. Once a course is created
+
 ### Office Hours
 
 Hourly allows for Instructors and Course Staff to schedule their office hours using the calendar.
