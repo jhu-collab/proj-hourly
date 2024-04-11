@@ -128,6 +128,17 @@ These allow students to get a quick view of the topics being covered or addition
 
 These events can also be viewed in a more condensed form under the agenda tab.
 
+### Notifications
+
+Hourly provides email notifications for our users. These emails are for registerations and cancellations of events. When
+deploying you can use any email address so long as you use its smtp server and your email address and password. Using an
+application password over your personal password is recommended as it will help prevent your account from being locked.
+Hourly is designed such that you could substitute nodemailer (currently in use) for another Email as a service provider.
+Every email that is sent calls the sendEmail function in [notificationUtil.js](./server/src/util/notificationUtil.js). Some
+easy subtitutions would be with services such as Resend, Sendgrid, and Mailgun. For these services a custom domain is
+necessary in order to have a personalized email address. Additionally, AWS SES could be used with some additionaly
+configuration.
+
 ## Demo
 
 ## Installation
@@ -182,6 +193,8 @@ FRONTEND_BASE_URL=localhost:3000
 ```
 
 You can enable debugging by uncommenting the DEBUG flag.
+
+Note: for your email, it is recommended to set up an app password for use
 
 [Client](./client/) Environment Variables:
 
