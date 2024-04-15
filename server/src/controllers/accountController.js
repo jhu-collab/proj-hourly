@@ -5,6 +5,9 @@ import sendEmail from "../util/notificationUtil.js";
 import { Role } from "@prisma/client";
 import { generateCalendar } from "../util/icalHelpers.js";
 import { factory } from "../util/debug.js";
+import { hashPassword } from "../util/password.js";
+import { createToken } from "../util/token.js";
+import crypto from "crypto";
 
 const debug = factory(import.meta.url);
 
@@ -13,11 +16,15 @@ export const create = async (req, res) => {
   if (validate(req, res)) {
     return res;
   }
-  const { email, name } = req.body;
+  const { email, username, password, firstName, lastName } = req.body;
+  const hashedPassword = hashPassword(password);
   await prisma.account.create({
     data: {
       email,
-      userName: name,
+      userName: username,
+      hashedPassword,
+      firstName: firstName,
+      lastName: lastName,
     },
   });
   const account = await prisma.account.findUnique({
@@ -52,7 +59,15 @@ export const create = async (req, res) => {
     html: "<p> " + emailBody + " </p>",
   });
   debug("account creation email sent...");
-  return res.status(StatusCodes.CREATED).json({ account });
+  const {
+    hashedPassword: hashedPassword2,
+    createdAt,
+    updatedAt,
+    token: storedToken,
+    ...userInfo
+  } = account;
+  const token = createToken({ user: { ...userInfo } });
+  return res.status(StatusCodes.CREATED).json({ token, account });
 };
 
 export const login = async (req, res) => {
@@ -279,4 +294,108 @@ export const promoteToAdmin = async (req, res) => {
   });
   debug("promoted to admin...");
   return res.status(StatusCodes.ACCEPTED).json(account);
+};
+
+export const forgotPassword = async (req, res) => {
+  debug("forgot password called...");
+  const { username } = req.body;
+  debug("retrieving account...");
+  const account = await prisma.account.findUnique({
+    where: {
+      userName: username,
+    },
+  });
+  const token = crypto
+    .randomBytes(32)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "")
+    .replace(/\s/g, "");
+  debug("adding token to account...");
+
+  await prisma.account.update({
+    where: {
+      id: account.id,
+    },
+    data: {
+      resetToken: token,
+      tokenCreatedAt: new Date(),
+    },
+  });
+  const resetLink = `${process.env.FRONTEND_BASE_URL}/proj-hourly/resetPassword?id=${token}&email=${account.email}`;
+  const donotreply = "--- Do not reply to this email ---";
+  const text = "Here is your password reset link: <br>" + resetLink;
+  const emailBody = `${donotreply}
+
+Dear ${account.firstName} ${account.lastName},
+
+${text}
+
+Thanks,
+The Hourly Team
+
+${donotreply}`;
+
+  const htmlBody = `
+    <p>${donotreply}</p>
+    <p>Dear ${account.firstName} ${account.lastName},</p>
+    <p><br>${text}<br></p>
+    <p>Thanks,<br>The Hourly Team</p>
+    <p>${donotreply}</p>
+  `;
+  debug("sending reset link...");
+  await sendEmail({
+    email: account.email,
+    subject: "Hourly Password Reset",
+    text: emailBody,
+    html: htmlBody,
+  });
+  return res
+    .status(StatusCodes.ACCEPTED)
+    .json({ msg: "A reset link has been sent to your email" });
+};
+
+export const resetPassword = async (req, res) => {
+  debug("resetting password...");
+  const { newPassword, email, id } = req.body;
+  const hashedPassword = hashPassword(newPassword);
+  debug("updating password and removing tokens...");
+  const account = await prisma.account.update({
+    where: {
+      email: email,
+    },
+    data: {
+      hashedPassword,
+      resetToken: null,
+      tokenCreatedAt: null,
+      token: null,
+    },
+  });
+  return res.status(StatusCodes.ACCEPTED).json({ msg: "Password reset!" });
+};
+
+export const changePassword = async (req, res) => {
+  const id = req.id;
+  const { newPassword } = req.body;
+  const hashedPassword = hashPassword(newPassword);
+  const account = await prisma.account.update({
+    where: {
+      id,
+    },
+    data: {
+      hashedPassword,
+      resetToken: null,
+      tokenCreatedAt: null,
+    },
+  });
+  const {
+    hashedPassword: hashedPassword2,
+    createdAt,
+    updatedAt,
+    token: storedToken,
+    ...userInfo
+  } = account;
+  const token = createToken({ user: { ...userInfo } });
+  return res.status(StatusCodes.ACCEPTED).json({ token });
 };

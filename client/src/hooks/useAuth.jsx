@@ -40,11 +40,6 @@ function useAuth() {
     return false;
   };
 
-  const ssoSignIn = async () => {
-    debug("Redirect to the Hourly API for JHU SSO...");
-    window.location.href = import.meta.env.VITE_ROSTER_SSO_JHU_URL;
-  };
-
   const signIn = async ({ username, password }) => {
     try {
       debug("Sending username and password to the backend!");
@@ -86,7 +81,6 @@ function useAuth() {
     isAuthenticated,
     isTokenExpired,
     isAdmin,
-    ssoSignIn,
     signIn,
     signOut,
     signInAsAdmin,

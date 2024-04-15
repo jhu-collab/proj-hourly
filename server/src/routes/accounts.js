@@ -16,21 +16,52 @@ router.post(
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("email", "Email is required").isEmail(),
-  body("name", "Name is required").notEmpty(),
+  body("email", "Email is required").notEmpty().isEmail(),
+  body("password", "Password is required").notEmpty(),
+  body("username", "username is required").notEmpty(),
+  body("firstName", "firstName is required").notEmpty(),
+  body("lastName", "lastName is required").notEmpty(),
   validator.isUniqueEmail,
+  validator.isUniqueUsername,
   controller.create
 );
 
+// router.post(
+//   "/login",
+//   async (req, res, next) => {
+//     debug(`${req.method} ${req.path} called...`);
+//     next();
+//   },
+//   body("email", "Email is required").isEmail(),
+//   validator.emailExists,
+//   controller.login
+// );
+
 router.post(
-  "/login",
+  "/forgotPassword",
   async (req, res, next) => {
     debug(`${req.method} ${req.path} called...`);
     next();
   },
-  body("email", "Email is required").isEmail(),
+  body("username", "username is required").notEmpty(),
+  validator.usernameExists,
+  validator.doesNotHaveExistingActiveLink,
+  controller.forgotPassword
+);
+
+router.post(
+  "/resetPassword",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("id", "id is required").notEmpty(),
+  body("email", "email is required").notEmpty(),
+  body("newPassword", "new password is required").notEmpty(),
   validator.emailExists,
-  controller.login
+  validator.doesResetPasswordCodeMatch,
+  validator.codeNotExpired,
+  controller.resetPassword
 );
 
 router.use(checkToken);
@@ -53,6 +84,20 @@ router.get(
   },
   validator.isAdmin,
   controller.getAll
+);
+
+router.post(
+  "/changePassword",
+  async (req, res, next) => {
+    debug(`${req.method} ${req.path} called...`);
+    next();
+  },
+  body("oldPassword", "oldPassword is required").notEmpty(),
+  body("newPassword", "newPassword is required").notEmpty(),
+  validator.isAccountValidHeader,
+  validator.isOldPasswordAccurate,
+  validator.isNewPasswordNew,
+  controller.changePassword
 );
 
 router.post(

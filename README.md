@@ -14,6 +14,20 @@ in more detail below.
 
 ## Features
 
+### Authentication
+
+Hourly provides authentication for our users. A user can create a new account or login with an existing one in order
+to access their courses. We provide a forgot password option and the option to reset a users password within their
+user profile.
+
+### Course Creation/Joining
+
+Once a user is authenticated, they will be displayed their courses. As a professor, you can create a course by selecting
+the plus in the bottom right and selecting create course. This will allow you to specificy a number of fields to make
+this course identifiable to your students. Once a course is created, the user will be given a course code, a 6 character
+code. This can be distributed to students. Students can then select the plus button and enter the course code to
+join the course.
+
 ### Office Hours
 
 Hourly allows for Instructors and Course Staff to schedule their office hours using the calendar.
@@ -128,6 +142,17 @@ These allow students to get a quick view of the topics being covered or addition
 
 These events can also be viewed in a more condensed form under the agenda tab.
 
+### Notifications
+
+Hourly provides email notifications for our users. These emails are for registerations and cancellations of events. When
+deploying you can use any email address so long as you use its smtp server and your email address and password. Using an
+application password over your personal password is recommended as it will help prevent your account from being locked.
+Hourly is designed such that you could substitute nodemailer (currently in use) for another Email as a service provider.
+Every email that is sent calls the sendEmail function in [notificationUtil.js](./server/src/util/notificationUtil.js). Some
+easy subtitutions would be with services such as Resend, Sendgrid, and Mailgun. For these services a custom domain is
+necessary in order to have a personalized email address. Additionally, AWS SES could be used with some additionaly
+configuration.
+
 ## Demo
 
 ## Installation
@@ -178,9 +203,12 @@ NODE_ENV=local
 HOURLY_API_KEY="api-key"
 # DEBUG=hourly:*
 DISABLE_EMAIL_SENDING=true
+FRONTEND_BASE_URL=localhost:3000
 ```
 
 You can enable debugging by uncommenting the DEBUG flag.
+
+Note: for your email, it is recommended to set up an app password for use
 
 [Client](./client/) Environment Variables:
 
@@ -188,7 +216,6 @@ You can enable debugging by uncommenting the DEBUG flag.
 VITE_LOC_BASE_URL=http://localhost:5000
 VITE_DEV_BASE_URL=https://proj-hourly-dev.herokuapp.com
 VITE_PROD_BASE_URL=https://proj-hourly-prod.herokuapp.com
-VITE_ROSTER_SSO_JHU_URL=https://glacial-plateau-47269.herokuapp.com/jhu/login
 VITE_USER_USERNAME=user-1
 VITE_USER_PASSWORD=user-1
 VITE_ADMIN_USERNAME=admin-1
