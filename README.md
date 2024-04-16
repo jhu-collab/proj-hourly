@@ -153,8 +153,6 @@ easy subtitutions would be with services such as Resend, Sendgrid, and Mailgun. 
 necessary in order to have a personalized email address. Additionally, AWS SES could be used with some additionaly
 configuration.
 
-## Demo
-
 ## Installation
 
 Install Node.js onto your system. The LTS distribution can be found [here](https://nodejs.org/en)
@@ -255,7 +253,7 @@ To test routes without the frontend, you can import the files in [postman_files]
 
 ## Deployment
 
-For Deploying, there are Dockerfiles and Github Actions defined to deploy to Heroku and GitHub pages.
+For Deploying, there are Dockerfiles and Github Actions defined to deploy to Heroku and GitHub pages. Additionally, there are publically available docker images [here](https://hub.docker.com/repository/docker/chriswilhelm/hourly/general) which run the backend on port 5000 and frontend on 3000.
 
 ## Running Tests
 
