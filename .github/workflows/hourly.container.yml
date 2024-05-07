@@ -5,6 +5,11 @@ on:
     branches:
       - ChrisWilhelm_readme_update
 
+env:
+  DB_PORT: 5432
+  DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+  DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+
 jobs:
   build:
     runs-on: ubuntu-latest
