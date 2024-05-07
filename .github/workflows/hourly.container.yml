@@ -9,6 +9,9 @@ env:
   DB_PORT: 5432
   DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
   DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+  DB_IMAGE_NAME: proj-hourly-db
+  SERVER_IMAGE_NAME: proj-hourly-server
+  FRONTEND_IMAGE_NAME: proj-hourly-frontend
 
 jobs:
   build:
@@ -29,11 +32,11 @@ jobs:
         run: docker-compose -f docker-compose.yml build
 
       - name: Tag and Push Docker images
-        run: |
-          docker-compose -f docker-compose.yml push
-          docker tag server_image_id ghcr.io/${{ github.repository_owner }}/proj-hourly-server:latest
-          docker tag frontend_image_id ghcr.io/${{ github.repository_owner }}/proj-hourly-frontend:latest
-          docker tag db_image_id ghcr.io/${{ github.repository_owner }}/proj-hourly-db:latest
-          docker push ghcr.io/${{ github.repository_owner }}/proj-hourly-server:latest
-          docker push ghcr.io/${{ github.repository_owner }}/proj-hourly-frontend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/proj-hourly-db:latest
+      run: |
+        docker-compose -f docker-compose.yml push
+        docker tag server_image_id ghcr.io/${{ github.repository }}/${{ env.SERVER_IMAGE_NAME }}:latest
+        docker tag frontend_image_id ghcr.io/${{ github.repository }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+        docker tag db_image_id ghcr.io/${{ github.repository }}/${{ env.DB_IMAGE_NAME }}:latest
+        docker push ghcr.io/${{ github.repository }}/${{ env.SERVER_IMAGE_NAME }}:latest
+        docker push ghcr.io/${{ github.repository }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+        docker push ghcr.io/${{ github.repository }}/${{ env.DB_IMAGE_NAME }}:latest
