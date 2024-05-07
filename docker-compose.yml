@@ -19,25 +19,25 @@ services:
     ports:
       - "5000:5000"
     environment:
-      DATABASE_URL: postgresql://postgres:password@db:5432/postgres-for-hourly
-      DIRECT_URL: postgresql://postgres:password@db:5432/postgres-for-hourly
-      DB_PORT: 5432
-      JWT_SECRET: awicdbcZ6@6l
-      EMAIL_HOST: sandbox.smtp.mailtrap.io
-      EMAIL: 0cac8cdb07e99d
-      EMAIL_PASSWORD: 18d59fa62a7e29
-      DEBUG: roster:*
-      NODE_ENV: local
-      JHU_SSO_URL: https://idp.jh.edu/idp/profile/SAML2/Redirect/SSO
-      SP_NAME: glacial-plateau-47269
-      BASE_URL: https://glacial-plateau-47269.herokuapp.com
-      CERT: ""
-      PBK: "YOUR PUBLIC KEY"
-      PVK: "YOUR PRIVATE KEY"
-      HOURLY_API_KEY: api-key
-      test: false
-      DISABLE_EMAIL_SENDING: true
-      FRONTEND_BASE_URL: localhost:3000
+      DATABASE_URL: $DATABASE_URL
+      DIRECT_URL: $DIRECT_URL
+      DB_PORT: $DB_PORT
+      JWT_SECRET: $JWT_SECRET
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL: $EMAIL
+      EMAIL_PASSWORD: $EMAIL_PASSWORD
+      DEBUG: $DEBUG
+      NODE_ENV: $NODE_ENV
+      JHU_SSO_URL: $JHU_SSO_URL
+      SP_NAME: $SP_NAME
+      BASE_URL: $BASE_URL
+      CERT: $CERT
+      PBK: $PBK
+      PVK: $PVK
+      HOURLY_API_KEY: $HOURLY_API_KEY
+      test: $test
+      DISABLE_EMAIL_SENDING: $DISABLE_EMAIL_SENDING
+      FRONTEND_BASE_URL: $FRONTEND_BASE_URL
     image: proj-hourly-server
     depends_on:
       - db
@@ -48,25 +48,15 @@ services:
       context: ./client
       dockerfile: Dockerfile # same as of your docker file name
       args:
-        VITE_RUN_MODE: local
-        VITE_LOC_BASE_URL: http://localhost:5000
-        VITE_DEV_BASE_URL: https://proj-hourly-dev.herokuapp.com
-        VITE_PROD_BASE_URL: https://proj-hourly-prod.herokuapp.com
-        VITE_ROSTER_SSO_JHU_URL: https://glacial-plateau-47269.herokuapp.com/jhu/login
-        VITE_USER_USERNAME: user-1
-        VITE_USER_PASSWORD: user-1
-        VITE_ADMIN_USERNAME: admin-1
-        VITE_ADMIN_PASSWORD: admin-1
-    environment:
-      VITE_RUN_MODE: local
-      VITE_LOC_BASE_URL: http://localhost:5000
-      VITE_DEV_BASE_URL: https://proj-hourly-dev.herokuapp.com
-      VITE_PROD_BASE_URL: https://proj-hourly-prod.herokuapp.com
-      VITE_ROSTER_SSO_JHU_URL: https://glacial-plateau-47269.herokuapp.com/jhu/login
-      VITE_USER_USERNAME: user-1
-      VITE_USER_PASSWORD: user-1
-      VITE_ADMIN_USERNAME: admin-1
-      VITE_ADMIN_PASSWORD: admin-1
+        VITE_RUN_MODE: $VITE_RUN_MODE
+        VITE_LOC_BASE_URL: $VITE_LOC_BASE_URL
+        VITE_DEV_BASE_URL: $VITE_DEV_BASE_URL
+        VITE_PROD_BASE_URL: $VITE_PROD_BASE_URL
+        VITE_ROSTER_SSO_JHU_URL: $VITE_ROSTER_SSO_JHU_URL
+        VITE_USER_USERNAME: $VITE_USER_USERNAME
+        VITE_USER_PASSWORD: $VITE_USER_PASSWORD
+        VITE_ADMIN_USERNAME: $VITE_ADMIN_USERNAME
+        VITE_ADMIN_PASSWORD: $VITE_ADMIN_PASSWORD
     volumes:
       - ./directory-path:/direcotory-end-name
     ports:
