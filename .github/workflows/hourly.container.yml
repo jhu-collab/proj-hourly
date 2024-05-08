@@ -33,8 +33,8 @@ jobs:
 
       - name: Tag Docker images
         run: |
-          docker tag server ghcr.io/${{ github.repository }}-server:latest
-          docker tag frontend ghcr.io/${{ github.repository }}-client:latest
+          docker tag docker.io/library/proj-hourly-server ghcr.io/${{ github.repository }}-server:latest
+          docker tag docker.io/library/proj-hourly_frontend ghcr.io/${{ github.repository }}-client:latest
           docker tag postgres-for-hourly ghcr.io/${{ github.repository }}-db:latest
 
       - name: Push Docker images
