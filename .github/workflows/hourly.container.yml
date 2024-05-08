@@ -37,9 +37,9 @@ jobs:
           server_image_id=$(docker images -q $SERVER_IMAGE_NAME)
           frontend_image_id=$(docker images -q $FRONTEND_IMAGE_NAME)
           db_image_id=$(docker images -q $DB_IMAGE_NAME)
-          echo "Server Image ID: $server_image_id"
-          echo "Frontend Image ID: $frontend_image_id"
-          echo "DB Image ID: $db_image_id"
+          echo "::debug::Server Image ID: $server_image_id"
+          echo "::debug::Frontend Image ID: $frontend_image_id"
+          echo "::debug::DB Image ID: $db_image_id"
           echo "::set-output name=server_image_id::$server_image_id"
           echo "::set-output name=frontend_image_id::$frontend_image_id"
           echo "::set-output name=db_image_id::$db_image_id"
