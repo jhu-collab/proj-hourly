@@ -3,7 +3,7 @@ name: Build and Push Hourly Container
 on:
   push:
     branches:
-      - ChrisWilhelm_readme_update
+      - main
 
 env:
   DB_PORT: 5432
