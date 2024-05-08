@@ -33,12 +33,12 @@ jobs:
 
       - name: Tag Docker images
         run: |
-          docker tag server_image_id ghcr.io/${{ github.repository }}/${{ env.SERVER_IMAGE_NAME }}:latest
-          docker tag frontend_image_id ghcr.io/${{ github.repository }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
-          docker tag db_image_id ghcr.io/${{ github.repository }}/${{ env.DB_IMAGE_NAME }}:latest
+          docker tag server_image_id ghcr.io/${{ github.repository }}-server:latest
+          docker tag frontend_image_id ghcr.io/${{ github.repository }}-client:latest
+          docker tag db_image_id ghcr.io/${{ github.repository }}-db:latest
 
       - name: Push Docker images
         run: |
-          docker push ghcr.io/${{ github.repository }}/${{ env.SERVER_IMAGE_NAME }}:latest
-          docker push ghcr.io/${{ github.repository }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
-          docker push ghcr.io/${{ github.repository }}/${{ env.DB_IMAGE_NAME }}:latest
+          docker push ghcr.io/${{ github.repository }}-server:latest
+          docker push ghcr.io/${{ github.repository }}-client:latest
+          docker push ghcr.io/${{ github.repository }}-db:latest
