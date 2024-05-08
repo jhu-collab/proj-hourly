@@ -35,10 +35,8 @@ jobs:
         run: |
           docker tag docker.io/library/proj-hourly-server ghcr.io/${{ github.repository }}-server:latest
           docker tag docker.io/library/proj-hourly_frontend ghcr.io/${{ github.repository }}-client:latest
-          docker tag postgres-for-hourly ghcr.io/${{ github.repository }}-db:latest
 
       - name: Push Docker images
         run: |
           docker push ghcr.io/${{ github.repository }}-server:latest
           docker push ghcr.io/${{ github.repository }}-client:latest
-          docker push ghcr.io/${{ github.repository }}-db:latest
