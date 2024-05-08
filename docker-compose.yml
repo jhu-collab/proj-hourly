@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
   server:
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile

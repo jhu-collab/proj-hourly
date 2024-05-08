@@ -9,9 +9,9 @@ env:
   DB_PORT: 5432
   DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
   DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
-  DB_IMAGE_NAME: proj-hourly-db
-  SERVER_IMAGE_NAME: proj-hourly-server
-  FRONTEND_IMAGE_NAME: proj-hourly-frontend
+  DB_IMAGE_NAME: postgres-for-hourly
+  SERVER_IMAGE_NAME: server
+  FRONTEND_IMAGE_NAME: frontend
 
 jobs:
   build:
