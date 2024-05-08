@@ -31,14 +31,18 @@ jobs:
       - name: Build Docker images
         run: docker-compose -f docker-compose.yml build
 
-      - name: Tag Docker images
+      - name: Get Docker image IDs
         run: |
-          docker tag server_image_id ghcr.io/${{ github.repository }}-server:latest
-          docker tag frontend_image_id ghcr.io/${{ github.repository }}-client:latest
-          docker tag db_image_id ghcr.io/${{ github.repository }}-db:latest
+          server_image_id=$(docker images -q ghcr.io/${{ github.repository }}-server:latest)
+          frontend_image_id=$(docker images -q ghcr.io/${{ github.repository }}-client:latest)
+          db_image_id=$(docker images -q ghcr.io/${{ github.repository }}-db:latest)
 
-      - name: Push Docker images
+      - name: Tag and Push Docker images
         run: |
+          docker tag $server_image_id ghcr.io/${{ github.repository }}-server:latest
+          docker tag $frontend_image_id ghcr.io/${{ github.repository }}-client:latest
+          docker tag $db_image_id ghcr.io/${{ github.repository }}-db:latest
+
           docker push ghcr.io/${{ github.repository }}-server:latest
           docker push ghcr.io/${{ github.repository }}-client:latest
           docker push ghcr.io/${{ github.repository }}-db:latest
