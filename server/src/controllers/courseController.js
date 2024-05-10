@@ -427,6 +427,14 @@ export const leaveCourse = async (req, res) => {
   debug("leaveCourse is called!");
   const courseId = parseInt(req.params.courseId, 10);
   const accountId = req.id;
+  debug("getting course tokens...");
+  const courseTokens = await prisma.courseToken.findMany({
+    where: {
+      courseId,
+    },
+  });
+  debug("got course tokens...");
+  const courseTokenIds = courseTokens.map((token) => token.id);
   debug("updating course...");
   const course = await prisma.course.update({
     where: {
@@ -446,6 +454,15 @@ export const leaveCourse = async (req, res) => {
       accountId: accountId,
       officeHour: {
         courseId,
+      },
+    },
+  });
+  debug("deleting issue tokens...");
+  await prisma.issueToken.deleteMany({
+    where: {
+      accountId,
+      courseTokenId: {
+        in: courseTokenIds,
       },
     },
   });
@@ -873,7 +890,7 @@ export const deleteCourse = async (req, res) => {
       courseId: id,
     },
   });
-  debug("deleting feedback...")
+  debug("deleting feedback...");
   debug("deleting feedback for course");
   await prisma.feedback.deleteMany({
     where: {
