@@ -97,7 +97,11 @@ export const tokenLimitReached = async (req, res, next) => {
       courseTokenId,
     },
     include: {
-      usedTokens: true,
+      usedTokens: {
+        where: {
+          unDoneById: null,
+        },
+      },
     },
   });
   debug("Found issue token...");

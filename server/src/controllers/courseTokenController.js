@@ -301,9 +301,7 @@ export const getAllRemainingTokens = async (req, res) => {
               usedToken.unDoneById === null ||
               usedToken.unDoneById === undefined
           ).length;
-    if (remainingTokens > 0) {
-      filteredIssueTokens.push(issueToken);
-    }
+    filteredIssueTokens.push(issueToken);
   }
   debug("issue tokens filtered");
   return res.status(StatusCodes.ACCEPTED).json({ filteredIssueTokens });

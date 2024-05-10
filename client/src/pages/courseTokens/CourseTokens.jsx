@@ -48,13 +48,14 @@ function CourseTokens() {
 
   if (!isLoadingRemaining && !errorRemaining) {
     filteredRemainingTokens = remainingTokens.map((issueToken) => {
+      const stillUsedTokens = issueToken.usedTokens.filter(token => token.unDoneById === null).map(token => token.createdAt);
       return {
         id: issueToken.CourseToken.id,
         title: issueToken.CourseToken.title,
         description: issueToken.CourseToken.description,
-        tokenLimit: issueToken.CourseToken.tokenLimit,
+        tokenLimit: issueToken.overrideAmount == null ? issueToken.CourseToken.tokenLimit : issueToken.overrideAmount,
         issueTokenId: issueToken.id,
-        datesUsed: issueToken.datesUsed,
+        datesUsed: stillUsedTokens,
       };
     });
   }
