@@ -17,7 +17,6 @@ import useMutationEditToken from "../../hooks/useMutationEditToken";
 import useMutationDeleteToken from "../../hooks/useMutationDeleteToken";
 import Grid from "@mui/material/Grid";
 
-
 /**
  * Represents a single Topic card.
  * @param {*} topic topic object
