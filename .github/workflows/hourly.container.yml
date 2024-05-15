@@ -1,0 +1,42 @@
+name: Build and Push Hourly Container
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DB_PORT: 5432
+  DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+  DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+  DB_IMAGE_NAME: postgres-for-hourly
+  SERVER_IMAGE_NAME: server
+  FRONTEND_IMAGE_NAME: frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker images
+        run: docker-compose -f docker-compose.yml build
+
+      - name: Tag Docker images
+        run: |
+          docker tag docker.io/library/proj-hourly-server ghcr.io/${{ github.repository }}-server:latest
+          docker tag docker.io/library/proj-hourly_frontend ghcr.io/${{ github.repository }}-client:latest
+
+      - name: Push Docker images
+        run: |
+          docker push ghcr.io/${{ github.repository }}-server:latest
+          docker push ghcr.io/${{ github.repository }}-client:latest

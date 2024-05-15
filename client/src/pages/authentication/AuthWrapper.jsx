@@ -37,10 +37,10 @@ function AuthWrapper({ children }) {
                 Hourly
               </Typography>
               <AuthCard>{children}</AuthCard>
-              <Alert severity="warning" data-cy="login-alert" sx={{ marginLeft: 1.5 }}>
+              {/* <Alert severity="warning" data-cy="login-alert" sx={{ marginLeft: 1.5 }}>
                 <AlertTitle>Sign in option</AlertTitle>
                 Use JHU SSO sign in unless directed otherwise by admin.
-              </Alert>
+              </Alert> */}
             </Grid>
           </Grid>
         </Grid>

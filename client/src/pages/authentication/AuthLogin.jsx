@@ -3,7 +3,6 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AnimateButton from "../../components/AnimateButton";
-import SingleSignOn from "./SingleSignOn";
 import Form from "../../components/form-ui/Form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,6 +14,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useNavigate, Link } from "react-router-dom";
+import Typography from "@mui/material/Typography";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
@@ -28,6 +29,8 @@ function AuthLogin() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   if (isAuthenticated()) {
     return <Navigate to="/" replace={true} />;
@@ -44,35 +47,40 @@ function AuthLogin() {
     event.preventDefault();
   };
 
+  const onSignUpClick = () => {
+    navigate("/signup");
+  };
+
   return (
     <Stack spacing={2}>
-      {value === "local" ? (
-        <Stack spacing={1}>
-          <AnimateButton>
-            <Button
-              data-cy="sign-in-as-user-button"
-              variant="contained"
-              fullWidth
-              size="large"
-              onClick={() => signInAsUser()}
-            >
-              Sign in as User
-            </Button>
-          </AnimateButton>
-        </Stack>
-      ) : (
-        <SingleSignOn />
+      {value === "local" && (
+        <>
+          <Stack spacing={1}>
+            <AnimateButton>
+              <Button
+                data-cy="sign-in-as-user-button"
+                variant="contained"
+                fullWidth
+                size="large"
+                onClick={() => signInAsUser()}
+              >
+                Sign in as User
+              </Button>
+            </AnimateButton>
+          </Stack>
+          <Divider
+            data-cy="login-divider-or"
+            sx={{
+              fontSize: "17px",
+              "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+              "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+            }}
+          >
+            OR
+          </Divider>
+        </>
       )}
-      <Divider
-        data-cy="login-divider-or"
-        sx={{
-          fontSize: "17px",
-          "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
-          "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
-        }}
-      >
-        OR
-      </Divider>
+
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} marginTop={-0.5} alignItems="center">
           <FormInputText
@@ -119,6 +127,33 @@ function AuthLogin() {
           </AnimateButton>
         </Stack>
       </Form>
+      <Divider
+        data-cy="login-divider-or"
+        sx={{
+          fontSize: "17px",
+          "::before": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+          "::after": { borderTop: "1px dashed rgba(30, 62, 102, 0.42)" },
+        }}
+      >
+        OR
+      </Divider>
+      <Stack spacing={2} marginTop={-0.5} alignItems="center">
+        <AnimateButton>
+          <Button
+            data-cy="signup-button"
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{ fontSize: "17px", width: "120px" }}
+            onClick={onSignUpClick}
+          >
+            Sign Up
+          </Button>
+        </AnimateButton>
+      </Stack>
+      <Typography variant="body1" align="center">
+        Forgot Your Password? <Link to="/forgotPassword">Forgot Password</Link>
+      </Typography>
     </Stack>
   );
 }
