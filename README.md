@@ -211,8 +211,8 @@ Note: for your email, it is recommended to set up an app password for use
 
 ```
 VITE_LOC_BASE_URL=http://localhost:5000
-VITE_DEV_BASE_URL=https://proj-hourly-dev.herokuapp.com
-VITE_PROD_BASE_URL=https://proj-hourly-prod.herokuapp.com
+VITE_DEV_BASE_URL=https://example_dev.com # this shopuld be your development server, if you require one
+VITE_PROD_BASE_URL=https://example_prodcom # this should be your production server for live deployment
 VITE_USER_USERNAME=user-1
 VITE_USER_PASSWORD=user-1
 VITE_ADMIN_USERNAME=admin-1
