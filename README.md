@@ -252,7 +252,14 @@ To test routes without the frontend, you can import the files in [postman_files]
 
 ## Deployment
 
-For Deploying, there are Dockerfiles and Github Actions defined to deploy to Heroku and GitHub pages. Additionally, there are publically available docker images [here](https://hub.docker.com/repository/docker/chriswilhelm/hourly/general) which run the backend on port 5000 and frontend on 3000.
+For Deploying, there are Dockerfiles and Github Actions defined to deploy to Heroku and GitHub pages. Additionally, there are publically available docker images [here](https://github.com/orgs/jhu-collab/packages) which run the backend on port 5000 and frontend on 3000.
+
+You can run the following commands to pull the specific images. You will need to create the postgres image from the repository as well.
+
+```
+docker pull ghcr.io/jhu-collab/proj-hourly-server:latest
+docker pull ghcr.io/jhu-collab/proj-hourly-client:latest
+```
 
 ### Joint Deployment
 
