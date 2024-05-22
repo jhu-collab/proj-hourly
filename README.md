@@ -20,6 +20,8 @@ Hourly provides authentication for our users. A user can create a new account or
 to access their courses. We provide a forgot password option and the option to reset a users password within their
 user profile.
 
+For local development, there are 3 easy sign in options that allow a user to sign in by clicking a button into a student, ta, or professor account. The professor account will have site admin permissions. This should only be used on local.
+
 ### Course Creation/Joining
 
 Once a user is authenticated, they will be displayed their courses. As a professor, you can create a course by selecting
@@ -215,14 +217,18 @@ Note: for your email, it is recommended to set up an app password for use
 VITE_LOC_BASE_URL=http://localhost:5000
 VITE_DEV_BASE_URL=https://example_dev.com # this shopuld be your development server, if you require one
 VITE_PROD_BASE_URL=https://example_prodcom # this should be your production server for live deployment
-VITE_USER_USERNAME=user-1
-VITE_USER_PASSWORD=user-1
-VITE_ADMIN_USERNAME=admin-1
-VITE_ADMIN_PASSWORD=admin-1
+VITE_USER_USERNAME=student-account
+VITE_USER_PASSWORD=student-account
+VITE_ADMIN_USERNAME=professor-account
+VITE_ADMIN_PASSWORD=professor-account
+VITE_TA_USERNAME=ta-account
+VITE_TA_PASSWORD=ta-account
 VITE_RUN_MODE=local
 ```
 
 For your environment variables, you need to setup a production environment and provide the base url to the API here.
+
+The Vite username and password fields are used to local development only and allow an easy login with the push of a button.
 
 ## Run Locally
 

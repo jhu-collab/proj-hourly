@@ -64,7 +64,7 @@ function AuthLogin() {
                 size="large"
                 onClick={() => signInAsUser()}
               >
-                Sign in as User
+                Sign in as User (LOCAL)
               </Button>
             </AnimateButton>
             <AnimateButton>
@@ -74,7 +74,7 @@ function AuthLogin() {
                 size="large"
                 onClick={() => singInAsTa()}
               >
-                Sign in as TA
+                Sign in as TA (LOCAL)
               </Button>
             </AnimateButton>
             <AnimateButton>
@@ -84,7 +84,7 @@ function AuthLogin() {
                 size="large"
                 onClick={() => signInAsAdmin()}
               >
-                Sign in as Professor
+                Sign in as Professor (LOCAL)
               </Button>
             </AnimateButton>
           </Stack>
