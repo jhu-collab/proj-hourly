@@ -77,6 +77,14 @@ function useAuth() {
     });
   };
 
+  const singInAsTa = async () => {
+    debug("Sign in as a sample TA user!");
+    signIn({
+      username: import.meta.env.VITE_TA_USERNAME,
+      password: import.meta.env.VITE_TA_PASSWORD,
+    });
+  }
+
   return {
     isAuthenticated,
     isTokenExpired,
@@ -85,6 +93,7 @@ function useAuth() {
     signOut,
     signInAsAdmin,
     signInAsUser,
+    singInAsTa
   };
 }
 

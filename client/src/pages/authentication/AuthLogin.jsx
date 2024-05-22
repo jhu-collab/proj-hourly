@@ -19,7 +19,8 @@ import Typography from "@mui/material/Typography";
 
 function AuthLogin() {
   const [value] = useState(import.meta.env.VITE_RUN_MODE);
-  const { isAuthenticated, signIn, signInAsUser, signInAsAdmin } = useAuth();
+  const { isAuthenticated, signIn, signInAsUser, signInAsAdmin, singInAsTa } =
+    useAuth();
   const { control, handleSubmit } = useForm({
     defaultValues: {
       username: "",
@@ -55,16 +56,35 @@ function AuthLogin() {
     <Stack spacing={2}>
       {value === "local" && (
         <>
-          <Stack spacing={1}>
+          <Stack direction="row" spacing={1} justifyContent="center">
             <AnimateButton>
               <Button
                 data-cy="sign-in-as-user-button"
                 variant="contained"
-                fullWidth
                 size="large"
                 onClick={() => signInAsUser()}
               >
                 Sign in as User
+              </Button>
+            </AnimateButton>
+            <AnimateButton>
+              <Button
+                data-cy="sign-in-as-ta-button"
+                variant="contained"
+                size="large"
+                onClick={() => singInAsTa()}
+              >
+                Sign in as TA
+              </Button>
+            </AnimateButton>
+            <AnimateButton>
+              <Button
+                data-cy="sign-in-as-professor-button"
+                variant="contained"
+                size="large"
+                onClick={() => signInAsAdmin()}
+              >
+                Sign in as Professor
               </Button>
             </AnimateButton>
           </Stack>
