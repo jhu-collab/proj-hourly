@@ -7,34 +7,6 @@ import { factory } from "./debug.js";
 
 const debug = factory(import.meta.url);
 
-export const checkApiKey = async (req, res, next) => {
-  debug(`checkApiKey is called...`);
-  try {
-    debug(`Read the stored API key from ENV variable...`);
-    const sourceKey = process.env.HOURLY_API_KEY;
-    debug(`Read the request header to extract the provided API key...`);
-    const givenKey = req.headers["api-key"];
-
-    if (!givenKey) {
-      debug(`No API key was provided!..`);
-      throw new ApiError(401, "No API key was provided!");
-    }
-
-    if (sourceKey !== givenKey) {
-      debug(`Invalid API key!..`);
-      throw new ApiError(403, "Invalid API key!");
-    }
-
-    debug("Api key is valid!");
-    debug(`checkApiKey is done!`);
-    next();
-  } catch (err) {
-    debug("Error in checkApiKey...");
-    debug({ err });
-    next(err);
-  }
-};
-
 export const checkToken = async (req, res, next) => {
   debug(`checkToken is called!`);
   try {

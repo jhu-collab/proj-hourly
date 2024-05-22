@@ -193,12 +193,11 @@ For all environment variables, put them in a .env file in their respective direc
 DATABASE_URL=postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
 DIRECT_URL=postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
 DB_PORT=5432
-JWT_SECRET="abcdef12345"
-EMAIL_HOST="sandbox.smtp.mailtrap.io"
-EMAIL="email-address@example.com"
-EMAIL_PASSWORD="example_password"
+JWT_SECRET="YOUR_JWT_SECRET" #ENTER YOUR CHOSEN JWT SECRET HERE
+EMAIL_HOST="example.smtp.com" #ENTER YOUR SMTP HOST HERE
+EMAIL="email-address@example.com" #ENTER YOUR EMAIL ADDRESS HERE
+EMAIL_PASSWORD="example_password" #ENTER YIUR APP PASSWORD FOR YOUR EMAIL HERE
 NODE_ENV=local
-HOURLY_API_KEY="api-key"
 # DEBUG=hourly:*
 DISABLE_EMAIL_SENDING=true
 FRONTEND_BASE_URL=localhost:3000
