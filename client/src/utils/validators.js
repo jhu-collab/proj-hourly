@@ -1,6 +1,9 @@
 import { DateTime } from "luxon";
 import * as yup from "yup";
 
+const passwordRules =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 export const loginSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
   password: yup.string().min(1, "Password must be 1 or more characters"),
@@ -8,7 +11,13 @@ export const loginSchema = yup.object().shape({
 
 export const signupSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
-  password: yup.string().min(8, "Password must be 8 or more characters"),
+  password: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
   confirmPassword: yup
     .string()
     .min(8, "Password must be 8 or more characters")
@@ -26,7 +35,13 @@ export const changePasswordSchema = yup.object().shape({
   originalPassword: yup
     .string()
     .min(8, "Password must be 8 or more characters"),
-  newPassword: yup.string().min(8, "Password must be 8 or more characters"),
+  newPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
   confirmNewPassword: yup
     .string()
     .min(8, "Password must be 8 or more characters")
@@ -38,7 +53,13 @@ export const forgotPasswordSchema = yup.object().shape({
 });
 
 export const resetPasswordSchema = yup.object().shape({
-  password: yup.string().min(8, "Password must be 8 or more characters"),
+  password: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
   confirmPassword: yup
     .string()
     .min(8, "Password must be 8 or more characters")

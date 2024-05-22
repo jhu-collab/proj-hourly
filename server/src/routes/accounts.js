@@ -17,7 +17,18 @@ router.post(
     next();
   },
   body("email", "Email is required").notEmpty().isEmail(),
-  body("password", "Password is required").notEmpty(),
+  body("password", "Password is required")
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage("Password must be 8 or more characters")
+    .matches(/^(?=.*[a-z])/, "i")
+    .withMessage("Password must contain at least one lowercase letter")
+    .matches(/^(?=.*[A-Z])/, "i")
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/^(?=.*\d)/)
+    .withMessage("Password must contain at least one number")
+    .matches(/^(?=.*[@$!%*?&])/)
+    .withMessage("Password must contain at least one special character"),
   body("username", "username is required").notEmpty(),
   body("firstName", "firstName is required").notEmpty(),
   body("lastName", "lastName is required").notEmpty(),
@@ -57,7 +68,18 @@ router.post(
   },
   body("id", "id is required").notEmpty(),
   body("email", "email is required").notEmpty(),
-  body("newPassword", "new password is required").notEmpty(),
+  body("newPassword", "new password is required")
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage("Password must be 8 or more characters")
+    .matches(/^(?=.*[a-z])/, "i")
+    .withMessage("Password must contain at least one lowercase letter")
+    .matches(/^(?=.*[A-Z])/, "i")
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/^(?=.*\d)/)
+    .withMessage("Password must contain at least one number")
+    .matches(/^(?=.*[@$!%*?&])/)
+    .withMessage("Password must contain at least one special character"),
   validator.emailExists,
   validator.doesResetPasswordCodeMatch,
   validator.codeNotExpired,
@@ -93,7 +115,18 @@ router.post(
     next();
   },
   body("oldPassword", "oldPassword is required").notEmpty(),
-  body("newPassword", "newPassword is required").notEmpty(),
+  body("newPassword", "newPassword is required")
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage("Password must be 8 or more characters")
+    .matches(/^(?=.*[a-z])/, "i")
+    .withMessage("Password must contain at least one lowercase letter")
+    .matches(/^(?=.*[A-Z])/, "i")
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/^(?=.*\d)/)
+    .withMessage("Password must contain at least one number")
+    .matches(/^(?=.*[@$!%*?&])/)
+    .withMessage("Password must contain at least one special character"),
   validator.isAccountValidHeader,
   validator.isOldPasswordAccurate,
   validator.isNewPasswordNew,
