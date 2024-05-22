@@ -5,34 +5,34 @@ import { hashPassword } from "../src/util/password.js";
 import ical from "ical-generator";
 
 const createDataStructures = async () => {
-  const aliTheStudent = await prisma.Account.create({
+  const studentAccount = await prisma.Account.create({
     data: {
-      userName: "ali-the-student".toLocaleLowerCase(),
-      hashedPassword: hashPassword("ali-the-student"),
-      email: "ali-the-student@jhu.edu".toLowerCase(),
-      firstName: "Ali-Student",
+      userName: "student-account".toLocaleLowerCase(),
+      hashedPassword: hashPassword("student-account"),
+      email: "student@university.edu".toLowerCase(),
+      firstName: "Student",
       lastName: "Student",
       preferredName: "Student",
       role: Role.User,
     },
   });
-  const aliTheTA = await prisma.Account.create({
+  const taAccount = await prisma.Account.create({
     data: {
-      userName: "ali-the-ta".toLocaleLowerCase(),
-      hashedPassword: hashPassword("ali-the-ta"),
-      email: "alimadooei@gmail.com".toLowerCase(),
-      firstName: "Ali-TA",
+      userName: "ta-account".toLocaleLowerCase(),
+      hashedPassword: hashPassword("ta-account"),
+      email: "ta@university.edu".toLowerCase(),
+      firstName: "TA",
       lastName: "TA",
       preferredName: "TA",
       role: Role.User,
     },
   });
-  const aliTheProfessor = await prisma.Account.create({
+  const professorAccount = await prisma.Account.create({
     data: {
-      userName: "ali-the-professor".toLocaleLowerCase(),
-      hashedPassword: hashPassword("ali-the-professor"),
-      email: "amadooe1@jhu.edu".toLowerCase(),
-      firstName: "Ali-Professor",
+      userName: "professor-account".toLocaleLowerCase(),
+      hashedPassword: hashPassword("professor-account"),
+      email: "professor@university.edu".toLowerCase(),
+      firstName: "Professor",
       lastName: "Professor",
       preferredName: "Professor",
       role: Role.Admin,
@@ -44,21 +44,21 @@ const createDataStructures = async () => {
       title: "Data Structures",
       courseNumber: "601.226",
       semester: "Spring",
-      calendarYear: 2023,
+      calendarYear: 2025,
       code: "ABCDEF",
       instructors: {
         connect: {
-          id: aliTheProfessor.id,
+          id: professorAccount.id,
         },
       },
       courseStaff: {
         connect: {
-          id: aliTheTA.id,
+          id: taAccount.id,
         },
       },
       students: {
         connect: {
-          id: aliTheStudent.id,
+          id: studentAccount.id,
         },
       },
       iCalJson: cal.toJSON(),
