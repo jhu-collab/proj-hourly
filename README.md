@@ -253,7 +253,11 @@ When prompted select the desired browser and then select end to end testing.
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-[![Contributors](https://contrib.rocks/preview?repo=jhu-collab/proj-hourly)](https://github.com/jhu-collab/proj-hourly/graphs/contributors)
+
+<a href="https://github.com/jhu-collab/proj-hourly/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=jhu-collab/proj-hourly" />
+</a>
+
 
 ## License
 
