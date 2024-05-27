@@ -3,7 +3,7 @@ name: (prod) Deploy the client (frontend) app
 on:
   push:
     branches:
-      - main
+      - caprover
     paths:
       - "client/**"
       - ".github/workflows/prod.client.yml"
@@ -13,7 +13,7 @@ env:
   VITE_DEV_BASE_URL: ${{ secrets.DEV_BASE_URL }}
   VITE_PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
   VITE_ROSTER_SSO_JHU_URL: ${{ secrets.ROSTER_SSO_JHU_URL }}
-  
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
         run: |
           docker build --build-arg VITE_RUN_MODE=$VITE_RUN_MODE --build-arg VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL --build-arg VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL --build-arg VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL --tag ghcr.io/${{ github.repository }}-ui:latest ./client
           docker push ghcr.io/${{ github.repository }}-ui:latest
-      
+
       - name: Deploy to Caprover
         uses: caprover/deploy-from-github@v1.1.2
         with:

@@ -3,7 +3,7 @@ name: (prod) Deploy the server (backend) app
 on:
   push:
     branches:
-      - main
+      - caprover
     paths:
       - "server/**"
       - ".github/workflows/prod.server.yml"
@@ -30,7 +30,7 @@ jobs:
         run: |
           docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg TARGET=production ./server --tag ghcr.io/${{ github.repository }}-api:latest
           docker push ghcr.io/${{ github.repository }}-api:latest
-      
+
       - name: Deploy to Caprover
         uses: caprover/deploy-from-github@v1.1.2
         with:

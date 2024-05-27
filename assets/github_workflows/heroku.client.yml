@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - ali-move-heroku
+      - jhu-sso
     paths:
       - "client/**"
       - ".github/workflows/heroku.client.yml"

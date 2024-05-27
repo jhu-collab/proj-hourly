@@ -36,7 +36,7 @@ Hourly allows for Instructors and Course Staff to schedule their office hours us
 It has a click to drag feature to creating events, or can be created using a add button. Here is
 an example of the create event menu:
 
-![Office Hours Create Event Menu](./screenshots/create_event.png "Create Event")
+![Office Hours Create Event Menu](./assets/screenshots/create_event.png "Create Event")
 
 Here you have the option for start time and end time as well as the date of the event. Three additional fields
 are the recurring event, remote, and location. Recurring events repeat on a weekly basis, so when you opt to make
@@ -46,13 +46,13 @@ event will populate the calendar and be viewable by students.
 
 Once an event is created, it will appear on the calendar like this:
 
-![Calendar with Office Hour](./screenshots/calendar_view.png "Calendar View")
+![Calendar with Office Hour](./assets/screenshots/calendar_view.png "Calendar View")
 
 Here students and staff can select their office hours in order to interact. Registrations will be covered later.
 When a staff member clicks on their office hours, they will be able to view their details and have several options
 for manipulation:
 
-![Office Hour Details Staff](./screenshots/office_hour_details_staff.png "Office Hour Details Staff View")
+![Office Hour Details Staff](./assets/screenshots/office_hour_details_staff.png "Office Hour Details Staff View")
 
 Going from left to right, the interaction buttons are, edit, edit location, cancel, and exit. Most of these functionalities
 do not need a description. However, when editing a recurrning event, its location, or cancelling, you will be
@@ -64,7 +64,7 @@ you to mass edit your event calendar if necessary.
 As a student, on the calendar page, you can select a given event. If they are not already registered, they are
 prompted to select the register button. From here the registration form is displayed:
 
-![Registration Form](./screenshots/registration_form.png "Registration Form")
+![Registration Form](./assets/screenshots/registration_form.png "Registration Form")
 
 Here the student is asked to select a time option. Time options are configured by the Professors for what the
 duration of registrations should be. For example, two registration types could be "Quick Question" and "Problem
@@ -84,7 +84,7 @@ select topics (which will be discussed later) and add any additional comments or
 
 Once registered, the registration can be viewed by both Staff and Students under the registration tab:
 
-![Registration Tab](/screenshots/registrations_tab_student.png "Registration Tab")
+![Registration Tab](/assets/screenshots/registrations_tab_student.png "Registration Tab")
 
 Here a student is able to view their upcoming, ongoing, and past registrations. A student can click on a registration
 to exapnd its details, and if it is upcoming, can cancel the registration. The instructors/staff view looks very similar
@@ -140,7 +140,7 @@ of these is to serve as a course agenda/schedule for lectures/sections. These ca
 of class and what contents will be covered. These are all located at the top of the calendar and are saved as all day events.
 These allow students to get a quick view of the topics being covered or additional review sessions being held.
 
-![Course Events](/screenshots/course_event_calendar.png "Course Events")
+![Course Events](/assets/screenshots/course_event_calendar.png "Course Events")
 
 These events can also be viewed in a more condensed form under the agenda tab.
 
@@ -258,7 +258,7 @@ yarn prisma studio
 
 which wil create a locally hosted view of the database schema and entries.
 
-To test routes without the frontend, you can import the files in [postman_files](./postman_files/) into your local postman
+To test routes without the frontend, you can import the files in [postman_files](./assets/postman_files/) into your local postman
 
 ## Deployment
 
