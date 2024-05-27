@@ -3,7 +3,7 @@ name: (prod) Deploy the client (frontend) app
 on:
   push:
     branches:
-      - caprover
+      - main # change this to the desired branch
     paths:
       - "client/**"
       - ".github/workflows/prod.client.yml"

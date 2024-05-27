@@ -4,8 +4,7 @@ on:
   # Runs on pushes to the main branch
   push:
     branches:
-      - ali-move-heroku
-      - jhu-sso
+      - main # change this to the desired branch
     paths:
       - "client/**"
       - ".github/workflows/heroku.client.yml"

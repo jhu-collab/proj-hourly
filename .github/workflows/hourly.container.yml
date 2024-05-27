@@ -7,8 +7,8 @@ on:
 
 env:
   DB_PORT: 5432
-  DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
-  DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly
+  DATABASE_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly # if deployed in the same container, your DB url may need to be postgresql://postgres:password@postgres-for-hourly:5432/postgres-for-hourly
+  DIRECT_URL: postgresql://postgres:password@127.0.0.1:5432/postgres-for-hourly # if deployed in the same container, your DB url may need to be postgresql://postgres:password@postgres-for-hourly:5432/postgres-for-hourly
   DB_IMAGE_NAME: postgres-for-hourly
   SERVER_IMAGE_NAME: server
   FRONTEND_IMAGE_NAME: frontend
