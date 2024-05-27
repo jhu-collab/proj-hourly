@@ -1,0 +1,12 @@
+{
+  "name": "hourly",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "docker:up": "docker-compose up -d"
+  }
+}

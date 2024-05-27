@@ -1,9 +1,69 @@
 import { DateTime } from "luxon";
 import * as yup from "yup";
 
+const passwordRules =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 export const loginSchema = yup.object().shape({
   username: yup.string().min(1, "Username must be 1 or more characters"),
   password: yup.string().min(1, "Password must be 1 or more characters"),
+});
+
+export const signupSchema = yup.object().shape({
+  username: yup.string().min(1, "Username must be 1 or more characters"),
+  password: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
+  confirmPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .oneOf([yup.ref("password"), null], "passwords must match"),
+  email: yup
+    .string()
+    .email("Must be a valid email")
+    .max(255)
+    .required("Email is required"),
+  firstName: yup.string().min(1, "First name must be 1 or more characters"),
+  lastName: yup.string().min(1, "Last name must be 1 or more characters"),
+});
+
+export const changePasswordSchema = yup.object().shape({
+  originalPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters"),
+  newPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
+  confirmNewPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .oneOf([yup.ref("newPassword"), null], "passwords must match"),
+});
+
+export const forgotPasswordSchema = yup.object().shape({
+  username: yup.string().min(1, "Username must be 1 or more characters"),
+});
+
+export const resetPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .matches(
+      passwordRules,
+      "Passowrd must container 1 upper case, 1 lower case, 1 number, and 1 special character"
+    ),
+  confirmPassword: yup
+    .string()
+    .min(8, "Password must be 8 or more characters")
+    .oneOf([yup.ref("password"), null], "passwords must match"),
 });
 
 /**

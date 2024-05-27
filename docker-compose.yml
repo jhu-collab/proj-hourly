@@ -1,0 +1,66 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    container_name: postgres-for-hourly
+    ports:
+      - "${DB_PORT}:5432" # HOST_PORT:CONTAINER_PORT
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      args:
+        - DATABASE_URL=$DATABASE_URL
+        - DIRECT_URL=$DIRECT_URL
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: $DATABASE_URL
+      DIRECT_URL: $DIRECT_URL
+      DB_PORT: $DB_PORT
+      JWT_SECRET: $JWT_SECRET
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL: $EMAIL
+      EMAIL_PASSWORD: $EMAIL_PASSWORD
+      DEBUG: $DEBUG
+      NODE_ENV: $NODE_ENV
+      JHU_SSO_URL: $JHU_SSO_URL
+      SP_NAME: $SP_NAME
+      BASE_URL: $BASE_URL
+      CERT: $CERT
+      PBK: $PBK
+      PVK: $PVK
+      HOURLY_API_KEY: $HOURLY_API_KEY
+      test: $test
+      DISABLE_EMAIL_SENDING: $DISABLE_EMAIL_SENDING
+      FRONTEND_BASE_URL: $FRONTEND_BASE_URL
+    image: proj-hourly-server
+    depends_on:
+      - db
+    restart: unless-stopped
+  frontend:
+    container_name: frontend
+    build:
+      context: ./client
+      dockerfile: Dockerfile # same as of your docker file name
+      args:
+        VITE_RUN_MODE: $VITE_RUN_MODE
+        VITE_LOC_BASE_URL: $VITE_LOC_BASE_URL
+        VITE_DEV_BASE_URL: $VITE_DEV_BASE_URL
+        VITE_PROD_BASE_URL: $VITE_PROD_BASE_URL
+        VITE_USER_USERNAME: $VITE_USER_USERNAME
+        VITE_USER_PASSWORD: $VITE_USER_PASSWORD
+        VITE_ADMIN_USERNAME: $VITE_ADMIN_USERNAME
+        VITE_ADMIN_PASSWORD: $VITE_ADMIN_PASSWORD
+        VITE_TA_USERNAME: $VITE_TA_USERNAME
+        VITE_TA_PASSWORD: $VITE_TA_USERNAME
+    volumes:
+      - ./directory-path:/direcotory-end-name
+    ports:
+      - 3000:3000
+    restart: always

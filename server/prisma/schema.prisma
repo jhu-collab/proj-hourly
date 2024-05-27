@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Account {
@@ -30,6 +31,8 @@ model Account {
   undoneTokens      UsedToken[]    @relation("undone")
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @default(now()) @updatedAt
+  resetToken        String?
+  tokenCreatedAt    DateTime?
 }
 
 enum Role {

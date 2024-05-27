@@ -1,6 +1,8 @@
 import prisma from "../../prisma/client.js";
 import { StatusCodes } from "http-status-codes";
 import { factory } from "./debug.js";
+import { hashPassword } from "../util/password.js";
+import { verifyPassword } from "../util/password.js";
 
 const debug = factory(import.meta.url);
 
@@ -23,6 +25,25 @@ export const isUniqueEmail = async (req, res, next) => {
   }
 };
 
+export const isUniqueUsername = async (req, res, next) => {
+  debug("checking if username is unique...");
+  const { username } = req.body;
+  const query = await prisma.Account.findFirst({
+    where: {
+      userName: username,
+    },
+  });
+  if (query !== null) {
+    debug("username already in use!");
+    return res
+      .status(StatusCodes.CONFLICT)
+      .json({ msg: "username already in use" });
+  } else {
+    debug("username is unique!");
+    next();
+  }
+};
+
 export const emailExists = async (req, res, next) => {
   debug("checking if email exists...");
   const { email } = req.body;
@@ -38,6 +59,25 @@ export const emailExists = async (req, res, next) => {
       .json({ msg: "Email is not associated with an account" });
   } else {
     debug("email exists!");
+    next();
+  }
+};
+
+export const usernameExists = async (req, res, next) => {
+  debug("checking if username exists...");
+  const { username } = req.body;
+  const query = await prisma.Account.findFirst({
+    where: {
+      userName: username,
+    },
+  });
+  if (query === null) {
+    debug("invalid username!");
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "username is not associated with an account" });
+  } else {
+    debug("username exists!");
     next();
   }
 };
@@ -290,6 +330,7 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
   debug("checking if account is staff or instructor...");
   const id = req.id;
   const courseId = parseInt(req.params.courseId, 10);
+  debug("getting course staff...");
   const staff = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -302,6 +343,7 @@ export const isAccountStaffOrInstructor = async (req, res, next) => {
       },
     },
   });
+  debug("getting course instructors...");
   const instructor = await prisma.course.findUnique({
     where: {
       id: courseId,
@@ -407,5 +449,104 @@ export const isAccountUserParams = async (req, res, next) => {
   } else {
     debug("account is user!");
     next();
+  }
+};
+
+export const doesResetPasswordCodeMatch = async (req, res, next) => {
+  debug("checking if reset code matches the one on the account...");
+  const { email, id } = req.body;
+  debug("getting account by email...");
+  const account = await prisma.account.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (account.resetToken == id) {
+    debug("reset code matches!");
+    next();
+  } else {
+    debug("reset code does not match!");
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Reset token did not match" });
+  }
+};
+
+export const codeNotExpired = async (req, res, next) => {
+  debug("checking if reset token is not expired...");
+  const { email } = req.body;
+  const date = new Date();
+  debug("getting account by email...");
+  const account = await prisma.account.findUnique({
+    where: {
+      email,
+    },
+  });
+  const createDate = account.tokenCreatedAt;
+  createDate.setUTCHours(createDate.getUTCHours() + 1);
+  if (createDate < date) {
+    debug("token is expired!");
+    return res.status(StatusCodes.CONFLICT).json({ msg: "Link has expired" });
+  } else {
+    debug("token is not expired!");
+    next();
+  }
+};
+
+export const doesNotHaveExistingActiveLink = async (req, res, next) => {
+  debug("checking if account has active expiration link...");
+  const { username } = req.body;
+  debug("getting account by username...");
+  const account = await prisma.account.findUnique({
+    where: {
+      userName: username,
+    },
+  });
+  if (account.resetToken == null) {
+    debug("account does not have link!");
+    next();
+  } else {
+    const date = new Date();
+    const createDate = account.tokenCreatedAt;
+    createDate.setUTCHours(createDate.getUTCHours() + 1);
+    if (createDate > date) {
+      debug("account has active link!");
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Account has an existing reset link available" });
+    } else {
+      debug("account does not have active link!");
+      next();
+    }
+  }
+};
+
+export const isOldPasswordAccurate = async (req, res, next) => {
+  const id = req.id;
+  const { oldPassword } = req.body;
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  const passwordValid = verifyPassword(oldPassword, account.hashedPassword);
+  if (passwordValid) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "Old Password was incorrect!" });
+  }
+};
+
+export const isNewPasswordNew = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  if (oldPassword != newPassword) {
+    next();
+  } else {
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ msg: "New Password is not new!" });
   }
 };

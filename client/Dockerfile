@@ -12,13 +12,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ARG VITE_RUN_MODE
 ARG VITE_DEV_BASE_URL
 ARG VITE_PROD_BASE_URL
-ARG VITE_ROSTER_SSO_JHU_URL
 ARG VITE_LOC_BASE_URL
 
 ENV VITE_RUN_MODE=$VITE_RUN_MODE
 ENV VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL
 ENV VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL
-ENV VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL
 ENV VITE_LOC_BASE_URL=$VITE_LOC_BASE_URL
 
 WORKDIR /app
@@ -34,18 +32,23 @@ COPY . .
 # ^ Copy all the files located in the current directory to WORKDIR
 # Won't copy directory/files noted in .dockerignore
 
-RUN VITE_RUN_MODE=$VITE_RUN_MODE VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL VITE_ROSTER_SSO_JHU_URL=$VITE_ROSTER_SSO_JHU_URL yarn build
+RUN VITE_RUN_MODE=$VITE_RUN_MODE VITE_DEV_BASE_URL=$VITE_DEV_BASE_URL VITE_PROD_BASE_URL=$VITE_PROD_BASE_URL yarn build
 # ^ build the app
 
-FROM socialengine/nginx-spa:latest
-# ^ socialengine/nginx-spa is a simple static ngninx server that handle 
-# pushState (every request is routed to /index.html so you can use frontend routing).
+EXPOSE 3000
 
-WORKDIR /app
-# ^ Working directory of the container
+# Command to run the app
+CMD ["yarn", "run", "preview"]
 
-COPY --from=build /app/dist .
-# ^ Copy the build artifact (dist folder) from the build image to the WORKDIR of this one
+# FROM socialengine/nginx-spa:latest
+# # ^ socialengine/nginx-spa is a simple static ngninx server that handle 
+# # pushState (every request is routed to /index.html so you can use frontend routing).
 
-RUN chmod -R 777 .
+# WORKDIR /app
+# # ^ Working directory of the container
+
+# COPY --from=build /app/dist .
+# # ^ Copy the build artifact (dist folder) from the build image to the WORKDIR of this one
+
+# RUN chmod -R 777 .
 # ^ Update access permissions on the WORKDIR of this image

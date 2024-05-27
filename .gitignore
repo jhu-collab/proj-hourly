@@ -13,3 +13,4 @@ __MACOSX/*
 **/coverage/*
 **/.nyc_output/*
 client/.nyc_output/*
+**/.yarn
